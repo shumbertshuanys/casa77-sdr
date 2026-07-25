@@ -1,0 +1,381 @@
+# ============================================================
+# knowledge/casa77.yaml
+# FONTE DE VERDADE COMERCIAL E OPERACIONAL DA CASA 77
+#
+# REGRA: nenhum campo abaixo pode ser preenchido por inferencia,
+# memoria de conversa antiga ou conhecimento generico.
+# Preenchimento somente com dado confirmado por Douglas Bianchi.
+#
+# Campos com valor null ou status "pendente" obrigam handoff humano.
+# ============================================================
+
+versao: "1.0"
+ultima_atualizacao: "2026-07-24"
+
+empresa:
+  nome: "Casa 77"
+  descricao: >
+    Espaço exclusivo para eventos intimistas, pensado para quem valoriza
+    elegância, conforto e uma experiência única.
+  posicionamento:
+    - "premium"
+    - "alto luxo"
+  diferenciais:
+    - "vista privilegiada"
+    - "ambiente sofisticado"
+    - "exclusividade"
+    - "experiência intimista"
+
+localizacao:
+  endereco_completo: "Rua Magnólia de Aguiar, 77, Morro do Moreno, Praia da Costa, Vila Velha/ES, 29101-082"
+  cidade: "Vila Velha"
+  estado: "ES"
+  regioes_principais:
+    - "Vila Velha"
+    - "Vitória"
+  pode_informar_endereco_antes_qualificacao: true
+  google_maps_url: null
+
+eventos:
+  aceitos:
+    - "casamento"
+    - "noivado"
+    - "bodas"
+    - "evento corporativo"
+    - "aniversário adulto"
+  perfil_ideal: "Evento intimista"
+  nao_aceitos:
+    - "despedida de solteiro"
+    - "festa de adolescente"
+    - "festa infantil"
+    - "evento com comportamento descontrolado"
+  datas_nao_aceitas:
+    - "Carnaval"
+    - "Natal"
+    - "Ano Novo"
+
+capacidade:
+  convidados_sentados: 80
+  formato_coquetel: 100
+  minimo_convidados: null
+  observacao_minimo: "Não existe quantidade mínima estabelecida."
+
+estrutura:
+  percentual_coberto: 80
+  cerimonia_e_recepcao_mesmo_local: true
+
+  plano_chuva:
+    disponivel: true
+    descricao: >
+      O espaço comporta instalação de toldos. A contratação, o custo,
+      a instalação e a responsabilidade pelos toldos são do contratante.
+
+  banheiros:
+    total: 4
+    masculinos: 2
+    femininos: 2
+
+  estacionamento:
+    disponivel: false
+    observacao: >
+      O estacionamento na rua é limitado. Recomenda-se orientar os
+      convidados a utilizar transporte por aplicativo, táxi ou outro
+      transporte alternativo.
+
+  acessibilidade: true
+
+  suite_noiva:
+    disponivel: true
+    incluida_no_preco_padrao: false
+    contratacao: "Sob consulta"
+    valor: null
+    inclui:
+      - "uma suíte"
+      - "uma sala de convivência"
+      - "um banheiro exclusivo"
+
+  cozinha:
+    disponivel: true
+    equipamentos:
+      - quantidade: 1
+        item: "freezer horizontal"
+        especificacao: "aproximadamente 280 litros"
+      - quantidade: 2
+        item: "geladeira duplex"
+      - quantidade: 1
+        item: "cervejeira"
+      - quantidade: 1
+        item: "fogão industrial"
+        especificacao: "uma boca"
+      - quantidade: 2
+        item: "fogão convencional"
+        especificacao: "quatro bocas"
+      - quantidade: 2
+        item: "forno elétrico"
+      - quantidade: 1
+        item: "micro-ondas"
+      - quantidade: 1
+        item: "churrasqueira"
+      - quantidade: 2
+        item: "bancada de apoio"
+      - quantidade: 1
+        item: "área de cozinha externa"
+
+  gerador:
+    incluido: false
+    permite_instalacao: true
+    observacao: "Pode ser contratado separadamente pelo contratante."
+
+  climatizacao:
+    disponivel: true
+    equipamentos:
+      - "ar-condicionado de 36.000 BTUs"
+      - "ar-condicionado de 22.000 BTUs"
+
+  iluminacao:
+    incluida: "Iluminação padrão da casa"
+    iluminacao_cenica_incluida: false
+    observacao: >
+      Iluminação adicional ou cênica deve ser contratada e instalada
+      sob responsabilidade do contratante.
+
+  som:
+    incluido: false
+    responsabilidade: "Contratante"
+    rede_eletrica:
+      - "110 V"
+      - "220 V"
+
+  espaco_infantil:
+    disponivel: false
+
+  piscina:
+    disponivel_para_eventos: false
+    uso_proibido: true
+
+mobiliario:
+  incluido: true
+  observacao: "A utilização dos móveis fica a critério da decoração."
+  itens:
+    - quantidade: 2
+      item: "mesa grande de jantar"
+      capacidade: "8 a 10 pessoas por mesa"
+    - quantidade: 12
+      item: "cadeira de polietileno"
+    - quantidade: 1
+      item: "bistrô"
+    - quantidade: 11
+      item: "cadeira alta"
+    - quantidade: 2
+      item: "sofá"
+    - quantidade: 3
+      item: "poltrona"
+      especificacao: "uma de couro e duas de tecido"
+    - quantidade: 1
+      item: "divã"
+    - quantidade: 2
+      item: "aparador"
+    - quantidade: 1
+      item: "espelho grande"
+    - quantidade: 1
+      item: "televisão"
+      especificacao: "75 polegadas"
+    - quantidade: 1
+      item: "jogo de sofá de varanda com poltrona"
+    - quantidade: 1
+      item: "jogo de móveis rústicos com poltronas e mesa"
+
+equipe_incluida:
+  segurancas_externos: 3
+  governanta: 1
+  governanta_funcao: "Governanta e auxiliar de recepção"
+  limpeza_pre_evento: true
+  limpeza_durante_evento: false
+  observacao_limpeza: >
+    A casa é entregue limpa. A limpeza durante o evento é responsabilidade
+    do contratante.
+
+horarios:
+  duracao_padrao_evento_horas: 5
+  horario_limite: "23:00"
+  hora_adicional_disponivel: true
+  observacao: >
+    Mesmo com contratação de hora adicional, o evento deve terminar
+    obrigatoriamente até as 23:00.
+
+montagem_desmontagem:
+  inicio_montagem: "Até 24 horas antes do evento"
+  fim_desmontagem: "Até um dia útil após o evento"
+
+incluido_locacao_padrao:
+  - "uso das áreas contratadas da Casa 77"
+  - "mobiliário disponível da casa"
+  - "três seguranças na parte externa"
+  - "uma governanta e auxiliar de recepção"
+  - "limpeza para entrega inicial da casa"
+
+nao_incluido:
+  - "buffet"
+  - "decoração"
+  - "iluminação cênica"
+  - "sonorização"
+  - "DJ"
+  - "gerador"
+  - "cerimonialista"
+  - "bebidas"
+  - "limpeza durante o evento"
+  - "toldos"
+  - "estacionamento"
+
+fornecedores:
+  obrigatorios: []
+  recomendados:
+    - "buffets que já conhecem a estrutura da Casa 77"
+  permite_fornecedor_proprio: true
+  observacao: >
+    O cliente pode contratar seus próprios fornecedores. A Casa 77 recomenda
+    buffets que já trabalharam no espaço e conhecem suas regras.
+
+restricoes:
+  proibido:
+    - "drogas ilícitas"
+    - "uso da piscina"
+    - "uso da parte inferior da casa"
+    - "quantidade de pessoas superior ao contratado"
+    - "fogos de artifício"
+    - "animais"
+    - "danos ou intervenções na estrutura da casa"
+  fogos_motivo: "Área ambiental com proibição legal."
+  decoracao: >
+    Permitida desde que não provoque danos ou alterações na estrutura.
+  drones:
+    status: "pendente"
+  velas:
+    status: "pendente"
+  bebidas:
+    status: "Permitidas, observadas as regras contratuais."
+
+precos:
+  moeda: "BRL"
+  diferenca_por_dia_semana: false
+  diferenca_por_temporada: false
+  desconto_a_vista: false
+  desconto_autorizado_bot: false
+
+  pacotes:
+    - codigo: "ATE_80"
+      descricao: "Locação para evento com até 80 convidados"
+      limite_convidados: 80
+      valor: 15000
+      duracao_horas: 5
+      hora_adicional: 3000
+
+    - codigo: "ATE_100"
+      descricao: "Locação para evento com até 100 convidados"
+      limite_convidados: 100
+      valor: 18000
+      duracao_horas: 5
+      hora_adicional: 3600
+
+pagamento:
+  opcoes:
+    - descricao: "Pagamento integral"
+      parcelas: 1
+    - descricao: "Pagamento em duas etapas"
+      parcelas: 2
+      primeira_parcela:
+        percentual: 50
+        vencimento: "Na assinatura do contrato"
+      segunda_parcela:
+        percentual: 50
+        vencimento: "Trinta dias antes do evento"
+  caucao: false
+  parcelamento_adicional: false
+  desconto_a_vista: false
+
+proposta:
+  validade_dias: 15
+  preco_pode_ser_informado_imediatamente: true
+
+alteracao_data:
+  antecedencia_minima_dias: 90
+  depende_disponibilidade: true
+  atendimento_humano_obrigatorio: true
+
+cancelamento:
+  permitido: true
+  retencao_entrada_percentual: 100
+  explicacao: >
+    Em caso de cancelamento, o valor pago como entrada, correspondente
+    a 50% do contrato, fica retido pela contratada.
+  atendimento_humano_obrigatorio: true
+
+multas_possiveis:
+  - "uso da piscina"
+  - "lixo excessivo"
+  - "quebra ou dano ao mobiliário"
+  - "ultrapassagem do horário contratado"
+  - "uso de áreas não incluídas"
+  - "descumprimento das regras ambientais"
+  - "excesso de pessoas em relação ao contratado"
+
+processo_comercial:
+  responsavel:
+    nome: "Douglas Bianchi"
+    funcao: "Proprietário e responsável comercial"
+    telefone: "(27) 99844-9794"
+
+  horario_atendimento:
+    segunda_a_sexta:
+      inicio: "09:00"
+      fim: "18:00"
+    sabado:
+      inicio: "09:00"
+      fim: "12:00"
+    domingo:
+      inicio: "09:00"
+      fim: "12:00"
+
+  visitas:
+    bot_pode_confirmar: false
+    responsavel_confirmacao: "Douglas Bianchi"
+    responsavel_visita: "Douglas Bianchi"
+    duracao_estimada_minutos:
+      minimo: 30
+      maximo: 40
+    depende_aprovacao_humana: true
+
+  contratacao:
+    bot_pode_fechar: false
+    atendimento_humano_obrigatorio: true
+
+  sistema_atual: "WhatsApp"
+  crm_atual: false
+  followups_atuais: 0
+
+integracoes_planejadas:
+  whatsapp:
+    status: "pendente"
+  calendario:
+    tipo_sugerido: "Google Calendar"
+    status: "pendente"
+  crm:
+    status: "pendente"
+
+materiais:
+  fotos: null
+  videos: null
+  planta: null
+  apresentacao_comercial: null
+  portfolio: null
+
+informacoes_pendentes:
+  - "valor da suíte da noiva"
+  - "link oficial do Google Maps"
+  - "links oficiais de fotos, vídeos e portfólio"
+  - "planta do espaço"
+  - "regra específica para drones"
+  - "regra específica para velas"
+  - "critérios para parcerias e permutas"
+  - "mensagens de acompanhamento aprovadas pelo Douglas"
+  - "política objetiva de reajuste anual"
