@@ -6,7 +6,7 @@ Uma etapa por vez. Nenhuma etapa começa sem pedido específico.
 |---|---|---|---|---|
 | 1 | Organizar base de conhecimento | **Concluída** | `docs/`, `knowledge/`, `prompts/`, `tests/` | 9 itens pendentes, nenhum bloqueador |
 | 2 | Definir fluxo de atendimento | **Concluída** | Fluxo detalhado e máquina de estados | Nenhum |
-| 3 | Motor de respostas | **Liberada** | Camada que lê `knowledge/` e responde | Nenhum — etapa 2 aprovada e versionada |
+| 3 | Motor de respostas | **Em execução** | Camada que lê `knowledge/` e responde | Nenhum — etapa 2 aprovada e versionada |
 | 4 | Qualificação | Não iniciada | Regras de classificação executáveis | Nenhum — limites definidos (80/100) |
 | 5 | Encaminhamento humano | Não iniciada | Geração e entrega do resumo | Canal de entrega e SLA pendentes |
 | 6 | Integração de calendário | Não iniciada | Consulta de disponibilidade | Google Calendar sugerido, não confirmado |
