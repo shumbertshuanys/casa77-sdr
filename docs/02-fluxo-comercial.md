@@ -1,6 +1,8 @@
 # 02 — Fluxo Comercial
 
-Base: `knowledge/casa77.yaml` v1.0.
+Base: `knowledge/casa77.yaml` v1.0. A formalização deste fluxo como máquina de estados
+está em `docs/06-maquina-de-estados.md`, que distingue **estado da conversa** (onde a
+conversa está) de **resultado de qualificação** (o que sabemos do lead).
 
 ## Etapas do atendimento
 
@@ -39,15 +41,19 @@ Sem integração de calendário (`integracoes_planejadas.calendario.status: pend
 
 ### 6. Qualificação
 
-Estados oficiais (nenhum outro é usado):
+Resultados de qualificação oficiais (nenhum outro é usado). São um **atributo do lead**,
+não estados da conversa — os estados operacionais da conversa estão em
+`docs/06-maquina-de-estados.md`:
 
-| Estado | Significado |
+| Resultado | Significado |
 |---|---|
-| `dados_incompletos` | Faltam informações necessárias para decidir. **É o estado inicial** enquanto os campos obrigatórios não foram coletados. Nunca tratar ausência de dado como recusa. |
+| `dados_incompletos` | Faltam informações necessárias para decidir. **É o resultado inicial** enquanto os campos obrigatórios não foram coletados. Nunca tratar ausência de dado como recusa. |
 | `qualificado` | Evento compatível e dados suficientes. |
 | `qualificado_com_ressalva` | Compatível, mas depende de confirmação humana. |
 | `incompativel` | O evento viola uma regra objetiva do YAML. |
-| `indefinido` | A decisão depende de campo pendente na base. |
+| `indefinido` | A decisão de classificação do evento depende de campo pendente na base. Pergunta acessória pendente (ex.: valor da suíte) não altera a classificação — é registrada como pendência de resposta (`docs/06-maquina-de-estados.md` §1.3). |
+
+Falta de qualquer campo obrigatório → `dados_incompletos`, nunca `incompativel`.
 
 Regras objetivas que levam a `incompativel`:
 
@@ -56,13 +62,11 @@ Regras objetivas que levam a `incompativel`:
   janela antes ou depois);
 - número de convidados acima de 100 (`capacidade.formato_coquetel`).
 
-Falta de qualquer campo obrigatório → `dados_incompletos`, nunca `incompativel`.
-
 ### 6.1 Capacidade e formato
 
 Fonte: `capacidade.convidados_sentados = 80`, `capacidade.formato_coquetel = 100`.
 
-| Convidados | Formato | Estado | Pacote |
+| Convidados | Formato | Resultado | Pacote |
 |---|---|---|---|
 | até 80 | opcional | `qualificado` (se demais dados ok) | `ATE_80` |
 | 81 a 100 | coquetel | `qualificado` em princípio | `ATE_100` |
@@ -108,7 +112,8 @@ abertura
                 ├─ coquetel ──> ATE_100 (qualificado)
                 ├─ sentado ──> qualificado_com_ressalva + handoff
                 └─ sem formato ──> dados_incompletos (perguntar)
-        → dúvidas (knowledge/) ──[pendente]──> indefinido → R03 + handoff
+        → dúvidas (knowledge/) ──[pendente impeditivo]──> indefinido → R03 + handoff
+                               ──[pendente acessório]──> pendencias_resposta → R03 + handoff (qualificação mantida)
           → coleta de dados ──[falta campo obrigatório]──> dados_incompletos
             → disponibilidade (bloqueado) ──> R05
               → qualificação
