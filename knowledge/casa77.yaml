@@ -55,8 +55,8 @@ eventos:
   observacao_nao_aceitos: >
     Aniversário adulto deixou de ser aceito por decisão de Douglas Bianchi em
     2026-08-15 (arbitragem D1). Treinamento, palestra e workshop não são
-    atendidos porque a estrutura da casa não é adequada a esse formato
-    (arbitragem D6).
+    atendidos porque a estrutura da casa não é adequada a esse formato: não há
+    projetor nem assentos em quantidade para esse uso (arbitragem D6).
   datas_nao_aceitas:
     - "Carnaval"
     - "Natal"

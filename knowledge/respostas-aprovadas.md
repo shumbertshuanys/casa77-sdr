@@ -123,12 +123,15 @@ Link do Google Maps: **BLOQUEADO** (`google_maps_url: null`) → R03.
 
 > A Casa 77 não recebe esse tipo de evento. O espaço é voltado para eventos intimistas.
 
+Origem: `eventos.nao_aceitos` e `eventos.observacao_nao_aceitos`.
+
 Aplica-se a: despedida de solteiro, festa de adolescente, festa infantil, aniversário
 adulto (decisão de 2026-08-15, arbitragem D1), treinamento, palestra e workshop.
 
-Para treinamento, palestra e workshop o motivo é estrutural — a casa não tem projetor
-nem assentos em quantidade para esse formato (arbitragem D6). O texto acima cobre a
-recusa; se o interessado perguntar o motivo, a razão estrutural pode ser citada.
+Para treinamento, palestra e workshop o motivo registrado no YAML
+(`eventos.observacao_nao_aceitos`) é estrutural — não há projetor nem assentos em
+quantidade para esse uso. O texto acima cobre a recusa; se o interessado perguntar o
+motivo, citar a razão registrada no YAML.
 
 ## R18 — Datas bloqueadas — APROVADO
 
