@@ -1,6 +1,6 @@
 # Respostas Aprovadas
 
-Textos que o bot pode usar. Todo valor citado vem de `knowledge/casa77.yaml` v1.0.
+Textos que o bot pode usar. Todo valor citado vem de `knowledge/casa77.yaml` v1.1.
 
 Status: **APROVADO** = pode usar | **AGUARDA APROVAÇÃO** = texto rascunhado, falta validação
 de Douglas Bianchi | **BLOQUEADO** = campo pendente no YAML, usar R03.
@@ -116,14 +116,22 @@ Link do Google Maps: **BLOQUEADO** (`google_maps_url: null`) → R03.
 
 ## R16 — Tipo de evento aceito — APROVADO
 
-> Recebemos casamento, noivado, bodas, evento corporativo e aniversário adulto. O perfil da
-> casa é de evento intimista.
+> Recebemos casamento, noivado, bodas e evento corporativo. O perfil da casa é de evento
+> intimista.
 
 ## R17 — Tipo de evento não aceito — APROVADO
 
 > A Casa 77 não recebe esse tipo de evento. O espaço é voltado para eventos intimistas.
 
-Aplica-se a: despedida de solteiro, festa de adolescente, festa infantil.
+Origem: `eventos.nao_aceitos` e `eventos.observacao_nao_aceitos`.
+
+Aplica-se a: despedida de solteiro, festa de adolescente, festa infantil, aniversário
+adulto (decisão de 2026-08-15, arbitragem D1), treinamento, palestra e workshop.
+
+Para treinamento, palestra e workshop o motivo registrado no YAML
+(`eventos.observacao_nao_aceitos`) é estrutural — não há projetor nem assentos em
+quantidade para esse uso. O texto acima cobre a recusa; se o interessado perguntar o
+motivo, citar a razão registrada no YAML.
 
 ## R18 — Datas bloqueadas — APROVADO
 

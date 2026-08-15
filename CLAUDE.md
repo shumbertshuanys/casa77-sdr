@@ -91,18 +91,13 @@ pendências que impedem o próximo passo.
 
 Não avançar de etapa sem pedido específico.
 
-## Estado atual
+## Estado do projeto
 
-Etapa 1 concluída. `knowledge/casa77.yaml` v1.0 (2026-07-24) preenchido e validado por
-Douglas Bianchi.
+Antes de qualquer tarefa, consultar `docs/00-estado-atual.md` para etapa, subetapa, PR,
+commits, testes e próxima ação.
 
-Números que o código vai consumir — sempre lendo do YAML, nunca em constante hardcoded:
+Para qualquer dado comercial ou operacional, consultar `knowledge/casa77.yaml`. Lacunas
+conhecidas estão em `knowledge/informacoes-pendentes.md`.
 
-- capacidade: 80 sentados, 100 coquetel, sem mínimo
-- pacotes: `ATE_80` R$ 15.000 / `ATE_100` R$ 18.000, 5h, hora adicional R$ 3.000 / R$ 3.600
-- horário limite: 23:00, inclusive com hora adicional
-- pagamento: integral ou 50% na assinatura + 50% trinta dias antes; sem caução, sem desconto
-- proposta válida por 15 dias
-
-9 itens seguem pendentes (ver `knowledge/informacoes-pendentes.md`). Nenhum bloqueia a
-etapa 2.
+`CLAUDE.md` não é fonte de estado granular nem de valor comercial. Nenhum número
+comercial deve ser copiado para este arquivo.
