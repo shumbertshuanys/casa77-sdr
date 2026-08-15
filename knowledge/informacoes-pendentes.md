@@ -1,6 +1,6 @@
 # Informações Pendentes
 
-Tudo aqui obriga R03 + handoff. Base: `knowledge/casa77.yaml` v1.0 (2026-07-24).
+Tudo aqui obriga R03 + handoff. Base: `knowledge/casa77.yaml` v1.1 (2026-08-15).
 
 ## Declaradas no próprio YAML
 
@@ -8,7 +8,7 @@ Tudo aqui obriga R03 + handoff. Base: `knowledge/casa77.yaml` v1.0 (2026-07-24).
 |---|---|---|---|
 | 1 | Valor da suíte da noiva | `estrutura.suite_noiva.valor: null` | Alto — pergunta comum em casamento |
 | 2 | Link oficial do Google Maps | `localizacao.google_maps_url: null` | Médio — endereço pode ser informado por texto |
-| 3 | Fotos, vídeos e portfólio | `materiais.fotos/videos/portfolio: null` | Alto — é o principal pedido no primeiro contato |
+| 3 | Fotos, vídeos e portfólio | `materiais.fotos/videos/portfolio: null` | Alto — é o principal pedido no primeiro contato. Douglas autorizou o envio pelo bot em 2026-08-15 (`materiais.envio_pelo_bot_autorizado: true`); falta ele fornecer os links/arquivos oficiais — até lá, R03 + handoff |
 | 4 | Planta do espaço | `materiais.planta: null` | Médio — pedido por cerimonialista e buffet |
 | 5 | Regra para drones | `restricoes.drones.status: pendente` | Médio — recorrente em casamento |
 | 6 | Regra para velas | `restricoes.velas.status: pendente` | Médio — recorrente em decoração |

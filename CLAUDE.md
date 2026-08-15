@@ -93,8 +93,10 @@ Não avançar de etapa sem pedido específico.
 
 ## Estado atual
 
-Etapa 1 concluída. `knowledge/casa77.yaml` v1.0 (2026-07-24) preenchido e validado por
-Douglas Bianchi.
+Etapa 1 concluída. `knowledge/casa77.yaml` v1.1 (2026-08-15) preenchido e validado por
+Douglas Bianchi. A v1.1 incorpora a arbitragem das divergências D1–D8 da auditoria S0
+(2026-08-15): aniversário adulto não é mais aceito; treinamento, palestra e workshop não
+são atendidos; envio de fotos/vídeos pelo bot autorizado, aguardando links oficiais.
 
 Números que o código vai consumir — sempre lendo do YAML, nunca em constante hardcoded:
 

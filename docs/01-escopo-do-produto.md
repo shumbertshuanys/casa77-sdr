@@ -55,5 +55,5 @@ A integração pertence à etapa 7.
 ## Contexto do espaço
 
 Casa 77 — espaço premium para eventos intimistas no Morro do Moreno, Praia da Costa, Vila
-Velha/ES. Até 80 convidados sentados ou 100 em coquetel. Recebe casamento, noivado, bodas,
-evento corporativo e aniversário adulto.
+Velha/ES. Até 80 convidados sentados ou 100 em coquetel. Recebe casamento, noivado, bodas
+e evento corporativo.

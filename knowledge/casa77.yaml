@@ -9,8 +9,8 @@
 # Campos com valor null ou status "pendente" obrigam handoff humano.
 # ============================================================
 
-versao: "1.0"
-ultima_atualizacao: "2026-07-24"
+versao: "1.1"
+ultima_atualizacao: "2026-08-15"
 
 empresa:
   nome: "Casa 77"
@@ -42,13 +42,21 @@ eventos:
     - "noivado"
     - "bodas"
     - "evento corporativo"
-    - "aniversário adulto"
   perfil_ideal: "Evento intimista"
   nao_aceitos:
     - "despedida de solteiro"
     - "festa de adolescente"
     - "festa infantil"
+    - "aniversário adulto"
+    - "treinamento"
+    - "palestra"
+    - "workshop"
     - "evento com comportamento descontrolado"
+  observacao_nao_aceitos: >
+    Aniversário adulto deixou de ser aceito por decisão de Douglas Bianchi em
+    2026-08-15 (arbitragem D1). Treinamento, palestra e workshop não são
+    atendidos porque a estrutura da casa não é adequada a esse formato
+    (arbitragem D6).
   datas_nao_aceitas:
     - "Carnaval"
     - "Natal"
@@ -363,6 +371,11 @@ integracoes_planejadas:
     status: "pendente"
 
 materiais:
+  envio_pelo_bot_autorizado: true
+  observacao_envio: >
+    Douglas Bianchi autorizou em 2026-08-15 o envio de fotos e vídeos pelo bot
+    (arbitragem D4). Enquanto os campos abaixo estiverem null, não existe
+    material oficial: aplicar R03 + handoff.
   fotos: null
   videos: null
   planta: null
