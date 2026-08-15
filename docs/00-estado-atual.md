@@ -25,7 +25,7 @@ Atualizado em: 2026-08-15.
 | Etapa 2 — máquina de estados (`docs/06`) | documental | PR #1 (`3323105`, merge `2ec5d79`) |
 | Etapa 3A — arquitetura do motor (`docs/07`) | documental | PR #2 (`03ecd5d`, merge `0a9e584`) |
 | Etapa 3B.1 — carregador validado do YAML (`src/casa77_sdr/knowledge.py` + testes) | **funcional** | PR #3 (`00fd1d4`, merge `26ab907`) |
-| Auditoria/reconciliação do legado n8n | saneamento/auditoria (read-only, artefatos fora do repo) | export histórico analisado; estado operacional atual do n8n não registrado como marco aprovado neste documento |
+| Auditoria/reconciliação do legado n8n | saneamento/auditoria (read-only) | **Auditoria S0.2 concluída e aprovada em 2026-08-15.** O workflow legado atual foi verificado read-only e classificado como histórico/inativo. Matriz e conclusões sanitizadas em `docs/08-reconciliacao-legado-n8n.md` |
 | Saneamento comercial/documental — arbitragem D1–D8 | comercial/documental | PR #4 — **INTEGRADO à `main`** em 2026-08-15 (head `190704e622d1c62767a38027bc19cd191583d472`, merge `954484a279ef19957c2a8bb6c2c159810da493f2`) |
 
 O PR #4 atualiza base comercial e documentação a partir de decisões de Douglas Bianchi
@@ -44,10 +44,13 @@ etapas 4 a 10 não iniciadas.
 
 ## Próxima ação
 
-1. Concluir/reconciliar o estado operacional atual do legado n8n por auditoria
-   read-only aprovada, antes de qualquer nova implementação funcional.
-2. 3B.2 permanece não iniciada e só poderá começar mediante pedido específico, após
-   essa reconciliação.
+1. Definir formalmente o escopo da 3B.2 com base na arquitetura aprovada
+   (`docs/06`, `docs/07`) e na reconciliação do legado n8n
+   (`docs/08-reconciliacao-legado-n8n.md`).
+2. Como a abertura da 3B.2 envolve planejamento técnico e dependências entre
+   componentes, o próximo passo deve ser planejado pelo Claude Desktop e auditado
+   pelo GPT antes da execução.
+3. 3B.2 permanece **NÃO INICIADA** até aprovação explícita desse planejamento.
 
 ## Pendências que não bloqueiam
 
