@@ -26,7 +26,7 @@ Atualizado em: 2026-08-15.
 | Etapa 3A — arquitetura do motor (`docs/07`) | documental | PR #2 (`03ecd5d`, merge `0a9e584`) |
 | Etapa 3B.1 — carregador validado do YAML (`src/casa77_sdr/knowledge.py` + testes) | **funcional** | PR #3 (`00fd1d4`, merge `26ab907`) |
 | Auditoria/reconciliação do legado n8n | saneamento/auditoria (read-only, artefatos fora do repo) | export histórico analisado; estado operacional atual do n8n não registrado como marco aprovado neste documento |
-| Saneamento comercial/documental — arbitragem D1–D8 | comercial/documental | PR #4 — **ABERTO, não integrado à `main`**; estado definitivo será registrado após o merge |
+| Saneamento comercial/documental — arbitragem D1–D8 | comercial/documental | PR #4 — **INTEGRADO à `main`** em 2026-08-15 (head `190704e622d1c62767a38027bc19cd191583d472`, merge `954484a279ef19957c2a8bb6c2c159810da493f2`) |
 
 O PR #4 atualiza base comercial e documentação a partir de decisões de Douglas Bianchi
 (2026-08-15). Ele **não** é implementação funcional do motor e não altera o marco
@@ -34,8 +34,8 @@ funcional acima.
 
 ## Testes
 
-Última execução real: `python -m pytest -q` sobre a branch do PR #4 em 2026-08-15 —
-`48 passed`. A suíte cobre o carregador da 3B.1 (`tests/test_knowledge.py`).
+Última execução real: `python -m pytest -q` sobre a `main` pós-merge do PR #4 em
+2026-08-15 — `48 passed`. A suíte cobre o carregador da 3B.1 (`tests/test_knowledge.py`).
 
 ## Roadmap (resumo — detalhe em `docs/05-roadmap.md`)
 
@@ -44,8 +44,10 @@ etapas 4 a 10 não iniciadas.
 
 ## Próxima ação
 
-1. Decisão humana sobre o merge do PR #4.
-2. Após o merge, a 3B.2 só começa com pedido específico (regra do projeto).
+1. Concluir/reconciliar o estado operacional atual do legado n8n por auditoria
+   read-only aprovada, antes de qualquer nova implementação funcional.
+2. 3B.2 permanece não iniciada e só poderá começar mediante pedido específico, após
+   essa reconciliação.
 
 ## Pendências que não bloqueiam
 
