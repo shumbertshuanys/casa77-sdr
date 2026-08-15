@@ -37,6 +37,8 @@ _REQUIRED_STRUCTURE: tuple[tuple[tuple[str, ...], str], ...] = (
     (("empresa", "nome"), _NON_EMPTY_STRING),
     (("eventos",), _MAPPING),
     (("eventos", "aceitos"), _LIST),
+    (("eventos", "nao_aceitos"), _LIST),
+    (("eventos", "datas_nao_aceitas"), _LIST),
     (("capacidade",), _MAPPING),
     (("capacidade", "convidados_sentados"), _INTEGER),
     (("capacidade", "formato_coquetel"), _INTEGER),

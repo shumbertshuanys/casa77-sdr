@@ -28,6 +28,8 @@ CAMINHOS_OBRIGATORIOS: tuple[tuple[str, ...], ...] = (
     ("empresa", "nome"),
     ("eventos",),
     ("eventos", "aceitos"),
+    ("eventos", "nao_aceitos"),
+    ("eventos", "datas_nao_aceitas"),
     ("capacidade",),
     ("capacidade", "convidados_sentados"),
     ("capacidade", "formato_coquetel"),
@@ -45,7 +47,11 @@ def base_minima() -> dict[str, Any]:
     return {
         "versao": "0.0-teste",
         "empresa": {"nome": "Espaço de Teste"},
-        "eventos": {"aceitos": ["tipo-a", "tipo-b"]},
+        "eventos": {
+            "aceitos": ["tipo-a", "tipo-b"],
+            "nao_aceitos": ["tipo-vetado-teste"],
+            "datas_nao_aceitas": ["data-bloqueada-teste"],
+        },
         "capacidade": {"convidados_sentados": 7, "formato_coquetel": 9},
         "precos": {
             "moeda": "XTS",
