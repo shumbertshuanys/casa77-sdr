@@ -661,8 +661,8 @@ Testar **não** é uma etapa final. A etapa 9 consolida; ela não é a primeira 
 
 | # | Regra |
 |---|---|
-| T1 | Toda implementação da **Etapa 3B** deve **incluir e executar** testes unitários dos componentes que criar. |
-| T2 | As **etapas 4 a 8** também testam as próprias entregas — qualificação, handoff, calendário, WhatsApp e registro de leads entregam código com teste executado. |
+| T1 | Toda implementação da **Etapa 3B** deve **incluir e executar** testes unitários dos componentes que criar — inclusive o `Qualificador`, cuja implementação pertence à 3B (§9). |
+| T2 | As **etapas 5 a 8** também testam as próprias entregas — handoff, calendário, WhatsApp e registro de leads entregam código com teste executado. |
 | T3 | A **Etapa 9** consolida: testes integrados, regressão, aceitação e cenários ponta a ponta (`tests/cenarios-conversa.md`, `tests/perguntas-criticas.md`). |
 | T4 | **Nenhum código é aprovado sem a saída real dos testes correspondentes** — saída colada no relato da execução, não afirmação de que passou. |
 | T5 | Testes com **LLM real** podem continuar limitados e manuais quando apropriado; não bloqueiam a entrega de componentes determinísticos. |
@@ -700,6 +700,12 @@ Ordem de construção dentro da Estratégia 2 — importa para o mantenedor inic
 5. redação natural (componente 5), ainda sujeita ao validador.
 
 Cada passo entrega código **com a saída dos seus testes unitários** (T1/T4).
+
+Fronteira de Qualificação, arbitrada: o `Qualificador` é componente do motor (§2, item 2) e
+sua **implementação pertence à Etapa 3B**, não a uma etapa autônoma de roadmap. Dentro do
+passo 1 acima, ele **precede a `MaquinaEstados`**: a máquina consome a classificação e as
+condições produzidas pelas regras de qualificação (doc 06 §1.2, T08, T09, T13, T21) e não
+pode duplicar essa lógica comercial. Nenhum dos dois está implementado.
 
 O que os passos 1 a 3 entregam, com precisão:
 

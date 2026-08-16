@@ -47,21 +47,32 @@ idempotência (3B.4, `tests/test_normalization.py`).
 ## Roadmap (resumo — detalhe em `docs/05-roadmap.md`)
 
 Etapas 1 e 2 concluídas; etapa 3 em execução (3A, 3B.1, 3B.2, 3B.3 e 3B.4 entregues;
-próxima subetapa funcional **não iniciada**); etapas 4 a 10 permanecem conforme
-`docs/05-roadmap.md`.
+próxima subetapa funcional **não iniciada**). A antiga Etapa 4 — Qualificação — foi
+absorvida pela Etapa 3B pela arbitragem S1: o `Qualificador` **ainda não está
+implementado** e será entregue como subetapa funcional da 3B. Etapas 5 a 10 permanecem
+futuras e com a numeração preservada, conforme `docs/05-roadmap.md`.
 
 ## Próxima ação
 
-1. Definir formalmente a próxima entrega funcional a partir do grafo de dependências da
-   arquitetura (`docs/07`) no estado posterior à 3B.4, considerando as entregas já
-   integradas (3B.1 a 3B.4).
-2. Como isso envolve desenho técnico e dependências entre componentes, o próximo passo
-   deve ser planejado pelo Claude Desktop e auditado pelo GPT antes de qualquer código.
-3. Nenhuma nova subetapa funcional está iniciada até aprovação explícita desse
-   planejamento; nenhum componente seguinte está escolhido.
-4. O planejamento deve considerar explicitamente as pendências técnicas em aberto
-   registradas abaixo, porque duas delas condicionam quais componentes podem ser
-   implementados com segurança.
+1. Planejar formalmente, pelo Claude Desktop, o próximo componente funcional da Etapa 3B
+   a partir do grafo de dependências da arquitetura (`docs/07`) no estado posterior à
+   3B.4 e à arbitragem S1.
+2. Com a fronteira de Qualificação arbitrada, o `Qualificador` é o candidato
+   arquitetural imediatamente desbloqueado — o que **não** significa implementação
+   iniciada nem subetapa aprovada.
+3. Nenhuma nova subetapa funcional está iniciada e nenhuma numeração futura está
+   aprovada; o GPT deve auditar o plano antes de qualquer execução pelo Claude Code.
+4. O planejamento deve considerar explicitamente as pendências técnicas ainda em aberto
+   registradas abaixo, porque elas condicionam quais componentes podem ser implementados
+   com segurança.
+
+## Arbitragens concluídas
+
+Decisões de governança já tomadas. Não criam marco funcional nem código.
+
+| # | Arbitragem | Decisão | Evidência |
+|---|---|---|---|
+| A | Fronteira de Qualificação entre `docs/05-roadmap.md` e `docs/07-arquitetura-motor-respostas.md` | **ARBITRADA** (S1): o `Qualificador` permanece componente do motor e sua implementação pertence à Etapa 3B; a antiga Etapa 4 deixa de ser aberta como etapa autônoma e é absorvida pela 3B; as etapas 5 a 10 mantêm a numeração; o `Qualificador` precede a `MaquinaEstados`. **Nenhum dos dois está implementado ou iniciado.** | reconciliação documental de `docs/05`, `docs/07` §8.4/§9 e deste documento |
 
 ## Pendências técnicas em aberto
 
@@ -69,7 +80,6 @@ Registradas aqui como estado, não resolvidas nesta entrega.
 
 | # | Pendência | Antes de quê precisa ser arbitrada |
 |---|---|---|
-| A | Fronteira entre `docs/05-roadmap.md`, que trata a Qualificação como Etapa 4 separada, e `docs/07-arquitetura-motor-respostas.md`, que posiciona o `Qualificador` no grafo do motor | implementar `Qualificador` ou `MaquinaEstados` |
 | B | Colisão conceitual de nome: `RegistroAtendimento` já existe em `src/casa77_sdr/persistence.py` como dataclass de transporte, enquanto `docs/07` usa o mesmo nome para uma responsabilidade futura | implementar o componente `RegistroAtendimento` descrito em `docs/07` |
 | C | Não existe contrato estruturado, legível por máquina, relacionando as respostas aprovadas (`Rxx`) aos campos do YAML | implementar `ValidadorConsistenciaBase` e, em cascata, `SeletorFatos` e `ValidadorResposta` |
 
