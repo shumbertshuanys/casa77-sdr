@@ -12,10 +12,10 @@ Atualizado em: 2026-08-15.
 |---|---|
 | Projeto | Casa 77 SDR |
 | Branch de referência | `main` |
-| Último commit **funcional** aprovado | `00fd1d47da649c493af240a5393b51f02e82009b` |
-| Merge correspondente na `main` | `26ab907e3b8874a2586cb7f510c287f50aee0e36` |
-| Última subetapa **funcional** concluída | 3B.1 — Carregador validado do YAML (PR #3) |
-| Subetapa 3B.2 | **NÃO INICIADA** |
+| Último commit **funcional** aprovado | `24556ea0ec20173a9d58e5b7c99a5317b6b51898` |
+| Merge correspondente na `main` | `d5781130c3ff402aef19728f50120cbd31474ad1` |
+| Última subetapa **funcional** concluída | 3B.2 — Regras comerciais determinísticas (PR #7) |
+| Subetapa 3B.2 | **CONCLUÍDA** |
 
 ## Histórico verificado de entregas
 
@@ -27,6 +27,7 @@ Atualizado em: 2026-08-15.
 | Etapa 3B.1 — carregador validado do YAML (`src/casa77_sdr/knowledge.py` + testes) | **funcional** | PR #3 (`00fd1d4`, merge `26ab907`) |
 | Auditoria/reconciliação do legado n8n | saneamento/auditoria (read-only) | **Auditoria S0.2 concluída e aprovada em 2026-08-15.** O workflow legado atual foi verificado read-only e classificado como histórico/inativo. Matriz e conclusões sanitizadas em `docs/08-reconciliacao-legado-n8n.md` |
 | Saneamento comercial/documental — arbitragem D1–D8 | comercial/documental | PR #4 — **INTEGRADO à `main`** em 2026-08-15 (head `190704e622d1c62767a38027bc19cd191583d472`, merge `954484a279ef19957c2a8bb6c2c159810da493f2`) |
+| Etapa 3B.2 — regras comerciais determinísticas (`RegrasComerciais` em `src/casa77_sdr/rules.py` + testes), avaliando dados do interessado contra a base carregada pela 3B.1 | **funcional** | PR #7 (commit funcional `24556ea`, merge `d578113`) |
 
 O PR #4 atualiza base comercial e documentação a partir de decisões de Douglas Bianchi
 (2026-08-15). Ele **não** é implementação funcional do motor e não altera o marco
@@ -34,23 +35,25 @@ funcional acima.
 
 ## Testes
 
-Última execução real: `python -m pytest -q` sobre a `main` pós-merge do PR #4 em
-2026-08-15 — `48 passed`. A suíte cobre o carregador da 3B.1 (`tests/test_knowledge.py`).
+Última execução real: `python -m pytest -q -p no:cacheprovider` sobre a `main`
+pós-merge do PR #7 em 2026-08-15 — `72 passed`. A suíte cobre o carregador/validação
+da base (3B.1, `tests/test_knowledge.py`) e as regras comerciais determinísticas
+(3B.2, `tests/test_rules.py`).
 
 ## Roadmap (resumo — detalhe em `docs/05-roadmap.md`)
 
-Etapas 1 e 2 concluídas; etapa 3 em execução (3A e 3B.1 entregues; 3B.2 não iniciada);
-etapas 4 a 10 não iniciadas.
+Etapas 1 e 2 concluídas; etapa 3 em execução (3A, 3B.1 e 3B.2 entregues; próxima
+subetapa funcional ainda não iniciada); etapas 4 a 10 permanecem conforme
+`docs/05-roadmap.md`.
 
 ## Próxima ação
 
-1. Definir formalmente o escopo da 3B.2 com base na arquitetura aprovada
-   (`docs/06`, `docs/07`) e na reconciliação do legado n8n
-   (`docs/08-reconciliacao-legado-n8n.md`).
-2. Como a abertura da 3B.2 envolve planejamento técnico e dependências entre
-   componentes, o próximo passo deve ser planejado pelo Claude Desktop e auditado
-   pelo GPT antes da execução.
-3. 3B.2 permanece **NÃO INICIADA** até aprovação explícita desse planejamento.
+1. Definir formalmente a próxima subetapa funcional da Etapa 3B com base no grafo de
+   dependências da arquitetura (`docs/07`) e nas entregas já integradas (3B.1 e 3B.2).
+2. Como isso envolve desenho técnico e dependências entre componentes, o próximo passo
+   deve ser planejado pelo Claude Desktop e auditado pelo GPT antes da execução.
+3. Nenhuma nova subetapa funcional está iniciada até aprovação explícita desse
+   planejamento.
 
 ## Pendências que não bloqueiam
 
