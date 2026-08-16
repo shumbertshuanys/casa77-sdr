@@ -112,7 +112,13 @@ class PersistenciaOperacional(ABC):
         """Substitui explicitamente um registro existente.
 
         Identificador inexistente é erro do chamador (`ValueError`):
-        gravação nunca cria atendimento (N6).
+        gravação nunca cria atendimento (N6). O vínculo
+        id_atendimento × canal × contato é imutável após a criação:
+        gravação com canal ou contato diferentes do registro armazenado é
+        rejeitada (`ValueError`), sem reassociar o atendimento a outra
+        identidade. `canal` e `contato` são identificadores operacionais do
+        vínculo persistido, não dados comerciais editáveis; a comparação é
+        estrita, sem normalização.
         """
 
     @abstractmethod
@@ -191,10 +197,16 @@ class PersistenciaEmMemoria(PersistenciaOperacional):
             raise FalhaDePersistencia(
                 f"Falha simulada ao gravar o registro {registro.id_atendimento}"
             )
-        if registro.id_atendimento not in self._registros:
+        atual = self._registros.get(registro.id_atendimento)
+        if atual is None:
             raise ValueError(
                 f"Registro {registro.id_atendimento} não existe; "
                 "gravação nunca cria atendimento"
+            )
+        if registro.canal != atual.canal or registro.contato != atual.contato:
+            raise ValueError(
+                f"Registro {registro.id_atendimento} pertence a outro vínculo "
+                "canal × contato; gravação nunca reassocia o atendimento"
             )
         self._registros[registro.id_atendimento] = copy.deepcopy(registro)
 

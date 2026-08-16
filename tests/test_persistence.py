@@ -225,6 +225,79 @@ def test_gravar_id_inexistente_e_erro_explicito_e_nao_cria() -> None:
     )
 
 
+# 7a. Vínculo id_atendimento × canal × contato é imutável após a criação
+
+
+def test_gravar_com_mesmo_vinculo_continua_funcionando() -> None:
+    persistencia = PersistenciaEmMemoria()
+    persistencia.criar(registro_ficticio())
+    atualizado = RegistroAtendimento(
+        id_atendimento="atendimento-fake-1",
+        canal="canal-teste",
+        contato="contato-fake-1",
+        estado_conversa="estado-opaco-b",
+    )
+
+    persistencia.gravar(atualizado)
+
+    assert (
+        persistencia.recuperar_por_id(
+            "atendimento-fake-1", "canal-teste", "contato-fake-1"
+        ).registro
+        == atualizado
+    )
+
+
+def test_gravar_com_contato_diferente_e_rejeitado_sem_reassociar() -> None:
+    """Gravação nunca transfere o atendimento para outro contato."""
+    persistencia = PersistenciaEmMemoria()
+    original = registro_ficticio()
+    persistencia.criar(original)
+
+    with pytest.raises(ValueError):
+        persistencia.gravar(
+            RegistroAtendimento(
+                id_atendimento="atendimento-fake-1",
+                canal="canal-teste",
+                contato="contato-fake-2",
+                estado_conversa="estado-que-nao-deve-entrar",
+            )
+        )
+
+    assert (
+        persistencia.recuperar_por_id(
+            "atendimento-fake-1", "canal-teste", "contato-fake-1"
+        ).registro
+        == original
+    )
+    assert persistencia.consultar_por_contato("canal-teste", "contato-fake-2") == ()
+
+
+def test_gravar_com_canal_diferente_e_rejeitado_sem_reassociar() -> None:
+    """Gravação nunca transfere o atendimento para outro canal."""
+    persistencia = PersistenciaEmMemoria()
+    original = registro_ficticio()
+    persistencia.criar(original)
+
+    with pytest.raises(ValueError):
+        persistencia.gravar(
+            RegistroAtendimento(
+                id_atendimento="atendimento-fake-1",
+                canal="canal-outro",
+                contato="contato-fake-1",
+                estado_conversa="estado-que-nao-deve-entrar",
+            )
+        )
+
+    assert (
+        persistencia.recuperar_por_id(
+            "atendimento-fake-1", "canal-teste", "contato-fake-1"
+        ).registro
+        == original
+    )
+    assert persistencia.consultar_por_contato("canal-outro", "contato-fake-1") == ()
+
+
 # 8. Idempotência: chave opaca recebida pronta
 
 
