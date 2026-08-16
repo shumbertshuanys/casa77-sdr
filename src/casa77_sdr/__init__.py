@@ -18,6 +18,14 @@ from casa77_sdr.persistence import (
     RegistroAtendimento,
     ResultadoRecuperacao,
 )
+from casa77_sdr.qualification import (
+    DadosQualificacao,
+    FormatoEvento,
+    MotivoQualificacao,
+    Qualificacao,
+    ResultadoQualificacao,
+    qualificar,
+)
 from casa77_sdr.rules import (
     DadosAtendimento,
     MotivoViolacao,
@@ -45,4 +53,10 @@ __all__ = [
     "MensagemVazia",
     "OrigemChave",
     "normalizar_entrada",
+    "DadosQualificacao",
+    "FormatoEvento",
+    "MotivoQualificacao",
+    "Qualificacao",
+    "ResultadoQualificacao",
+    "qualificar",
 ]
