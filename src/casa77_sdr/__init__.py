@@ -1,6 +1,14 @@
 """Motor de respostas do bot SDR da Casa 77."""
 
 from casa77_sdr.knowledge import KnowledgeError, load_knowledge
+from casa77_sdr.normalization import (
+    EntradaInvalida,
+    EntradaMensagem,
+    EntradaNormalizada,
+    MensagemVazia,
+    OrigemChave,
+    normalizar_entrada,
+)
 from casa77_sdr.persistence import (
     FalhaDePersistencia,
     PersistenciaEmMemoria,
@@ -31,4 +39,10 @@ __all__ = [
     "RecuperacaoPorId",
     "RegistroAtendimento",
     "ResultadoRecuperacao",
+    "EntradaInvalida",
+    "EntradaMensagem",
+    "EntradaNormalizada",
+    "MensagemVazia",
+    "OrigemChave",
+    "normalizar_entrada",
 ]
