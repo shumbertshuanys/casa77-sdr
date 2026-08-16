@@ -1,6 +1,15 @@
 """Motor de respostas do bot SDR da Casa 77."""
 
 from casa77_sdr.knowledge import KnowledgeError, load_knowledge
+from casa77_sdr.persistence import (
+    FalhaDePersistencia,
+    PersistenciaEmMemoria,
+    PersistenciaOperacional,
+    ProcessamentoPendente,
+    RecuperacaoPorId,
+    RegistroAtendimento,
+    ResultadoRecuperacao,
+)
 from casa77_sdr.rules import (
     DadosAtendimento,
     MotivoViolacao,
@@ -15,4 +24,11 @@ __all__ = [
     "MotivoViolacao",
     "Violacao",
     "avaliar_regras",
+    "FalhaDePersistencia",
+    "PersistenciaEmMemoria",
+    "PersistenciaOperacional",
+    "ProcessamentoPendente",
+    "RecuperacaoPorId",
+    "RegistroAtendimento",
+    "ResultadoRecuperacao",
 ]
