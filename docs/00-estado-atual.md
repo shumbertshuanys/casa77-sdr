@@ -53,9 +53,9 @@ entregues; próxima subetapa funcional **não iniciada**). A antiga Etapa 4 —
 Qualificação — continua absorvida pela Etapa 3B conforme a arbitragem S1, e o
 `Qualificador` foi **implementado na 3B.5**. A `MaquinaEstados` continua **não
 implementada**, e a arbitragem documental **S2** — que trata das ambiguidades que impedem
-especificá-la — foi **aprovada pelo GPT e versionada na branch**, mas **não integrada à
-`main`**, sem iniciar a 3B.6. Etapas 5 a 10 permanecem futuras e com a numeração
-preservada, conforme `docs/05-roadmap.md`.
+especificá-la — foi **aprovada pelo GPT, versionada na branch e proposta no PR #16
+(OPEN)**, mas **ainda não integrada à `main`**, sem iniciar a 3B.6. Etapas 5 a 10
+permanecem futuras e com a numeração preservada, conforme `docs/05-roadmap.md`.
 
 ## Próxima ação
 
@@ -67,10 +67,10 @@ preservada, conforme `docs/05-roadmap.md`.
    ser planejado pelo Claude Desktop e auditado pelo GPT antes de qualquer execução pelo
    Claude Code.
 4. A `MaquinaEstados` está arquiteturalmente desbloqueada pela conclusão do
-   `Qualificador`. A arbitragem **S2 foi aprovada pelo GPT e versionada na branch**
-   `docs/s2-arbitragem-maquina-estados`, mas **não existe PR nem merge** e ela **não está
-   integrada à `main`**. Versionar na branch **não** autoriza implementação: a **3B.6 não
-   foi iniciada e não está autorizada**.
+   `Qualificador`. A arbitragem **S2 foi aprovada pelo GPT, versionada na branch**
+   `docs/s2-arbitragem-maquina-estados` **e proposta no PR #16** (**OPEN**), mas **ainda
+   não houve merge** e ela **não está integrada à `main`**. Abrir PR **não** autoriza
+   implementação: a **3B.6 não foi iniciada e não está autorizada**.
 5. O planejamento deve continuar considerando explicitamente as pendências técnicas em
    aberto registradas abaixo, incluindo **S2-D5, S2-D7, S2-D8 e a confirmação de entrega
    do handoff** — nenhuma delas bloqueia a 3B.6.
@@ -78,21 +78,22 @@ preservada, conforme `docs/05-roadmap.md`.
 ## Arbitragens
 
 Decisões de governança. Não criam marco funcional nem código. A coluna Decisão informa o
-estado de ciclo de vida de cada arbitragem — inclusive quando ela já foi **aprovada e
-versionada na branch**, mas ainda **não integrada à `main`**.
+estado de ciclo de vida de cada arbitragem — inclusive quando ela já foi **aprovada,
+versionada na branch e proposta em PR**, mas ainda **não integrada à `main`**.
 
 | # | Arbitragem | Decisão | Evidência |
 |---|---|---|---|
 | A | Fronteira de Qualificação entre `docs/05-roadmap.md` e `docs/07-arquitetura-motor-respostas.md` | **ARBITRADA** (S1): o `Qualificador` permanece componente do motor e sua implementação pertence à Etapa 3B; a antiga Etapa 4 deixa de ser aberta como etapa autônoma e é absorvida pela 3B; as etapas 5 a 10 mantêm a numeração; o `Qualificador` precede a `MaquinaEstados`. O `Qualificador` foi **implementado na 3B.5** (PR #14); a precedência permanece e a `MaquinaEstados` **ainda não foi iniciada**. | reconciliação documental de `docs/05`, `docs/07` §8.4/§9 e deste documento |
-| S2 | Semântica de ciclo da `MaquinaEstados` (`docs/06-maquina-de-estados.md` × `docs/07-arquitetura-motor-respostas.md`) | **APROVADA — VERSIONADA NA BRANCH, NÃO INTEGRADA À MAIN.** Arbitragem documental **aprovada pelo GPT** na auditoria da entrega e versionada na branch `docs/s2-arbitragem-maquina-estados`. **Não existe PR e não existe merge**; a `main` permanece sem esta arbitragem. **Não implementa código** e **não cria marco funcional.** Escopo abaixo. | núcleo documental no commit `0be5a022d2b30b5cfa2bca501e77c06bed501419` — `docs/06` (§1.1, §2.2, §3, §4.1–§4.5, §9, §10, §11) e `docs/07` (§4.1, §5, §7.2, §8.1, §9, §12) — **na branch, não na `main`** |
+| S2 | Semântica de ciclo da `MaquinaEstados` (`docs/06-maquina-de-estados.md` × `docs/07-arquitetura-motor-respostas.md`) | **APROVADA — VERSIONADA NA BRANCH — PR #16 ABERTO — NÃO INTEGRADA À MAIN.** Arbitragem documental **aprovada pelo GPT** na auditoria da entrega, versionada na branch `docs/s2-arbitragem-maquina-estados` e proposta para integração no **PR #16** (**OPEN**, base `main`). **Ainda não existe merge**; a `main` permanece sem esta arbitragem. **Não implementa código** e **não cria marco funcional.** Escopo abaixo. | núcleo documental no commit `0be5a022d2b30b5cfa2bca501e77c06bed501419` — `docs/06` (§1.1, §2.2, §3, §4.1–§4.5, §9, §10, §11) e `docs/07` (§4.1, §5, §7.2, §8.1, §9, §12); evidência operacional de integração pendente: **PR #16** — **na branch, não na `main`** |
 
-### Arbitragem S2 — escopo aprovado, versionado na branch
+### Arbitragem S2 — escopo aprovado, versionado na branch, PR #16 aberto
 
 Entrega **exclusivamente documental**: nenhum código, teste, dado comercial ou
 dependência foi alterado. O escopo abaixo foi **aprovado pelo GPT** e **versionado na
 branch** `docs/s2-arbitragem-maquina-estados` (núcleo documental no commit
-`0be5a022d2b30b5cfa2bca501e77c06bed501419`). Enquanto não houver PR e merge, ele existe
-**apenas na branch** e **não** está integrado à `main`.
+`0be5a022d2b30b5cfa2bca501e77c06bed501419`), com integração proposta no **PR #16**
+(**OPEN**, base `main`). **Enquanto não houver merge**, ele existe **apenas na branch** e
+**não** está integrado à `main`.
 
 | # | Decisão |
 |---|---|
@@ -113,11 +114,13 @@ Consequências de estado da S2:
 - a `MaquinaEstados` continua **NÃO implementada**;
 - a **3B.6 — `MaquinaEstados`** continua **NÃO iniciada** e **NÃO autorizada**, e nenhuma
   numeração futura está aprovada;
-- **status atual: APROVADA — VERSIONADA NA BRANCH, NÃO INTEGRADA À MAIN.** A S2 foi
-  **aprovada pelo GPT** e o núcleo documental está versionado no commit
+- **status atual: APROVADA — VERSIONADA NA BRANCH — PR #16 ABERTO — NÃO INTEGRADA À
+  MAIN.** A S2 foi **aprovada pelo GPT**, o núcleo documental está versionado no commit
   `0be5a022d2b30b5cfa2bca501e77c06bed501419`, na branch
-  `docs/s2-arbitragem-maquina-estados`. **Não existe PR e não existe merge**: a `main`
-  continua sem esta arbitragem. **Versionar na branch não é integrar à `main`.**
+  `docs/s2-arbitragem-maquina-estados`, e a integração está proposta no **PR #16**
+  (estado **OPEN**, base `main`, head `docs/s2-arbitragem-maquina-estados`). **Ainda não
+  existe merge**: a `main` continua sem esta arbitragem. **Abrir PR não é integrar à
+  `main`.**
 
 ## Pendências técnicas em aberto
 
