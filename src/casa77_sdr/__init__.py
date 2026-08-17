@@ -32,6 +32,20 @@ from casa77_sdr.rules import (
     Violacao,
     avaliar_regras,
 )
+from casa77_sdr.state_machine import (
+    AcaoMaquina,
+    CondicoesCiclo,
+    DecisaoMaquina,
+    EfeitoParalelo,
+    Estado,
+    Evento,
+    Identidade,
+    Inercia,
+    MotivoEncerramento,
+    Transicao,
+    TransicaoInexistente,
+    decidir,
+)
 
 __all__ = [
     "KnowledgeError",
@@ -59,4 +73,16 @@ __all__ = [
     "Qualificacao",
     "ResultadoQualificacao",
     "qualificar",
+    "AcaoMaquina",
+    "CondicoesCiclo",
+    "DecisaoMaquina",
+    "EfeitoParalelo",
+    "Estado",
+    "Evento",
+    "Identidade",
+    "Inercia",
+    "MotivoEncerramento",
+    "Transicao",
+    "TransicaoInexistente",
+    "decidir",
 ]
