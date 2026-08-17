@@ -183,9 +183,9 @@ calculados, escolhidos ou interpretados pelo LLM.
 | `RegistroAtendimento` | registrar dados e correções (`E02`–`E05`), sobrescrevendo valores corrigidos | dados extraídos + estado | dados atualizados + lista de correções |
 | `RegrasComerciais` | avaliar tipo, data, número de convidados e formato contra o YAML | dados + YAML | lista de violações com motivo e campo de origem |
 | `Qualificador` | calcular `resultado_qualificacao` conforme doc 02 §6 e §6.1. Recebe as **pendências impeditivas já classificadas**; **não detecta pendência** (doc 06 §11 — S2-D8) | dados + violações + **pendências impeditivas já classificadas** | um dos cinco valores oficiais + motivo + campos ausentes |
-| `MaquinaEstados` | aplicar a ordem do doc 06 §4/§4.2 e a tabela de transições. **Não lê o YAML** e **não fabrica eventos**: consome eventos já confirmados e condições já estruturadas | estado + eventos confirmados + `Qualificacao` + condições já estruturadas, **incluindo `insumo_qualificacao_atualizado`** (doc 06 §4.1) | caminho percorrido + **estado final único** + ações obrigatórias + efeitos auditáveis |
+| `MaquinaEstados` | aplicar a ordem do doc 06 §4/§4.2 e a tabela de transições. **Não lê o YAML** e **não fabrica eventos**: consome eventos já confirmados e condições já estruturadas | estado + eventos confirmados + `Qualificacao` + condições já estruturadas (§4.4), **incluindo `insumo_qualificacao_atualizado`** (doc 06 §4.1) | caminho percorrido + **estado final único** + ações obrigatórias (§4.5) + efeitos auditáveis |
 | `DetectorHandoff` | reconhecer os **gatilhos 3–10** do doc 04 e emitir `E18` com motivo (partição do doc 06 §9). **Não recebe `Qualificacao`**; não recalcula regra comercial, pendência nem qualificação | mensagem interpretada + dados + YAML | motivo(s) de handoff |
-| `SeletorFatos` | escolher quais fatos aprovados podem entrar na resposta, **conferindo cada `Rxx` contra o YAML antes de selecioná-lo** (F3) | perguntas + estado + YAML + respostas aprovadas | lista fechada de fatos autorizados, ou divergência de base |
+| `SeletorFatos` | escolher quais fatos aprovados podem entrar na resposta, **conferindo cada `Rxx` contra o YAML antes de selecioná-lo** (F3). **Não produz condição consumida pela `MaquinaEstados`** (§4.4): roda nas etapas 8–9, depois da primeira chamada da máquina | perguntas + estado + YAML + respostas aprovadas | lista fechada de fatos autorizados, ou divergência de base |
 | `ValidadorResposta` | vetar rascunho com valor, promessa ou termo não autorizado | rascunho + fatos autorizados | aprovado / bloqueado + motivo |
 | `Persistencia` | persistência **operacional**: gravar estado, dados, qualificação, pendências, motivos e chave de idempotência antes da emissão (P9, §7.3) | decisão final | confirmação de gravação ou falha |
 
@@ -242,6 +242,96 @@ Regras:
 
 ---
 
+### 4.4 Condições de ciclo consumidas pela `MaquinaEstados`
+
+Fronteira estrutural da máquina, arbitrada na S3. É **contrato conceitual**, não
+implementação: nenhum código é criado nesta etapa.
+
+A máquina recebe as condições **já determinadas a montante** e nunca as calcula. Nenhum
+campo carrega dado pessoal (PII), texto de mensagem ou valor comercial.
+
+| # | Condição | Forma | Produtor |
+|---|---|---|---|
+| 1 | `insumo_qualificacao_atualizado` | `bool \| None` (doc 06 §4.1) | etapa 6 do pipeline (§5) |
+| 2 | `pendencia_impeditiva` | `bool \| None` | **não atribuído — S2-D8** (doc 06 §11) |
+| 3 | `motivos_handoff` | conjunto/tupla de **identificadores textuais opacos** | `DetectorHandoff` (gatilhos 3–10, doc 06 §9) |
+| 4 | `resposta_aprovada_disponivel` | `bool \| None` | **não atribuído — S2-D8** (doc 06 §11) |
+| 5 | `interesse_confirmar_disponibilidade` | `bool \| None` | interpretação estruturada a montante |
+| 6 | `calendario_integrado` | `bool \| None` | configuração/integração avaliada a montante |
+| 7 | `identidade` | resultado estruturado do `ResolvedorIdentidade` (§7.1) | `ResolvedorIdentidade` (etapa 5) |
+| 8 | `motivo_encerramento` | motivo estruturado entre as **quatro** modalidades aprovadas de T35 (doc 06 §3) | **não atribuído — S3-D1** |
+
+Onde o produtor está pendente, ele **permanece pendente**: esta seção descreve a fronteira,
+não escolhe componente concreto.
+
+### 4.5 Contrato das ações da `MaquinaEstados`
+
+As "ações obrigatórias" devolvidas pela máquina são **vocabulário técnico fechado**:
+
+| # | Propriedade |
+|---|---|
+| 1 | **semânticas**, não textuais — descrevem *o que deve acontecer*, nunca *como será dito* |
+| 2 | **sem referência a `Rxx`** e sem consulta a `knowledge/respostas-aprovadas.md` |
+| 3 | **sem conteúdo comercial** — nenhum preço, capacidade, horário, prazo ou condição |
+| 4 | **declarativas**: a máquina as **emite**, e **nunca as executa** |
+| 5 | **tupla ordenada** quando o documento fixa ordem entre elas |
+
+Cobertura obrigatória: **cada `Txx` de T01–T41 deve estar coberta por pelo menos um** dos
+seguintes — um código de ação; um efeito paralelo `P1`–`P6` (doc 06 §4.3); um campo
+dedicado da saída; ou uma mudança de estado suficiente por contrato.
+
+A materialização textual autorizada continua sendo decidida pelo `SeletorFatos` e pela
+redação (§4.1, §4.2), nunca pela máquina.
+
+#### Vocabulário aprovado — `AcaoMaquina`
+
+Contrato técnico fechado da S3, com **exatamente 20 códigos**. Nenhuma ação pode ser
+acrescentada ou renomeada, e nenhuma delas cita `Rxx`.
+
+| # | Código |
+|---|---|
+| 1 | `APRESENTAR_ATENDIMENTO_INICIAL` |
+| 2 | `RESPONDER_PERGUNTA_COMERCIAL` |
+| 3 | `PERGUNTAR_PROXIMO_CAMPO_AUSENTE` |
+| 4 | `PERGUNTAR_FORMATO` |
+| 5 | `RETOMAR_COLETA_SEM_REPETIR` |
+| 6 | `INFORMAR_REGRA_INCOMPATIVEL` |
+| 7 | `INFORMAR_RESSALVA_DE_CAPACIDADE` |
+| 8 | `INFORMAR_CONDICOES_DE_VISITA` |
+| 9 | `INFORMAR_LACUNA_DE_INFORMACAO` |
+| 10 | `INFORMAR_NAO_CONFIRMACAO_DE_DISPONIBILIDADE` |
+| 11 | `DESPEDIR_SEM_CONTINUIDADE` |
+| 12 | `REFORCAR_ENCAMINHAMENTO` |
+| 13 | `EMITIR_MENSAGEM_DE_ENCAMINHAMENTO` |
+| 14 | `NAO_AVANCAR_COLETA` |
+| 15 | `SILENCIAR_RESPOSTA_AUTOMATICA` |
+| 16 | `PREPARAR_RESUMO` |
+| 17 | `ENTREGAR_RESUMO` |
+| 18 | `SOLICITAR_CONSULTA_CALENDARIO` |
+| 19 | `REABRIR_ATENDIMENTO` |
+| 20 | `ABRIR_NOVO_ATENDIMENTO` |
+
+`DESPEDIR_SEM_CONTINUIDADE` é produzida por **T35 somente para `SEM_INTERESSE`** (doc 06
+§3). Para `ENGANO`, `SPAM` e `INCOMPATIBILIDADE_ACEITA`, T35 encerra sem essa ação.
+
+#### Pré-requisito declarativo em T27
+
+`EMITIR_MENSAGEM_DE_ENCAMINHAMENTO` tem como **pré-requisito** `ENTREGAR_RESUMO`. A ordem
+de S2.9 permanece:
+
+| # | Momento |
+|---|---|
+| 1 | `E12` = resumo **efetivamente gerado** (doc 06 §2.2) |
+| 2 | a `MaquinaEstados` decide T27 |
+| 3 | a decisão final é **persistida** (etapa 13) |
+| 4 | **tentar entregar** o resumo (etapa 14) |
+| 5 | **somente após o sucesso da entrega**, emitir a mensagem de encaminhamento |
+
+A máquina apenas **declara** as duas ações. Ela **não** entrega, **não** envia, **não**
+verifica sucesso, **não** reverte estado e **não** cria retentativa, fila, contador ou
+status de entrega (doc 06 §10). A representação concreta futura desse pré-requisito pode
+ser um **mapeamento estático do contrato** — não implementado nesta etapa.
+
 ## 5. Pipeline
 
 **Catorze etapas** coordenadas pelo `OrquestradorMotor`. Uma mensagem produz **uma única
@@ -259,9 +349,9 @@ adivinhar.
 | 4 | Interpretar e extrair | mensagem normalizada | intenções, campos, perguntas, referências ao evento anterior, confiança | LLM indisponível → modo degradado (§7); confiança baixa → campo **não** é registrado |
 | 5 | **Resolver identidade do atendimento** | contexto recuperado (3) + interpretação (4) | atendimento ativo, mesma solicitação (T36), nova solicitação (T37) **ou ambíguo** | ambíguo → **não decidir**: pedir esclarecimento, sem herdar nem sobrescrever dado algum (§7.1); persistir o processamento pendente quando possível |
 | 6 | Registrar dados e correções | campos extraídos + atendimento resolvido | dados atualizados + correções + **sinal de mutação efetiva de insumo da qualificação** (`insumo_qualificacao_atualizado`, doc 06 §4.1) | conflito entre mensagem e estado → §7; dado incerto nunca é gravado; identidade ambígua → nada é registrado no atendimento anterior |
-| 7 | Executar a ordem determinística do doc 06 §4 — **primeira decisão determinística do ciclo** | dados + eventos + sinal da etapa 6 + avaliação comercial feita **a montante** contra o YAML (`RegrasComerciais`, `Qualificador`) — a `MaquinaEstados` recebe o resultado já estruturado e **não lê o YAML** (doc 06 I23) | eventos confirmados, violações, motivos, qualificação recalculada e o **estado intermediário** resultante da **primeira chamada da `MaquinaEstados`** — caminho percorrido (uma ou mais `Txx`, doc 06 §4.2), ainda sujeito ao fechamento da etapa 12 | `E07`, `E08`, `E09` e `E18` são **recebidos/confirmados a partir das saídas determinísticas a montante**, não fabricados aqui; violação da precedência (ex.: `E07` sobre incompatibilidade) é erro de programa, não caso de negócio → bloquear envio. **O produtor concreto de `E09` não é definido nesta arquitetura — S2-D8 permanece aberta** (doc 06 §11) |
-| 8 | Consultar YAML e respostas aprovadas | perguntas detectadas | valores de campo e códigos `R` correspondentes | campo `null`/`pendente` e ausência de resposta aprovada **já foram confirmados como `E09` na etapa 7** (gatilhos 1–2 do doc 04, doc 06 §9): aqui a pendência é **consultada e registrada**, nunca criada tardiamente |
-| 9 | Selecionar fatos permitidos — **conferindo cada `Rxx` comercial contra o YAML** (F3) | resultado de 7 e 8 | lista fechada de fatos, cada um com origem e conferência | divergência `Rxx` × YAML → o fato **não** entra na lista, registra-se erro de consistência da base e o dado divergente é bloqueado (F4); lista vazia com pergunta pendente → R03 + handoff. **Nenhum `E09` nasce nesta etapa** |
+| 7 | Executar a ordem determinística do doc 06 §4 — **primeira decisão determinística do ciclo** | dados + eventos + avaliação comercial feita **a montante** contra o YAML (`RegrasComerciais`, `Qualificador`) + **todas as condições estruturadas de §4.4** já determinadas — `insumo_qualificacao_atualizado`, classificação de `E09`, `resposta_aprovada_disponivel`, `interesse_confirmar_disponibilidade`, `calendario_integrado`, `identidade`, `motivos_handoff` e `motivo_encerramento`. A `MaquinaEstados` recebe tudo já estruturado e **não lê o YAML** (doc 06 I23) | eventos confirmados, violações, motivos, qualificação recalculada e o **estado intermediário** resultante da **primeira chamada da `MaquinaEstados`** — caminho percorrido (uma ou mais `Txx`, doc 06 §4.2), ainda sujeito ao fechamento da etapa 12 | `E07`, `E08`, `E09` e `E18` são **recebidos/confirmados a partir das saídas determinísticas a montante**, não fabricados aqui; violação da precedência (ex.: `E07` sobre incompatibilidade) é erro de programa, não caso de negócio → bloquear envio. **O produtor concreto de `E09` não é definido nesta arquitetura — S2-D8 permanece aberta** (doc 06 §11) |
+| 8 | Consultar YAML e respostas aprovadas | perguntas detectadas | valores de campo e códigos `R` correspondentes | campo `null`/`pendente` e ausência de resposta aprovada **já foram confirmados como `E09` na etapa 7** (gatilhos 1–2 do doc 04, doc 06 §9): aqui a pendência é **consultada e registrada**, nunca criada tardiamente. Esta etapa **não produz condição consumida pela etapa 7** |
+| 9 | Selecionar fatos permitidos — **conferindo cada `Rxx` comercial contra o YAML** (F3) | resultado de 7 e 8 | lista fechada de fatos, cada um com origem e conferência | divergência `Rxx` × YAML → o fato **não** entra na lista, registra-se erro de consistência da base e o dado divergente é bloqueado (F4); lista vazia com pergunta pendente → R03 + handoff. **Nenhum `E09` nasce nesta etapa** e **nenhuma condição de §4.4 é produzida aqui** |
 | 10 | Gerar rascunho | fatos autorizados + tom + estado | texto candidato | LLM indisponível ou lento → usar o texto aprovado literal (§7) |
 | 11 | Validar o rascunho | rascunho + fatos autorizados | aprovado ou bloqueado + motivo | qualquer valor, promessa ou termo fora da lista → bloqueio |
 | 12 | Bloquear ou substituir — e **fechar o ciclo determinístico** | resultado de 11 | texto final seguro + fechamento com `E15` e `E12` **pós-efeito** | substituir pelo texto aprovado literal; se não houver, R03 + handoff. Nunca reenviar ao LLM mais de uma vez. `E15` e `E12` só são confirmados **depois do efeito real** (doc 06 §2.2) e reentram na `MaquinaEstados` na ordem `E15` → `E12` (doc 06 §4.2): **no máximo duas chamadas adicionais** — uma para `E15`, uma para `E12` |
@@ -272,6 +362,11 @@ Regras do pipeline:
 
 - **a etapa 3 antecede a 4, e as duas antecedem a 5**: identidade só é resolvida com contexto
   persistido e interpretação disponíveis;
+- **fronteira temporal da etapa 7**: todas as condições de §4.4 — em especial
+  `resposta_aprovada_disponivel` — precisam estar **determinadas antes** da etapa 7, porque
+  é ali que ocorre a primeira chamada da `MaquinaEstados`. As etapas 8 e 9 **consultam,
+  conferem e selecionam** fatos e textos, mas **não produzem condição necessária a uma
+  chamada que já aconteceu**;
 - as etapas 7 a 9 são a única origem de conteúdo comercial;
 - a etapa 10 é a única que pode falhar por indisponibilidade externa sem parar o
   atendimento — todas as outras têm caminho determinístico;
