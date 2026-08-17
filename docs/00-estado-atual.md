@@ -69,20 +69,21 @@ especificá-la — está **integrada à `main`** (PR #16, merge `1a719546…`), 
 
 ## Próxima ação
 
-1. A arbitragem **S2 já está integrada à `main`** (PR #16 **MERGED**, merge
-   `1a719546b922e0a89d30912de745046eb11849d9`). Nenhuma nova subetapa funcional está
-   iniciada e nenhuma numeração futura além da já documentada está aprovada.
-2. Esta entrega (**S2-R**) apenas **reconcilia o estado documental** deste arquivo com o
-   merge já consumado. Ela não implementa nada e não cria marco funcional.
-3. Depois de esta reconciliação ser versionada, integrada e auditada, a próxima candidata
-   funcional é a **3B.6 — `MaquinaEstados`**.
-4. Como a 3B.6 envolve implementação e dependências arquiteturais, seu plano deve ser
-   elaborado pelo Claude Desktop e auditado pelo GPT antes de qualquer execução pelo
-   Claude Code. **A 3B.6 não é autorizada por esta entrega**: continua **NÃO iniciada** e
-   **NÃO autorizada**.
+1. As arbitragens **S2 e S2-R já estão integradas à `main`** (PRs #16 e #17, **MERGED**).
+   Nenhuma nova subetapa funcional está iniciada e nenhuma numeração futura além da já
+   documentada está aprovada.
+2. A arbitragem **S3 foi aprovada pelo GPT**, e a presente entrega apenas **materializa
+   essa arbitragem documental** em `docs/06`, `docs/07` e neste arquivo. Ela não implementa
+   nada e não cria marco funcional.
+3. A **3B.6 continua NÃO iniciada e NÃO autorizada** enquanto esta arbitragem não estiver
+   **versionada, integrada à `main` e auditada**.
+4. Depois dessa integração e auditoria, a próxima candidata funcional é a implementação da
+   **3B.6 — `MaquinaEstados`**, mediante **mandato fechado do GPT para o Claude Code**.
+   Como envolve implementação e dependências arquiteturais, o plano deve ser elaborado pelo
+   Claude Desktop e auditado pelo GPT antes de qualquer execução.
 5. O planejamento deve continuar considerando explicitamente as pendências técnicas em
-   aberto registradas abaixo, incluindo **S2-D5, S2-D7, S2-D8 e a confirmação de entrega
-   do handoff** — nenhuma delas bloqueia a 3B.6.
+   aberto registradas abaixo, incluindo **S2-D5, S2-D7, S2-D8, S3-D1 e a confirmação de
+   entrega do handoff** — nenhuma delas bloqueia a 3B.6.
 
 ## Arbitragens
 
@@ -92,8 +93,34 @@ já alcançou a `main`.
 
 | # | Arbitragem | Decisão | Evidência |
 |---|---|---|---|
+| S3 | Arbitragem residual da `MaquinaEstados` (`docs/06-maquina-de-estados.md` × `docs/07-arquitetura-motor-respostas.md`) | **APROVADA PELO GPT — MATERIALIZADA NESTA BRANCH — NÃO INTEGRADA À MAIN.** Fecha as ambiguidades residuais posteriores à S2 sem redesenhar a máquina: materialização de T04, precedência entre classes de `E08`, `T09 > T04`, `T32 > T35`, contrato semântico de ações, condição estruturada de T35, fronteira temporal da resposta aprovada e `CondicoesCiclo`. **PR #18 ABERTO; não existe merge**; **não implementa código** e **não cria marco funcional.** Escopo abaixo. | **PR #18** (**OPEN**, base `main`), commit documental principal `541aa765ac0e956620e3a78c19b38c0d24a40885`, na branch `docs/s3-arbitragem-residual-maquina-estados`, a partir do merge `759cbc1db93930e33fd6c1912234aa7b2874e559`; alterações em `docs/06` (notas da §3, §4.2, §11) e `docs/07` (§4.1, §4.4, §4.5, §5) — **na branch, não na `main`** |
 | A | Fronteira de Qualificação entre `docs/05-roadmap.md` e `docs/07-arquitetura-motor-respostas.md` | **ARBITRADA** (S1): o `Qualificador` permanece componente do motor e sua implementação pertence à Etapa 3B; a antiga Etapa 4 deixa de ser aberta como etapa autônoma e é absorvida pela 3B; as etapas 5 a 10 mantêm a numeração; o `Qualificador` precede a `MaquinaEstados`. O `Qualificador` foi **implementado na 3B.5** (PR #14); a precedência permanece e a `MaquinaEstados` **ainda não foi iniciada**. | reconciliação documental de `docs/05`, `docs/07` §8.4/§9 e deste documento |
 | S2 | Semântica de ciclo da `MaquinaEstados` (`docs/06-maquina-de-estados.md` × `docs/07-arquitetura-motor-respostas.md`) | **APROVADA — INTEGRADA À MAIN.** Arbitragem documental **aprovada pelo GPT** na auditoria da entrega e **integrada à `main`** pelo **PR #16** (**MERGED**), a partir da branch `docs/s2-arbitragem-maquina-estados`. **Não implementa código** e **não cria marco funcional.** Escopo abaixo. | PR #16 — head integrado `e4746d8b350b65388672ecfb5233a558031ff352`, merge `1a719546b922e0a89d30912de745046eb11849d9`; núcleo documental no commit `0be5a022d2b30b5cfa2bca501e77c06bed501419` — `docs/06` (§1.1, §2.2, §3, §4.1–§4.5, §9, §10, §11) e `docs/07` (§4.1, §5, §7.2, §8.1, §9, §12) |
+
+### Arbitragem S3 — escopo aprovado, materializado nesta branch
+
+Arbitragem **residual** da `MaquinaEstados`: fecha as ambiguidades que restavam depois da
+S2, **sem redesenhar a máquina**. Preserva os 8 estados, `E01`–`E18`, T01–T41, P1–P6,
+N1–N4 e S2.1–S2.9 — **zero estado novo, zero evento novo, zero `Txx` nova, zero P7, zero
+N5**. Entrega **exclusivamente documental**: nenhum código, teste, dado comercial ou
+dependência foi alterado, e a `MaquinaEstados` **continua não implementada**.
+
+| # | Decisão |
+|---|---|
+| S3.1 | **Materialização de T04**: a condição "dado compatível com o YAML" é materializada pelo resultado estruturado da `Qualificacao` — T04 só é elegível quando `resultado_qualificacao` ≠ `incompativel`. A máquina continua sem ler YAML; P1 segue garantindo o registro dos dados e correções. |
+| S3.2 | **Precedência entre classes de `E08`**: havendo violações de classes diferentes, basta **uma** da classe T05/T22 para aplicar T05/T22; T06/T23 só quando **todas** forem dessa classe. Todas as violações são preservadas, o `E08` é consumido uma única vez e motivo não classificado é **erro de contrato** — sem `E08` múltiplo e sem fallback. |
+| S3.3 | **Precedências concretas**: `T32 > T35` (C3, mesmo `E14`) e `T09 > T04` (C11, mesmo `E04`). São **duas precedências concretas**, não um princípio geral: nenhuma colisão futura ganha solução por analogia. T34 permanece separada porque sua origem já está excluída de T35. |
+| S3.4 | **Condição estruturada de T35 — `motivo_encerramento`**: vocabulário fechado com as **quatro** modalidades já existentes na linha T35 (`SEM_INTERESSE`, `ENGANO`, `SPAM`, `INCOMPATIBILIDADE_ACEITA`). A máquina **recebe** o motivo, não o interpreta, e não referencia `Rxx`. Despedida é obrigação semântica **apenas** de `SEM_INTERESSE`. A ausência de pedido de exceção/humano segue materializada pela ausência de `E18` (N3). |
+| S3.5 | **Contrato semântico de ações**: `AcaoMaquina` com **exatamente 20 códigos** fechados — semânticos, declarativos, sem `Rxx` e sem conteúdo comercial. A máquina **emite** ações e **nunca as executa**; cada `Txx` fica coberta por ação, efeito paralelo, campo dedicado ou mudança de estado. |
+| S3.6 | **Pré-requisito declarativo em T27**: `EMITIR_MENSAGEM_DE_ENCAMINHAMENTO` pressupõe `ENTREGAR_RESUMO`, preservando a ordem de S2.9. A máquina apenas declara — não entrega, não verifica sucesso e não cria fila, retentativa, contador ou status. |
+| S3.7 | **Fronteira temporal da resposta aprovada**: `resposta_aprovada_disponivel` precisa estar determinada **antes da etapa 7**; as etapas 8–9 consultam e selecionam, mas não produzem condição para uma chamada já ocorrida. O `SeletorFatos` **não** é produtor dessa condição. |
+| S3.8 | **`CondicoesCiclo`**: fronteira estrutural com as **oito** condições consumidas pela máquina, sem PII e sem valor comercial, com produtor pendente onde ainda não atribuído. |
+| S3.9 | **Ampliação de S2-D8** (sem resolvê-la) e **criação de S3-D1**; **S2-D5 e S2-D7 preservadas** e não reabertas. |
+
+Status da S3: **APROVADA PELO GPT — MATERIALIZADA NESTA BRANCH — NÃO INTEGRADA À MAIN.**
+O **PR #18 está ABERTO**; **não existe merge** desta arbitragem. Ela **não cria marco
+funcional** e não altera o último commit funcional (`02dcb477…`) nem o último marco
+funcional (**3B.5**). A **3B.6 continua NÃO iniciada e NÃO autorizada**.
 
 ### Arbitragem S2 — escopo aprovado e integrado à `main`
 
@@ -152,7 +179,8 @@ comercial `D1`–`D8` já registrada no histórico deste documento.
 |---|---|---|
 | S2-D5 | Mensagem conversacional recebida enquanto o estado é `aguardando_confirmacao_disponibilidade`, **antes** de `E16`. Hoje o caso é inalcançável enquanto a integração de calendário está pendente (I17 de `docs/06`). Resolver na **Etapa 6**. | **não bloqueia** a 3B.6 |
 | S2-D7 | `E13` a partir de estado **diferente** de `encaminhado_humano`. Hoje não existe produtor nem interface operacional para esse caminho. Resolver na **Etapa 5**. | **não bloqueia** a 3B.6 |
-| S2-D8 | Contrato de detecção e classificação de pendências: detectar campo `null`/`pendente` relevante e ausência de resposta aprovada, classificar impeditiva × acessória, fornecer os identificadores técnicos ao `Qualificador` e confirmar `E09`. **Nenhum componente concreto foi escolhido** — não é o `CarregadorYaml` nem o `ValidadorYaml`. Detalhe em `docs/06` §11. | **não bloqueia** a `MaquinaEstados`/3B.6; **bloqueia** o `OrquestradorMotor` e a integração completa |
+| S2-D8 | Contrato de detecção e classificação de pendências: detectar campo `null`/`pendente` relevante e ausência de resposta aprovada, classificar impeditiva × acessória, fornecer os identificadores técnicos ao `Qualificador` e confirmar `E09`. **Ampliada pela S3**: o mesmo produtor também fornece a condição estruturada **`resposta_aprovada_disponivel`** (T10, T17, T28), determinada **antes da etapa 7** — saída **distinta** de `E09` e **não** sua negação; só o status APROVADO habilita. **Nenhum componente concreto foi escolhido** — não é o `CarregadorYaml`, não é o `ValidadorYaml` e não é o `SeletorFatos`. **Continua ABERTA.** Detalhe em `docs/06` §11. | **não bloqueia** a `MaquinaEstados`/3B.6; **bloqueia** o `OrquestradorMotor` e a integração completa |
+| S3-D1 | Produtor da condição **`motivo_encerramento`**: determinar, a montante da etapa 7, uma das **quatro** modalidades já existentes de T35 — sem interesse, engano, spam, incompatibilidade aceita. Produtor **NÃO atribuído**: **não** é a `MaquinaEstados`, **não** é o `DetectorHandoff`, **não** é o `Qualificador`, **não** é o `CarregadorYaml` e **não** é o LLM decidindo sozinho. | **não bloqueia** a 3B.6; **bloqueia** o `OrquestradorMotor` e a integração completa |
 | Confirmação de entrega do handoff | `encaminhado_humano` afirma handoff **registrado**, nunca recebimento confirmado. A confirmação física permanece futura da **etapa 5** (canal de entrega do resumo). | **não bloqueia** a 3B.6 |
 
 ## Pendências que não bloqueiam

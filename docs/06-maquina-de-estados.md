@@ -243,6 +243,22 @@ Notas:
   máquina consome a classificação do `Qualificador` em vez de recalculá-la.
 - **A máquina não lê convidados, formato nem YAML** para decidir T08. Toda condição de
   qualificação chega pronta em `resultado_qualificacao` (§1.2).
+- **Materialização da condição de T04** (arbitragem S3). A condição "dado compatível com o
+  YAML" é materializada para a `MaquinaEstados` pelo **resultado estruturado da
+  `Qualificacao`**, nunca por leitura da base: T04 só é elegível quando
+  `resultado_qualificacao` **≠** `incompativel`. Fundamento: a máquina não lê YAML (I23);
+  a incompatibilidade já detectada é preservada (P4); depois de T06/T23 a máquina não deve
+  avançar a coleta; e o registro dos dados e correções continua garantido por **P1**,
+  independentemente de T04 entrar ou não no caminho.
+- **Precedência entre classes de `E08`** (arbitragem S3). Quando `Qualificacao.violacoes`
+  contiver violações de **classes diferentes**: se existir **ao menos uma** violação cujo
+  tratamento documentado pertence a **T05/T22**, aplica-se T05/T22; **T06/T23 só se aplica
+  quando todas** as violações forem dessa classe. Todas as violações permanecem
+  preservadas no lead, e o `E08` continua sendo **consumido uma única vez** (§4.2) — não
+  existe `E08` múltiplo. Motivo de violação não reconhecido ou não classificado é **erro de
+  contrato** (§4.5), nunca fallback. Classificação dos motivos existentes hoje: data não
+  aceita → classe **T05/T22**; tipo não aceito e convidados acima da capacidade → classe
+  **T06/T23**.
 - A ordem em que estas linhas são avaliadas dentro de um ciclo está fixada em §4.2; os
   efeitos que sobrevivem a outra decisão de estado estão em §4.3; os casos em que um
   evento legítimo não transiciona estão em §4.4.
@@ -250,6 +266,19 @@ Notas:
   de identificação será definido na etapa de modelo de dados. Esta máquina define apenas
   o comportamento de cada caso. A distinção entre entidades (conversa, atendimento,
   lead) também pertence à etapa de modelo de dados.
+- **Materialização da condição de T35 — motivo de encerramento** (arbitragem S3). A
+  condição já existente de T35 é materializada por um **motivo estruturado** de vocabulário
+  **fechado**, com exatamente as **quatro** modalidades que a própria linha T35 já
+  enumera: `SEM_INTERESSE`, `ENGANO`, `SPAM`, `INCOMPATIBILIDADE_ACEITA`. **Nenhuma quinta
+  modalidade é criada.** A parte "sem pedido de exceção nem de humano" continua
+  materializada pela **ausência de `E18` no ciclo**, conforme **N3**. A `MaquinaEstados`
+  **não interpreta mensagem** e **não decide sozinha o motivo**: ela **recebe** o motivo já
+  estruturado a montante e **não referencia nenhum `Rxx`**. A obrigação semântica de
+  **despedida** existe **somente** para `SEM_INTERESSE`; para `ENGANO`, `SPAM` e
+  `INCOMPATIBILIDADE_ACEITA`, T35 encerra **sem obrigar despedida automática**. O texto de
+  despedida permanece fora desta máquina e continua dependendo de aprovação humana — nada
+  em `knowledge/` é alterado para resolver isso. O produtor do motivo **não é atribuído**:
+  ver a pendência **S3-D1** em `docs/00-estado-atual.md`.
 
 ## 4. Ordem de processamento de uma mensagem
 
@@ -391,7 +420,7 @@ O consumo do evento como **gatilho** não apaga o que P1–P6 preservam: obriga�
 | C0 | abertura no estado `novo` | T03 > T02 > T01 | após T01, **o mesmo ciclo continua** — T01 não encerra a avaliação, e o caminho segue a partir do estado intermediário que T01 produziu. O `E01` consumido por T01 **não** é reutilizado adiante |
 | C1 | identidade e estados absorventes | T33, T36, T37 | T33 absorve `E18` concomitante e **preserva o motivo sem resposta automática** (I03) |
 | C2 | handoff obrigatório | T07, T24, T26, T30 | — |
-| C3 | encerramento | T32, T34, T35 | — |
+| C3 | encerramento | T32, T34, T35 | **T32 > T35** quando ambas disputarem o mesmo `E14`. T34 permanece separada porque seu estado de origem `atendimento_humano` já está excluído de T35 |
 | C4 | humano assumiu | T31 | `E13` chega isolado, em ciclo próprio (§2.2) |
 | C5 | incompatibilidade | T05, T06, T22, T23 | — |
 | C6 | pendência impeditiva | T11, T18 | `E09` chega já classificado |
@@ -399,11 +428,17 @@ O consumo do evento como **gatilho** não apaga o que P1–P6 preservam: obriga�
 | C8 | qualificação | T08 → T13 → T40 | respeitando o estado de origem, a condição de cada linha e o **consumo único de `E07`** |
 | C9 | resposta comercial | T10, T17, T28 | — |
 | C10 | pendência acessória | T12, T19 | — |
-| C11 | coleta e visita | T04, T09, T16, T39, T41 | T39 e T41 dependem do mesmo `E01`: pelo consumo único, **no máximo uma das duas** entra no caminho, e nenhuma delas reaproveita um `E01` já consumido em C0 |
+| C11 | coleta e visita | T04, T09, T16, T39, T41 | **T09 > T04** quando ambas disputarem o mesmo `E04`. T39 e T41 dependem do mesmo `E01`: pelo consumo único, **no máximo uma das duas** entra no caminho, e nenhuma delas reaproveita um `E01` já consumido em C0. T16 preservada |
 
 Em C8, T08 é avaliada antes de T13: `qualificado_com_ressalva` em `coletando_dados` é
 decidido por T08, e T13 recebe apenas o `E07` restante. Como `E07` é consumido uma única
 vez por ciclo, T08, T13 e T40 nunca se aplicam duas vezes no mesmo ciclo.
+
+As precedências **T32 > T35** (C3) e **T09 > T04** (C11) vêm da arbitragem S3 e são **duas
+precedências concretas**, cada uma restrita à disputa pelo mesmo evento na sua própria
+família. Elas **não** instituem princípio geral algum — não existe regra de "linha mais
+específica" ou equivalente neste documento, e **nenhuma colisão futura ganha solução
+automática por analogia**: cada caso novo exige arbitragem própria.
 
 #### Fechamento do ciclo
 
@@ -634,10 +669,31 @@ Escopo do contrato pendente:
 | classificar a pendência em **impeditiva × acessória** |
 | fornecer os identificadores técnicos ao `Qualificador` (`pendencias_impeditivas`) |
 | confirmar `E09` |
+| fornecer à `MaquinaEstados` a condição estruturada `resposta_aprovada_disponivel` (ampliação S3) |
 
-Regras:
+Ampliação da arbitragem S3 — segunda saída estruturada:
+
+O mesmo produtor futuro, ainda **não atribuído**, também fornece à `MaquinaEstados` uma
+condição estruturada equivalente a **`resposta_aprovada_disponivel`**, consumida pelas
+linhas **T10**, **T17** e **T28**. Regras:
+
+- ela precisa estar **determinada antes da primeira chamada da `MaquinaEstados`** — isto é,
+  antes da etapa 7 do doc 07 (§5 daquele documento);
+- **`resposta_aprovada_disponivel` e `E09` são saídas distintas** e **não são a negação uma
+  da outra**: no mesmo ciclo pode haver uma pergunta com resposta aprovada disponível e
+  outra pergunta que confirma `E09`;
+- somente o status **APROVADO** habilita o uso. **AGUARDA APROVAÇÃO não habilita** e
+  **BLOQUEADO não habilita**;
+- a `MaquinaEstados` **não consulta** `knowledge/respostas-aprovadas.md` e **não referencia
+  nenhum `Rxx`**: recebe apenas a condição booleana já determinada;
+- **nenhum produtor concreto é escolhido** — em particular, o `SeletorFatos` **não** é
+  declarado produtor desta condição.
+
+Regras gerais da pendência:
 
 - **nenhum componente concreto é escolhido aqui** — em particular, o produtor **não** é
   atribuído ao `CarregadorYaml` nem ao `ValidadorYaml`;
-- **S2-D8 não bloqueia** a implementação da `MaquinaEstados`, que recebe `E09` pronto;
+- **S2-D8 continua ABERTA** — a ampliação acima descreve o contrato pendente, não o resolve;
+- **S2-D8 não bloqueia** a implementação isolada da `MaquinaEstados`, que recebe `E09` e as
+  condições estruturadas já prontos;
 - **S2-D8 bloqueia** o `OrquestradorMotor` e a integração completa do pipeline.
