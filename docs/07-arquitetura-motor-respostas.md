@@ -182,9 +182,9 @@ calculados, escolhidos ou interpretados pelo LLM.
 | `NormalizadorEntrada` | limpar a mensagem e calcular a chave de idempotência conforme §4.3 | mensagem bruta + metadados do canal | mensagem normalizada + chave + origem da chave |
 | `RegistroAtendimento` | registrar dados e correções (`E02`–`E05`), sobrescrevendo valores corrigidos | dados extraídos + estado | dados atualizados + lista de correções |
 | `RegrasComerciais` | avaliar tipo, data, número de convidados e formato contra o YAML | dados + YAML | lista de violações com motivo e campo de origem |
-| `Qualificador` | calcular `resultado_qualificacao` conforme doc 02 §6 e §6.1 | dados + violações + pendências | um dos cinco valores oficiais + motivo + campos ausentes |
-| `MaquinaEstados` | aplicar a ordem do doc 06 §4 e a tabela de transições | estado + eventos | próximo estado único + ações obrigatórias |
-| `DetectorHandoff` | reconhecer os 12 gatilhos do doc 04 e emitir `E18` com motivo | mensagem interpretada + dados + YAML | motivo(s) de handoff |
+| `Qualificador` | calcular `resultado_qualificacao` conforme doc 02 §6 e §6.1. Recebe as **pendências impeditivas já classificadas**; **não detecta pendência** (doc 06 §11 — S2-D8) | dados + violações + **pendências impeditivas já classificadas** | um dos cinco valores oficiais + motivo + campos ausentes |
+| `MaquinaEstados` | aplicar a ordem do doc 06 §4/§4.2 e a tabela de transições. **Não lê o YAML** e **não fabrica eventos**: consome eventos já confirmados e condições já estruturadas | estado + eventos confirmados + `Qualificacao` + condições já estruturadas, **incluindo `insumo_qualificacao_atualizado`** (doc 06 §4.1) | caminho percorrido + **estado final único** + ações obrigatórias + efeitos auditáveis |
+| `DetectorHandoff` | reconhecer os **gatilhos 3–10** do doc 04 e emitir `E18` com motivo (partição do doc 06 §9). **Não recebe `Qualificacao`**; não recalcula regra comercial, pendência nem qualificação | mensagem interpretada + dados + YAML | motivo(s) de handoff |
 | `SeletorFatos` | escolher quais fatos aprovados podem entrar na resposta, **conferindo cada `Rxx` contra o YAML antes de selecioná-lo** (F3) | perguntas + estado + YAML + respostas aprovadas | lista fechada de fatos autorizados, ou divergência de base |
 | `ValidadorResposta` | vetar rascunho com valor, promessa ou termo não autorizado | rascunho + fatos autorizados | aprovado / bloqueado + motivo |
 | `Persistencia` | persistência **operacional**: gravar estado, dados, qualificação, pendências, motivos e chave de idempotência antes da emissão (P9, §7.3) | decisão final | confirmação de gravação ou falha |
@@ -258,15 +258,15 @@ adivinhar.
 | 3 | **Recuperar contexto persistido** | canal + contato + identificador do atendimento, quando houver | contexto recuperado (§6.2): atendimento indicado quando existir, atendimentos ativos ou recentes do contato necessários à resolução, estado, dados, qualificação, pendências, motivos | atendimento indicado e **não recuperado** → erro operacional: bloquear, preservar, alertar. Estado corrompido → bloqueio (§7.1). **Nunca criar atendimento novo por não encontrar o indicado** |
 | 4 | Interpretar e extrair | mensagem normalizada | intenções, campos, perguntas, referências ao evento anterior, confiança | LLM indisponível → modo degradado (§7); confiança baixa → campo **não** é registrado |
 | 5 | **Resolver identidade do atendimento** | contexto recuperado (3) + interpretação (4) | atendimento ativo, mesma solicitação (T36), nova solicitação (T37) **ou ambíguo** | ambíguo → **não decidir**: pedir esclarecimento, sem herdar nem sobrescrever dado algum (§7.1); persistir o processamento pendente quando possível |
-| 6 | Registrar dados e correções | campos extraídos + atendimento resolvido | dados atualizados + correções | conflito entre mensagem e estado → §7; dado incerto nunca é gravado; identidade ambígua → nada é registrado no atendimento anterior |
-| 7 | Executar a ordem determinística do doc 06 §4 | dados + YAML + eventos | eventos confirmados, violações, motivos, qualificação recalculada | violação da precedência (ex.: `E07` sobre incompatibilidade) é erro de programa, não caso de negócio → bloquear envio |
-| 8 | Consultar YAML e respostas aprovadas | perguntas detectadas | valores de campo e códigos `R` correspondentes | campo `null`/`pendente` → `E09`; sem resposta aprovada → gatilho 1 do doc 04 |
-| 9 | Selecionar fatos permitidos — **conferindo cada `Rxx` comercial contra o YAML** (F3) | resultado de 7 e 8 | lista fechada de fatos, cada um com origem e conferência | divergência `Rxx` × YAML → o fato **não** entra na lista, registra-se erro de consistência da base e o dado divergente é bloqueado (F4); lista vazia com pergunta pendente → R03 + handoff |
+| 6 | Registrar dados e correções | campos extraídos + atendimento resolvido | dados atualizados + correções + **sinal de mutação efetiva de insumo da qualificação** (`insumo_qualificacao_atualizado`, doc 06 §4.1) | conflito entre mensagem e estado → §7; dado incerto nunca é gravado; identidade ambígua → nada é registrado no atendimento anterior |
+| 7 | Executar a ordem determinística do doc 06 §4 — **primeira decisão determinística do ciclo** | dados + eventos + sinal da etapa 6 + avaliação comercial feita **a montante** contra o YAML (`RegrasComerciais`, `Qualificador`) — a `MaquinaEstados` recebe o resultado já estruturado e **não lê o YAML** (doc 06 I23) | eventos confirmados, violações, motivos, qualificação recalculada e o **estado intermediário** resultante da **primeira chamada da `MaquinaEstados`** — caminho percorrido (uma ou mais `Txx`, doc 06 §4.2), ainda sujeito ao fechamento da etapa 12 | `E07`, `E08`, `E09` e `E18` são **recebidos/confirmados a partir das saídas determinísticas a montante**, não fabricados aqui; violação da precedência (ex.: `E07` sobre incompatibilidade) é erro de programa, não caso de negócio → bloquear envio. **O produtor concreto de `E09` não é definido nesta arquitetura — S2-D8 permanece aberta** (doc 06 §11) |
+| 8 | Consultar YAML e respostas aprovadas | perguntas detectadas | valores de campo e códigos `R` correspondentes | campo `null`/`pendente` e ausência de resposta aprovada **já foram confirmados como `E09` na etapa 7** (gatilhos 1–2 do doc 04, doc 06 §9): aqui a pendência é **consultada e registrada**, nunca criada tardiamente |
+| 9 | Selecionar fatos permitidos — **conferindo cada `Rxx` comercial contra o YAML** (F3) | resultado de 7 e 8 | lista fechada de fatos, cada um com origem e conferência | divergência `Rxx` × YAML → o fato **não** entra na lista, registra-se erro de consistência da base e o dado divergente é bloqueado (F4); lista vazia com pergunta pendente → R03 + handoff. **Nenhum `E09` nasce nesta etapa** |
 | 10 | Gerar rascunho | fatos autorizados + tom + estado | texto candidato | LLM indisponível ou lento → usar o texto aprovado literal (§7) |
 | 11 | Validar o rascunho | rascunho + fatos autorizados | aprovado ou bloqueado + motivo | qualquer valor, promessa ou termo fora da lista → bloqueio |
-| 12 | Bloquear ou substituir | resultado de 11 | texto final seguro | substituir pelo texto aprovado literal; se não houver, R03 + handoff. Nunca reenviar ao LLM mais de uma vez |
-| 13 | Persistir — **persistência operacional** (§7.3) | decisão final | estado, dados, qualificação, pendências, motivos e chave de idempotência gravados | falha de persistência → **bloquear a emissão** da resposta que depende da nova transição; preservar a mensagem para reprocessamento idempotente; alerta operacional (§7.2) |
-| 14 | Emitir resposta ou handoff | texto final + decisão **já gravada** | resposta ao interessado e/ou resumo para Douglas | estado `atendimento_humano` → nada é emitido (I03); handoff não registrado → não afirmar que houve handoff (§7.2) |
+| 12 | Bloquear ou substituir — e **fechar o ciclo determinístico** | resultado de 11 | texto final seguro + fechamento com `E15` e `E12` **pós-efeito** | substituir pelo texto aprovado literal; se não houver, R03 + handoff. Nunca reenviar ao LLM mais de uma vez. `E15` e `E12` só são confirmados **depois do efeito real** (doc 06 §2.2) e reentram na `MaquinaEstados` na ordem `E15` → `E12` (doc 06 §4.2): **no máximo duas chamadas adicionais** — uma para `E15`, uma para `E12` |
+| 13 | Persistir — **persistência operacional** (§7.3) | **estado final produzido pela última chamada determinística aplicável após o fechamento da etapa 12**: o resultado da **etapa 7** quando não houver `E15` nem `E12`; o resultado **pós-`E15`** quando só houver `E15`; o resultado **pós-`E12`** quando a cadeia completa existir | estado, dados, qualificação, pendências, motivos e chave de idempotência gravados | falha de persistência → **bloquear a emissão** da resposta que depende da nova transição; preservar a mensagem para reprocessamento idempotente; alerta operacional (§7.2) |
+| 14 | Emitir resposta ou handoff | texto final + decisão **já gravada** | resposta ao interessado e/ou resumo para Douglas | **ordem de emissão obrigatória: 1. tentar a entrega do resumo; 2. somente após sucesso, emitir a mensagem de encaminhamento ao interessado** (doc 06 §10). Estado `atendimento_humano` → nada é emitido (I03); handoff não registrado → não afirmar que houve handoff (§7.2) |
 
 Regras do pipeline:
 
@@ -527,6 +527,8 @@ fosse completo. É preferível o atendimento parar e alguém ser avisado.
 | Q6 | Resposta segura e handoff **só são emitidos quando puderem ser registrados**. Não existe "resposta segura" que promete algo não gravado. |
 | Q7 | **Erro de conteúdo com persistência funcionando** → resposta segura + handoff, ambos registrados. |
 | Q8 | **Erro de infraestrutura que impede persistência** → bloqueio de emissão + alerta operacional. O interessado não recebe nada em vez de receber algo falso. |
+| Q9 | **Geração e persistência do resumo**: o resumo é **gerado** (`E12`) antes da persistência quando necessário; a etapa 13 persiste a decisão final; a etapa 14 **tenta a entrega do resumo e só depois emite a mensagem de encaminhamento** ao interessado (doc 06 §10). `encaminhado_humano` significa handoff **registrado**, não confirmação física de recebimento. |
+| Q10 | **Falha de entrega do resumo**: não reverte o estado já registrado; preserva o processamento pendente de forma **opaca**; emite alerta operacional; **não inventa** fila, retentativa, contador, status de entrega, canal nem provedor; e **não permite processar novo ciclo** que dependa do handoff como operacionalmente concluído enquanto a pendência não for resolvida. O `ProcessamentoPendente` atual **não ganha campos**. |
 
 Q7 e Q8 são a distinção que elimina a contradição entre "sempre responder com segurança" e
 "nunca prometer o que não foi feito": o que decide é **se a gravação funcionou**, não a
@@ -616,15 +618,15 @@ Regra obrigatória sobre o repositório em memória:
 | `OrquestradorMotor` | executa as **14 etapas na ordem**, com **recuperação de contexto (3) antes da interpretação (4) e ambas antes da resolução de identidade (5)**; **estado enviado pelo adaptador é ignorado ou rejeitado** (E3); não emite antes de persistir (Q1); termina o ciclo sem transição em contexto inválido e em identidade ambígua |
 | `ResolvedorIdentidade` | usa contexto + interpretação para decidir atendimento ativo, T36, T37 ou ambíguo; **nunca é executado sobre contexto inválido** (S7); em ambiguidade não herda dado algum (A1, A6) |
 | `RegrasComerciais` | tipo não aceito, data bloqueada e excesso de convidados produzem violação com motivo (I04) |
-| `MaquinaEstados` | as 37 transições do doc 06 §3 e a ordem do §4 |
-| `Qualificador` | os cinco resultados oficiais, a faixa entre capacidade sentada e coquetel, e I09 (ausência de dado nunca é incompatibilidade) |
-| `DetectorHandoff` | os 12 gatilhos do doc 04, cada um com o motivo correto |
+| `MaquinaEstados` | as **41 transições** do doc 06 §3; a **ordem de avaliação** das famílias C0–C11 (§4.2), com o **caminho percorrido** auditável e **estado final único**; o **fechamento** `E15` → `E12` pós-efeito, o teto de **três chamadas por ciclo** e a ausência de loop; os efeitos paralelos P1–P6 (§4.3) e as inércias N1–N4 (§4.4); evento não coberto por transição, efeito paralelo ou inércia é **erro de contrato** (§4.5); a máquina **não lê o YAML** e **não fabrica eventos** |
+| `Qualificador` | os cinco resultados oficiais, a faixa entre capacidade sentada e coquetel, e I09 (ausência de dado nunca é incompatibilidade); recebe pendências impeditivas já classificadas e **não as detecta** |
+| `DetectorHandoff` | os **gatilhos 3–10** do doc 04, cada um com o motivo correto (partição do doc 06 §9); não recebe `Qualificacao` e não reemite os gatilhos 1–2 nem 11–12 |
 | `SeletorFatos` | nada fora do YAML e das respostas aprovadas entra na lista; campo pendente vira R03; **`Rxx` divergente do YAML não é selecionado** e produz erro de consistência da base (F4) |
 | `ValidadorResposta` | rascunho com valor inventado, promessa de prazo, confirmação de data ou desconto é bloqueado; texto literal de `Rxx` também é conferido |
 | `Persistencia` (contrato abstrato, com implementação em memória — B1/B2) | gravação, recuperação de estado e idempotência funcionam; falha de gravação bloqueia a emissão e preserva a mensagem; nenhuma afirmação de handoff sem registro (Q2, Q3) |
 
 Esses testes são determinísticos, rápidos e não custam nada por execução. São a rede de
-segurança do produto e cobrem os 20 invariantes do doc 06 §8.
+segurança do produto e cobrem os 23 invariantes do doc 06 §8.
 
 ### 8.2 Testáveis com resposta simulada do LLM
 
@@ -705,7 +707,8 @@ Fronteira de Qualificação, arbitrada: o `Qualificador` é componente do motor 
 sua **implementação pertence à Etapa 3B**, não a uma etapa autônoma de roadmap. Dentro do
 passo 1 acima, ele **precede a `MaquinaEstados`**: a máquina consome a classificação e as
 condições produzidas pelas regras de qualificação (doc 06 §1.2, T08, T09, T13, T21) e não
-pode duplicar essa lógica comercial. Nenhum dos dois está implementado.
+pode duplicar essa lógica comercial. O `Qualificador` foi **implementado na Etapa 3B.5**;
+a `MaquinaEstados` **ainda não foi implementada**.
 
 O que os passos 1 a 3 entregam, com precisão:
 
@@ -791,10 +794,13 @@ commit e nenhum push. A Etapa 3B não foi iniciada.
 | 3b | Janela temporal da chave composta de idempotência (§4.3) | curta demais duplica resposta; longa demais engole repetição humana legítima | Etapa 3B, com medição |
 | 3c | Divergência `Rxx` × YAML depende de mapear cada `Rxx` ao campo que ele cita | mapeamento incompleto deixa divergência passar sem detecção | Etapa 3B |
 | 4 | `R01` e `R15` ainda em **AGUARDA APROVAÇÃO** | saudação e encerramento sem texto aprovado | Douglas Bianchi |
-| 5 | Canal de entrega do resumo e SLA indefinidos | etapa 14 do pipeline fica sem destino | etapa 5 |
+| 5 | Canal de entrega do resumo e SLA indefinidos; **confirmação física de entrega do resumo** | etapa 14 do pipeline fica sem destino. `encaminhado_humano` afirma handoff **registrado**, nunca recebimento confirmado (doc 06 §10) — a confirmação física permanece futura | etapa 5 |
 | 6 | Comportamento fora do horário de atendimento indefinido | resposta fora de horário não especificada | Douglas Bianchi |
 | 7 | Precisão do validador de resposta | validador fraco deixa passar valor inventado; forte demais bloqueia texto correto | Etapa 3B, com os casos de `tests/perguntas-criticas.md` |
 | 8 | Custo por conversa não medido | sem parâmetro de custo do LLM | etapa 9 |
 | 9 | Política de retenção de log não definida (L7) | dado pessoal guardado sem prazo | antes da produção, etapa 10 |
+| 10 | **S2-D8** — contrato de detecção e classificação de pendências: detectar campo `null`/`pendente` relevante e ausência de resposta aprovada, classificar impeditiva × acessória, fornecer os identificadores técnicos ao `Qualificador` e confirmar `E09` | **não bloqueia** a `MaquinaEstados`, que recebe `E09` pronto; **bloqueia** o `OrquestradorMotor` e a integração completa. Nenhum componente concreto foi escolhido — não é o `CarregadorYaml` nem o `ValidadorYaml` | arbitragem específica, antes da integração do pipeline (doc 06 §11) |
 
-Nenhuma dessas pendências bloqueia a Etapa 3B.
+Nenhuma dessas pendências bloqueia especificamente a 3B.6 / `MaquinaEstados`. **S2-D8**
+bloqueia o `OrquestradorMotor` e a integração completa; as demais mantêm os bloqueios
+indicados na própria tabela.
