@@ -262,10 +262,21 @@ Notas:
 - A ordem em que estas linhas são avaliadas dentro de um ciclo está fixada em §4.2; os
   efeitos que sobrevivem a outra decisão de estado estão em §4.3; os casos em que um
   evento legítimo não transiciona estão em §4.4.
-- **Identificação de mesmo evento vs. nova solicitação** (T36/T37): o critério técnico
-  de identificação será definido na etapa de modelo de dados. Esta máquina define apenas
-  o comportamento de cada caso. A distinção entre entidades (conversa, atendimento,
-  lead) também pertence à etapa de modelo de dados.
+- **Identificação de mesmo evento vs. nova solicitação** (T36/T37) — **critério arbitrado**
+  (arbitragem R3). O critério técnico de identificação **não é mais futuro**: está
+  materializado no contrato do `ResolvedorIdentidade` em **`docs/07` §7.1**, como cascata
+  determinística **D0–D6** sobre um conjunto fechado de candidatos elegíveis, com
+  comparação **exclusivamente nominal** e vocabulário fechado de critérios. Três
+  consequências para esta máquina:
+  1. o `ResolvedorIdentidade` produz a relação de identidade **antes** da chamada da
+     `MaquinaEstados` (etapa 5 do pipeline de `docs/07` §5, anterior à etapa 7);
+  2. **T36 e T37 mantêm exatamente a semântica que já possuem** nesta tabela — nenhuma
+     transição é criada, removida ou alterada por essa arbitragem;
+  3. **esta máquina não resolve identidade.** Ela recebe a identidade já resolvida como
+     condição estruturada (§4.4 de `docs/07`) e nunca a recalcula.
+  A distinção completa entre as entidades **conversa × atendimento × lead** permanece
+  **aberta** como pendência **E1** (`docs/07` §12) e continua pertencendo à etapa de
+  modelo de dados.
 - **Materialização da condição de T35 — motivo de encerramento** (arbitragem S3). A
   condição já existente de T35 é materializada por um **motivo estruturado** de vocabulário
   **fechado**, com exatamente as **quatro** modalidades que a própria linha T35 já
@@ -499,9 +510,41 @@ Inércia é o caso em que um evento legítimo **não produz transição e não �
 - efeito paralelo permitido (§4.3);
 - inércia enumerada (§4.4)
 
-permanece **erro de contrato** (`TransicaoInexistente`). A única exceção são os
+permanece **erro de contrato** (`TransicaoInexistente`). As únicas exceções são os
 comportamentos explicitamente normativos já documentados: mensagem repetida (§4, passo 1)
-e "sem transição" por contexto inválido ou identidade ambígua (doc 07 §7.1).
+e o "sem transição" produzido **a montante desta máquina** — ciclos que **encerram antes de
+qualquer chamada da `MaquinaEstados`**. São **quatro** casos, conforme doc 07 §5:
+
+| # | Caso | Onde encerra |
+|---|---|---|
+| 1 | **contexto inválido** | **etapa 3** — a recuperação de contexto bloqueia (doc 07 §7.1, S1–S8). Não é produzido pelo `ResolvedorIdentidade`: a etapa 5 nem chega a ser executada (S7) |
+| 2 | **`Identidade.AMBIGUA`** | **etapa 5** — a cascata conclui ambiguidade e aplica A1–A7 (doc 07 §7.1) |
+| 3 | **`SEM_CANDIDATO_ELEGIVEL`** | **etapa 5** — enquanto a pendência **E4** estiver aberta (tabela G1–G7, abaixo) |
+| 4 | **`situacao_takeover == HUMANO_MULTIPLO`** | **etapa 5** — **sem alvo**, `identidade = None`, a **`MaquinaEstados` não é chamada**, **zero emissão automática** (doc 07 §7.1, R5-P0) |
+
+**`HUMANO_UNICO` não pertence a esta lista.** Ele **não** encerra o ciclo: a máquina **é
+chamada**, com `estado = atendimento_humano` e identidade `None`, e `E01` resolve por **T33**
+— que mantém o estado e proíbe qualquer resposta automática (I03). Silêncio ali é a transição
+funcionando, não ausência dela.
+
+**`SEM_CANDIDATO_ELEGIVEL` — fronteira obrigatória** (arbitragem R3). É o resultado da
+etapa 5 quando **existe atendimento anterior conhecido do contato** (`havia estado
+esperado?` = sim) e, ainda assim, o conjunto elegível deste ciclo tem **zero candidatos**.
+Ele encerra a resolução **sem transição**, e as seguintes negações são normativas:
+
+| # | Regra |
+|---|---|
+| G1 | **Não é `Identidade.AMBIGUA`.** Não há candidatos entre os quais hesitar — há ausência de candidatos. |
+| G2 | **Não é primeiro contato.** Primeiro contato exige `havia estado esperado?` = não; aqui é sim. |
+| G3 | **Não é `Estado.NOVO`** e não estabelece estado algum. |
+| G4 | **Não autoriza T01.** Nenhum atendimento é criado por causa dele. |
+| G5 | **Não autoriza T37.** Nova solicitação é decisão positiva da cascata, não consequência de conjunto vazio. |
+| G6 | **Não é passado silenciosamente à `MaquinaEstados`.** A máquina não é chamada com esse resultado como se fosse `NOVO`. |
+| G7 | O tratamento pelo `OrquestradorMotor` permanece **pendente em E4** (`docs/07` §12). Enquanto **E4** não for arbitrada, esse resultado **não autoriza avanço de integração**. |
+
+Também **não é erro**: contexto íntegro e ausência de candidatos elegíveis são estados
+válidos e distintos de contexto ausente ou corrompido, que continua bloqueado na etapa 3
+por **E5/S7** (doc 07 §7.1).
 
 ## 5. Regras obrigatórias da máquina
 
@@ -541,6 +584,25 @@ e "sem transição" por contexto inválido ou identidade ambígua (doc 07 §7.1)
     conversa.** Após `encerrado`, identificar se a mensagem trata do mesmo evento
     (reabrir preservando dados — T36) ou de nova solicitação (novo atendimento sem
     reutilizar dados comerciais do atendimento anterior — T37).
+    **Qualificação (arbitragem R3), aplicável quando
+    `situacao_takeover == SEM_TAKEOVER`.** A continuidade por atendimento ativo funciona
+    como **inércia de identidade**: ela vale enquanto **não existir evidência positiva
+    distinguindo outro candidato elegível**. Corroboração estrutural explícita apontando
+    outro candidato **pode derrotar essa inércia** — a decisão ocorre no
+    `ResolvedorIdentidade` (`docs/07` §7.1, critério `INERCIA_ATENDIMENTO_ATIVO` e a
+    cascata D0–D6 que o precede). Isto **não cria regra de transição nova**: é resolução
+    de **alvo**, anterior à `MaquinaEstados`, e as transições desta tabela permanecem
+    inalteradas.
+    **Fronteira do takeover humano (arbitragem R5).** Quando
+    `situacao_takeover != SEM_TAKEOVER`, a regra acima **não se aplica**: **R5-P0**
+    (`docs/07` §7.1) tem precedência **antes de D0–D6**, e a cascata sequer executa. Em
+    particular, **`atendimento_humano` não é "atendimento ativo derrotável"** por
+    corroboração de outro candidato. **Nenhuma** referência explícita ao evento anterior,
+    coincidência de tipo ou data, identificador apontando outro atendimento, nem
+    `NOVO_EVENTO_DECLARADO` **revoga o takeover**. `HUMANO_UNICO` **mantém o alvo humano** e
+    segue para **T33**; `HUMANO_MULTIPLO` **encerra sem transição e sem escolher** entre os
+    atendimentos (§4.5, caso 4). **T31, T33 e T34 permanecem exatamente como estão** e
+    nenhuma transição é criada.
 
 ## 6. Ordem de coleta
 

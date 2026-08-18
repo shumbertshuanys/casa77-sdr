@@ -175,7 +175,7 @@ calculados, escolhidos ou interpretados pelo LLM.
 | Componente | Responsabilidade | Entrada | Saída |
 |---|---|---|---|
 | `OrquestradorMotor` | coordenar as 14 etapas do pipeline na ordem correta — em especial recuperar contexto (3) antes de interpretar (4) e resolver identidade (5); decidir o que emitir; nenhuma regra comercial própria | entrada do contrato externo (§6.1) | saída (§6.5) |
-| `ResolvedorIdentidade` | decidir se a mensagem pertence a atendimento ativo, a T36, a T37 — ou se é ambígua (§7.1) | contexto recuperado (§6.2) + interpretação (§6.3) | identidade resolvida ou ambígua, com o critério que a determinou |
+| `ResolvedorIdentidade` | decidir se a mensagem pertence a atendimento ativo, a T36, a T37 — ou se é ambígua — aplicando a cascata determinística **D0–D6** de §7.1. **Puro e determinístico**: zero I/O, zero rede, zero LLM, zero YAML, zero relógio. Não calcula elegibilidade nem recência, não consulta persistência, não interpreta texto, não cria atendimento, não persiste, não aplica transição e não altera a `MaquinaEstados` | **conjunto elegível fechado de candidatos já produzido pela etapa 3** (§6.2) + **projeção estruturada da interpretação** (§6.3) + veredito do identificador já validado (§6.1.1) | **decisão auditável** (§7.1): `identidade`, `id_atendimento_alvo`, `criterio`, `situacao_takeover`, `candidatos_avaliados`, `classificacao_por_candidato`, `vinculo_declarado`, `escopo_restrito_por_identificador`. `identidade` pode ser `None` em **três** situações estruturalmente distintas: `PRIMEIRO_CONTATO_COMPROVADO`, `SEM_CANDIDATO_ELEGIVEL` e **`situacao_takeover != SEM_TAKEOVER`** — neste último caso porque a resolução de referente é **curto-circuitada antes de D0–D6** (R5, §7.1). As três continuam distinguíveis por campos estruturados (`criterio` e `situacao_takeover`), **sem criar quinto membro em `Identidade`**. **Nenhum texto livre na saída** |
 | `CarregadorYaml` | ler `knowledge/casa77.yaml` uma vez por execução e manter em memória | caminho do arquivo | estrutura carregada + versão |
 | `ValidadorYaml` | conferir presença, tipo e coerência dos campos exigidos pelas regras | estrutura carregada | válido / lista de campos faltantes |
 | `ValidadorConsistenciaBase` | conferir cada `Rxx` que cita fato comercial contra o YAML carregado (F3) | respostas aprovadas + YAML | lista de divergências, com `Rxx` e campo do YAML |
@@ -345,9 +345,9 @@ adivinhar.
 |---|---|---|---|---|
 | 1 | Receber e normalizar mensagem | entrada no contrato comum de §6.1, **com a mensagem bruta** | mensagem normalizada + origem do identificador | mensagem vazia → não processar, sem transição |
 | 2 | Verificar idempotência | mensagem normalizada + metadados | chave de idempotência (§4.3) + veredito duplicada/nova | duplicata → encerrar o ciclo sem efeito (doc 06 §4 passo 1); sem identificador de canal → chave composta, marcada como heurística no log |
-| 3 | **Recuperar contexto persistido** | canal + contato + identificador do atendimento, quando houver | contexto recuperado (§6.2): atendimento indicado quando existir, atendimentos ativos ou recentes do contato necessários à resolução, estado, dados, qualificação, pendências, motivos | atendimento indicado e **não recuperado** → erro operacional: bloquear, preservar, alertar. Estado corrompido → bloqueio (§7.1). **Nunca criar atendimento novo por não encontrar o indicado** |
+| 3 | **Recuperar contexto persistido** | canal + contato + identificador do atendimento, quando houver | contexto recuperado (§6.2): atendimento indicado quando existir, o **conjunto elegível fechado** de atendimentos ativos ou recentes do contato necessários à resolução — nunca o histórico inteiro —, estado, dados, qualificação, pendências, motivos | atendimento indicado e **não recuperado** → erro operacional: bloquear, preservar, alertar. Estado corrompido → bloqueio (§7.1). **Nunca criar atendimento novo por não encontrar o indicado** |
 | 4 | Interpretar e extrair | mensagem normalizada | intenções, campos, perguntas, referências ao evento anterior, confiança | LLM indisponível → modo degradado (§7); confiança baixa → campo **não** é registrado |
-| 5 | **Resolver identidade do atendimento** | contexto recuperado (3) + interpretação (4) | atendimento ativo, mesma solicitação (T36), nova solicitação (T37) **ou ambíguo** | ambíguo → **não decidir**: pedir esclarecimento, sem herdar nem sobrescrever dado algum (§7.1); persistir o processamento pendente quando possível |
+| 5 | **Resolver identidade do atendimento** | conjunto elegível fechado (3) + projeção estruturada da interpretação (4) | **primeiro** `situacao_takeover` (§6.3); se `SEM_TAKEOVER`, um de **seis** resultados conceituais: `ATENDIMENTO_ATIVO`, `MESMA_SOLICITACAO` (T36), `NOVA_SOLICITACAO` (T37), `AMBIGUA`, `PRIMEIRO_CONTATO_COMPROVADO` (identidade `None`) e `SEM_CANDIDATO_ELEGIVEL` (identidade `None`) — sempre com `criterio` do vocabulário fechado de §7.1 | ambíguo → **não decidir**: pedir esclarecimento, sem herdar nem sobrescrever dado algum (§7.1, A1–A7); persistir o processamento pendente quando possível. `SEM_CANDIDATO_ELEGIVEL` → **encerra sem transição**; tratamento pelo orquestrador **bloqueado pela pendência E4**. `situacao_takeover != SEM_TAKEOVER` → **D0–D6 não executam** e a identidade **não é calculada** (R5, abaixo) |
 | 6 | Registrar dados e correções | campos extraídos + atendimento resolvido | dados atualizados + correções + **sinal de mutação efetiva de insumo da qualificação** (`insumo_qualificacao_atualizado`, doc 06 §4.1) | conflito entre mensagem e estado → §7; dado incerto nunca é gravado; identidade ambígua → nada é registrado no atendimento anterior |
 | 7 | Executar a ordem determinística do doc 06 §4 — **primeira decisão determinística do ciclo** | dados + eventos + avaliação comercial feita **a montante** contra o YAML (`RegrasComerciais`, `Qualificador`) + **todas as condições estruturadas de §4.4** já determinadas — `insumo_qualificacao_atualizado`, classificação de `E09`, `resposta_aprovada_disponivel`, `interesse_confirmar_disponibilidade`, `calendario_integrado`, `identidade`, `motivos_handoff` e `motivo_encerramento`. A `MaquinaEstados` recebe tudo já estruturado e **não lê o YAML** (doc 06 I23) | eventos confirmados, violações, motivos, qualificação recalculada e o **estado intermediário** resultante da **primeira chamada da `MaquinaEstados`** — caminho percorrido (uma ou mais `Txx`, doc 06 §4.2), ainda sujeito ao fechamento da etapa 12 | `E07`, `E08`, `E09` e `E18` são **recebidos/confirmados a partir das saídas determinísticas a montante**, não fabricados aqui; violação da precedência (ex.: `E07` sobre incompatibilidade) é erro de programa, não caso de negócio → bloquear envio. **O produtor concreto de `E09` não é definido nesta arquitetura — S2-D8 permanece aberta** (doc 06 §11) |
 | 8 | Consultar YAML e respostas aprovadas | perguntas detectadas | valores de campo e códigos `R` correspondentes | campo `null`/`pendente` e ausência de resposta aprovada **já foram confirmados como `E09` na etapa 7** (gatilhos 1–2 do doc 04, doc 06 §9): aqui a pendência é **consultada e registrada**, nunca criada tardiamente. Esta etapa **não produz condição consumida pela etapa 7** |
@@ -356,7 +356,7 @@ adivinhar.
 | 11 | Validar o rascunho | rascunho + fatos autorizados | aprovado ou bloqueado + motivo | qualquer valor, promessa ou termo fora da lista → bloqueio |
 | 12 | Bloquear ou substituir — e **fechar o ciclo determinístico** | resultado de 11 | texto final seguro + fechamento com `E15` e `E12` **pós-efeito** | substituir pelo texto aprovado literal; se não houver, R03 + handoff. Nunca reenviar ao LLM mais de uma vez. `E15` e `E12` só são confirmados **depois do efeito real** (doc 06 §2.2) e reentram na `MaquinaEstados` na ordem `E15` → `E12` (doc 06 §4.2): **no máximo duas chamadas adicionais** — uma para `E15`, uma para `E12` |
 | 13 | Persistir — **persistência operacional** (§7.3) | **estado final produzido pela última chamada determinística aplicável após o fechamento da etapa 12**: o resultado da **etapa 7** quando não houver `E15` nem `E12`; o resultado **pós-`E15`** quando só houver `E15`; o resultado **pós-`E12`** quando a cadeia completa existir | estado, dados, qualificação, pendências, motivos e chave de idempotência gravados | falha de persistência → **bloquear a emissão** da resposta que depende da nova transição; preservar a mensagem para reprocessamento idempotente; alerta operacional (§7.2) |
-| 14 | Emitir resposta ou handoff | texto final + decisão **já gravada** | resposta ao interessado e/ou resumo para Douglas | **ordem de emissão obrigatória: 1. tentar a entrega do resumo; 2. somente após sucesso, emitir a mensagem de encaminhamento ao interessado** (doc 06 §10). Estado `atendimento_humano` → nada é emitido (I03); handoff não registrado → não afirmar que houve handoff (§7.2) |
+| 14 | Emitir resposta ou handoff | texto final + decisão **já gravada** | resposta ao interessado e/ou resumo para Douglas | **ordem de emissão obrigatória: 1. tentar a entrega do resumo; 2. somente após sucesso, emitir a mensagem de encaminhamento ao interessado** (doc 06 §10). Estado `atendimento_humano` → nada é emitido (I03); handoff não registrado → não afirmar que houve handoff (§7.2). **`deve responder = false` sempre que `situacao_takeover != SEM_TAKEOVER`** (R5, §6.5) |
 
 Regras do pipeline:
 
@@ -373,10 +373,49 @@ Regras do pipeline:
 - **a etapa 13 antecede a 14, sem exceção** — inclusive para resposta segura e para handoff
   (§7.2). Nunca responder um estado que não foi gravado;
 - a etapa 11 roda mesmo quando o texto veio pronto de `respostas-aprovadas.md`;
-- as etapas 3 e 5 podem terminar o ciclo sem produzir transição: contexto inválido bloqueia,
-  identidade ambígua pede esclarecimento (§7.1);
+- as etapas 3 e 5 podem terminar o ciclo sem produzir transição, em **quatro** situações:
+  1. **contexto inválido** — a etapa 3 bloqueia (§7.1, S1–S8);
+  2. **`Identidade.AMBIGUA`** — a etapa 5 termina sem transição e aplica **A1–A7**;
+  3. **`SEM_CANDIDATO_ELEGIVEL`** — a etapa 5 termina sem transição enquanto a pendência
+     **E4** estiver aberta. O que acontece depois **não é decidido aqui**;
+  4. **`situacao_takeover == HUMANO_MULTIPLO`** — a etapa 5 termina sem transição: **sem
+     alvo**, `identidade = None`, a **`MaquinaEstados` não é chamada**, processamento
+     pendente preservado, **alerta operacional** e **zero emissão automática** (R5-P0).
+
+  **`HUMANO_UNICO` não pertence a esta lista**: ele **não** encerra sem transição. O ciclo
+  prossegue e a `MaquinaEstados` é chamada com `estado = atendimento_humano` e
+  `CondicoesCiclo.identidade = None`; `E01` segue por **T33**, que mantém o estado e proíbe
+  qualquer resposta automática;
 - a etapa 4 pode rodar sobre contexto inválido **apenas para diagnóstico** — nesse caso
   nenhuma transição e nenhuma gravação comercial ocorrem (§7.1).
+
+**Precedência de takeover na etapa 5** (arbitragem R5). **Antes** da restrição por
+identificador e **antes de D0**, a etapa 5 determina `situacao_takeover` (§6.3). O resultado
+governa se a cascata sequer executa:
+
+| `situacao_takeover` | Etapa 5 | `id_atendimento_alvo` | `identidade` | Consequência |
+|---|---|---|---|---|
+| `SEM_TAKEOVER` | executa D0–D6 normalmente | conforme a cascata | conforme a cascata | fluxo normal da R3/R5 |
+| `HUMANO_UNICO` | **D0–D6 não executam** | **id do único atendimento em `atendimento_humano`** | `None` — não calculada | evidência estruturada preservada para auditoria. A futura chamada da `MaquinaEstados` recebe `estado = atendimento_humano` e `CondicoesCiclo.identidade = None`; `E01` segue por **T33**; **zero resposta automática** |
+| `HUMANO_MULTIPLO` | **D0–D6 não executam** | `None` | `None` — não calculada | **a `MaquinaEstados` não é chamada**; o ciclo termina na etapa 5 **sem transição**; processamento pendente preservado; **alerta operacional**; **zero resposta automática** |
+
+| # | Regra |
+|---|---|
+| W1 | Em `HUMANO_MULTIPLO` o motor **não escolhe** entre os atendimentos e **não usa recência para desempatar**. Escolher seria inventar um referente que os sinais não determinam. |
+| W2 | `HUMANO_UNICO` e `HUMANO_MULTIPLO` **não são resultados do enum `Identidade`** e não são critérios de `CriterioIdentidade`. São valores de `situacao_takeover`, dimensão ortogonal (§6.3, K1). |
+| W3 | Em ambos, `identidade = None` significa **"identidade não calculada por curto-circuito de takeover"** — distinto de `PRIMEIRO_CONTATO_COMPROVADO` e de `SEM_CANDIDATO_ELEGIVEL`, que são conclusões da cascata (§6.4). |
+
+**Tratamento dos resultados da etapa 5 quando `situacao_takeover == SEM_TAKEOVER`**
+(arbitragem R3). Os seis resultados conceituais e o que cada um autoriza:
+
+| Resultado | Identidade | Tratamento |
+|---|---|---|
+| `ATENDIMENTO_ATIVO` | resolvida | alvo obrigatório; o ciclo segue para a etapa 6 sobre o atendimento alvo |
+| `MESMA_SOLICITACAO` (T36) | resolvida | alvo obrigatório, em estado `encerrado`; reabertura preservando os dados já registrados |
+| `NOVA_SOLICITACAO` (T37) | resolvida | alvo `None`; novo atendimento **sem reutilizar dado comercial** do anterior (I15) |
+| `AMBIGUA` | ambígua | **não transicionar**; pedir **esclarecimento objetivo**; **nada é herdado**; **A1–A7 continuam valendo integralmente** |
+| `PRIMEIRO_CONTATO_COMPROVADO` | `None` | **resultado legítimo**, não falha: nenhum atendimento anterior é alvo; compatível **futuramente** com o fluxo `NOVO`/T01, que não é acionado por esta etapa |
+| `SEM_CANDIDATO_ELEGIVEL` | `None` | há **histórico anterior conhecido** e **zero candidatos elegíveis**. **Não equivale a primeiro contato**; **não autoriza chamar a `MaquinaEstados` como `NOVO`**; o tratamento de integração está **bloqueado pela pendência E4** (§12; doc 06 §4.5, G1–G7) |
 
 ---
 
@@ -418,6 +457,10 @@ da resolução de contexto (§6.2), não como dado confiado ao canal.
 | N4 | **Não prova por si só que o atendimento existe.** Quem prova é a persistência. |
 | N5 | Identificador **inexistente, incompatível ou corrompido → erro operacional** (§7.1): bloqueio, mensagem preservada, alerta. |
 | N6 | O motor **nunca cria atendimento novo silenciosamente** porque o identificador não foi encontrado. |
+| N7 | **O identificador validado apenas restringe o escopo da resolução a um candidato** (arbitragem R3). Ele **não estabelece continuidade** e **não substitui os demais sinais** de §7.1: o candidato identificado ainda passa integralmente pelo teste **mesma × nova × ambígua** da cascata D0–D6, inclusive quando está **encerrado**. Coerente com **N2** (é referência para consulta) e **N4** (não prova por si só). A rastreabilidade dessa restrição é o campo `escopo_restrito_por_identificador` (§7.1) — **não existe critério `IDENTIFICADOR_VALIDADO`**. |
+
+Os vereditos `NAO_ENCONTRADO` e `INCOMPATIVEL` **não chegam** à etapa 5: continuam
+bloqueados anteriormente na **etapa 3**, por **N5**, **N6** e **S3**.
 
 #### 6.1.2 Fonte autoritativa do estado
 
@@ -440,14 +483,32 @@ Produzido pela etapa 3, a partir da persistência operacional. Nunca vem do cana
 | Campo | Conteúdo |
 |---|---|
 | atendimento indicado | resultado da consulta pelo identificador de §6.1.1, quando ele foi fornecido: encontrado e compatível, não encontrado, ou incompatível |
-| atendimentos do contato | atendimentos ativos ou recentes do mesmo contato **necessários à resolução de identidade** — não o histórico inteiro |
+| atendimentos do contato | **conjunto elegível fechado**: os atendimentos ativos ou recentes do mesmo contato **necessários à resolução de identidade** — não o histórico inteiro. O conjunto é **produzido pela etapa 3** e entregue pronto ao `ResolvedorIdentidade` |
 | estado da conversa | um dos oito valores do doc 06 §1.1, por atendimento recuperado |
 | dados já coletados | tipo, data, convidados, formato, nome, contato |
 | `resultado_qualificacao` | valor atual de cada atendimento recuperado |
 | `pendencias_resposta` | perguntas em aberto |
 | motivos registrados | incompatibilidade e handoff já detectados |
-| **havia estado esperado?** | conclusão **interna** da resolução: o contato tem atendimento anterior conhecido? Distingue primeiro contato comprovado de estado ausente por falha (§7.1, S6) |
+| **havia estado esperado?** | conclusão **interna** da resolução: **existe atendimento anterior conhecido do contato**, *independentemente de algum deles integrar o conjunto elegível deste ciclo*. Distingue primeiro contato comprovado de estado ausente por falha (§7.1, S6) e, agora, também de `SEM_CANDIDATO_ELEGIVEL` |
 | integridade | contexto íntegro, ausente ou corrompido. Ausente ou corrompido quando havia estado esperado → bloqueio (E5) |
+
+**Fronteira do conjunto elegível** (arbitragem R3). O `ResolvedorIdentidade` **recebe o
+conjunto pronto**: não calcula elegibilidade, **não calcula recência** e **não recebe o
+histórico inteiro**. Passar o histórico completo como substituto da falta de política de
+recência é **violação de contrato**, não simplificação — transforma em candidatos avaliados
+atendimentos que a política excluiria, alterando o resultado da cascata D0–D6.
+
+Disso decorrem combinações **válidas e distintas**:
+
+| Combinação | Significado |
+|---|---|
+| `havia estado esperado?` = **sim** + **zero** candidatos elegíveis | estado válido → `SEM_CANDIDATO_ELEGIVEL`. **Não é** contexto ausente nem corrompido |
+| `havia estado esperado?` = **não** + **zero** candidatos elegíveis | `PRIMEIRO_CONTATO_COMPROVADO` |
+| contexto **ausente** ou **corrompido** havendo estado esperado | **bloqueio na etapa 3** por **E5/S7** — a etapa 5 nem chega a ser executada |
+
+**N-a — pendência de integração.** A **política concreta de elegibilidade e de recência**
+que produz esse conjunto **permanece aberta** (§12). Enquanto não for arbitrada, o conjunto
+elegível é um contrato de entrada exigido, nunca um cálculo do resolvedor.
 
 ### 6.3 Interpretação (saída do LLM na etapa 4)
 
@@ -467,6 +528,75 @@ identidade de atendimento. Ele apenas relata o que leu. `pedido de humano` é um
 uma decisão: quem emite `E18` é o `DetectorHandoff`. `referências ao evento anterior` também
 é sinal: quem decide T36 × T37 é o `ResolvedorIdentidade`, na etapa 5.
 
+#### Projeção estruturada para a identidade (arbitragem R3)
+
+O `ResolvedorIdentidade` **não recebe esta tabela nem texto conversacional**. Ele recebe uma
+**projeção própria**, estruturada e fechada, derivada dela. O campo central é
+`IntencaoIdentidade`, com **exatamente três** valores e **nenhum texto livre**:
+
+| `IntencaoIdentidade` | Significado |
+|---|---|
+| `CONTINUIDADE_DECLARADA` | a mensagem declara tratar do evento já conversado |
+| `NOVO_EVENTO_DECLARADO` | a mensagem declara tratar de um evento diferente |
+| `NAO_DISCRIMINANTE` | a mensagem não discrimina identidade |
+
+As **intenções genéricas `E02`–`E11` e `E17` não discriminam identidade por si mesmas**:
+informar data, perguntar preço ou pedir humano são compatíveis com qualquer candidato e
+projetam-se em `NAO_DISCRIMINANTE`.
+
+`IntencaoIdentidade` combina-se com `referencia_evento_anterior` (`COM_REFERENCIA` ×
+`SEM_REFERENCIA`), derivando o `Vinculo` declarado. O `Vinculo` tem **exatamente quatro**
+valores — `DECLARA_CONTINUIDADE`, `DECLARA_NOVO`, `SEM_DECLARACAO` e
+`DECLARACAO_CONTRADITORIA` (correção C1 da arbitragem R5) — e a tabela é **total**: as seis
+combinações possíveis têm valor próprio, nenhuma resulta em estado implícito.
+
+| `IntencaoIdentidade` | `referencia_evento_anterior` | `Vinculo` |
+|---|---|---|
+| `CONTINUIDADE_DECLARADA` | `COM_REFERENCIA` | `DECLARA_CONTINUIDADE` |
+| `CONTINUIDADE_DECLARADA` | `SEM_REFERENCIA` | `DECLARA_CONTINUIDADE` |
+| `NOVO_EVENTO_DECLARADO` | `SEM_REFERENCIA` | `DECLARA_NOVO` |
+| `NOVO_EVENTO_DECLARADO` | `COM_REFERENCIA` | **`DECLARACAO_CONTRADITORIA`** |
+| `NAO_DISCRIMINANTE` | `COM_REFERENCIA` | `DECLARA_CONTINUIDADE` |
+| `NAO_DISCRIMINANTE` | `SEM_REFERENCIA` | `SEM_DECLARACAO` |
+
+`NOVO_EVENTO_DECLARADO` acompanhado de referência ao evento anterior é **sinal
+contraditório**: a mensagem declara evento novo e simultaneamente aponta para o antigo. O
+resolvedor **não escolhe um lado** — o par produz `DECLARACAO_CONTRADITORIA`, consumido por
+**curto-circuito em D0** (§7.1).
+
+A quinta linha — `NAO_DISCRIMINANTE` + `COM_REFERENCIA` → `DECLARA_CONTINUIDADE` — é a
+semântica já arbitrada na R3 e **permanece inalterada**: referência ao evento anterior sem
+declaração explícita de novidade é sinal de continuidade, não de contradição.
+
+**`IntencaoIdentidade` permanece com exatamente três valores** — `CONTINUIDADE_DECLARADA`,
+`NOVO_EVENTO_DECLARADO`, `NAO_DISCRIMINANTE`. Nenhum quarto valor, nenhuma renomeação: a
+correção C1 amplia o `Vinculo`, **não** a intenção.
+
+**Confiança baixa é tratada como ausência.** Um sinal com confiança baixa é projetado como
+**ausente / não discriminante** para efeito de identidade — nunca como sinal fraco a ser
+ponderado. **Nenhum threshold numérico novo é criado**: a confiança já é binária (§7.1).
+
+#### `SituacaoTakeover` — contrato conceitual (arbitragem R5)
+
+Contrato **exclusivamente documental**; nenhum arquivo de `src/` é criado por esta
+arbitragem. Seja **`H`** o conjunto dos atendimentos recuperados para o contato/canal cujo
+estado é **`atendimento_humano`**:
+
+| `SituacaoTakeover` | Condição |
+|---|---|
+| `SEM_TAKEOVER` | `quantidade(H) == 0` |
+| `HUMANO_UNICO` | `quantidade(H) == 1` |
+| `HUMANO_MULTIPLO` | `quantidade(H) >= 2` |
+
+Exatamente **três** valores. Fronteiras obrigatórias:
+
+| # | Regra |
+|---|---|
+| K1 | **Não é `Identidade`.** É dimensão **ortogonal**; não existe e nunca existirá `TAKEOVER_HUMANO_*` como membro de `Identidade`. |
+| K2 | **Não entra em `CondicoesCiclo`** (§4.4). O contrato de condições consumidas pela `MaquinaEstados` permanece **intocado**. |
+| K3 | **Não chega à `MaquinaEstados`.** A máquina continua recebendo `estado` e as condições já existentes — nada é acrescentado à sua entrada. |
+| K4 | **Não cria estado**, **não cria evento** (`Exx`) e **não cria transição** (`Txx`). `atendimento_humano`, `E01`, `E13`, `E14`, T31, T33 e T34 permanecem exatamente como estão em doc 06 §3. |
+
 ### 6.4 Decisão determinística
 
 | Campo | Conteúdo |
@@ -478,17 +608,75 @@ uma decisão: quem emite `E18` é o `DetectorHandoff`. `referências ao evento a
 | pendências de resposta | perguntas sem resposta aprovada, com o campo pendente correspondente |
 | motivo de incompatibilidade | motivo objetivo + campo do YAML violado (I04) |
 | motivo de handoff | motivo enumerado do doc 06 §2.1, ou lista de motivos |
-| próximo estado | decisão única (I19). Pode ser **"sem transição"** quando a etapa 3 ou a 5 termina o ciclo (contexto inválido ou identidade ambígua) |
-| identidade do atendimento | atendimento ativo, mesma solicitação (T36), nova solicitação (T37) ou **ambígua**; quando ambígua, nenhum dado anterior é herdado ou sobrescrito (§7.1) |
+| próximo estado | decisão única (I19). Pode ser **"sem transição"** quando a etapa 3 ou a 5 termina o ciclo, nos **quatro** casos de §5: contexto inválido, `Identidade.AMBIGUA`, `SEM_CANDIDATO_ELEGIVEL` enquanto **E4** estiver aberta, e `situacao_takeover == HUMANO_MULTIPLO`. **`HUMANO_UNICO` não está entre eles** — o ciclo segue para a máquina e resolve por T33 |
+| `identidade` | `Identidade \| None` — atendimento ativo, mesma solicitação (T36), nova solicitação (T37) ou **ambígua**; `None` quando a cascata conclui `PRIMEIRO_CONTATO_COMPROVADO` ou `SEM_CANDIDATO_ELEGIVEL`, **e também** quando `situacao_takeover != SEM_TAKEOVER` e a cascata não executa (R5, tabela abaixo). Quando ambígua, nenhum dado anterior é herdado ou sobrescrito (§7.1). **`Identidade` permanece com os mesmos quatro membros** — nenhum valor novo é criado no enum |
+| `id_atendimento_alvo` | `str \| None` — **qual** atendimento a decisão aponta. Separar o alvo da relação é o que permite `NOVA_SOLICITACAO` e `AMBIGUA` conviverem com alvo `None` sem ambiguidade de leitura |
+| `criterio` | `CriterioIdentidade \| None` — **por que** a decisão foi essa, do vocabulário fechado de **12 códigos** de §7.1. **Obrigatório** (um dos 12) quando `situacao_takeover == SEM_TAKEOVER`, porque a cascata executou; **`None`** quando `situacao_takeover != SEM_TAKEOVER`, porque D0–D6 não executaram. **Nenhum código novo é criado para representar essa ausência** — os 12 permanecem os mesmos |
+| `situacao_takeover` | `SituacaoTakeover` (§6.3) — **sempre presente**. Campo **ortogonal** a `identidade`: não amplia o enum e não entra em `CondicoesCiclo` |
 | fatos autorizados | lista fechada; cada fato com valor, texto, origem (`campo do YAML` ou `Rxx`) e resultado da conferência contra o YAML (F3) |
 | divergências de base | lista de `Rxx` em conflito com o YAML detectados neste ciclo (F4); vazia no caso normal |
+
+Os demais campos de auditoria da resolução — `candidatos_avaliados`,
+`classificacao_por_candidato`, `vinculo_declarado` e `escopo_restrito_por_identificador` —
+estão detalhados em **§7.1**.
+
+**Invariantes de identidade × alvo** (arbitragem R3). A combinação é fechada:
+
+| `criterio` resolve em | `identidade` | `id_atendimento_alvo` |
+|---|---|---|
+| `ATENDIMENTO_ATIVO` | `ATENDIMENTO_ATIVO` | **obrigatório** |
+| `MESMA_SOLICITACAO` | `MESMA_SOLICITACAO` | **obrigatório** |
+| `NOVA_SOLICITACAO` | `NOVA_SOLICITACAO` | `None` |
+| `AMBIGUA` | `AMBIGUA` | `None` |
+| `PRIMEIRO_CONTATO_COMPROVADO` | `None` | `None` |
+| `SEM_CANDIDATO_ELEGIVEL` | `None` | `None` |
+
+Qualquer outra combinação é **erro de contrato**. E, com destaque: **`SEM_CANDIDATO_ELEGIVEL`
+não autoriza automaticamente `Estado.NOVO`** — identidade `None` ali significa ausência de
+alvo, não início de atendimento (doc 06 §4.5, G3/G4/G6).
+
+**Sob takeover** (arbitragem R5), a tabela acima **não se aplica**, porque a cascata não
+executou:
+
+| `situacao_takeover` | `identidade` | `id_atendimento_alvo` | `criterio` |
+|---|---|---|---|
+| `HUMANO_UNICO` | `None` | id do único atendimento em `atendimento_humano` | **`None`** |
+| `HUMANO_MULTIPLO` | `None` | `None` | **`None`** |
+
+O tipo permanece **`identidade: Identidade \| None`** — **o enum não é ampliado**. Aqui,
+`None` significa **"identidade não calculada por curto-circuito de takeover"**, leitura
+distinta dos demais casos documentados:
+
+| `identidade = None` porque… | Distinguido por |
+|---|---|
+| primeiro contato comprovado | `criterio = PRIMEIRO_CONTATO_COMPROVADO`, `situacao_takeover = SEM_TAKEOVER` |
+| histórico conhecido sem candidato elegível | `criterio = SEM_CANDIDATO_ELEGIVEL`, `situacao_takeover = SEM_TAKEOVER` |
+| **canal sob controle humano** | `situacao_takeover != SEM_TAKEOVER`, `criterio = None` |
+
+`id_atendimento_alvo` é o campo já existente no contrato R3 e **é mantido** — em
+`HUMANO_UNICO` ele aponta o atendimento humano, sem que isso constitua relação de identidade
+resolvida.
+
+**Matriz de obrigatoriedade de `criterio`** — fechada e exaustiva:
+
+| Caso | `situacao_takeover` | `criterio` |
+|---|---|---|
+| `PRIMEIRO_CONTATO_COMPROVADO` | `SEM_TAKEOVER` | **obrigatório** — `PRIMEIRO_CONTATO_COMPROVADO` |
+| `SEM_CANDIDATO_ELEGIVEL` | `SEM_TAKEOVER` | **obrigatório** — `SEM_CANDIDATO_ELEGIVEL` |
+| resultado normal ou ambíguo da cascata | `SEM_TAKEOVER` | **obrigatório** — um dos 12 |
+| `HUMANO_UNICO` | `HUMANO_UNICO` | **`None`** |
+| `HUMANO_MULTIPLO` | `HUMANO_MULTIPLO` | **`None`** |
+
+**Nenhum outro caso admite `criterio = None`.** Em particular, `criterio = None` com
+`situacao_takeover == SEM_TAKEOVER` é **erro de contrato**: se a cascata executou, ela
+decidiu, e toda decisão da cascata tem código.
 
 ### 6.5 Saída
 
 | Campo | Conteúdo |
 |---|---|
 | texto | mensagem final ao interessado, já validada |
-| deve responder | falso em `atendimento_humano`, em mensagem duplicada e quando a persistência falhou (§7.2) |
+| deve responder | falso em `atendimento_humano`, em mensagem duplicada, quando a persistência falhou (§7.2) e **sempre que `situacao_takeover != SEM_TAKEOVER`** (R5) |
 | deve fazer handoff | derivado do próximo estado — e só afirmado ao interessado depois de registrado (§7.2) |
 | resumo para Douglas | campos do bloco de `docs/04-handoff-humano.md` |
 | bloqueios | o que o validador vetou e por quê; inclui divergência de base (F4) |
@@ -497,6 +685,19 @@ uma decisão: quem emite `E18` é o `DetectorHandoff`. `referências ao evento a
 
 Os logs mínimos são o que torna uma resposta auditável depois. Sem a origem de cada fato,
 não é possível provar que um valor veio do YAML.
+
+**Sob takeover — o que pode e o que não pode ser afirmado** (arbitragem R5). A âncora é
+única: **`deve responder = false` sempre que `situacao_takeover != SEM_TAKEOVER`**. A partir
+dela, os limites do que a saída pode declarar:
+
+| `situacao_takeover` | Pode afirmar | **Não pode afirmar** |
+|---|---|---|
+| `HUMANO_UNICO` | T33 mantém `atendimento_humano`; resposta automática **silenciada**; o eventual motivo foi **preservado** quando aplicável | "Douglas recebeu"; "Douglas foi notificado"; "mensagem entregue"; qualquer afirmação de **entrega física** |
+| `HUMANO_MULTIPLO` | processamento pendente **preservado**; **alerta operacional** emitido; **zero emissão automática** | "registrado para o humano"; "entregue"; "recebido"; qualquer **destinatário humano específico** |
+
+O princípio é o mesmo já vigente em §7.2 e em doc 06 §10: **registro não é entrega**. O motor
+pode afirmar o que ele próprio fez — silenciar, preservar, alertar — e nunca o que depende de
+um terceiro ter recebido.
 
 ### 6.6 Política mínima de logs e dados sensíveis
 
@@ -563,15 +764,335 @@ Insumos que o `ResolvedorIdentidade` deve usar — todos, não um só:
 
 | Insumo | Origem |
 |---|---|
-| contexto recuperado da persistência | §6.2 |
-| intenção e dados extraídos da mensagem | §6.3 |
-| tipo de evento | dado extraído × dado recuperado |
-| data | dado extraído × dado recuperado |
+| **conjunto elegível fechado** de candidatos, já produzido pela etapa 3 | §6.2 |
+| **projeção estruturada** da interpretação | §6.3 |
+| tipo de evento | dado extraído × dado registrado no candidato |
+| data | dado extraído × dado registrado no candidato |
 | referências explícitas ao evento anterior | §6.3 |
 | identificador de atendimento **já validado**, quando houver | §6.1.1 |
+| `havia estado esperado?` | §6.2 |
 
-Resultados possíveis: atendimento ativo, mesma solicitação (T36), nova solicitação (T37), ou
-**ambíguo**.
+O componente é **puro e determinístico** (arbitragem R3): **zero I/O, zero rede, zero LLM,
+zero YAML, zero relógio**. Ele **não** calcula elegibilidade, **não** calcula recência,
+**não** consulta persistência, **não** interpreta texto, **não** cria atendimento, **não**
+persiste, **não** aplica transição e **não** altera a `MaquinaEstados`. Dadas as mesmas
+entradas, produz sempre a mesma decisão.
+
+Resultados possíveis — **seis**: `ATENDIMENTO_ATIVO`, `MESMA_SOLICITACAO` (T36),
+`NOVA_SOLICITACAO` (T37), `AMBIGUA`, `PRIMEIRO_CONTATO_COMPROVADO` (identidade `None`) e
+`SEM_CANDIDATO_ELEGIVEL` (identidade `None`) — todos alcançados **somente quando
+`situacao_takeover == SEM_TAKEOVER`**. O enum **`Identidade` permanece com quatro membros**:
+os dois últimos resultados são expressos por `identidade = None` distinguidos pelo
+`criterio`, não por membros novos. Sob takeover (R5-P0, adiante) a cascata **não executa** e
+`identidade = None` decorre de curto-circuito, distinguido por `situacao_takeover` — também
+sem membro novo.
+
+#### Contratos locais do `ResolvedorIdentidade` (arbitragem R3)
+
+Contratos **conceituais** — nenhum arquivo de `src/` é criado por esta arbitragem.
+
+**`CandidatoAtendimento`** — um elemento do conjunto elegível:
+
+| Campo | Tipo | Observação |
+|---|---|---|
+| `id_atendimento` | `str` | identificador do candidato |
+| `estado` | `Estado` | um dos oito valores do doc 06 §1.1 |
+| `tipo_evento_registrado` | `str \| None` | como **registrado** no candidato; `None` quando não coletado |
+| `data_nomeada_registrada` | `str \| None` | valor **nominal** registrado; `None` quando não coletado |
+
+Nenhum outro campo do atendimento entra: **sem nome, sem telefone, sem mensagem, sem preço,
+sem capacidade, sem número de convidados, sem formato**.
+
+**`VeredictoIdentificador`** — resultado da validação de §6.1.1:
+
+| Valor | Significado |
+|---|---|
+| `NAO_INFORMADO` | identificador não foi fornecido — situação normal (N1) |
+| `ENCONTRADO` | fornecido, encontrado e compatível com canal e contato |
+| `NAO_ENCONTRADO` | fornecido e não encontrado |
+| `INCOMPATIVEL` | fornecido e apontando para atendimento de outro contato |
+
+`NAO_ENCONTRADO` e `INCOMPATIVEL` **normalmente já foram bloqueados na etapa 3** (N5, N6,
+S3). Se alcançarem a etapa 5, são **erro de contrato defensivo** — o resolvedor levanta
+erro e **não devolve identidade alguma**; nunca os trata como caso de negócio.
+
+**Projeção da interpretação** — os campos que o resolvedor recebe de §6.3:
+
+| Campo | Domínio |
+|---|---|
+| `intencao_identidade` | `CONTINUIDADE_DECLARADA` \| `NOVO_EVENTO_DECLARADO` \| `NAO_DISCRIMINANTE` |
+| `referencia_evento_anterior` | presente \| ausente |
+| `confianca_referencia` | `ALTA` \| `BAIXA` |
+| `tipo_evento_extraido` | `str \| None` |
+| `confianca_tipo` | `ALTA` \| `BAIXA` |
+| `data_nomeada_extraida` | `str \| None` |
+| `confianca_data` | `ALTA` \| `BAIXA` |
+
+Regras de confiança, sem nenhum limiar numérico novo:
+
+| # | Regra |
+|---|---|
+| C1 | A confiança é **binária**: `ALTA` ou `BAIXA`. **Nenhum threshold numérico** é definido aqui. |
+| C2 | **Valor presente sem confiança declarada é erro de contrato**, não valor com confiança implícita. |
+| C3 | Confiança `BAIXA` → o campo é **tratado como ausente** para efeito de identidade. Não é sinal fraco ponderado: é ausência. |
+
+#### Comparação nominal por candidato
+
+A comparação é **exclusivamente nominal**. **Sem score, sem similaridade, sem sinônimo, sem
+interpretação semântica e sem threshold numérico novo.** Duas comparações, cada uma com três
+valores:
+
+| Comparação | Valores |
+|---|---|
+| `comparacao_tipo` | `IGUAL` \| `DIFERENTE` \| `INDETERMINADO` |
+| `comparacao_data` | `IGUAL` \| `DIFERENTE` \| `INDETERMINADO` |
+
+| # | Regra |
+|---|---|
+| P1 | `INDETERMINADO` sempre que **qualquer um dos lados** estiver ausente — extraído ausente, registrado ausente, ou confiança `BAIXA` (C3). |
+| P2 | Igualdade **nominal normalizada**, seguindo o precedente das regras de normalização já existentes: **caixa**, **espaços** e **acentos**. Nada além disso. |
+| P3 | A data é comparada como **valor nominal**. O resolvedor **não parseia calendário**, não resolve um nome de mês contra uma data em formato ISO, não calcula proximidade e não usa relógio. |
+| P4 | O resolvedor **não normaliza YAML nem consulta a base**: compara o que recebeu contra o que o candidato tem registrado. |
+
+Classificação de cada candidato — tabela **fechada e exaustiva** das nove combinações:
+
+| `comparacao_tipo` | `comparacao_data` | Classe |
+|---|---|---|
+| `IGUAL` | `IGUAL` | `CORROBORADO` |
+| `IGUAL` | `INDETERMINADO` | `CORROBORADO` |
+| `INDETERMINADO` | `IGUAL` | `CORROBORADO` |
+| `IGUAL` | `DIFERENTE` | `CONTRADITORIO` |
+| `INDETERMINADO` | `DIFERENTE` | `CONTRADITORIO` |
+| `INDETERMINADO` | `INDETERMINADO` | `NEUTRO` |
+| `DIFERENTE` | `IGUAL` | `EXCLUIDO` |
+| `DIFERENTE` | `DIFERENTE` | `EXCLUIDO` |
+| `DIFERENTE` | `INDETERMINADO` | `EXCLUIDO` |
+
+**Somente tipo de evento divergente exclui** um candidato. Data divergente com tipo igual ou
+indeterminado produz `CONTRADITORIO` — o candidato continua no conjunto e será tratado pela
+cascata, não descartado silenciosamente.
+
+#### Cascata determinística D0–D6
+
+Definições sobre o **escopo corrente** `E` — inicialmente o conjunto elegível recebido:
+
+| Símbolo | Definição |
+|---|---|
+| `total_escopo` | quantidade de candidatos em `E` |
+| **válido** | candidato cuja classe é **diferente de `EXCLUIDO`** |
+| **ativo** | candidato cujo `estado` é **diferente de `encerrado`** |
+| `corroborados` | candidatos em `E` com classe `CORROBORADO` |
+| `validos` | candidatos válidos em `E` |
+| `ativos_validos` | candidatos válidos **e** ativos |
+| `encerrados_validos` | candidatos válidos **e** encerrados |
+| `ativos_excluidos` | candidatos ativos com classe `EXCLUIDO` |
+
+**Precedência de takeover — antes de D0** (arbitragem R5). A cascata só é alcançada quando o
+canal não está sob controle humano:
+
+```text
+R5-P0 — precedencia de takeover (antes da restricao por identificador e antes de D0)
+    determinar situacao_takeover                 # §6.3, sobre H
+    se situacao_takeover == HUMANO_UNICO:
+        identidade = None                        # nao calculada
+        alvo       = id do unico atendimento em atendimento_humano
+        preservar evidencia estruturada para auditoria
+        NAO executar D0-D6
+        # a futura chamada da MaquinaEstados recebe estado = atendimento_humano
+        # e CondicoesCiclo.identidade = None; E01 segue por T33; zero emissao
+    se situacao_takeover == HUMANO_MULTIPLO:
+        identidade = None                        # nao calculada
+        alvo       = None
+        NAO executar D0-D6
+        NAO chamar MaquinaEstados
+        encerrar o ciclo na etapa 5 sem transicao
+        preservar processamento pendente + alerta operacional; zero emissao
+        # nao escolher entre os atendimentos; nao usar recencia para desempatar
+    se situacao_takeover == SEM_TAKEOVER:
+        prosseguir para D0
+```
+
+Consequência sobre a ambiguidade: **A1–A7 só operam quando
+`situacao_takeover == SEM_TAKEOVER`**. Sob takeover, `AMBIGUA` **não é produzida pela
+cascata**, simplesmente porque D0–D6 não executam — não há esclarecimento a pedir enquanto o
+humano controla o canal.
+
+Pseudocódigo normativo da cascata. A ordem **D0 → D6 é obrigatória**; a primeira regra que
+decide encerra a cascata.
+
+```text
+D0 — sinais contraditorios
+    se vinculo == DECLARACAO_CONTRADITORIA:      # NOVO_EVENTO_DECLARADO + COM_REFERENCIA
+        identidade = AMBIGUA
+        alvo       = None
+        criterio   = AMBIGUIDADE_SINAIS_CONTRADITORIOS
+
+D1 — escopo vazio
+    se total_escopo == 0:
+        se havia_estado_esperado == false:
+            identidade = None
+            alvo       = None
+            criterio   = PRIMEIRO_CONTATO_COMPROVADO
+        senao:
+            identidade = None
+            alvo       = None
+            criterio   = SEM_CANDIDATO_ELEGIVEL
+
+D2 — identificador restringe (nunca decide)
+    se veredito_identificador == ENCONTRADO:
+        se existe candidato FORA do identificado com classe CORROBORADO
+           e o identificado NAO e CORROBORADO:
+            identidade = AMBIGUA
+            alvo       = None
+            criterio   = AMBIGUIDADE_SINAIS_CONTRADITORIOS
+        senao:
+            E = { apenas o candidato identificado }
+            escopo_restrito_por_identificador = true
+            recalcular todos os contadores sobre E
+            prosseguir para D3
+
+D3 — evento novo declarado
+    se vinculo == DECLARA_NOVO:
+        se existe pelo menos um candidato ATIVO no escopo
+           — inclusive se sua classe for EXCLUIDO:
+            identidade = AMBIGUA
+            alvo       = None
+            criterio   = AMBIGUIDADE_DIVERGENCIA_EM_ATENDIMENTO_ATIVO
+        senao:
+            identidade = NOVA_SOLICITACAO
+            alvo       = None
+            criterio   = NOVO_EVENTO_DECLARADO
+
+D4 — ancora coincidente
+    se corroborados == 1:
+        alvo     = o unico CORROBORADO
+        criterio = ANCORA_COINCIDENTE_UNICA
+    se corroborados >= 2:
+        identidade = AMBIGUA
+        alvo       = None
+        criterio   = AMBIGUIDADE_MULTIPLOS_COMPATIVEIS
+    se corroborados == 0:
+        continuar
+
+D5 — continuidade declarada, sem ancora
+    se corroborados == 0 e vinculo == DECLARA_CONTINUIDADE:
+        se validos == 1:
+            alvo     = o unico candidato nao EXCLUIDO
+            criterio = CONTINUIDADE_DECLARADA_CANDIDATO_UNICO
+        senao:
+            identidade = AMBIGUA
+            alvo       = None
+            criterio   = AMBIGUIDADE_SINAIS_INSUFICIENTES
+
+D6 — sem declaracao: inercia do atendimento ativo
+    se corroborados == 0 e vinculo == SEM_DECLARACAO:
+        se ativos_validos == 1:
+            alvo     = o unico ativo valido
+            criterio = INERCIA_ATENDIMENTO_ATIVO
+        senao se ativos_validos >= 2:
+            identidade = AMBIGUA
+            alvo       = None
+            criterio   = AMBIGUIDADE_MULTIPLOS_ATIVOS
+        senao se ativos_excluidos >= 1:
+            identidade = AMBIGUA
+            alvo       = None
+            criterio   = AMBIGUIDADE_DIVERGENCIA_EM_ATENDIMENTO_ATIVO
+        senao se encerrados_validos == 0:
+            identidade = NOVA_SOLICITACAO
+            alvo       = None
+            criterio   = TODOS_CANDIDATOS_DIVERGENTES
+        senao:
+            identidade = AMBIGUA
+            alvo       = None
+            criterio   = AMBIGUIDADE_SINAIS_INSUFICIENTES
+
+RELACAO — aplicada depois que um alvo foi determinado (D4, D5 ou D6)
+    se estado(alvo) != encerrado:
+        identidade = ATENDIMENTO_ATIVO
+    senao:
+        identidade = MESMA_SOLICITACAO          # T36
+
+FECHAMENTO
+    qualquer combinacao valida nao coberta acima:
+        identidade = AMBIGUA
+        alvo       = None
+        criterio   = AMBIGUIDADE_SINAIS_INSUFICIENTES
+```
+
+Leitura das decisões estruturais da cascata:
+
+| # | Regra |
+|---|---|
+| R0 | **A precedência de takeover (R5-P0) vem antes de D0.** Enquanto o canal está sob controle humano, não há resolução de referente a executar. |
+| R1 | **D0 vem antes de tudo na cascata.** Contradição declarada não é resolvida por contagem de candidatos. |
+| R2 | **O identificador restringe, não decide** (D2, N7). Ele reduz o escopo a um candidato e a cascata continua normalmente sobre ele — inclusive podendo resultar em `AMBIGUA` ou `MESMA_SOLICITACAO`. Quando outro candidato está corroborado e o identificado não está, o conflito é **ambiguidade**, não preferência pelo identificador. |
+| R3 | **D3 protege atendimento ativo.** Declarar evento novo havendo atendimento ativo no escopo — mesmo excluído por tipo divergente — é ambiguidade, não abertura automática. O caso permanece aberto como **E3**. |
+| R4 | **Somente `NEUTRO`/`CONTRADITORIO`/`CORROBORADO` seguem na cascata.** `EXCLUIDO` sai de `validos`, mas ainda conta em `ativos_excluidos` (D6) — é o que impede ignorar um atendimento ativo divergente. |
+| R5 | **Nenhum score.** Toda a cascata é contagem inteira sobre classes de vocabulário fechado. |
+| R6 | **A relação é derivada do estado do alvo**, nunca escolhida: ativo → `ATENDIMENTO_ATIVO`; encerrado → `MESMA_SOLICITACAO`. |
+| R7 | **O fechamento é conservador**: o não previsto resolve em `AMBIGUA`, jamais em continuidade presumida. |
+
+**Nota sobre `DECLARACAO_CONTRADITORIA`** (correção C1 da R5). D0 passou a testar o
+**valor total** `vinculo == DECLARACAO_CONTRADITORIA`, em vez de um predicado parcial
+paralelo. Esse valor é **consumido por curto-circuito em D0** e **não cria
+`CriterioIdentidade` adicional**: o critério continua sendo
+`AMBIGUIDADE_SINAIS_CONTRADITORIOS`. **Os 12 códigos permanecem exatamente os mesmos** e
+**nenhuma decisão D1–D6 muda** — a alteração é de representação do vínculo, não de
+comportamento da cascata.
+
+#### `CriterioIdentidade` — vocabulário fechado de 12 códigos
+
+| # | Código | Resolve em |
+|---|---|---|
+| 1 | `PRIMEIRO_CONTATO_COMPROVADO` | identidade `None`, alvo `None` |
+| 2 | `SEM_CANDIDATO_ELEGIVEL` | identidade `None`, alvo `None` |
+| 3 | `NOVO_EVENTO_DECLARADO` | `NOVA_SOLICITACAO`, alvo `None` |
+| 4 | `ANCORA_COINCIDENTE_UNICA` | alvo definido → `ATENDIMENTO_ATIVO` ou `MESMA_SOLICITACAO` |
+| 5 | `CONTINUIDADE_DECLARADA_CANDIDATO_UNICO` | alvo definido → `ATENDIMENTO_ATIVO` ou `MESMA_SOLICITACAO` |
+| 6 | `INERCIA_ATENDIMENTO_ATIVO` | alvo definido → `ATENDIMENTO_ATIVO` |
+| 7 | `TODOS_CANDIDATOS_DIVERGENTES` | `NOVA_SOLICITACAO`, alvo `None` |
+| 8 | `AMBIGUIDADE_SINAIS_CONTRADITORIOS` | `AMBIGUA`, alvo `None` |
+| 9 | `AMBIGUIDADE_DIVERGENCIA_EM_ATENDIMENTO_ATIVO` | `AMBIGUA`, alvo `None` |
+| 10 | `AMBIGUIDADE_MULTIPLOS_COMPATIVEIS` | `AMBIGUA`, alvo `None` |
+| 11 | `AMBIGUIDADE_MULTIPLOS_ATIVOS` | `AMBIGUA`, alvo `None` |
+| 12 | `AMBIGUIDADE_SINAIS_INSUFICIENTES` | `AMBIGUA`, alvo `None` |
+
+**Não existe o critério `IDENTIFICADOR_VALIDADO`.** O identificador não é razão de decisão —
+é restrição de escopo, e sua rastreabilidade é o booleano
+`escopo_restrito_por_identificador`. Criar um critério com esse nome seria afirmar
+continuidade provada pelo identificador, o que **N4** e **N7** proíbem.
+
+#### Saída auditável
+
+| Campo | Tipo | Conteúdo |
+|---|---|---|
+| `identidade` | `Identidade \| None` | a relação; `None` nos critérios 1 e 2, e também sob takeover (R5-P0), quando a cascata não executa |
+| `id_atendimento_alvo` | `str \| None` | o alvo, quando existe |
+| `criterio` | `CriterioIdentidade \| None` | **um dos 12** quando D0–D6 executaram; **`None`** quando o takeover curto-circuitou a cascata (R5-P0). `None` com `situacao_takeover == SEM_TAKEOVER` é **erro de contrato** |
+| `candidatos_avaliados` | `tuple[str, ...]` | ids dos candidatos que compuseram o escopo avaliado |
+| `classificacao_por_candidato` | `tuple[tuple[str, Classe], ...]` | par (id, classe) por candidato |
+| `vinculo_declarado` | `Vinculo` | `DECLARA_CONTINUIDADE` \| `DECLARA_NOVO` \| `SEM_DECLARACAO` \| `DECLARACAO_CONTRADITORIA` |
+| `situacao_takeover` | `SituacaoTakeover` | `SEM_TAKEOVER` \| `HUMANO_UNICO` \| `HUMANO_MULTIPLO` (§6.3). Sob takeover os demais campos de cascata ficam vazios, porque D0–D6 não executaram |
+| `escopo_restrito_por_identificador` | `bool` | se D2 restringiu o escopo |
+
+A saída **não contém**: nome, telefone, mensagem completa ou qualquer trecho conversacional,
+preço, capacidade, número de convidados e formato. **Nenhum texto livre.** Ela é suficiente
+para reconstruir a decisão em auditoria — quais candidatos existiam, como cada um foi
+classificado, que vínculo foi declarado e qual regra decidiu — sem carregar dado pessoal nem
+dado comercial, coerente com §6.6.
+
+#### Erro × ambiguidade — três classes distintas
+
+| Classe | Situação | Comportamento |
+|---|---|---|
+| **I — pré-condição da etapa 3** | contexto ausente, corrompido, ou identificador inexistente/incompatível | o `ResolvedorIdentidade` **não é executado** (S7). Bloqueio, mensagem preservada, alerta |
+| **II — erro de contrato** | entrada malformada: valor presente sem confiança (C2), veredito `NAO_ENCONTRADO`/`INCOMPATIVEL` alcançando a etapa 5, combinação identidade × alvo fora dos invariantes de §6.4 | erro conceitual do tipo `TypeError`/`ValueError`. **Nenhuma identidade é devolvida.** Não é caso de negócio |
+| **III — ambiguidade legítima** | os sinais existem mas não determinam o alvo | `Identidade.AMBIGUA`, alvo `None`, **nada herdado** (A1–A7). É resultado normal, não falha |
+
+**`SEM_CANDIDATO_ELEGIVEL` não pertence a nenhuma das três**: não é erro, não é ambiguidade
+e não é primeiro contato. É um **quarto desfecho** — resolução concluída sem alvo, com
+histórico conhecido — cujo tratamento a jusante está **bloqueado pela pendência E4**
+(doc 06 §4.5, G1–G7).
 
 #### Ambiguidade entre T36 (mesmo evento) e T37 (nova solicitação)
 
@@ -710,8 +1231,8 @@ Regra obrigatória sobre o repositório em memória:
 | `ValidadorYaml` | detecta campo obrigatório ausente e aponta qual |
 | `ValidadorConsistenciaBase` | **teste obrigatório de divergência**: com um `Rxx` citando valor diferente do YAML carregado, a divergência é detectada, o `Rxx` é reprovado, o campo do YAML em conflito é identificado e nenhum dado divergente é liberado (F3–F5) |
 | `NormalizadorEntrada` | identificador do canal produz a chave; sem identificador, a chave composta é usada e marcada como heurística; a mesma frase fora da janela temporal é mensagem nova, não duplicata (§4.3) |
-| `OrquestradorMotor` | executa as **14 etapas na ordem**, com **recuperação de contexto (3) antes da interpretação (4) e ambas antes da resolução de identidade (5)**; **estado enviado pelo adaptador é ignorado ou rejeitado** (E3); não emite antes de persistir (Q1); termina o ciclo sem transição em contexto inválido e em identidade ambígua |
-| `ResolvedorIdentidade` | usa contexto + interpretação para decidir atendimento ativo, T36, T37 ou ambíguo; **nunca é executado sobre contexto inválido** (S7); em ambiguidade não herda dado algum (A1, A6) |
+| `OrquestradorMotor` | executa as **14 etapas na ordem**, com **recuperação de contexto (3) antes da interpretação (4) e ambas antes da resolução de identidade (5)**; **estado enviado pelo adaptador é ignorado ou rejeitado** (E3); não emite antes de persistir (Q1); **termina o ciclo sem transição** nos **quatro** casos normativos — contexto inválido, `Identidade.AMBIGUA`, `SEM_CANDIDATO_ELEGIVEL` enquanto **E4** estiver aberta, e `situacao_takeover == HUMANO_MULTIPLO` (§5); e **distingue `HUMANO_UNICO`**, que **não** encerra sem transição — segue para a `MaquinaEstados` com `estado = atendimento_humano` e `identidade = None`, resolvendo por **T33** com zero emissão automática |
+| `ResolvedorIdentidade` | a **cascata D0–D6 é determinística** — mesmas entradas, mesma decisão, sem relógio, sem I/O e sem LLM; **alvo único** quando a cascata resolve, com `identidade` derivada do estado do alvo; **ambiguidade segura** — `AMBIGUA` sempre com alvo `None` e **sem herdar dado algum** (A1, A6); **primeiro contato** distinguido por `havia estado esperado?` = não; **`SEM_CANDIDATO_ELEGIVEL`** produzido quando há histórico conhecido e zero candidatos elegíveis, **sem virar primeiro contato, sem virar `NOVO` e sem transição**; **o identificador apenas restringe o escopo** (N7) e nunca decide sozinho; **contexto inválido nunca é entrada normal** (S7) — é erro de contrato ou pré-condição bloqueada na etapa 3; **precedência de takeover** (R5-P0): com `situacao_takeover != SEM_TAKEOVER` a cascata **não executa**, `identidade` é `None` e nenhuma `AMBIGUA` é produzida |
 | `RegrasComerciais` | tipo não aceito, data bloqueada e excesso de convidados produzem violação com motivo (I04) |
 | `MaquinaEstados` | as **41 transições** do doc 06 §3; a **ordem de avaliação** das famílias C0–C11 (§4.2), com o **caminho percorrido** auditável e **estado final único**; o **fechamento** `E15` → `E12` pós-efeito, o teto de **três chamadas por ciclo** e a ausência de loop; os efeitos paralelos P1–P6 (§4.3) e as inércias N1–N4 (§4.4); evento não coberto por transição, efeito paralelo ou inércia é **erro de contrato** (§4.5); a máquina **não lê o YAML** e **não fabrica eventos** |
 | `Qualificador` | os cinco resultados oficiais, a faixa entre capacidade sentada e coquetel, e I09 (ausência de dado nunca é incompatibilidade); recebe pendências impeditivas já classificadas e **não as detecta** |
@@ -745,6 +1266,56 @@ Casos conceituais obrigatórios de contexto e identidade:
 | K5 | Mensagem com **referência explícita ao evento anterior** ("o casamento de outubro que a gente falou") | T36: reabertura preservando os dados já registrados, decidida com contexto + interpretação |
 | K6 | Contato com **vários atendimentos possíveis** e mensagem sem referência distintiva | **Ambíguo**: pergunta de esclarecimento, atendimento anterior intacto, **sem herança** de data, tipo, convidados ou formato; processamento pendente persistido (A1–A7) |
 | K7 | **Contexto corrompido** quando havia estado esperado | Etapa 5 **não é executada**; transição bloqueada, mensagem preservada, alerta emitido; a falha não vira primeiro contato nem nova solicitação (S1–S8) |
+
+**Reclassificação por camada** (arbitragem R3). Os casos acima não pertencem todos ao mesmo
+componente; separá-los evita exigir do resolvedor prova que é de outra etapa:
+
+| # | Camada que o caso exercita |
+|---|---|
+| K1 | **pipeline / adaptador** — rejeição de estado externo, antes de qualquer resolução |
+| K2 | **etapa 3 + resolvedor** — a etapa 3 recupera e valida; o resolvedor recebe o escopo restrito |
+| K3 | **etapa 3** — bloqueio por identificador inexistente; **o resolvedor não é executado** |
+| K4 | **resolvedor** — tipo divergente exclui o candidato; cascata resolve em `NOVA_SOLICITACAO` |
+| K5 | **resolvedor** — referência ao evento anterior corrobora; cascata resolve em `MESMA_SOLICITACAO` |
+| K6 | **resolvedor + ação futura do orquestrador** — o resolvedor devolve `AMBIGUA`; a pergunta de esclarecimento e a persistência do pendente (A3, A7) são do orquestrador |
+| K7 | **etapa 3** — bloqueio por contexto corrompido; **o resolvedor não é executado** |
+
+**Cenários normativos do `ResolvedorIdentidade`.** Cobertura conceitual suficiente — não é
+necessário replicar fixtures, mas nenhum cenário abaixo pode ficar sem prova:
+
+| # | Cenário | Resultado esperado |
+|---|---|---|
+| R2-K1 | Um candidato ativo, sem declaração, sinais indeterminados | `ATENDIMENTO_ATIVO` / `INERCIA_ATENDIMENTO_ATIVO` |
+| R2-K2 | Dois candidatos ativos válidos, sem declaração | `AMBIGUA` / `AMBIGUIDADE_MULTIPLOS_ATIVOS` |
+| R2-K3 | Um candidato encerrado, tipo e data coincidentes | `MESMA_SOLICITACAO` / `ANCORA_COINCIDENTE_UNICA` |
+| R2-K4 | Dois candidatos corroborados | `AMBIGUA` / `AMBIGUIDADE_MULTIPLOS_COMPATIVEIS` |
+| R2-K5 | Continuidade declarada, um único candidato válido, sem âncora | `CONTINUIDADE_DECLARADA_CANDIDATO_UNICO` |
+| R2-K6 | Continuidade declarada, dois candidatos válidos, sem âncora | `AMBIGUA` / `AMBIGUIDADE_SINAIS_INSUFICIENTES` |
+| R2-K7 | Evento novo declarado, nenhum candidato ativo no escopo | `NOVA_SOLICITACAO` / `NOVO_EVENTO_DECLARADO` |
+| R2-K8 | Evento novo declarado **com** candidato ativo no escopo, inclusive `EXCLUIDO` | `AMBIGUA` / `AMBIGUIDADE_DIVERGENCIA_EM_ATENDIMENTO_ATIVO` |
+| R3-K1 | `NOVO_EVENTO_DECLARADO` **com** referência ao evento anterior | `AMBIGUA` / `AMBIGUIDADE_SINAIS_CONTRADITORIOS` — decidido em **D0**, antes de qualquer contagem |
+| R3-K2 | Escopo vazio e `havia estado esperado?` = **não** | identidade `None` / `PRIMEIRO_CONTATO_COMPROVADO` |
+| R3-K3 | Escopo vazio e `havia estado esperado?` = **sim** | identidade `None` / `SEM_CANDIDATO_ELEGIVEL`; **sem transição**, **não é primeiro contato**, **não vira `NOVO`** |
+| R3-K4 | Identificador `ENCONTRADO`, outro candidato `CORROBORADO`, identificado não corroborado | `AMBIGUA` / `AMBIGUIDADE_SINAIS_CONTRADITORIOS` — o identificador **não vence** a corroboração alheia |
+| R3-K5 | Identificador `ENCONTRADO` sem conflito | escopo restrito ao identificado, `escopo_restrito_por_identificador = true`, cascata prossegue e **pode** resultar em `AMBIGUA` ou `MESMA_SOLICITACAO` |
+| R3-K6 | Todos os candidatos com tipo divergente, sem declaração, nenhum ativo | `NOVA_SOLICITACAO` / `TODOS_CANDIDATOS_DIVERGENTES` |
+| R3-K7 | Valor extraído presente **sem** confiança declarada; ou veredito `NAO_ENCONTRADO`/`INCOMPATIVEL` alcançando a etapa 5 | **erro de contrato** (classe II de §7.1): nenhuma identidade devolvida — nunca `AMBIGUA` |
+
+Em todos os cenários acima, a saída auditável de §7.1 deve ser conferida: `criterio`
+presente, `candidatos_avaliados` e `classificacao_por_candidato` coerentes com o escopo, e
+**nenhum nome, telefone, texto conversacional ou dado comercial** no resultado.
+
+**Cenários da arbitragem R5** — correção do `Vinculo` e precedência de takeover:
+
+| # | Cenário | Resultado esperado |
+|---|---|---|
+| R5-K1 | `NAO_DISCRIMINANTE` + `COM_REFERENCIA` | `Vinculo = DECLARA_CONTINUIDADE` — semântica **R3 preservada**, sem regressão |
+| R5-K2 | `NOVO_EVENTO_DECLARADO` + `COM_REFERENCIA` | `Vinculo = DECLARACAO_CONTRADITORIA` → **D0** → `AMBIGUA` / `AMBIGUIDADE_SINAIS_CONTRADITORIOS`. **Nenhum critério novo** é criado |
+| R5-K3 | `HUMANO_UNICO` **e** outro atendimento encerrado `CORROBORADO` | **takeover prevalece**: D0–D6 não executam; `identidade = None`; alvo = o atendimento **humano**; `E01` segue por **T33**; **zero emissão**. A corroboração alheia **não** desvia o alvo |
+| R5-K4 | `HUMANO_UNICO` **e** identificador apontando outro atendimento | **takeover prevalece**: `identidade = None`; alvo = o atendimento humano; **T33**. A restrição por identificador (D2) **nem chega a ser aplicada**, pois R5-P0 a antecede |
+| R5-K5 | `HUMANO_MULTIPLO` | `identidade = None`; `id_atendimento_alvo = None`; **`MaquinaEstados` não é chamada**; ciclo encerra sem transição; **zero emissão**; **nenhuma alegação de entrega**, registro para humano ou destinatário específico |
+| R5-K6 | `SEM_TAKEOVER` | **D0–D6 idênticos à R3**, com a única diferença sendo a representação **total** do vínculo contraditório (`DECLARACAO_CONTRADITORIA` em vez de predicado paralelo) |
+| R5-K7 | Conjunto completo dos casos R5 | **Nenhum deles exige membro novo em `Identidade`** — o enum permanece com **quatro** membros; takeover é expresso por `situacao_takeover`, campo ortogonal |
 
 ### 8.3 Testáveis somente com LLM real (poucos, manuais)
 
@@ -802,8 +1373,10 @@ Fronteira de Qualificação, arbitrada: o `Qualificador` é componente do motor 
 sua **implementação pertence à Etapa 3B**, não a uma etapa autônoma de roadmap. Dentro do
 passo 1 acima, ele **precede a `MaquinaEstados`**: a máquina consome a classificação e as
 condições produzidas pelas regras de qualificação (doc 06 §1.2, T08, T09, T13, T21) e não
-pode duplicar essa lógica comercial. O `Qualificador` foi **implementado na Etapa 3B.5**;
-a `MaquinaEstados` **ainda não foi implementada**.
+pode duplicar essa lógica comercial. O `Qualificador` foi **implementado na Etapa 3B.5** e a
+`MaquinaEstados` foi **implementada na Etapa 3B.6**. A precedência entre os dois foi
+respeitada na ordem de entrega e **permanece válida como regra de arquitetura**; a
+arbitragem **S1** não é reaberta.
 
 O que os passos 1 a 3 entregam, com precisão:
 
@@ -884,7 +1457,7 @@ commit e nenhum push. A Etapa 3B não foi iniciada.
 | 2 | Persistência **operacional** — contrato e implementação em memória | necessário para testar o pipeline ponta a ponta; em memória não sustenta operação real (M2, M3) | **Etapa 3B** |
 | 2a | Persistência **operacional não volátil** — armazenamento mínimo para uso real | sem ela, nenhuma resposta pode ser emitida em canal real (M3). Nenhuma tecnologia escolhida | **decisão específica e explícita antes de qualquer uso real** — não é decisão da 3B nem da etapa 8 |
 | 2b | **Registro comercial de leads** — destino definitivo, histórico, relatórios, exportação | não bloqueia a 3B; não pode ser usado como justificativa para emitir sem gravar estado (§7.3) | etapa 8 |
-| 3 | Critério técnico de "mesmo evento × nova solicitação" (T36/T37) | enquanto indefinido, mais mensagens caem no caminho de esclarecimento de §7.1 — seguro, porém mais lento na conversa | modelo de dados, Etapa 3B |
+| 3 | Critério técnico de "mesmo evento × nova solicitação" (T36/T37) | **ARBITRADO** nesta entrega (arbitragem R3): cascata determinística **D0–D6**, comparação exclusivamente nominal e vocabulário fechado de 12 critérios, materializados em §7.1 e refletidos em doc 06 §3. **Não bloqueia mais** a especificação; a implementação de `ResolvedorIdentidade` permanece não autorizada | **resolvido** — §7.1 |
 | 3a | Destino do alerta operacional não definido | S5, Q5 e F4 exigem um canal separado da conversa; hoje não existe | etapa 5 / etapa 8 |
 | 3b | Janela temporal da chave composta de idempotência (§4.3) | curta demais duplica resposta; longa demais engole repetição humana legítima | Etapa 3B, com medição |
 | 3c | Divergência `Rxx` × YAML depende de mapear cada `Rxx` ao campo que ele cita | mapeamento incompleto deixa divergência passar sem detecção | Etapa 3B |
@@ -896,6 +1469,33 @@ commit e nenhum push. A Etapa 3B não foi iniciada.
 | 9 | Política de retenção de log não definida (L7) | dado pessoal guardado sem prazo | antes da produção, etapa 10 |
 | 10 | **S2-D8** — contrato de detecção e classificação de pendências: detectar campo `null`/`pendente` relevante e ausência de resposta aprovada, classificar impeditiva × acessória, fornecer os identificadores técnicos ao `Qualificador` e confirmar `E09` | **não bloqueia** a `MaquinaEstados`, que recebe `E09` pronto; **bloqueia** o `OrquestradorMotor` e a integração completa. Nenhum componente concreto foi escolhido — não é o `CarregadorYaml` nem o `ValidadorYaml` | arbitragem específica, antes da integração do pipeline (doc 06 §11) |
 
-Nenhuma dessas pendências bloqueia especificamente a 3B.6 / `MaquinaEstados`. **S2-D8**
-bloqueia o `OrquestradorMotor` e a integração completa; as demais mantêm os bloqueios
-indicados na própria tabela.
+| 11 | **N-a** — política concreta de **elegibilidade e recência** que produz o conjunto elegível da etapa 3, **e** o tratamento de `SEM_CANDIDATO_ELEGIVEL` na integração | o `ResolvedorIdentidade` exige o conjunto pronto (§6.2) e **passar o histórico inteiro é violação de contrato**. Sem a política, a integração não pode ser fechada | **pendência de integração** — arbitragem específica, antes do `OrquestradorMotor` |
+| 12 | **N-b** — contrato global da **interpretação**: quem produz a projeção estruturada de §6.3 (`intencao_identidade`, referências, confianças binárias) e com que garantias | sem ele, a entrada do resolvedor não tem produtor atribuído | arbitragem específica, antes da integração |
+| 13 | **E1** — distinção entre as entidades **conversa × atendimento × lead** | atravessa identidade, persistência e registro de leads; hoje o motor opera com "atendimento" como unidade única | modelo de dados |
+| 14 | **E3** — **evento novo declarado durante atendimento ativo** | hoje o resultado é **conservador**: `AMBIGUA` / `AMBIGUIDADE_DIVERGENCIA_EM_ATENDIMENTO_ATIVO` (D3). **Nenhuma transição nova foi aprovada** para abrir atendimento paralelo | arbitragem específica |
+| 15 | **E4** — tratamento de **`SEM_CANDIDATO_ELEGIVEL`** pelo `OrquestradorMotor` | o resultado existe e é auditável, mas **o que o orquestrador faz com ele não está decidido**. Enquanto aberta, o resultado **encerra o ciclo sem transição** e **não autoriza avanço de integração** (doc 06 §4.5, G7) | arbitragem específica, antes do `OrquestradorMotor` |
+| 16 | **Retorno do controle ao bot** — não existe hoje **transição inversa de T31** que devolva o canal ao atendimento automático sem passar por `E14`/T34 | uma vez em `atendimento_humano`, a saída documentada é o encerramento (T34) ou o encerramento por T32 a partir de `encaminhado_humano`. **Nenhum evento ou transição é criado por esta arbitragem** | arbitragem futura — **não bloqueia** a materialização R5 |
+
+**Silêncio sob takeover não é decisão comercial nova** (arbitragem R5). Enquanto o canal
+está sob controle humano, o silêncio automático é **consequência do contrato já existente**,
+não política criada aqui:
+
+| Fonte já vigente | O que já determina |
+|---|---|
+| estado `atendimento_humano` | doc 06 §1.1 |
+| **T33** | `E01` em `atendimento_humano` mantém o estado e **proíbe qualquer resposta automática** — inclusive com `E18` concomitante |
+| **regra 11** (doc 06 §5) | quando o humano assume (`E13`), o bot **para de responder automaticamente** |
+| **I03** (doc 06 §8) | em `atendimento_humano` o bot **não emite nenhuma resposta automática** |
+| `deve responder = false` | §6.5 |
+
+A política que **seria** nova é a oposta: permitir que o bot **voltasse a falar** enquanto o
+humano controla o canal. **A R5 não concede essa permissão** — ela apenas garante que a
+resolução de identidade não produza um referente que contorne o silêncio já obrigatório.
+**E1** permanece aberta para eventual refinamento futuro da fronteira conversa × atendimento
+× lead.
+
+Nenhuma dessas pendências bloqueia especificamente a 3B.6 / `MaquinaEstados`, que já está
+implementada e integrada. **S2-D8**, **N-a**, **N-b** e **E4** bloqueiam o
+`OrquestradorMotor` e a integração completa; **E1** e **E3** permanecem abertas sem bloquear
+a especificação já arbitrada; as demais mantêm os bloqueios indicados na própria tabela.
+**Nenhuma delas é resolvida por esta entrega.**
