@@ -4,7 +4,7 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-17.
+Atualizado em: 2026-08-18.
 
 ## Referências
 
@@ -12,10 +12,11 @@ Atualizado em: 2026-08-17.
 |---|---|
 | Projeto | Casa 77 SDR |
 | Branch de referência | `main` |
-| Último commit **funcional** aprovado | `02dcb477ea893a6092d62be1a6fa02262fb0a81c` |
-| Merge correspondente na `main` | `55f6ed77e32489b2d16e65dde94fbc276ac1af2b` |
-| Última subetapa **funcional** concluída | 3B.5 — Qualificador determinístico (PR #14) |
-| Subetapa 3B.5 | **CONCLUÍDA** |
+| Último commit **funcional** aprovado | `d51087732a77930e52c4a691d52910f6da921b1e` |
+| Merge correspondente na `main` | `e3dbe55502774e0e74b7d05a3034bb2468eb986a` |
+| Última subetapa **funcional** concluída | 3B.6 — MaquinaEstados determinística (PR #21) |
+| Subetapa 3B.6 | **CONCLUÍDA** |
+| Subetapa 3B.5 | **CONCLUÍDA** (marco funcional anterior — commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
 ## Histórico verificado de entregas
 
@@ -33,6 +34,7 @@ Atualizado em: 2026-08-17.
 | Etapa 3B.5 — qualificador determinístico (`src/casa77_sdr/qualification.py` + testes): os cinco resultados oficiais a partir de contrato próprio por composição, com violações recebidas da 3B.2 em vez de recalculadas, capacidade lida dinamicamente da base e precedência determinística — sem pacote, sem handoff e sem transição de estado | **funcional** | PR #14 (commit funcional `02dcb47`, merge `55f6ed7`) |
 | Arbitragem S2 — semântica de ciclo da `MaquinaEstados` (`docs/06` e `docs/07`, com reflexo neste documento): reconcilia estados, semântica de confirmação dos eventos, T08, T38–T41, caminho C0–C11, consumo único, P1–P6, N1–N4, sinal `insumo_qualificacao_atualizado`, partição dos gatilhos de handoff e fronteira YAML | documental/governança | PR #16 — **INTEGRADO à `main`** em 2026-08-17 (head `e4746d8b350b65388672ecfb5233a558031ff352`, merge `1a719546b922e0a89d30912de745046eb11849d9`, branch de origem `docs/s2-arbitragem-maquina-estados`). **Não cria marco funcional novo** e não altera o marco 3B.5 |
 | Arbitragem S3 — residual da `MaquinaEstados` (`docs/06`, `docs/07` e este documento): materialização de T04, precedência entre classes de `E08`, `T09 > T04`, `T32 > T35`, `motivo_encerramento`, contrato semântico de ações, pré-requisito de T27, fronteira temporal da resposta aprovada e `CondicoesCiclo` | documental/governança | PR #18 — **INTEGRADO à `main`** em 2026-08-17 (head integrado `40841a3ef6ef00b83313d41e95c52c4f6c1045a8`, merge `ac49758771efe00596e27a9d8eec034d4c85df04`, branch de origem `docs/s3-arbitragem-residual-maquina-estados`). **Não cria marco funcional novo** e não altera o marco 3B.5 |
+| Etapa 3B.6 — `MaquinaEstados` determinística (`src/casa77_sdr/state_machine.py` + testes): máquina pura e determinística sobre os estados, eventos e transições oficiais; percurso C0–C11 com consumo único; efeitos paralelos P1–P6; inércias N1–N4; ações semânticas fechadas; contrato explícito de erros — sem leitura de YAML, sem I/O e sem serviço externo | **funcional** | PR #21 (commit funcional `d510877`, merge `e3dbe55`) |
 
 O PR #4 atualiza base comercial e documentação a partir de decisões de Douglas Bianchi
 (2026-08-15). Ele **não** é implementação funcional do motor e não altera o marco
@@ -40,52 +42,53 @@ funcional acima.
 
 Os PRs #16 e #18 integram as arbitragens documentais S2 e S3. Nenhum dos dois é
 implementação funcional do motor: nenhum arquivo de `src/`, `tests/`, `knowledge/` ou
-`prompts/` foi alterado, e o marco funcional continua sendo a 3B.5.
+`prompts/` foi alterado, e nenhum deles alterou o marco funcional — que **naquele
+momento** era a 3B.5. O marco funcional passou a ser a 3B.6 somente com o PR #21.
 
 ## Testes
 
-Última execução real: `python -m pytest -q -p no:cacheprovider` em 2026-08-17, na branch
-`docs/s2-reconciliacao-pos-merge` — criada a partir do merge `1a719546…` da `main` e sem
-nenhuma alteração de código em relação a ele — `180 passed`. A suíte cobre o
-carregador/validação da base (3B.1, `tests/test_knowledge.py`), as regras comerciais
-determinísticas (3B.2, `tests/test_rules.py`), a persistência operacional em memória
-(3B.3, `tests/test_persistence.py`), a normalização de entrada com a chave de
-idempotência (3B.4, `tests/test_normalization.py`) e a qualificação determinística
-(3B.5, `tests/test_qualification.py`).
+Última execução real: `python -m pytest -q -p no:cacheprovider` em 2026-08-17, sobre a
+`main` pós-merge do PR #21 (`e3dbe55502774e0e74b7d05a3034bb2468eb986a`) — **`427 passed`**.
+A suíte cobre o carregador/validação da base (3B.1, `tests/test_knowledge.py`), as regras
+comerciais determinísticas (3B.2, `tests/test_rules.py`), a persistência operacional em
+memória (3B.3, `tests/test_persistence.py`), a normalização de entrada com a chave de
+idempotência (3B.4, `tests/test_normalization.py`), a qualificação determinística
+(3B.5, `tests/test_qualification.py`) e a máquina de estados determinística
+(3B.6, `tests/test_state_machine.py`).
 
-A execução anterior, sobre a `main` pós-merge do PR #14 em 2026-08-16, também registrou
-`180 passed`. As arbitragens S2 e S3 e suas reconciliações são **documentais**: não
-alteram código nem testes, e a suíte funcional permanece verde e inalterada em número de
-casos. O baseline funcional confirmado continua sendo **`180 passed`**.
+**Baseline funcional atual: `427 passed`.**
+
+Histórico: até a 3B.5 o baseline era `180 passed`, e assim permaneceu durante as
+arbitragens documentais S2 e S3 — elas não alteram código nem testes. O salto para
+`427 passed` decorre exclusivamente da 3B.6, que acrescentou
+`tests/test_state_machine.py`.
 
 ## Roadmap (resumo — detalhe em `docs/05-roadmap.md`)
 
-Etapas 1 e 2 concluídas; etapa 3 em execução (3A, 3B.1, 3B.2, 3B.3, 3B.4 e 3B.5
-entregues; próxima subetapa funcional **não iniciada**). A antiga Etapa 4 —
-Qualificação — continua absorvida pela Etapa 3B conforme a arbitragem S1, e o
-`Qualificador` foi **implementado na 3B.5**. A `MaquinaEstados` continua **não
-implementada**, e as arbitragens documentais **S2** e **S3** — que tratam das ambiguidades
-que impediam especificá-la — estão **integradas à `main`** (PR #16, merge `1a719546…`; PR
-#18, merge `ac49758…`), sem iniciar a 3B.6. Etapas 5 a 10 permanecem futuras e com a
+Etapas 1 e 2 concluídas; etapa 3 em execução (3A, 3B.1, 3B.2, 3B.3, 3B.4, 3B.5 e 3B.6
+entregues). A antiga Etapa 4 — Qualificação — continua absorvida pela Etapa 3B conforme a
+arbitragem S1, e o `Qualificador` foi **implementado na 3B.5**. A `MaquinaEstados` foi
+**implementada na 3B.6** e integrada à `main` pelo **PR #21**; as arbitragens documentais
+**S2** e **S3** — que trataram das ambiguidades que impediam especificá-la — já estavam
+integradas (PR #16, merge `1a719546…`; PR #18, merge `ac49758…`). A **próxima subetapa
+funcional não foi escolhida nem autorizada**. Etapas 5 a 10 permanecem futuras e com a
 numeração preservada, conforme `docs/05-roadmap.md`.
 
 ## Próxima ação
 
-1. As arbitragens **S2, S2-R e S3 já estão integradas à `main`** (PRs #16, #17 e #18,
-   **MERGED**). Nenhuma nova subetapa funcional está iniciada e nenhuma numeração futura
-   além da já documentada está aprovada.
-2. A presente entrega (**S3-R**) apenas **reconcilia este documento** com o merge já
-   consumado do PR #18. Ela **não implementa código** e **não cria marco funcional**.
-3. A **3B.6 continua NÃO iniciada e NÃO autorizada nesta entrega**. Sua eventual
-   autorização só pode ocorrer **após a S3-R estar integrada à `main` e auditada pelo
-   GPT**.
-4. Depois dessa integração e auditoria, a próxima candidata funcional será a implementação
-   da **3B.6 — `MaquinaEstados`**, mediante **mandato fechado do GPT para o Claude Code**.
-   Como envolve implementação e dependências arquiteturais, o plano deve ser elaborado pelo
-   Claude Desktop e auditado pelo GPT antes de qualquer execução.
-5. O planejamento deve continuar considerando explicitamente as pendências técnicas em
-   aberto registradas abaixo — **B, C, S2-D5, S2-D7, S2-D8, S3-D1 e a confirmação de
-   entrega do handoff**. Nenhuma delas está resolvida, e nenhuma bloqueia a 3B.6.
+1. A **3B.6 — `MaquinaEstados` determinística** está **funcionalmente concluída e
+   integrada à `main`** pelo **PR #21** (**MERGED**).
+2. Commit funcional: `d51087732a77930e52c4a691d52910f6da921b1e`. Merge correspondente:
+   `e3dbe55502774e0e74b7d05a3034bb2468eb986a`.
+3. Baseline funcional atual: **`427 passed`**, verificado sobre a `main` já integrada.
+4. A presente entrega (**3B.6-R**) é **exclusivamente reconciliação documental**: não
+   altera código nem testes e **não cria novo marco funcional**.
+5. **Nenhuma próxima subetapa funcional foi iniciada, escolhida ou autorizada.** Em
+   particular, o `OrquestradorMotor` **não** está implementado e nenhuma numeração
+   seguinte está aprovada.
+6. Antes de qualquer nova implementação, o GPT deverá **reavaliar o estado atual** e as
+   pendências ainda abertas: **B, C, S2-D5, S2-D7, S2-D8, S3-D1 e a confirmação de
+   entrega do handoff**. Nenhuma delas está resolvida.
 
 ## Arbitragens
 
@@ -96,7 +99,7 @@ já alcançou a `main`.
 | # | Arbitragem | Decisão | Evidência |
 |---|---|---|---|
 | S3 | Arbitragem residual da `MaquinaEstados` (`docs/06-maquina-de-estados.md` × `docs/07-arquitetura-motor-respostas.md`) | **APROVADA — INTEGRADA À MAIN.** Fecha as ambiguidades residuais posteriores à S2 sem redesenhar a máquina: materialização de T04, precedência entre classes de `E08`, `T09 > T04`, `T32 > T35`, contrato semântico de ações, condição estruturada de T35, fronteira temporal da resposta aprovada e `CondicoesCiclo`. Arbitragem documental **aprovada pelo GPT** e **integrada à `main`** pelo **PR #18** (**MERGED**). **Não implementa código** e **não cria marco funcional.** Escopo abaixo. | PR #18 — head integrado `40841a3ef6ef00b83313d41e95c52c4f6c1045a8`, merge `ac49758771efe00596e27a9d8eec034d4c85df04`; commit documental principal `541aa765ac0e956620e3a78c19b38c0d24a40885`, a partir da branch `docs/s3-arbitragem-residual-maquina-estados`; alterações em `docs/06` (notas da §3, §4.2, §11) e `docs/07` (§4.1, §4.4, §4.5, §5) |
-| A | Fronteira de Qualificação entre `docs/05-roadmap.md` e `docs/07-arquitetura-motor-respostas.md` | **ARBITRADA** (S1): o `Qualificador` permanece componente do motor e sua implementação pertence à Etapa 3B; a antiga Etapa 4 deixa de ser aberta como etapa autônoma e é absorvida pela 3B; as etapas 5 a 10 mantêm a numeração; o `Qualificador` precede a `MaquinaEstados`. O `Qualificador` foi **implementado na 3B.5** (PR #14); a precedência permanece e a `MaquinaEstados` **ainda não foi iniciada**. | reconciliação documental de `docs/05`, `docs/07` §8.4/§9 e deste documento |
+| A | Fronteira de Qualificação entre `docs/05-roadmap.md` e `docs/07-arquitetura-motor-respostas.md` | **ARBITRADA** (S1): o `Qualificador` permanece componente do motor e sua implementação pertence à Etapa 3B; a antiga Etapa 4 deixa de ser aberta como etapa autônoma e é absorvida pela 3B; as etapas 5 a 10 mantêm a numeração; o `Qualificador` precede a `MaquinaEstados`. O `Qualificador` foi **implementado na 3B.5** (PR #14) e a `MaquinaEstados` foi **implementada na 3B.6** (PR #21); a precedência entre os dois foi respeitada na ordem de entrega. | reconciliação documental de `docs/05`, `docs/07` §8.4/§9 e deste documento |
 | S2 | Semântica de ciclo da `MaquinaEstados` (`docs/06-maquina-de-estados.md` × `docs/07-arquitetura-motor-respostas.md`) | **APROVADA — INTEGRADA À MAIN.** Arbitragem documental **aprovada pelo GPT** na auditoria da entrega e **integrada à `main`** pelo **PR #16** (**MERGED**), a partir da branch `docs/s2-arbitragem-maquina-estados`. **Não implementa código** e **não cria marco funcional.** Escopo abaixo. | PR #16 — head integrado `e4746d8b350b65388672ecfb5233a558031ff352`, merge `1a719546b922e0a89d30912de745046eb11849d9`; núcleo documental no commit `0be5a022d2b30b5cfa2bca501e77c06bed501419` — `docs/06` (§1.1, §2.2, §3, §4.1–§4.5, §9, §10, §11) e `docs/07` (§4.1, §5, §7.2, §8.1, §9, §12) |
 
 ### Arbitragem S3 — escopo aprovado e integrado à `main`
@@ -105,7 +108,8 @@ Arbitragem **residual** da `MaquinaEstados`: fecha as ambiguidades que restavam 
 S2, **sem redesenhar a máquina**. Preserva os 8 estados, `E01`–`E18`, T01–T41, P1–P6,
 N1–N4 e S2.1–S2.9 — **zero estado novo, zero evento novo, zero `Txx` nova, zero P7, zero
 N5**. Entrega **exclusivamente documental**: nenhum código, teste, dado comercial ou
-dependência foi alterado, e a `MaquinaEstados` **continua não implementada**.
+dependência foi alterado — **a própria S3 não implementou a `MaquinaEstados`**, que veio
+depois, na 3B.6.
 
 | # | Decisão |
 |---|---|
@@ -122,10 +126,9 @@ dependência foi alterado, e a `MaquinaEstados` **continua não implementada**.
 Status da S3: **APROVADA — INTEGRADA À MAIN.** O **PR #18** está **MERGED**, com merge
 `ac49758771efe00596e27a9d8eec034d4c85df04`, head integrado
 `40841a3ef6ef00b83313d41e95c52c4f6c1045a8` e commit documental principal
-`541aa765ac0e956620e3a78c19b38c0d24a40885`. Ela **não cria marco funcional** e não altera
-o último commit funcional (`02dcb477…`) nem o último marco funcional (**3B.5**). A
-`MaquinaEstados` continua **NÃO implementada** e a **3B.6 continua NÃO iniciada e NÃO
-autorizada**.
+`541aa765ac0e956620e3a78c19b38c0d24a40885`. Ela **não criou marco funcional**: no momento
+do seu merge, o último commit funcional continuava `02dcb477…` e o último marco, a
+**3B.5**. A implementação da `MaquinaEstados` veio depois, na **3B.6** (PR #21).
 
 ### Arbitragem S2 — escopo aprovado e integrado à `main`
 
@@ -151,18 +154,16 @@ dependência foi alterado. O escopo abaixo foi **aprovado pelo GPT** e **integra
 
 Consequências de estado da S2:
 
-- a S2 **não cria marco funcional**: o último commit funcional aprovado e o último marco
-  funcional (3B.5) permanecem exatamente os registrados em "Referências";
-- a `MaquinaEstados` continua **NÃO implementada**;
-- a **3B.6 — `MaquinaEstados`** continua **NÃO iniciada** e **NÃO autorizada**, e nenhuma
-  numeração futura está aprovada;
+- a S2 **não criou marco funcional**: no momento do seu merge, o último commit funcional
+  aprovado e o último marco funcional continuavam sendo os da **3B.5**;
+- a S2 **não implementou** a `MaquinaEstados` — isso ocorreu depois, na **3B.6** (PR #21);
 - **status atual: APROVADA — INTEGRADA À MAIN.** A S2 foi **aprovada pelo GPT** e
   integrada à `main` pelo **PR #16** (**MERGED**), com merge
   `1a719546b922e0a89d30912de745046eb11849d9` e head integrado
   `e4746d8b350b65388672ecfb5233a558031ff352`, a partir da branch
   `docs/s2-arbitragem-maquina-estados`. O núcleo documental permanece no commit
-  `0be5a022d2b30b5cfa2bca501e77c06bed501419`. **Integrar a arbitragem não autoriza
-  implementação**: a 3B.6 segue NÃO iniciada e NÃO autorizada.
+  `0be5a022d2b30b5cfa2bca501e77c06bed501419`. **Integrar a arbitragem não autorizava, por
+  si só, implementação**: a 3B.6 exigiu mandato próprio e foi entregue no PR #21.
 
 ## Pendências técnicas em aberto
 
