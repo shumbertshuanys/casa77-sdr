@@ -12,11 +12,12 @@ Atualizado em: 2026-08-19.
 |---|---|
 | Projeto | Casa 77 SDR |
 | Branch de referência | `main` |
-| Último commit **funcional** aprovado | `d51087732a77930e52c4a691d52910f6da921b1e` |
-| Merge correspondente na `main` | `e3dbe55502774e0e74b7d05a3034bb2468eb986a` |
-| Última subetapa **funcional** concluída | 3B.6 — MaquinaEstados determinística (PR #21) |
-| Subetapa 3B.6 | **CONCLUÍDA** |
-| Subetapa 3B.5 | **CONCLUÍDA** (marco funcional anterior — commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
+| Último commit **funcional** aprovado | `25ab2726e15daeb7710bc0bcce9cfe7e092ce9f4` |
+| Merge correspondente na `main` | `568919f5976361fa236e46a67909366e52ee85c3` |
+| Última subetapa **funcional** concluída | 3B.7 — ResolvedorIdentidade determinístico (PR #29) |
+| Subetapa 3B.7 | **CONCLUÍDA** |
+| Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
+| Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
 ## Histórico verificado de entregas
 
@@ -38,6 +39,7 @@ Atualizado em: 2026-08-19.
 | Arbitragem R — contrato de resolução de identidade do `ResolvedorIdentidade` (`docs/06` e `docs/07`), **anterior** à `MaquinaEstados`: conjunto elegível fechado de candidatos; `IntencaoIdentidade`; `Vinculo` total incluindo `DECLARACAO_CONTRADITORIA`; cascata determinística D0–D6; 12 `CriterioIdentidade`; `SEM_CANDIDATO_ELEGIVEL` distinto de primeiro contato; identificador que **restringe** o escopo sem provar continuidade; `SituacaoTakeover` separada de `Identidade`, com precedência **antes** de D0–D6 | documental/governança | PR #23 — **INTEGRADO à `main`** em 2026-08-18 (commit documental `6c848ea8d45e7f6e412cdd297e9ca68c1fa75a21`, merge `aeb446656fd11b91bb61164f29f9adca6959d4df`, branch de origem `docs/arbitragem-resolvedor-identidade`). **Não cria marco funcional novo** e não altera o marco 3B.6 |
 | Arbitragem R-H — fronteira do **conjunto H** / **takeover humano** na resolução de identidade (`docs/07`): `ids_em_atendimento_humano` como entrada **própria e separada** do conjunto elegível, **fora** da política N-a; regras H1–H6; cardinalidade de H determinando `SituacaoTakeover`; erros de contrato por ID duplicado e por incoerência entre projeções; alvo de `HUMANO_UNICO` obtido **direto de H**; R5-P0 preservado antes do identificador e de D0–D6; H fora de `CondicoesCiclo` e da `MaquinaEstados` | documental/governança | PR #25 — **INTEGRADO à `main`** em 2026-08-19 (commit documental `24835a8d6cca50a6f783c8b831ca2c924d2177a9`, merge `96a8ff98611fb9de75540ea98adad94166c65e8b`, branch de origem `docs/rh-fronteira-conjunto-h`). **Não cria marco funcional novo** e não altera o marco 3B.6 |
 | Arbitragem R-I — **projeção do identificador validado** da etapa 3 para a etapa 5 (`docs/07`): `id_atendimento_validado` como **insumo próprio e opaco** do `ResolvedorIdentidade`; pré-condições estruturais **P-I1–P-I5** verificadas **antes de R5-P0**; obrigações do produtor **N-I-1–N-I-4** na etapa 3; fronteira parcial **N-a-F1**; `VeredictoIdentificador` preservado com **quatro** valores; D2 continua **restringindo, não decidindo**; D0–D6 semanticamente inalterados | documental/governança | PR #27 — **INTEGRADO à `main`** em 2026-08-19 (commit documental `713f473c9b9fcae75f73aa0ffadc84dd31e81caa`, merge `4bb202e0bb68f67a8d66e487d85ec7978ea8cd95`, branch de origem `docs/ri-identificador-validado`). **Não cria marco funcional novo** e não altera o marco 3B.6 |
+| Etapa 3B.7 — `ResolvedorIdentidade` determinístico (`src/casa77_sdr/identity.py` + testes): resolução pura e determinística de **qual atendimento** a mensagem trata, **anterior** à `MaquinaEstados` no pipeline — vocabulários fechados de identidade, `CandidatoAtendimento`, `ProjecaoInterpretacao`, `DecisaoIdentidade`, comparação exclusivamente nominal, confiança binária, pré-condições **C2**, **H4/H5** e **P-I1–P-I5**, precedência de takeover **R5-P0**, cascata **D0–D6**, **RELACAO** e fechamento conservador, com saída auditável de **8** campos — sem I/O, sem rede, sem LLM, sem leitura de YAML, sem relógio e sem persistência | **funcional** | PR #29 — **INTEGRADO à `main`** em 2026-08-19 (commit funcional `25ab2726e15daeb7710bc0bcce9cfe7e092ce9f4`, merge `568919f5976361fa236e46a67909366e52ee85c3`, branch de origem `feat/3b7-resolvedor-identidade`). Arquivos: `src/casa77_sdr/identity.py`, `tests/test_identity.py`, `src/casa77_sdr/__init__.py` — **3 files changed, 2224 insertions(+)**. **Cria o novo marco funcional**, que passa a ser a **3B.7** |
 
 O PR #4 atualiza base comercial e documentação a partir de decisões de Douglas Bianchi
 (2026-08-15). Ele **não** é implementação funcional do motor e não altera o marco
@@ -48,54 +50,76 @@ implementação funcional do motor: nenhum arquivo de `src/`, `tests/`, `knowled
 `prompts/` foi alterado, e nenhum deles alterou o marco funcional — que **naquele
 momento** era a 3B.5. O marco funcional passou a ser a 3B.6 somente com o PR #21.
 
-O **PR #23** integra a arbitragem documental **R** do `ResolvedorIdentidade`. Vale a mesma
-regra: alterou **exclusivamente** `docs/06-maquina-de-estados.md` e
+O **PR #23** integrou a arbitragem documental **R** do `ResolvedorIdentidade`. Valeu a
+mesma regra: alterou **exclusivamente** `docs/06-maquina-de-estados.md` e
 `docs/07-arquitetura-motor-respostas.md` — nenhum arquivo de `src/`, `tests/`, `knowledge/`
-ou `prompts/` — e **não altera o marco funcional**, que permanece a **3B.6**. Ele especifica
-um componente que **ainda não existe em código**: o `ResolvedorIdentidade` **não está
-implementado**.
+ou `prompts/` — e **não criou marco funcional**: **naquele momento** o marco funcional
+seguia sendo a **3B.6**. À época, ele especificou um componente que **ainda não existia em
+código**. A **implementação funcional viria depois**, na **3B.7**, pelo **PR #29**.
 
-O **PR #25** integra a **micro-arbitragem documental R-H** — fronteira entre contexto
-recuperado, conjunto elegível e takeover humano. Vale a mesma regra: alterou
+O **PR #25** integrou a **micro-arbitragem documental R-H** — fronteira entre contexto
+recuperado, conjunto elegível e takeover humano. Valeu a mesma regra: alterou
 **exclusivamente** `docs/07-arquitetura-motor-respostas.md` — nenhum arquivo de `src/`,
-`tests/`, `knowledge/` ou `prompts/` — e **não altera o marco funcional**, que permanece a
-**3B.6**. Ele detalha a entrada `ids_em_atendimento_humano` do mesmo componente **ainda não
-implementado**: o `ResolvedorIdentidade` continua **sem código**.
+`tests/`, `knowledge/` ou `prompts/` — e **não criou marco funcional**: **naquele momento** o
+marco funcional seguia sendo a **3B.6**. Ele detalhou a entrada `ids_em_atendimento_humano`
+**antes da existência do código**. Esse contrato foi **materializado depois na 3B.7**, pelo
+**PR #29**.
 
-O **PR #27** integra a **micro-arbitragem documental R-I** — projeção do identificador de
-atendimento **validado** da etapa 3 para a etapa 5. Vale a mesma regra: alterou
+O **PR #27** integrou a **micro-arbitragem documental R-I** — projeção do identificador de
+atendimento **validado** da etapa 3 para a etapa 5. Valeu a mesma regra: alterou
 **exclusivamente** `docs/07-arquitetura-motor-respostas.md` (`+117 / -9`) — nenhum arquivo
-de `src/`, `tests/`, `knowledge/` ou `prompts/` — e **não altera o marco funcional**, que
-permanece a **3B.6**. Ele acrescenta um **insumo** ao contrato do mesmo componente **ainda
-não implementado**: o `ResolvedorIdentidade` continua **sem código**.
+de `src/`, `tests/`, `knowledge/` ou `prompts/` — e **não criou marco funcional**: **naquele
+momento** o marco funcional seguia sendo a **3B.6**. Ele acrescentou o insumo
+`id_atendimento_validado` ao contrato **antes da implementação**. Esse contrato foi
+**materializado depois na 3B.7**, pelo **PR #29**.
+
+O **PR #29** é a primeira entrega **funcional** desde a 3B.6: ele implementa o
+`ResolvedorIdentidade` especificado por **R**, **R-H** e **R-I**. Diferente dos PRs
+documentais acima, **altera o marco funcional**, que passa da **3B.6** para a **3B.7**.
+Ele **criou** `src/casa77_sdr/identity.py` e `tests/test_identity.py` e **alterou**
+`src/casa77_sdr/__init__.py` — exclusivamente para expor a nova superfície pública da
+3B.7. Nenhum dos módulos funcionais preexistentes — `state_machine.py`, `rules.py`,
+`persistence.py`, `normalization.py` e `qualification.py` — foi alterado, e nenhum
+arquivo de `docs/`, `knowledge/` ou `prompts/` foi tocado. O `OrquestradorMotor`
+**continua não implementado**.
 
 ## Testes
 
-Última execução real: `python -m pytest -q -p no:cacheprovider` em 2026-08-17, sobre a
-`main` pós-merge do PR #21 (`e3dbe55502774e0e74b7d05a3034bb2468eb986a`) — **`427 passed`**.
-A suíte cobre o carregador/validação da base (3B.1, `tests/test_knowledge.py`), as regras
-comerciais determinísticas (3B.2, `tests/test_rules.py`), a persistência operacional em
-memória (3B.3, `tests/test_persistence.py`), a normalização de entrada com a chave de
-idempotência (3B.4, `tests/test_normalization.py`), a qualificação determinística
-(3B.5, `tests/test_qualification.py`) e a máquina de estados determinística
-(3B.6, `tests/test_state_machine.py`).
+Última execução real em **2026-08-19**, sobre a `main` pós-merge do **PR #29**
+(`568919f5976361fa236e46a67909366e52ee85c3`) — **duas** execuções, nenhuma além destas:
 
-**Baseline funcional atual: `427 passed`.**
+| Comando | Resultado |
+|---|---|
+| `python -m pytest -q -p no:cacheprovider tests/test_identity.py` | **`147 passed`** |
+| `python -m pytest -q -p no:cacheprovider` | **`574 passed`** |
+
+Zero failures em ambas. A suíte cobre o carregador/validação da base (3B.1,
+`tests/test_knowledge.py`), as regras comerciais determinísticas (3B.2,
+`tests/test_rules.py`), a persistência operacional em memória (3B.3,
+`tests/test_persistence.py`), a normalização de entrada com a chave de idempotência
+(3B.4, `tests/test_normalization.py`), a qualificação determinística (3B.5,
+`tests/test_qualification.py`), a máquina de estados determinística (3B.6,
+`tests/test_state_machine.py`) e a **resolução de identidade determinística** (3B.7,
+`tests/test_identity.py`).
+
+**Baseline funcional atual: `574 passed`.**
 
 Histórico: até a 3B.5 o baseline era `180 passed`, e assim permaneceu durante as
 arbitragens documentais S2 e S3 — elas não alteram código nem testes. O salto para
-`427 passed` decorre exclusivamente da 3B.6, que acrescentou
-`tests/test_state_machine.py`.
+`427 passed` decorreu exclusivamente da 3B.6, que acrescentou
+`tests/test_state_machine.py`; **`427 passed` foi o baseline até a 3B.6** e permaneceu
+inalterado durante as arbitragens documentais **R**, **R-H** e **R-I**. O salto de
+**`427 passed` para `574 passed`** decorre exclusivamente da **3B.7**, que acrescentou
+`tests/test_identity.py` com **147** casos.
 
-O **PR #23** (arbitragem R), o **PR #25** (arbitragem R-H), o **PR #27** (arbitragem R-I)
-e a presente reconciliação **não alteram código nem testes** e, portanto, **não alteram o baseline**. Nenhuma nova
-execução de `pytest` é alegada por esta entrega: o valor `427 passed` continua sendo o da
-execução real de 2026-08-17 registrada acima.
+Os PRs **#23** (R), **#25** (R-H) e **#27** (R-I) e a presente reconciliação **não
+alteram código nem testes** e, portanto, **não alteram o baseline**. Nenhuma execução
+além das duas reportadas acima é alegada por esta entrega.
 
 ## Roadmap (resumo — detalhe em `docs/05-roadmap.md`)
 
-Etapas 1 e 2 concluídas; etapa 3 em execução (3A, 3B.1, 3B.2, 3B.3, 3B.4, 3B.5 e 3B.6
-entregues). A antiga Etapa 4 — Qualificação — continua absorvida pela Etapa 3B conforme a
+Etapas 1 e 2 concluídas; etapa 3 em execução (3A, 3B.1, 3B.2, 3B.3, 3B.4, 3B.5, 3B.6 e
+**3B.7** entregues). A antiga Etapa 4 — Qualificação — continua absorvida pela Etapa 3B conforme a
 arbitragem S1, e o `Qualificador` foi **implementado na 3B.5**. A `MaquinaEstados` foi
 **implementada na 3B.6** e integrada à `main` pelo **PR #21**; as arbitragens documentais
 **S2** e **S3** — que trataram das ambiguidades que impediam especificá-la — já estavam
@@ -106,71 +130,84 @@ A arbitragem documental **R** — contrato de resolução de identidade — foi 
 takeover humano — pelo **PR #25** (merge `96a8ff98…`); e a micro-arbitragem **R-I** —
 projeção do identificador **validado** para a etapa 5 — pelo **PR #27** (merge
 `4bb202e0…`). **As três especificam** o `ResolvedorIdentidade`, componente **anterior** à
-`MaquinaEstados` no pipeline, mas **não o implementam**: não existe
-`src/casa77_sdr/identity.py`. O `OrquestradorMotor` também **permanece não implementado**.
+`MaquinaEstados` no pipeline. Elas **não o implementavam**: a implementação veio depois,
+na **3B.7**, integrada pelo **PR #29** (merge `568919f5…`) — `src/casa77_sdr/identity.py`
+**agora existe**. O `OrquestradorMotor`, esse sim, **permanece não implementado**.
 
-A **próxima entrega funcional** já está **tecnicamente selecionada**, após análise do
-Claude Desktop e auditoria do GPT: a implementação **isolada** do `ResolvedorIdentidade`,
-cuja numeração **proposta e aprovada condicionalmente** é a **3B.7**.
+A **3B.7 está CONCLUÍDA e integrada à `main`**. Etapas 5 a 10 permanecem futuras e com a
+numeração preservada, conforme `docs/05-roadmap.md`.
 
-Isso é **planejamento, não execução**. A **3B.7 ainda NÃO está iniciada**: **nenhum código
-dela existe** e **nenhuma execução foi autorizada**. **Estado do gate:** antes, a 3B.7
-aguardava a integração e a auditoria da micro-arbitragem **R-I**; a R-I está agora
-**integrada à `main` pelo PR #27**, e a **presente reconciliação de `docs/00` é o último
-gate documental** antes da autorização funcional. Depois que esta reconciliação estiver
-versionada, mergeada e auditada, o GPT poderá emitir o **mandato funcional da 3B.7**. Etapas 5 a 10 permanecem
-futuras e com a numeração preservada, conforme `docs/05-roadmap.md`.
+**Nenhuma subetapa 3B.8 foi escolhida, proposta ou autorizada por esta entrega.** Depois
+que esta reconciliação estiver integrada e auditada, o GPT reavaliará qual é a próxima
+subetapa **à luz das pendências ainda abertas**. Em particular, **não** se afirma aqui que
+o `OrquestradorMotor` seja a próxima implementação autorizada: ele continua bloqueado por
+**N-a**, **N-b**, **E4** e **S2-D8**, todas abertas.
 
-### 3B.7 — escopo futuro selecionado (registro de planejamento, **não** implementação)
+### 3B.7 — escopo entregue (implementação integrada pelo PR #29)
 
-Registrado aqui apenas como **entrega futura selecionada condicionalmente**. **Nada abaixo
-existe em código.**
+Primeira entrega funcional do `ResolvedorIdentidade`. O que está **em código** na `main`:
 
 | Item | Registro |
 |---|---|
-| Componente | `ResolvedorIdentidade` **isolado e determinístico** |
-| Arquivos previstos | `src/casa77_sdr/identity.py`, `tests/test_identity.py`, `src/casa77_sdr/__init__.py` — **nenhum criado ou alterado** nesta entrega |
-| Fronteiras já aprovadas | puro; determinístico; **zero I/O, rede, LLM, YAML e relógio**; **não** calcula elegibilidade nem recência; recebe o **conjunto elegível pronto**; recebe a **projeção estruturada**; recebe `veredito_identificador`; recebe `id_atendimento_validado`; recebe `havia_estado_esperado`; recebe `ids_em_atendimento_humano`; aplica as **pré-condições estruturais** (C2, H4, H5, **P-I1–P-I5**); aplica **R5-P0 + D0–D6**; **não** integra o `OrquestradorMotor` |
-| Situação | **NÃO INICIADA** — aguarda mandato funcional próprio do GPT |
+| Componente | `ResolvedorIdentidade` **isolado, puro e determinístico** — `resolver_identidade(...)` com os **seis** insumos do contrato |
+| Arquivos | `src/casa77_sdr/identity.py` (**+778**), `tests/test_identity.py` (**+1418**), `src/casa77_sdr/__init__.py` (**+28**) — 3 files changed, **2224 insertions(+)** |
+| Contratos | `CandidatoAtendimento` (4 campos), `ProjecaoInterpretacao` (7 campos) e `DecisaoIdentidade` (**8** campos) — todos `frozen`, sem PII, sem texto livre e sem dado comercial |
+| Vocabulários fechados | `IntencaoIdentidade` (3), `ReferenciaEventoAnterior` (2), `Confianca` (2), `Vinculo` (4), `SituacaoTakeover` (**3**), `VeredictoIdentificador` (**4**), `Comparacao` (3), `ClasseCandidato` (4), `CriterioIdentidade` (**12**) |
+| Reuso | `Estado` e `Identidade` são **importados de `src/casa77_sdr/state_machine.py`**, não redeclarados. `Identidade` permanece com **4** membros |
+| Comparação | **exclusivamente nominal** — caixa, espaços e acentos; sem sinônimo, similaridade, score ou limiar numérico. Data permanece **valor nominal**, sem parse de calendário |
+| Confiança | **binária**; `BAIXA` é tratada como **ausência** para efeito de identidade |
+| Pré-condições | **C2**, **H4**, **H5** e **P-I1–P-I5**, verificadas **antes de R5-P0** e, portanto, antes de D0. Violação é erro de contrato (`TypeError`/`ValueError`) — **nunca** `AMBIGUA`, e nenhuma identidade é devolvida |
+| Decisão | precedência de takeover **R5-P0**, cascata **D0–D6**, **RELACAO** derivada do estado do alvo e **fechamento conservador** |
+| Critérios | os **12** códigos de `CriterioIdentidade`. **Não existe `IDENTIFICADOR_VALIDADO`** — a rastreabilidade da restrição continua sendo o booleano `escopo_restrito_por_identificador` |
+| Testes | `tests/test_identity.py` — **147 passed**, cobrindo R2-K1–K8, R3-K1–K7, R5-K1–K7, K-H1–K-H8 e R-I-K1–K15, além de vocabulário, contratos, pureza, determinismo e invariantes de saída |
+| Situação | **CONCLUÍDA** — integrada à `main` pelo **PR #29** |
+
+**Fronteiras preservadas na implementação.** O componente **não** calcula elegibilidade,
+**não** calcula recência, **não** consulta persistência, **não** lê o YAML, **não** usa
+LLM, **não** usa rede, **não** usa relógio, **não** aplica transição, **não** chama a
+`MaquinaEstados` e **não** implementa o `OrquestradorMotor`. O **conjunto elegível
+continua chegando pronto** da etapa 3, e `ids_em_atendimento_humano` continua sendo
+entrada separada, fora de N-a. A pureza é verificada por teste: o conjunto de imports do
+módulo é fechado em `__future__`, `unicodedata`, `dataclasses`, `enum` e
+`casa77_sdr.state_machine`.
+
+**Duplicatas gerais — nada foi decidido.** A 3B.7 **não cria regra global de unicidade**
+para `id_atendimento` entre candidatos **não identificados**. **P-I5** exige unicidade
+**apenas do ID identificado** e **apenas** com `veredito == ENCONTRADO`. Dois candidatos
+não identificados com o mesmo `id_atendimento` **não** falham — há teste provando isso — e
+a **pendência residual continua aberta**.
 
 ## Próxima ação
 
-1. A **3B.6 — `MaquinaEstados` determinística** está **funcionalmente concluída e
-   integrada à `main`** pelo **PR #21** (**MERGED**).
-2. Commit funcional: `d51087732a77930e52c4a691d52910f6da921b1e`. Merge correspondente:
-   `e3dbe55502774e0e74b7d05a3034bb2468eb986a`.
-3. Baseline funcional atual: **`427 passed`**, verificado sobre a `main` já integrada.
-4. A arbitragem documental **R** — contrato de resolução de identidade — está
-   **integrada à `main`** pelo **PR #23** (**MERGED**): commit documental
-   `6c848ea8d45e7f6e412cdd297e9ca68c1fa75a21`, merge
-   `aeb446656fd11b91bb61164f29f9adca6959d4df`. Ela alterou somente `docs/06` e `docs/07`.
-5. A micro-arbitragem documental **R-H** — fronteira do **conjunto H** e do **takeover
-   humano** — está **integrada à `main`** pelo **PR #25** (**MERGED**): commit documental
-   `24835a8d6cca50a6f783c8b831ca2c924d2177a9`, merge
-   `96a8ff98611fb9de75540ea98adad94166c65e8b`. Ela alterou **somente** `docs/07`.
-6. A micro-arbitragem documental **R-I** — **projeção do identificador validado** da
-   etapa 3 para a etapa 5 — está **integrada à `main`** pelo **PR #27** (**MERGED**):
-   commit documental `713f473c9b9fcae75f73aa0ffadc84dd31e81caa`, merge
-   `4bb202e0bb68f67a8d66e487d85ec7978ea8cd95`. Ela alterou **somente** `docs/07`
-   (`+117 / -9`).
-7. A presente entrega é **exclusivamente reconciliação documental de
-   `docs/00-estado-atual.md`** após aquele merge: não altera código, testes, base de
-   conhecimento nem prompts, e **não cria marco funcional novo**. O último marco funcional
-   continua sendo a **3B.6**.
-8. **Nenhuma implementação funcional ocorre aqui.** O `ResolvedorIdentidade` **não** está
-   implementado e o `OrquestradorMotor` **não** está implementado.
-9. A **3B.7 permanece NÃO INICIADA**. Ela já é a **próxima entrega funcional selecionada
-   condicionalmente** — implementação isolada do `ResolvedorIdentidade` —, mas **nenhum
-   código dela existe** e **nenhuma execução foi autorizada**.
-10. **Próximo gate previsto:** a R-I já está integrada; esta reconciliação de `docs/00` é o
-    **último gate documental**. Depois que ela estiver **versionada, mergeada e auditada**,
-    o GPT emite a **autorização funcional da 3B.7**. Nenhuma execução funcional antes disso.
-11. As pendências permanecem abertas conforme seus próprios bloqueios: **B, C, S2-D5,
+1. A **3B.7 — `ResolvedorIdentidade` determinístico** está **funcionalmente concluída e
+   integrada à `main`** pelo **PR #29** (**MERGED**).
+2. Commit funcional: `25ab2726e15daeb7710bc0bcce9cfe7e092ce9f4`. Merge correspondente:
+   `568919f5976361fa236e46a67909366e52ee85c3`.
+3. Baseline funcional atual: **`574 passed`**, verificado sobre a `main` já integrada —
+   com **`147 passed`** no teste direcionado de `tests/test_identity.py`.
+4. O marco funcional **anterior** era a **3B.6 — `MaquinaEstados` determinística** (PR #21,
+   commit `d5108773…`, merge `e3dbe555…`), que permanece **CONCLUÍDA**.
+5. As arbitragens documentais que especificaram o componente continuam **integradas e
+   inalteradas**: **R** — PR #23 (merge `aeb44665…`); **R-H** — PR #25 (merge `96a8ff98…`);
+   **R-I** — PR #27 (merge `4bb202e0…`). A 3B.7 é a **implementação funcional** do contrato
+   que as três fixaram; nenhuma decisão delas foi removida ou reescrita.
+6. A presente entrega é **exclusivamente reconciliação documental de
+   `docs/00-estado-atual.md`** após o merge do PR #29: não altera código, testes, base de
+   conhecimento nem prompts.
+7. **Nenhuma implementação funcional ocorre aqui.** O `OrquestradorMotor` **continua não
+   implementado** e **nenhuma integração de pipeline foi iniciada**.
+8. **Nenhuma subetapa 3B.8 foi escolhida, proposta ou autorizada** por esta entrega, que
+   **não decide arquitetura futura**.
+9. **Próximo gate previsto:** fechar documentalmente a 3B.7. Depois que esta reconciliação
+   estiver **versionada, mergeada e auditada**, o GPT **reavaliará qual é a próxima subetapa
+   à luz das pendências ainda abertas**. Nenhuma execução funcional antes disso.
+10. As pendências permanecem abertas conforme seus próprios bloqueios: **B, C, S2-D5,
     S2-D7, S2-D8, S3-D1, a confirmação de entrega do handoff, N-a — exceto a fronteira
     parcial N-a-F1 —, N-b, E1, E3, E4, o retorno do controle ao bot após
     `atendimento_humano` sem `E14`/T34** e a **unicidade geral de `id_atendimento` entre
     candidatos não identificados**. Nenhuma delas está resolvida — **nem por esta entrega,
-    nem pela R-H, nem pela R-I**.
+    nem pela 3B.7**. **N-a**, **N-b**, **E4** e **S2-D8** continuam especialmente relevantes
+    para a integração futura do `OrquestradorMotor`, e **nada sobre elas é decidido aqui**.
 
 ## Arbitragens
 
@@ -208,8 +245,9 @@ chamada da `MaquinaEstados`:
 | R-11 | **`HUMANO_MULTIPLO` encerra antes da `MaquinaEstados`**: sem alvo, identidade `None`, a máquina **não** é chamada, processamento pendente preservado, alerta operacional e zero emissão. O motor **não escolhe** entre os atendimentos nem usa recência para desempatar. |
 | R-12 | **Zero estado, evento ou transição nova.** T31, T33, T34, T36 e T37 permanecem exatamente como estão; o silêncio sob takeover é consequência do contrato já vigente, não política nova. |
 
-**A arbitragem R não implementa nada.** O `ResolvedorIdentidade` permanece **não
-implementado**, e nenhuma subetapa funcional foi aberta para ele.
+**A arbitragem R não implementou nada por si.** À época do PR #23, o
+`ResolvedorIdentidade` ainda não existia em código e nenhuma subetapa funcional havia sido
+aberta para ele. A **implementação funcional veio depois**, na **3B.7**, pelo **PR #29**.
 
 ### Arbitragem R-H — escopo aprovado e integrado à `main`
 
@@ -231,10 +269,11 @@ amplia `Identidade` nem `CriterioIdentidade`.
 | R-H-9 | **`HUMANO_MULTIPLO` não escolhe alvo**: alvo `None`, identidade `None`, `MaquinaEstados` não é chamada. |
 | R-H-10 | **R5-P0 permanece antes** da restrição por identificador e antes de D0–D6. A precedência do takeover não foi alterada. |
 | R-H-11 | **H não entra em `CondicoesCiclo` e não chega à `MaquinaEstados`** (H6). É exclusivamente insumo da resolução de takeover. |
-| R-H-12 | **Cenários K-H1–K-H8** registrados em `docs/07` §8.2 como testáveis futuros — **nenhum teste foi escrito**. |
+| R-H-12 | **Cenários K-H1–K-H8** registrados em `docs/07` §8.2 como testáveis futuros. **À época da arbitragem R-H nenhum teste havia sido escrito**; esses cenários foram materializados depois em `tests/test_identity.py`, pela **3B.7 / PR #29**. |
 
-**A arbitragem R-H não implementa nada.** O `ResolvedorIdentidade` permanece **não
-implementado**, e a **3B.7 permanece não iniciada**.
+**A arbitragem R-H não implementou nada por si.** Naquele momento o
+`ResolvedorIdentidade` ainda não existia em código e a **3B.7** não havia sido iniciada.
+Esse contrato foi **materializado depois na 3B.7**, pelo **PR #29**.
 
 **O que a R-H NÃO resolve.** Ela **não resolve N-a**. A N-a continua **aberta** quanto à
 **política de elegibilidade**, à **política de recência**, à **janela temporal** e à
@@ -270,8 +309,9 @@ contrato classe II por P-I5. Por **consequência** das pré-condições, o escop
 alcança D1 ocorre com veredito **`NAO_INFORMADO`**. A pendência **E4** — tratamento de
 `SEM_CANDIDATO_ELEGIVEL` pelo `OrquestradorMotor` — **continua aberta**.
 
-**A arbitragem R-I não implementa nada.** O `ResolvedorIdentidade` permanece **não
-implementado**, e a **3B.7 permanece não iniciada**.
+**A arbitragem R-I não implementou nada por si.** Naquele momento o
+`ResolvedorIdentidade` ainda não existia em código e a **3B.7** não havia sido iniciada.
+Esse contrato foi **materializado depois na 3B.7**, pelo **PR #29**.
 
 **O que a R-I NÃO resolve.** Ela **não resolve N-a**. A N-a continua **aberta** quanto à
 **política de elegibilidade dos demais candidatos**, à **definição de recência**, à **janela
@@ -356,7 +396,8 @@ Registradas aqui como estado, não resolvidas nesta entrega.
 | B | Colisão conceitual de nome: `RegistroAtendimento` já existe em `src/casa77_sdr/persistence.py` como dataclass de transporte, enquanto `docs/07` usa o mesmo nome para uma responsabilidade futura | implementar o componente `RegistroAtendimento` descrito em `docs/07` |
 | C | Não existe contrato estruturado, legível por máquina, relacionando as respostas aprovadas (`Rxx`) aos campos do YAML | implementar `ValidadorConsistenciaBase` e, em cascata, `SeletorFatos` e `ValidadorResposta` |
 
-As pendências **B e C permanecem inalteradas** pelas arbitragens S2, S3, R, R-H e R-I.
+As pendências **B e C permanecem inalteradas** pelas arbitragens S2, S3, R, R-H e R-I e
+pela implementação funcional da **3B.7** (PR #29).
 
 ### Pendências da arbitragem S2 — não bloqueadoras da 3B.6
 
@@ -374,8 +415,10 @@ comercial `D1`–`D8` já registrada no histórico deste documento.
 ### Pendências da arbitragem R — abertas pelo PR #23
 
 Registradas pelo contrato de identidade. **Nenhuma é resolvida** por aquele PR, pelo **PR
-#25** (arbitragem R-H), pelo **PR #27** (arbitragem R-I) nem por esta reconciliação —
-salvo a fronteira **parcial** N-a-F1 registrada abaixo. Detalhe em `docs/07` §12.
+#25** (arbitragem R-H), pelo **PR #27** (arbitragem R-I), pela **implementação funcional
+da 3B.7** (PR #29) nem por esta reconciliação — salvo a fronteira **parcial** N-a-F1
+registrada abaixo. A 3B.7 **consome** o contrato; ela não fecha nenhuma destas pendências.
+Detalhe em `docs/07` §12.
 
 | # | Pendência | Situação |
 |---|---|---|
@@ -384,7 +427,7 @@ salvo a fronteira **parcial** N-a-F1 registrada abaixo. Detalhe em `docs/07` §1
 | E1 | Distinção entre as entidades **conversa × atendimento × lead**. Já registrada como aberta desde a etapa de modelo de dados; a arbitragem R **não** a resolve. | **não bloqueia** a 3B.6 |
 | E3 | **Evento novo declarado durante atendimento ativo.** Hoje o resultado é **conservador** — `AMBIGUA` / `AMBIGUIDADE_DIVERGENCIA_EM_ATENDIMENTO_ATIVO`. **Nenhuma transição nova foi aprovada** para abrir atendimento paralelo. | **não bloqueia** a 3B.6 |
 | E4 | Tratamento de **`SEM_CANDIDATO_ELEGIVEL`** pelo `OrquestradorMotor`. O resultado existe e é auditável, mas o que o orquestrador faz com ele **não está decidido**; enquanto aberta, o resultado encerra o ciclo sem transição e **não autoriza avanço de integração**. | **não bloqueia** a 3B.6; **bloqueia** o `OrquestradorMotor` |
-| Unicidade geral de `id_atendimento` | **Questão residual aberta pelo PR #27.** A R-I exige unicidade **apenas do ID explicitamente identificado** e **apenas** quando `veredito == ENCONTRADO` (P-I5). **Não foi decidido** se IDs duplicados entre candidatos **não identificados** constituem erro geral de contrato. **Nenhuma regra global de unicidade foi estabelecida**, e nada é corrigido silenciosamente. | **não bloqueia** a 3B.6 nem a 3B.7 |
+| Unicidade geral de `id_atendimento` | **Questão residual aberta pelo PR #27.** A R-I exige unicidade **apenas do ID explicitamente identificado** e **apenas** quando `veredito == ENCONTRADO` (P-I5). **Não foi decidido** se IDs duplicados entre candidatos **não identificados** constituem erro geral de contrato. **Nenhuma regra global de unicidade foi estabelecida**, e nada é corrigido silenciosamente. **Confirmado na implementação da 3B.7**: `src/casa77_sdr/identity.py` valida a unicidade somente do ID identificado, e há teste provando que dois candidatos não identificados com o mesmo `id_atendimento` **não** falham. | **não bloqueia** a 3B.6 nem a 3B.7; **continua ABERTA** |
 | Retorno do controle ao bot | Não existe hoje **transição inversa de T31** que devolva o canal ao atendimento automático sem passar por `E14`/T34. **Nenhum evento ou transição foi criado** para isso. | **não bloqueia** a 3B.6 nem a arbitragem R |
 
 ## Pendências que não bloqueiam
