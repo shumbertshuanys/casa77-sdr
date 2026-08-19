@@ -1,6 +1,21 @@
 """Motor de respostas do bot SDR da Casa 77."""
 
 from casa77_sdr.knowledge import KnowledgeError, load_knowledge
+from casa77_sdr.identity import (
+    CandidatoAtendimento,
+    ClasseCandidato,
+    Comparacao,
+    Confianca,
+    CriterioIdentidade,
+    DecisaoIdentidade,
+    IntencaoIdentidade,
+    ProjecaoInterpretacao,
+    ReferenciaEventoAnterior,
+    SituacaoTakeover,
+    VeredictoIdentificador,
+    Vinculo,
+    resolver_identidade,
+)
 from casa77_sdr.normalization import (
     EntradaInvalida,
     EntradaMensagem,
@@ -85,4 +100,17 @@ __all__ = [
     "Transicao",
     "TransicaoInexistente",
     "decidir",
+    "CandidatoAtendimento",
+    "ClasseCandidato",
+    "Comparacao",
+    "Confianca",
+    "CriterioIdentidade",
+    "DecisaoIdentidade",
+    "IntencaoIdentidade",
+    "ProjecaoInterpretacao",
+    "ReferenciaEventoAnterior",
+    "SituacaoTakeover",
+    "VeredictoIdentificador",
+    "Vinculo",
+    "resolver_identidade",
 ]
