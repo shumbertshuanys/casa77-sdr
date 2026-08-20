@@ -18,6 +18,12 @@ A persistência é infraestrutura de estado, nunca camada de decisão:
 Ela apenas informa sucesso, dados recuperados ou falha explícita aos
 consumidores futuros. Chave de idempotência chega pronta e opaca — hash,
 janela temporal e composição pertencem ao futuro `NormalizadorEntrada`.
+
+O mesmo vale para `instante_ultima_transicao` (§6.2, N-a-T1–N-a-T8): o
+valor chega pronto do chamador. A persistência transporta e valida a
+representação na escrita, mas **não** consulta relógio, **não** cria o
+instante e **não** decide quando ele muda — N-a-T3–N-a-T7 pertencem à
+etapa 13 futura.
 """
 
 from __future__ import annotations
@@ -25,6 +31,7 @@ from __future__ import annotations
 import copy
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from datetime import datetime
 from enum import StrEnum
 from typing import Any
 
@@ -54,6 +61,13 @@ class RegistroAtendimento:
     pendências e motivos são opacos: nenhum enum, validação ou
     transformação semântica acontece aqui — os valores pertencem aos
     componentes que os produzem e consomem.
+
+    `instante_ultima_transicao` é o marco temporal de §6.2 (N-a-T1): o
+    instante da última transição de estado efetivamente persistida. Chega
+    pronto do chamador e é transportado sem conversão de fuso — a
+    persistência não o cria nem decide quando ele muda. `None` é válido no
+    armazenamento; a exigência do marco quando um `encerrado` precisa de
+    recência é da etapa 3 (S9), não daqui.
     """
 
     id_atendimento: str
@@ -65,6 +79,7 @@ class RegistroAtendimento:
     pendencias_resposta: tuple[str, ...] = ()
     motivo_incompatibilidade: str | None = None
     motivos_handoff: tuple[str, ...] = ()
+    instante_ultima_transicao: datetime | None = None
 
 
 @dataclass(frozen=True)
@@ -104,7 +119,8 @@ class PersistenciaOperacional(ABC):
         """Cria explicitamente um registro novo.
 
         Identificador já existente é erro do chamador (`ValueError`), nunca
-        substituição silenciosa.
+        substituição silenciosa. `instante_ultima_transicao`, quando
+        preenchido, exige fuso efetivo (`ValueError`); `None` é aceito.
         """
 
     @abstractmethod
@@ -118,7 +134,10 @@ class PersistenciaOperacional(ABC):
         rejeitada (`ValueError`), sem reassociar o atendimento a outra
         identidade. `canal` e `contato` são identificadores operacionais do
         vínculo persistido, não dados comerciais editáveis; a comparação é
-        estrita, sem normalização.
+        estrita, sem normalização. `instante_ultima_transicao` é substituído
+        pelo valor recebido — inclusive por `None` — e, quando preenchido,
+        exige fuso efetivo (`ValueError`). A persistência não decide se ele
+        deveria mudar neste ciclo (N-a-T4–N-a-T7).
         """
 
     @abstractmethod
@@ -157,6 +176,31 @@ class PersistenciaOperacional(ABC):
         """Devolve os processamentos pendentes preservados, sem interpretá-los."""
 
 
+def _exigir_marco_temporal_valido(registro: RegistroAtendimento) -> None:
+    """Valida a representação do marco temporal na fronteira de escrita.
+
+    Exige fuso **efetivo**, não apenas `tzinfo` preenchido: um `tzinfo`
+    cujo `utcoffset()` devolve `None` não é comparável como instante
+    absoluto, e comparabilidade é o que N-a-T8 exige do marco. `None`
+    permanece válido — ausência é decidida pelo chamador, e a exigência do
+    marco em candidato `encerrado` é bloqueio da etapa 3 (S9).
+
+    A mensagem cita apenas o nome do campo: nunca o identificador, o
+    contato ou o conteúdo da conversa.
+    """
+    instante = registro.instante_ultima_transicao
+    if instante is None:
+        return
+    if not isinstance(instante, datetime):
+        raise ValueError(
+            "O campo 'instante_ultima_transicao' deve ser um instante"
+        )
+    if instante.tzinfo is None or instante.utcoffset() is None:
+        raise ValueError(
+            "O campo 'instante_ultima_transicao' exige fuso horário efetivo"
+        )
+
+
 class PersistenciaEmMemoria(PersistenciaOperacional):
     """Implementação volátil em memória, exclusiva para testes (B2, M1).
 
@@ -172,6 +216,12 @@ class PersistenciaEmMemoria(PersistenciaOperacional):
 
     Cópias defensivas na entrada e na saída impedem que mutação externa de
     `dados_coletados` altere silenciosamente o estado interno.
+
+    `criar` e `gravar` validam a representação de
+    `instante_ultima_transicao` antes de qualquer efeito **e antes da
+    simulação de falha**: erro de contrato do chamador precede falha de
+    infraestrutura simulada, e gravação rejeitada não altera o registro já
+    armazenado.
     """
 
     def __init__(self) -> None:
@@ -181,6 +231,7 @@ class PersistenciaEmMemoria(PersistenciaOperacional):
         self.simular_falha_de_gravacao = False
 
     def criar(self, registro: RegistroAtendimento) -> None:
+        _exigir_marco_temporal_valido(registro)
         if self.simular_falha_de_gravacao:
             raise FalhaDePersistencia(
                 f"Falha simulada ao criar o registro {registro.id_atendimento}"
@@ -193,6 +244,7 @@ class PersistenciaEmMemoria(PersistenciaOperacional):
         self._registros[registro.id_atendimento] = copy.deepcopy(registro)
 
     def gravar(self, registro: RegistroAtendimento) -> None:
+        _exigir_marco_temporal_valido(registro)
         if self.simular_falha_de_gravacao:
             raise FalhaDePersistencia(
                 f"Falha simulada ao gravar o registro {registro.id_atendimento}"
