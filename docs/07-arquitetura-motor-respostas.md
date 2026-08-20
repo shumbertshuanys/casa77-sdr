@@ -522,10 +522,12 @@ Disso decorrem combinações **válidas e distintas**:
 | `havia estado esperado?` = **não** + **zero** candidatos elegíveis | `PRIMEIRO_CONTATO_COMPROVADO` |
 | contexto **ausente** ou **corrompido** havendo estado esperado | **bloqueio na etapa 3** por **E5/S7** — a etapa 5 nem chega a ser executada |
 
-**N-a — política arbitrada.** A **política de elegibilidade e de recência** que produz esse
-conjunto está **arbitrada documentalmente** na subseção **N-a**, adiante. Ela é executada
-**dentro da etapa 3**, antes da etapa 5: o conjunto elegível continua sendo um contrato de
-entrada exigido do resolvedor, **nunca um cálculo dele**.
+**N-a — política arbitrada e materializada.** A **política de elegibilidade e de recência**
+que produz esse conjunto está **arbitrada documentalmente** na subseção **N-a**, adiante, e
+sua **produção determinística de E** já possui **implementação pura** — ver a **nota de
+materialização** ao final da subseção. Ela é executada **dentro da etapa 3**, antes da
+etapa 5: o conjunto elegível continua sendo um contrato de entrada exigido do resolvedor,
+**nunca um cálculo dele**.
 
 **N-a-F1 — fronteira parcial de N-a** (arbitragem R-I). Quando
 `veredito_identificador == ENCONTRADO`, o conjunto elegível produzido pela etapa 3 **deve
@@ -635,6 +637,21 @@ tipo Python, coluna, índice nem serialização.
 | M-T4 | A persistência **transporta** o valor recebido: **não converte fuso**, não normaliza para UTC e não altera o instante. |
 | M-T5 | **Zero relógio vivo** e **zero preenchimento automático**: a persistência não cria o marco e **não decide** quando ele muda. **N-a-T3–N-a-T7 continuam não implementadas** e pertencem ao chamador da etapa 13. |
 | M-T6 | **Nenhuma coluna, índice, serialização ou persistência não volátil foi escolhida.** A implementação continua sendo a em memória de §7.4 (B2, M1–M3). |
+
+**Nota de materialização da política N-a/E — posterior à arbitragem.** A **produção
+determinística do conjunto elegível** deixou de ser apenas contrato: existe hoje como
+**função pura** em `src/casa77_sdr/eligibility.py`. Como M-T1–M-T6, estas são **decisões
+de implementação tomadas depois** do PR #31, **não** decisões originárias da arbitragem;
+**nenhuma regra normativa de N-a foi alterada**.
+
+| # | Materialização de N-a/E |
+|---|---|
+| M-E1 | **Não é componente arquitetural novo.** A tabela de §4.1 permanece com **14** componentes e a de §2 com **nove** responsabilidades (N-a-1, N-a-2). O módulo é **organização de código** para uma política **interna da etapa 3**. |
+| M-E2 | A função recebe os **registros já recuperados** e devolve **somente E** — `tuple[CandidatoAtendimento, ...]`. Ela **não recupera, não persiste** e **não faz I/O** (N-a-4, N-a-5). |
+| M-E3 | Materializa: validação do limiar (N-a-L1–L6), projeção (N-a-P1–P6), classificação dos oito estados (N-a-E1–E5), recência exclusiva de `encerrado` (N-a-R1–R6), **N-a-F1**, preservação de duplicatas não identificadas (N-a-D2) e ordem canônica (N-a-O1–O5). |
+| M-E4 | **Zero relógio vivo**, zero YAML, zero LLM, zero rede e zero conversão de fuso. Dadas as mesmas entradas, produz sempre a mesma tupla, e **não muta** os registros recebidos. |
+| M-E5 | As violações são **sinalizadas por exceção** — configuração temporal inválida (S10), marco temporal ausente (S9), contexto corrompido (S11) e identificado incoerente (N-I-2/P-I5). **O tratamento operacional do bloqueio não é implementado**: preservar a mensagem e emitir alerta (S4, S5) continuam sendo do `OrquestradorMotor`. |
+| M-E6 | **Permanecem NÃO implementados**: **N-a-T3–N-a-T7** (escrita do marco), o **conjunto H**, `havia_estado_esperado`, a projeção de `id_atendimento_validado` (**N-I**), o **wiring da etapa 3**, o **valor numérico do limiar**, o **mecanismo de carga** da configuração e o **`OrquestradorMotor`**. |
 
 **Marco temporal ausente.** Se um candidato `encerrado` precisar de recência e o
 `instante_ultima_transicao` estiver **ausente**, isso é **erro de integridade do contexto da
@@ -1881,7 +1898,7 @@ commit e nenhum push. A Etapa 3B não foi iniciada.
 | 9 | Política de retenção de log não definida (L7) | dado pessoal guardado sem prazo | antes da produção, etapa 10 |
 | 10 | **S2-D8** — contrato de detecção e classificação de pendências: detectar campo `null`/`pendente` relevante e ausência de resposta aprovada, classificar impeditiva × acessória, fornecer os identificadores técnicos ao `Qualificador` e confirmar `E09` | **não bloqueia** a `MaquinaEstados`, que recebe `E09` pronto; **bloqueia** o `OrquestradorMotor` e a integração completa. Nenhum componente concreto foi escolhido — não é o `CarregadorYaml` nem o `ValidadorYaml` | arbitragem específica, antes da integração do pipeline (doc 06 §11) |
 
-| 11 | **N-a** — política de **elegibilidade e recência** que produz o conjunto elegível da etapa 3 | **ARBITRADA DOCUMENTALMENTE** (arbitragem N-a, §6.2): classificação **fechada dos oito estados**; recência aplicável **exclusivamente** a `encerrado`; `instante_ultima_transicao` como **único** marco temporal do MVP — **quando inicializado ou atualizado, recebe o `instante_de_referencia_do_ciclo` daquele ciclo**, **nunca** o relógio vivo; atualização decidida pelo **caminho de transições**; limiar como **configuração operacional validada explicitamente**; projeção do registro em `CandidatoAtendimento`; composição de E; duplicatas; **ordem canônica** só para auditabilidade; e a precedência conceitual da etapa 3 — materializados em §5, §6.2 e §7.1, com **N-a-F1**, **N-I**, **P-I**, **R5-P0**, **H1–H6** e **D0–D6** preservados. **Não é implementação**: a **arbitragem N-a** não alterou `persistence.py` e o `OrquestradorMotor` **continua não autorizado**. **Materialização posterior**, em entrega funcional própria: o **transporte e a validação da representação** de `instante_ultima_transicao` já existem na persistência operacional (§6.2, M-T1–M-T6), mas **N-a permanece não implementada** — sem elegibilidade, sem recência, sem projeção e sem produção de E — e **N-a-T3–N-a-T7 continuam futuras** | **especificação resolvida** — §6.2. A **implementação funcional de N-a** é **futura e não autorizada** por esta arbitragem. O **valor numérico do limiar** e o **mecanismo concreto de carga** da configuração são o **item 18**. **E4** é pendência **distinta e ainda aberta**, no **item 15**, e **não é resolvida aqui** |
+| 11 | **N-a** — política de **elegibilidade e recência** que produz o conjunto elegível da etapa 3 | **ARBITRADA DOCUMENTALMENTE** (arbitragem N-a, §6.2): classificação **fechada dos oito estados**; recência aplicável **exclusivamente** a `encerrado`; `instante_ultima_transicao` como **único** marco temporal do MVP — **quando inicializado ou atualizado, recebe o `instante_de_referencia_do_ciclo` daquele ciclo**, **nunca** o relógio vivo; atualização decidida pelo **caminho de transições**; limiar como **configuração operacional validada explicitamente**; projeção do registro em `CandidatoAtendimento`; composição de E; duplicatas; **ordem canônica** só para auditabilidade; e a precedência conceitual da etapa 3 — materializados em §5, §6.2 e §7.1, com **N-a-F1**, **N-I**, **P-I**, **R5-P0**, **H1–H6** e **D0–D6** preservados. **Não é implementação**: a **arbitragem N-a** não alterou `persistence.py` e o `OrquestradorMotor` **continua não autorizado**. **Materializações posteriores**, em entregas funcionais próprias: (a) o **transporte e a validação da representação** de `instante_ultima_transicao` na persistência operacional (§6.2, M-T1–M-T6); e (b) a **produção determinística de E** — projeção, classificação dos oito estados, recência de `encerrado`, N-a-F1, duplicatas e ordem canônica — como função pura em `src/casa77_sdr/eligibility.py` (§6.2, M-E1–M-E6). **A integração N-a continua PARCIAL**: permanecem **não implementados** **N-a-T3–N-a-T7**, o **wiring da etapa 3**, o **tratamento operacional dos bloqueios**, o conjunto **H**, `havia_estado_esperado`, a projeção **N-I** e o **`OrquestradorMotor`** | **especificação resolvida** — §6.2. **Aquela arbitragem não autorizou implementação alguma** — o PR #31 foi entrega documental e, à época, N-a não existia em código. O **valor numérico do limiar** e o **mecanismo concreto de carga** da configuração são o **item 18**. **E4** é pendência **distinta e ainda aberta**, no **item 15**, e **não é resolvida aqui** |
 | 12 | **N-b** — contrato global da **interpretação**: quem produz a projeção estruturada de §6.3 (`intencao_identidade`, referências, confianças binárias) e com que garantias | sem ele, a entrada do resolvedor não tem produtor atribuído | arbitragem específica, antes da integração |
 | 13 | **E1** — distinção entre as entidades **conversa × atendimento × lead** | atravessa identidade, persistência e registro de leads; hoje o motor opera com "atendimento" como unidade única | modelo de dados |
 | 14 | **E3** — **evento novo declarado durante atendimento ativo** | hoje o resultado é **conservador**: `AMBIGUA` / `AMBIGUIDADE_DIVERGENCIA_EM_ATENDIMENTO_ATIVO` (D3). **Nenhuma transição nova foi aprovada** para abrir atendimento paralelo | arbitragem específica |
