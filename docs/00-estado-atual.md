@@ -4,7 +4,7 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-19.
+Atualizado em: 2026-08-20.
 
 ## Referências
 
@@ -16,6 +16,7 @@ Atualizado em: 2026-08-19.
 | Merge correspondente na `main` | `568919f5976361fa236e46a67909366e52ee85c3` |
 | Última subetapa **funcional** concluída | 3B.7 — ResolvedorIdentidade determinístico (PR #29) |
 | Subetapa 3B.7 | **CONCLUÍDA** |
+| Última **arbitragem documental** integrada à `main` | Arbitragem **N-a** — PR #31, commit `43774af5…`, merge `e8425410…`. **Não altera o marco funcional** |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -40,6 +41,7 @@ Atualizado em: 2026-08-19.
 | Arbitragem R-H — fronteira do **conjunto H** / **takeover humano** na resolução de identidade (`docs/07`): `ids_em_atendimento_humano` como entrada **própria e separada** do conjunto elegível, **fora** da política N-a; regras H1–H6; cardinalidade de H determinando `SituacaoTakeover`; erros de contrato por ID duplicado e por incoerência entre projeções; alvo de `HUMANO_UNICO` obtido **direto de H**; R5-P0 preservado antes do identificador e de D0–D6; H fora de `CondicoesCiclo` e da `MaquinaEstados` | documental/governança | PR #25 — **INTEGRADO à `main`** em 2026-08-19 (commit documental `24835a8d6cca50a6f783c8b831ca2c924d2177a9`, merge `96a8ff98611fb9de75540ea98adad94166c65e8b`, branch de origem `docs/rh-fronteira-conjunto-h`). **Não cria marco funcional novo** e não altera o marco 3B.6 |
 | Arbitragem R-I — **projeção do identificador validado** da etapa 3 para a etapa 5 (`docs/07`): `id_atendimento_validado` como **insumo próprio e opaco** do `ResolvedorIdentidade`; pré-condições estruturais **P-I1–P-I5** verificadas **antes de R5-P0**; obrigações do produtor **N-I-1–N-I-4** na etapa 3; fronteira parcial **N-a-F1**; `VeredictoIdentificador` preservado com **quatro** valores; D2 continua **restringindo, não decidindo**; D0–D6 semanticamente inalterados | documental/governança | PR #27 — **INTEGRADO à `main`** em 2026-08-19 (commit documental `713f473c9b9fcae75f73aa0ffadc84dd31e81caa`, merge `4bb202e0bb68f67a8d66e487d85ec7978ea8cd95`, branch de origem `docs/ri-identificador-validado`). **Não cria marco funcional novo** e não altera o marco 3B.6 |
 | Etapa 3B.7 — `ResolvedorIdentidade` determinístico (`src/casa77_sdr/identity.py` + testes): resolução pura e determinística de **qual atendimento** a mensagem trata, **anterior** à `MaquinaEstados` no pipeline — vocabulários fechados de identidade, `CandidatoAtendimento`, `ProjecaoInterpretacao`, `DecisaoIdentidade`, comparação exclusivamente nominal, confiança binária, pré-condições **C2**, **H4/H5** e **P-I1–P-I5**, precedência de takeover **R5-P0**, cascata **D0–D6**, **RELACAO** e fechamento conservador, com saída auditável de **8** campos — sem I/O, sem rede, sem LLM, sem leitura de YAML, sem relógio e sem persistência | **funcional** | PR #29 — **INTEGRADO à `main`** em 2026-08-19 (commit funcional `25ab2726e15daeb7710bc0bcce9cfe7e092ce9f4`, merge `568919f5976361fa236e46a67909366e52ee85c3`, branch de origem `feat/3b7-resolvedor-identidade`). Arquivos: `src/casa77_sdr/identity.py`, `tests/test_identity.py`, `src/casa77_sdr/__init__.py` — **3 files changed, 2224 insertions(+)**. **Cria o novo marco funcional**, que passa a ser a **3B.7** |
+| Arbitragem N-a — **política de produção do conjunto elegível da etapa 3** (`docs/07`): classificação **fechada dos oito estados**; recência aplicável **exclusivamente** a `encerrado`; `instante_ultima_transicao` como único marco temporal do MVP, alimentado pelo **timestamp do ciclo** e **nunca** por relógio vivo; limiar como **configuração operacional explícita, sem default**; projeção `RegistroAtendimento` → `CandidatoAtendimento`; composição de E; duplicatas não identificadas **preservadas**; ordem canônica **só para auditabilidade**; **N-a-F1**, **H1–H6**, **R5-P0** e **D0–D6** preservados; cenários **K-Na-1–K-Na-18** | documental/governança | PR #31 — **INTEGRADO à `main`** em 2026-08-20 (commit documental `43774af58877e3de3ecfda32cf0384a9fd047693`, merge `e8425410a7ced47c8d186bfceeea1cdd70f73b0c`, branch de origem `docs/arbitragem-na-contexto-elegivel`). Arquivo alterado: **exclusivamente** `docs/07-arquitetura-motor-respostas.md` — **1 file changed, 247 insertions(+), 12 deletions(-)**. **Não cria marco funcional** e **não altera** o marco **3B.7** |
 
 O PR #4 atualiza base comercial e documentação a partir de decisões de Douglas Bianchi
 (2026-08-15). Ele **não** é implementação funcional do motor e não altera o marco
@@ -83,6 +85,16 @@ Ele **criou** `src/casa77_sdr/identity.py` e `tests/test_identity.py` e **altero
 arquivo de `docs/`, `knowledge/` ou `prompts/` foi tocado. O `OrquestradorMotor`
 **continua não implementado**.
 
+O **PR #31** integrou a **arbitragem documental N-a** — política de produção do conjunto
+elegível da etapa 3. Valeu a mesma regra dos PRs #23, #25 e #27: alterou **exclusivamente**
+`docs/07-arquitetura-motor-respostas.md` (`+247 / -12`) — nenhum arquivo de `src/`,
+`tests/`, `knowledge/` ou `prompts/` — e **não cria marco funcional**: o marco funcional
+**continua sendo a 3B.7**. Ele **especifica** a política, **não a implementa**: N-a **não
+foi implementada**, `src/casa77_sdr/persistence.py` **não foi alterado**, o campo temporal
+`instante_ultima_transicao` **não existe em código** — sua materialização na persistência
+permanece **futura** —, o `OrquestradorMotor` **continua não implementado** e **nenhuma
+subetapa 3B.8 foi criada, escolhida ou autorizada**.
+
 ## Testes
 
 Última execução real em **2026-08-19**, sobre a `main` pós-merge do **PR #29**
@@ -112,7 +124,7 @@ inalterado durante as arbitragens documentais **R**, **R-H** e **R-I**. O salto 
 **`427 passed` para `574 passed`** decorre exclusivamente da **3B.7**, que acrescentou
 `tests/test_identity.py` com **147** casos.
 
-Os PRs **#23** (R), **#25** (R-H) e **#27** (R-I) e a presente reconciliação **não
+Os PRs **#23** (R), **#25** (R-H), **#27** (R-I) e **#31** (N-a) e a presente reconciliação **não
 alteram código nem testes** e, portanto, **não alteram o baseline**. Nenhuma execução
 além das duas reportadas acima é alegada por esta entrega.
 
@@ -140,8 +152,21 @@ numeração preservada, conforme `docs/05-roadmap.md`.
 **Nenhuma subetapa 3B.8 foi escolhida, proposta ou autorizada por esta entrega.** Depois
 que esta reconciliação estiver integrada e auditada, o GPT reavaliará qual é a próxima
 subetapa **à luz das pendências ainda abertas**. Em particular, **não** se afirma aqui que
-o `OrquestradorMotor` seja a próxima implementação autorizada: ele continua bloqueado por
-**N-a**, **N-b**, **E4** e **S2-D8**, todas abertas.
+o `OrquestradorMotor` seja a próxima implementação autorizada. A formulação genérica
+anterior — "bloqueado por N-a, N-b, E4 e S2-D8" — deixa de valer para **N-a**, e passa a
+ser a seguinte, conforme o `docs/07` integrado:
+
+- **N-a — especificação documental: ARBITRADA / CONCLUÍDA** pelo **PR #31**. Deixou de ser
+  bloqueador de **especificação**.
+- **N-a — implementação funcional: NÃO INICIADA e NÃO AUTORIZADA.** A política não existe
+  em código.
+- Pré-requisitos concretos ainda pendentes da N-a, conforme `docs/07` §6.2 e §12: o **dado
+  temporal futuro da persistência** (`instante_ultima_transicao`, ainda não implementado) e
+  o **valor numérico do limiar** com o **mecanismo concreto de carga** da configuração.
+- **N-b**, **E4** e **S2-D8** **continuam abertas** e continuam bloqueando o
+  `OrquestradorMotor` e a integração completa, conforme `docs/07` §12.
+
+Nenhum bloqueador além dos que o `docs/07` integrado sustenta é afirmado aqui.
 
 ### 3B.7 — escopo entregue (implementação integrada pelo PR #29)
 
@@ -192,22 +217,28 @@ a **pendência residual continua aberta**.
    **R-I** — PR #27 (merge `4bb202e0…`). A 3B.7 é a **implementação funcional** do contrato
    que as três fixaram; nenhuma decisão delas foi removida ou reescrita.
 6. A presente entrega é **exclusivamente reconciliação documental de
-   `docs/00-estado-atual.md`** após o merge do PR #29: não altera código, testes, base de
-   conhecimento nem prompts.
+   `docs/00-estado-atual.md`** após o merge do **PR #31** — a arbitragem documental **N-a**
+   (commit `43774af5…`, merge `e8425410…`). A reconciliação do PR #29 já havia sido
+   integrada pelo **PR #30** (merge `0972be4a…`). Esta entrega **não altera código, testes,
+   base de conhecimento nem prompts**, e **não altera `docs/07`**.
 7. **Nenhuma implementação funcional ocorre aqui.** O `OrquestradorMotor` **continua não
    implementado** e **nenhuma integração de pipeline foi iniciada**.
 8. **Nenhuma subetapa 3B.8 foi escolhida, proposta ou autorizada** por esta entrega, que
    **não decide arquitetura futura**.
-9. **Próximo gate previsto:** fechar documentalmente a 3B.7. Depois que esta reconciliação
-   estiver **versionada, mergeada e auditada**, o GPT **reavaliará qual é a próxima subetapa
-   à luz das pendências ainda abertas**. Nenhuma execução funcional antes disso.
+9. **Esta reconciliação constitui o gate documental de fechamento da arbitragem N-a.**
+   Após sua **integração e auditoria**, a **seleção da próxima subetapa funcional depende
+   de nova auditoria/orquestração** — ela **não é decidida aqui**. **Nenhuma subetapa 3B.8
+   foi escolhida** e **nenhuma execução funcional está autorizada**.
 10. As pendências permanecem abertas conforme seus próprios bloqueios: **B, C, S2-D5,
-    S2-D7, S2-D8, S3-D1, a confirmação de entrega do handoff, N-a — exceto a fronteira
-    parcial N-a-F1 —, N-b, E1, E3, E4, o retorno do controle ao bot após
-    `atendimento_humano` sem `E14`/T34** e a **unicidade geral de `id_atendimento` entre
-    candidatos não identificados**. Nenhuma delas está resolvida — **nem por esta entrega,
-    nem pela 3B.7**. **N-a**, **N-b**, **E4** e **S2-D8** continuam especialmente relevantes
-    para a integração futura do `OrquestradorMotor`, e **nada sobre elas é decidido aqui**.
+    S2-D7, S2-D8, S3-D1, a confirmação de entrega do handoff, N-b, E1, E3, E4, o retorno
+    do controle ao bot após `atendimento_humano` sem `E14`/T34**, a **unicidade geral de
+    `id_atendimento` entre candidatos não identificados** e, quanto à **N-a**, o **valor
+    numérico do limiar temporal** com o **mecanismo concreto de carga** da configuração.
+    Nenhuma delas está resolvida — **nem por esta entrega, nem pela 3B.7, nem pelo PR
+    #31**. Quanto à **N-a**, vale a distinção obrigatória: **especificação documental
+    ARBITRADA / CONCLUÍDA** pelo PR #31, **implementação funcional NÃO INICIADA e NÃO
+    AUTORIZADA**. **N-b**, **E4** e **S2-D8** continuam especialmente relevantes para a
+    integração futura do `OrquestradorMotor`, e **nada sobre elas é decidido aqui**.
 
 ## Arbitragens
 
@@ -217,12 +248,39 @@ já alcançou a `main`.
 
 | # | Arbitragem | Decisão | Evidência |
 |---|---|---|---|
+| N-a | **Política de produção do conjunto elegível da etapa 3** (`docs/07-arquitetura-motor-respostas.md`) | **APROVADA — INTEGRADA À MAIN.** Fecha **documentalmente** a política de elegibilidade e recência que a etapa 3 aplica sobre os registros recuperados, **sem criar componente, estado, evento, transição ou critério**. Arbitragem documental **aprovada pelo GPT** e **integrada à `main`** pelo **PR #31** (**MERGED**). **Não implementa código**, **não implementa a persistência**, **não implementa o `OrquestradorMotor`** e **não cria marco funcional.** Escopo abaixo. | PR #31 — commit documental `43774af58877e3de3ecfda32cf0384a9fd047693`, merge `e8425410a7ced47c8d186bfceeea1cdd70f73b0c`, branch de origem `docs/arbitragem-na-contexto-elegivel`; alterações **exclusivamente** em `docs/07` (`+247 / -12`: §5 etapas 3 e 13, §6.2 subseção N-a completa, §7.1 S9–S11 e classe I, §12 item 11 e novo item 18) |
 | R-I | **Projeção do identificador validado** para a etapa 5 (`docs/07-arquitetura-motor-respostas.md`) | **APROVADA — INTEGRADA À MAIN.** Micro-arbitragem que fixa `id_atendimento_validado` como **insumo próprio e opaco** do `ResolvedorIdentidade`, com pré-condições estruturais **P-I1–P-I5**, obrigações do produtor **N-I-1–N-I-4** e a fronteira parcial **N-a-F1** — **sem criar estado, evento, transição, critério ou campo de saída**. Arbitragem documental **aprovada pelo GPT** e **integrada à `main`** pelo **PR #27** (**MERGED**). **Não implementa código** e **não cria marco funcional.** Escopo abaixo. | PR #27 — commit documental `713f473c9b9fcae75f73aa0ffadc84dd31e81caa`, merge `4bb202e0bb68f67a8d66e487d85ec7978ea8cd95`, branch de origem `docs/ri-identificador-validado`; alterações **exclusivamente** em `docs/07` (`+117 / -9`: §4.1 linha do componente, §5 etapa 5, §6.1.1 N7 + N-I-1–N-I-4, §6.2 projeção + N-a-F1, §7.1 insumos, assinatura, P-I1–P-I5, efeito sobre a cascata, saída auditável e classes de erro, §8.2 R-I-K1–R-I-K15, §12) |
 | R-H | **Fronteira do conjunto H / takeover humano** na resolução de identidade (`docs/07-arquitetura-motor-respostas.md`) | **APROVADA — INTEGRADA À MAIN.** Micro-arbitragem que fixa `ids_em_atendimento_humano` como **entrada própria e separada** do conjunto elegível, **fora** da política N-a, **sem criar estado, evento ou transição**. Arbitragem documental **aprovada pelo GPT** e **integrada à `main`** pelo **PR #25** (**MERGED**). **Não implementa código** e **não cria marco funcional.** Escopo abaixo. | PR #25 — commit documental `24835a8d6cca50a6f783c8b831ca2c924d2177a9`, merge `96a8ff98611fb9de75540ea98adad94166c65e8b`, branch de origem `docs/rh-fronteira-conjunto-h`; alterações **exclusivamente** em `docs/07` (§5 tabela de componentes, §5 etapas 3 e 5, §6.2 + regras H1–H6, §6.3, §7.1 insumos e assinatura conceitual, R5-P0, §7.1 classes de erro, §8.1, §8.2 cenários K-H1–K-H8) |
 | R | Contrato de **resolução de identidade** do `ResolvedorIdentidade`, anterior à `MaquinaEstados` (`docs/06-maquina-de-estados.md` × `docs/07-arquitetura-motor-respostas.md`) | **APROVADA — INTEGRADA À MAIN.** Materializa o critério técnico de "mesmo evento × nova solicitação" (T36/T37), que até então era declarado futuro, **sem criar estado, evento ou transição**. Arbitragem documental **aprovada pelo GPT** e **integrada à `main`** pelo **PR #23** (**MERGED**). **Não implementa código** e **não cria marco funcional.** Escopo abaixo. | PR #23 — commit documental `6c848ea8d45e7f6e412cdd297e9ca68c1fa75a21`, merge `aeb446656fd11b91bb61164f29f9adca6959d4df`, branch de origem `docs/arbitragem-resolvedor-identidade`; alterações em `docs/06` (nota da §3, §4.5, §5 regra 12) e `docs/07` (§4.1, §5, §6.1.1, §6.2, §6.3, §6.4, §6.5, §7.1, §8.1, §8.2, §9, §12) |
 | S3 | Arbitragem residual da `MaquinaEstados` (`docs/06-maquina-de-estados.md` × `docs/07-arquitetura-motor-respostas.md`) | **APROVADA — INTEGRADA À MAIN.** Fecha as ambiguidades residuais posteriores à S2 sem redesenhar a máquina: materialização de T04, precedência entre classes de `E08`, `T09 > T04`, `T32 > T35`, contrato semântico de ações, condição estruturada de T35, fronteira temporal da resposta aprovada e `CondicoesCiclo`. Arbitragem documental **aprovada pelo GPT** e **integrada à `main`** pelo **PR #18** (**MERGED**). **Não implementa código** e **não cria marco funcional.** Escopo abaixo. | PR #18 — head integrado `40841a3ef6ef00b83313d41e95c52c4f6c1045a8`, merge `ac49758771efe00596e27a9d8eec034d4c85df04`; commit documental principal `541aa765ac0e956620e3a78c19b38c0d24a40885`, a partir da branch `docs/s3-arbitragem-residual-maquina-estados`; alterações em `docs/06` (notas da §3, §4.2, §11) e `docs/07` (§4.1, §4.4, §4.5, §5) |
 | A | Fronteira de Qualificação entre `docs/05-roadmap.md` e `docs/07-arquitetura-motor-respostas.md` | **ARBITRADA** (S1): o `Qualificador` permanece componente do motor e sua implementação pertence à Etapa 3B; a antiga Etapa 4 deixa de ser aberta como etapa autônoma e é absorvida pela 3B; as etapas 5 a 10 mantêm a numeração; o `Qualificador` precede a `MaquinaEstados`. O `Qualificador` foi **implementado na 3B.5** (PR #14) e a `MaquinaEstados` foi **implementada na 3B.6** (PR #21); a precedência entre os dois foi respeitada na ordem de entrega. | reconciliação documental de `docs/05`, `docs/07` §8.4/§9 e deste documento |
 | S2 | Semântica de ciclo da `MaquinaEstados` (`docs/06-maquina-de-estados.md` × `docs/07-arquitetura-motor-respostas.md`) | **APROVADA — INTEGRADA À MAIN.** Arbitragem documental **aprovada pelo GPT** na auditoria da entrega e **integrada à `main`** pelo **PR #16** (**MERGED**), a partir da branch `docs/s2-arbitragem-maquina-estados`. **Não implementa código** e **não cria marco funcional.** Escopo abaixo. | PR #16 — head integrado `e4746d8b350b65388672ecfb5233a558031ff352`, merge `1a719546b922e0a89d30912de745046eb11849d9`; núcleo documental no commit `0be5a022d2b30b5cfa2bca501e77c06bed501419` — `docs/06` (§1.1, §2.2, §3, §4.1–§4.5, §9, §10, §11) e `docs/07` (§4.1, §5, §7.2, §8.1, §9, §12) |
+
+### Arbitragem N-a — escopo aprovado e integrado à `main`
+
+Arbitragem sobre a **produção do conjunto elegível E** pela etapa 3. Entrega
+**exclusivamente documental**: alterou somente `docs/07-arquitetura-motor-respostas.md`.
+**Zero componente, estado, evento, transição, critério ou campo novo** — a tabela de
+componentes de `docs/07` §4.1 permanece com **14**.
+
+| # | Decisão |
+|---|---|
+| N-a-a | **Classificação fechada dos oito estados.** Grupo I — `novo`, `coletando_dados`, `respondendo_duvidas`, `aguardando_confirmacao_disponibilidade`, `pronto_para_handoff` e `encaminhado_humano` — é elegível **sem consultar recência**. Grupo II — `atendimento_humano` — fica **fora de E** por N-a. Grupo III — `encerrado` — é elegível **apenas se recente**. |
+| N-a-b | **Recência somente para `encerrado`.** É o **único** estado cuja elegibilidade consulta o marco temporal; os demais **não o consultam**. |
+| N-a-c | **`instante_ultima_transicao`** é o **único marco temporal normativo do MVP** — o momento da última transição de estado **efetivamente persistida**; para `encerrado`, o último encerramento persistido. |
+| N-a-d | **Referência temporal pelo timestamp do ciclo.** A comparação usa o `instante_de_referencia_do_ciclo` — o campo "data e hora" da entrada — e o marco, quando inicializado ou atualizado, **recebe esse mesmo instante**. **Nunca relógio vivo.** A atualização é decidida pelo **caminho de transições**, não por `estado_inicial != estado_final`. |
+| N-a-e | **Limiar explícito e sem default.** É **duração**, **configuração operacional** do motor e **argumento explícito** — **não** é dado comercial, **não** vem do YAML, **não** vem do canal, **não** pode ser constante oculta e **não** tem default silencioso. Ausência, tipo inválido ou valor não positivo → **bloqueio**, verificado **sempre**, inclusive sem candidato `encerrado`. |
+| N-a-f | **Projeção `RegistroAtendimento` → `CandidatoAtendimento`** com exatamente quatro campos: `id_atendimento`, `estado` (convertido, com os oito valores), `tipo_evento_registrado` ← `dados_coletados["tipo_evento"]` e `data_nomeada_registrada` ← `dados_coletados["data_nomeada"]`. Ausente → `None`; **zero inferência, zero fuzzy, zero LLM, zero fallback semântico**. |
+| N-a-g | **N-a-F1 preservada e prevalecente.** Com `veredito_identificador == ENCONTRADO`, o atendimento identificado integra E **exatamente uma vez**, **independentemente de estado ou recência** — inclusive quando está em `atendimento_humano` ou fora do limiar. |
+| N-a-h | **H permanece independente de N-a.** É construído por filtro estrutural de estado, **antes e à parte** da filtragem, e **H1–H6 seguem intactas**. |
+| N-a-i | **Duplicatas não identificadas**: **não são deduplicadas** e **não bloqueiam apenas pela repetição**. Nenhuma regra global de unicidade foi criada; o bloqueio continua restrito ao ID identificado, por **N-I-2 / P-I5**. |
+| N-a-j | **Ordem canônica somente para auditabilidade** — chave estrutural `(id_atendimento, estado, tipo_evento_registrado, data_nomeada_registrada)` ascendente, `None` antes de texto. **Não** elimina candidato, **não** deduplica, **não** muda cardinalidade, **não** usa recência e **não** usa a ordem da persistência. A ordem **não tem significado semântico** para D0–D6. |
+| N-a-k | **R5-P0, D0 e D1 preservados, nesta ordem.** H ≠ vazio → **R5-P0**, e D0–D6 **não executam**; contradição declarada → **D0**, mesmo com E vazio. **Restando H vazio e D0 não decisivo**, alcança-se **D1**: E vazio com histórico conhecido → `SEM_CANDIDATO_ELEGIVEL`; E vazio sem histórico → `PRIMEIRO_CONTATO_COMPROVADO`. `havia_estado_esperado` é calculado sobre o **contexto recuperado**, **nunca sobre E**. |
+| N-a-l | **Cenários K-Na-1 a K-Na-18** documentados em `docs/07` §6.2, **sem criar ou alterar teste algum**. |
+
+**A arbitragem N-a não implementa nada por si.** N-a **não existe em código**; `src/casa77_sdr/persistence.py` **não foi alterado** e o campo `instante_ultima_transicao` **não foi implementado** — a evolução temporal da persistência permanece **futura**. O `OrquestradorMotor` **continua não implementado** e **nenhuma subetapa 3B.8 foi criada, escolhida ou autorizada**.
+
+**O que a N-a NÃO resolve.** Permanecem **abertas**, sem alteração: **E4**, **N-b**, **S2-D8**, **S3-D1**, **B**, **C**, **E1**, **E3**, **S2-D5**, **S2-D7**, a **confirmação física do handoff**, o **retorno do controle ao bot após `atendimento_humano` sem `E14`/T34** e a **unicidade geral de `id_atendimento` entre candidatos não identificados**. Ficam registradas como **pendências abertas da própria N-a** o **valor numérico do limiar temporal** e o **mecanismo concreto de carga** da configuração — `docs/07` §12, item 18.
 
 ### Arbitragem R — escopo aprovado e integrado à `main`
 
@@ -275,9 +333,9 @@ amplia `Identidade` nem `CriterioIdentidade`.
 `ResolvedorIdentidade` ainda não existia em código e a **3B.7** não havia sido iniciada.
 Esse contrato foi **materializado depois na 3B.7**, pelo **PR #29**.
 
-**O que a R-H NÃO resolve.** Ela **não resolve N-a**. A N-a continua **aberta** quanto à
-**política de elegibilidade**, à **política de recência**, à **janela temporal** e à
-**produção concreta do conjunto elegível**. A R-H fixa **apenas** que **N-a não governa H**.
+**O que a R-H NÃO resolveu.** Ela **não resolveu N-a**. **À época da R-H**, a N-a
+permaneceu **aberta** quanto à **política de elegibilidade**, à **política de recência**,
+à **janela temporal** e à **produção concreta do conjunto elegível**. A R-H fixa **apenas** que **N-a não governa H**. **Registro posterior:** a **especificação** de N-a foi **arbitrada e integrada** depois, pelo **PR #31**; a **implementação funcional** de N-a **continua não iniciada**.
 Permanecem igualmente abertas, sem alteração: **N-b, E4, S2-D8, S3-D1, E1, E3, B, C, S2-D5,
 S2-D7**, a **confirmação física do handoff** e o **retorno do controle ao bot após
 `atendimento_humano` sem `E14`/T34**.
@@ -313,10 +371,11 @@ alcança D1 ocorre com veredito **`NAO_INFORMADO`**. A pendência **E4** — tra
 `ResolvedorIdentidade` ainda não existia em código e a **3B.7** não havia sido iniciada.
 Esse contrato foi **materializado depois na 3B.7**, pelo **PR #29**.
 
-**O que a R-I NÃO resolve.** Ela **não resolve N-a**. A N-a continua **aberta** quanto à
-**política de elegibilidade dos demais candidatos**, à **definição de recência**, à **janela
-temporal**, à **composição concreta do conjunto** e à **consulta concreta da persistência**.
-A R-I fixa **apenas** a fronteira parcial **N-a-F1**. Permanecem igualmente abertas, sem
+**O que a R-I NÃO resolveu.** Ela **não resolveu N-a**. **À época da R-I**, a N-a
+permaneceu **aberta** quanto à **política de elegibilidade dos demais candidatos**, à
+**definição de recência**, à **janela temporal**, à **composição concreta do conjunto** e
+à **consulta concreta da persistência**.
+A R-I fixa **apenas** a fronteira parcial **N-a-F1**. **Registro posterior:** o restante da **especificação** de N-a foi **arbitrado e integrado** depois, pelo **PR #31**, com **N-a-F1 preservada**; a **implementação funcional** de N-a **continua não iniciada**. Permanecem igualmente abertas, sem
 alteração: **N-b, E4, S2-D8, S3-D1, E1, E3, B, C, S2-D5, S2-D7**, a **confirmação física do
 handoff** e o **retorno do controle ao bot após `atendimento_humano` sem `E14`/T34**. Fica
 registrada como **nova questão residual aberta** a **unicidade geral de `id_atendimento`
@@ -416,13 +475,15 @@ comercial `D1`–`D8` já registrada no histórico deste documento.
 
 Registradas pelo contrato de identidade. **Nenhuma é resolvida** por aquele PR, pelo **PR
 #25** (arbitragem R-H), pelo **PR #27** (arbitragem R-I), pela **implementação funcional
-da 3B.7** (PR #29) nem por esta reconciliação — salvo a fronteira **parcial** N-a-F1
-registrada abaixo. A 3B.7 **consome** o contrato; ela não fecha nenhuma destas pendências.
+da 3B.7** (PR #29) nem por esta reconciliação — salvo a fronteira **parcial** N-a-F1,
+registrada abaixo, e a **especificação** de **N-a**, arbitrada pelo **PR #31** e detalhada
+na linha correspondente. A 3B.7 **consome** o contrato; ela não fecha nenhuma destas pendências.
 Detalhe em `docs/07` §12.
 
 | # | Pendência | Situação |
 |---|---|---|
-| N-a | Política concreta de **elegibilidade e recência** que produz o conjunto elegível da etapa 3, **e** o tratamento de `SEM_CANDIDATO_ELEGIVEL` na integração. **Continua ABERTA** quanto à política de elegibilidade, à política de recência, à janela temporal e à produção concreta do conjunto elegível. A **arbitragem R-H não a resolve** — fixa **apenas** que **N-a não governa o conjunto H** (`docs/07` §6.2, H2). A **arbitragem R-I também não a resolve**: fixa **apenas** a fronteira parcial **N-a-F1** — com `veredito_identificador == ENCONTRADO`, o atendimento identificado **deve** integrar o conjunto elegível **exatamente uma vez** e **nenhuma política de recência ou elegibilidade pode removê-lo naquele ciclo** (`docs/07` §6.2). **Todo o restante de N-a continua aberto.** | **não bloqueia** a 3B.6; **bloqueia** o `OrquestradorMotor` e a integração completa |
+| N-a | Política de **elegibilidade e recência** que produz o conjunto elegível da etapa 3. **Especificação documental: ARBITRADA / CONCLUÍDA** pelo **PR #31** (`docs/07` §5, §6.2, §7.1, §12) — classificação fechada dos oito estados, recência só para `encerrado`, `instante_ultima_transicao`, limiar explícito sem default, projeção, composição de E, duplicatas, ordem canônica e precedência da etapa 3, com **N-a-F1**, **H1–H6**, **R5-P0** e **D0–D6** preservados. **Implementação funcional: NÃO INICIADA e NÃO AUTORIZADA** — N-a não existe em código, `persistence.py` não foi alterado e o campo temporal não foi implementado. O tratamento de `SEM_CANDIDATO_ELEGIVEL` na integração **não** é parte dela: é a **E4**, pendência distinta e **ainda aberta** | **especificação resolvida**; a **implementação** ainda depende do **dado temporal futuro da persistência** e do **valor/mecanismo do limiar** (linha abaixo) |
+| Limiar temporal de recência | **Valor numérico** do limiar e **mecanismo concreto de carga** da configuração. **Aberta pelo PR #31** (`docs/07` §12, item 18). **Nenhum número foi definido** e **nenhuma tecnologia, variável de ambiente, arquivo ou serviço foi escolhido**. **Não é dado comercial** — não entra em `knowledge/casa77.yaml`; depende de aprovação específica de Douglas Bianchi e de decisão operacional | **não bloqueia** a 3B.6 nem a 3B.7; **bloqueia** a implementação de N-a e, por consequência, o `OrquestradorMotor` |
 | N-b | Contrato global da **interpretação**: quem produz a projeção estruturada consumida pelo resolvedor (`intencao_identidade`, referências, confianças binárias) e com que garantias. **Produtor não atribuído.** | **não bloqueia** a 3B.6; **bloqueia** a integração completa |
 | E1 | Distinção entre as entidades **conversa × atendimento × lead**. Já registrada como aberta desde a etapa de modelo de dados; a arbitragem R **não** a resolve. | **não bloqueia** a 3B.6 |
 | E3 | **Evento novo declarado durante atendimento ativo.** Hoje o resultado é **conservador** — `AMBIGUA` / `AMBIGUIDADE_DIVERGENCIA_EM_ATENDIMENTO_ATIVO`. **Nenhuma transição nova foi aprovada** para abrir atendimento paralelo. | **não bloqueia** a 3B.6 |
