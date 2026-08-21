@@ -409,9 +409,13 @@ Os efeitos paralelos **P1–P6** (§4.3) e as inércias **N1–N4** (§4.4) cont
 
 #### Projeção das transições que mudaram estado
 
-**Contrato arbitrado; ainda não materializado em código.** Esta subseção **define** a
-projeção. Ela **não** afirma que o campo já exista em runtime, e **não** implementa
-**N-a-T3–N-a-T7** do doc 07 §6.2, que **continuam não implementadas**.
+**Contrato arbitrado e materializado em runtime.** Esta subseção **define** a projeção. O
+contrato permanece **exatamente o arbitrado** — nenhuma regra abaixo foi alterada — e a
+projeção **já existe em runtime**, exposta por `DecisaoMaquina` e produzida pela
+`MaquinaEstados`. Isso **não** implementa **N-a-T3–N-a-T7** do doc 07 §6.2, que
+**continuam não implementadas**; **não** implementa a **composição entre as até três
+chamadas** do ciclo; e **não** implementa o **`OrquestradorMotor`**, que **continua não
+implementado**.
 
 Conceitualmente, além de `caminho`, a decisão do ciclo expõe
 **`transicoes_que_mudaram_estado`**, de forma `tuple[Transicao, ...]`.

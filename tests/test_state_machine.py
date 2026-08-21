@@ -163,7 +163,7 @@ def test_condicoes_ciclo_tem_exatamente_oito_campos() -> None:
     ]
 
 
-def test_decisao_maquina_tem_exatamente_oito_campos() -> None:
+def test_decisao_maquina_tem_exatamente_nove_campos() -> None:
     assert list(DecisaoMaquina.__dataclass_fields__) == [
         "estado_final",
         "caminho",
@@ -173,6 +173,7 @@ def test_decisao_maquina_tem_exatamente_oito_campos() -> None:
         "eventos_consumidos",
         "motivos_handoff",
         "motivo_encerramento",
+        "transicoes_que_mudaram_estado",
     ]
 
 
@@ -1484,6 +1485,15 @@ def test_matriz_positiva_t01_a_t41(
     assert decisao.estado_final is esperado
     assert decisao.acoes == acoes
     assert decisao.eventos_consumidos == eventos
+    # Oráculo válido **somente aqui**: a asserção acima já provou que o caminho
+    # é **unitário**, então "mudou estado" coincide com `esperado is not
+    # estado`. Isto **não** é o algoritmo de produção — a máquina classifica
+    # cada `Txx` contra o estado intermediário do instante da aplicação — e
+    # **não se generaliza** para caminhos com mais de uma transição, cobertos
+    # pelos casos dedicados adiante.
+    assert decisao.transicoes_que_mudaram_estado == (
+        (transicao,) if esperado is not estado else ()
+    )
 
 
 def test_matriz_positiva_cobre_todas_as_quarenta_e_uma_transicoes() -> None:
@@ -2168,3 +2178,147 @@ def test_matriz_e06_com_resposta_aprovada(estado, transicao, estado_final) -> No
 def test_e06_em_novo_dispensa_resposta_aprovada() -> None:
     decisao = decidir(Estado.NOVO, (Evento.E06,), INCOMPLETOS, SEM_CONDICOES)
     assert decisao.caminho == (Transicao.T02,)
+
+
+# --------------------------------------------------------------------------
+# Projeção das transições que mudaram estado (doc 06 §4.2)
+#
+# A projeção é **subsequência ordenada de `caminho`**: contém exatamente as
+# `Txx` cujo destino diferiu do estado intermediário vigente **no instante da
+# aplicação**. Nenhum caso abaixo deriva a projeção de `estado_inicial !=
+# estado_final` — os casos 5 e 6 existem justamente para provar que essa
+# comparação seria errada.
+# --------------------------------------------------------------------------
+
+
+def test_ciclo_sem_transicao_projeta_tupla_vazia() -> None:
+    """1. Zero transição: `E02` em `atendimento_humano` é coberto por P1."""
+    decisao = decidir(
+        Estado.ATENDIMENTO_HUMANO, (Evento.E02,), INCOMPLETOS, SEM_CONDICOES
+    )
+
+    assert decisao.caminho == ()
+    assert decisao.estado_final is Estado.ATENDIMENTO_HUMANO
+    assert decisao.transicoes_que_mudaram_estado == ()
+    assert EfeitoParalelo.P1 in decisao.efeitos
+
+
+def test_uma_transicao_que_muda_entra_na_projecao() -> None:
+    """2. T01 leva `novo` → `coletando_dados`."""
+    decisao = decidir(Estado.NOVO, (Evento.E01,), INCOMPLETOS, SEM_CONDICOES)
+
+    assert decisao.caminho == (Transicao.T01,)
+    assert decisao.estado_final is Estado.COLETANDO_DADOS
+    assert decisao.transicoes_que_mudaram_estado == (Transicao.T01,)
+
+
+def test_t33_preserva_o_estado_e_fica_fora_da_projecao() -> None:
+    """3. T33 mantém `atendimento_humano`."""
+    decisao = decidir(
+        Estado.ATENDIMENTO_HUMANO, (Evento.E01,), INCOMPLETOS, SEM_CONDICOES
+    )
+
+    assert decisao.caminho == (Transicao.T33,)
+    assert decisao.estado_final is Estado.ATENDIMENTO_HUMANO
+    assert decisao.transicoes_que_mudaram_estado == ()
+
+
+def test_projecao_e_subsequencia_propria_de_caminho_multiplo() -> None:
+    """4. Caminho com duas `Txx`, apenas uma mudou estado."""
+    decisao = decidir(
+        Estado.NOVO, (Evento.E01, Evento.E02), INCOMPLETOS, SEM_CONDICOES
+    )
+
+    assert decisao.caminho == (Transicao.T01, Transicao.T04)
+    assert decisao.estado_final is Estado.COLETANDO_DADOS
+    assert decisao.transicoes_que_mudaram_estado == (Transicao.T01,)
+
+
+def test_k_na_17_mesma_solicitacao_muda_e_volta_ao_mesmo_estado() -> None:
+    """5. `encerrado` → reabertura → `encerrado`: inicial == final, com mudança."""
+    decisao = decidir(
+        Estado.ENCERRADO,
+        (Evento.E01, Evento.E14),
+        INCOMPLETOS,
+        CondicoesCiclo(
+            identidade=Identidade.MESMA_SOLICITACAO,
+            motivo_encerramento=MotivoEncerramento.SEM_INTERESSE,
+        ),
+    )
+
+    assert decisao.caminho == (Transicao.T36, Transicao.T35)
+    assert decisao.estado_final is Estado.ENCERRADO
+    assert decisao.transicoes_que_mudaram_estado == (Transicao.T36, Transicao.T35)
+
+
+def test_nova_solicitacao_tambem_muda_e_volta_ao_mesmo_estado() -> None:
+    """6. Variante de 5 por T37."""
+    decisao = decidir(
+        Estado.ENCERRADO,
+        (Evento.E01, Evento.E14),
+        INCOMPLETOS,
+        CondicoesCiclo(
+            identidade=Identidade.NOVA_SOLICITACAO,
+            motivo_encerramento=MotivoEncerramento.ENGANO,
+        ),
+    )
+
+    assert decisao.caminho == (Transicao.T37, Transicao.T35)
+    assert decisao.estado_final is Estado.ENCERRADO
+    assert decisao.transicoes_que_mudaram_estado == (Transicao.T37, Transicao.T35)
+
+
+def test_t35_muda_quando_a_origem_efetiva_nao_e_encerrado() -> None:
+    """7. T35 a partir de `coletando_dados`."""
+    decisao = decidir(
+        Estado.COLETANDO_DADOS,
+        (Evento.E14,),
+        INCOMPLETOS,
+        CondicoesCiclo(motivo_encerramento=MotivoEncerramento.ENGANO),
+    )
+
+    assert decisao.caminho == (Transicao.T35,)
+    assert decisao.estado_final is Estado.ENCERRADO
+    assert decisao.transicoes_que_mudaram_estado == (Transicao.T35,)
+
+
+def test_t35_preserva_quando_a_origem_efetiva_ja_e_encerrado() -> None:
+    """8. Mesma T35, origem `encerrado`: classificação é dinâmica, não estática."""
+    decisao = decidir(
+        Estado.ENCERRADO,
+        (Evento.E14,),
+        INCOMPLETOS,
+        CondicoesCiclo(motivo_encerramento=MotivoEncerramento.SPAM),
+    )
+
+    assert decisao.caminho == (Transicao.T35,)
+    assert decisao.estado_final is Estado.ENCERRADO
+    assert decisao.transicoes_que_mudaram_estado == ()
+
+
+def test_t41_preserva_o_estado_e_fica_fora_da_projecao() -> None:
+    """9. T41 mantém `coletando_dados`."""
+    decisao = decidir(
+        Estado.COLETANDO_DADOS,
+        (Evento.E01,),
+        INCOMPLETOS,
+        CondicoesCiclo(insumo_qualificacao_atualizado=True),
+    )
+
+    assert decisao.caminho == (Transicao.T41,)
+    assert decisao.estado_final is Estado.COLETANDO_DADOS
+    assert decisao.transicoes_que_mudaram_estado == ()
+
+
+def test_t17_preserva_o_estado_e_fica_fora_da_projecao() -> None:
+    """10. T17 mantém `respondendo_duvidas`."""
+    decisao = decidir(
+        Estado.RESPONDENDO_DUVIDAS,
+        (Evento.E06,),
+        INCOMPLETOS,
+        CondicoesCiclo(resposta_aprovada_disponivel=True),
+    )
+
+    assert decisao.caminho == (Transicao.T17,)
+    assert decisao.estado_final is Estado.RESPONDENDO_DUVIDAS
+    assert decisao.transicoes_que_mudaram_estado == ()

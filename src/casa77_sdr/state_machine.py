@@ -226,6 +226,10 @@ class DecisaoMaquina:
     famílias C0–C11 e não para na primeira aplicável. `motivos_handoff` só é
     ecoado quando o caminho efetivamente registra ou absorve `E18`;
     `motivo_encerramento` só quando T35 entra no caminho.
+
+    `transicoes_que_mudaram_estado` é a **subsequência ordenada de `caminho`**
+    com as `Txx` que **efetivamente mudaram o estado** intermediário no
+    instante de sua aplicação — contrato do doc 06 §4.2.
     """
 
     estado_final: Estado
@@ -236,6 +240,7 @@ class DecisaoMaquina:
     eventos_consumidos: tuple[Evento, ...] = ()
     motivos_handoff: tuple[str, ...] = ()
     motivo_encerramento: MotivoEncerramento | None = None
+    transicoes_que_mudaram_estado: tuple[Transicao, ...] = ()
 
 
 # --------------------------------------------------------------------------
@@ -502,6 +507,7 @@ class _Percurso:
     condicoes: CondicoesCiclo
     classe_violacao: _ClasseViolacao | None
     caminho: list[Transicao] = field(default_factory=list)
+    transicoes_que_mudaram_estado: list[Transicao] = field(default_factory=list)
     acoes: list[AcaoMaquina] = field(default_factory=list)
     consumidos: list[Evento] = field(default_factory=list)
 
@@ -696,6 +702,9 @@ def decidir(
             if Evento.E18 in percurso.consumidos
             else ()
         ),
+        transicoes_que_mudaram_estado=tuple(
+            percurso.transicoes_que_mudaram_estado
+        ),
         motivo_encerramento=(
             condicoes.motivo_encerramento
             if Transicao.T35 in percurso.caminho
@@ -724,6 +733,12 @@ def _tentar(percurso: _Percurso, transicao: Transicao) -> None:
 
     percurso.caminho.append(transicao)
     percurso.consumidos.append(gatilho)
+    # A classificação acontece **aqui**, antes da atualização: só neste ponto o
+    # estado intermediário vigente ainda é a origem efetiva desta aplicação.
+    # Nada é reconstruído depois, e T35 não recebe tratamento especial — a
+    # regra genérica basta (doc 06 §4.2).
+    if regra.destino is not percurso.estado:
+        percurso.transicoes_que_mudaram_estado.append(transicao)
     percurso.estado = regra.destino
     percurso.acoes.extend(_ACOES[transicao])
     if (
