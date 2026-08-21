@@ -1,6 +1,13 @@
 """Motor de respostas do bot SDR da Casa 77."""
 
 from casa77_sdr.knowledge import KnowledgeError, load_knowledge
+from casa77_sdr.context import (
+    ConjuntoHumanoIncoerente,
+    IdentificadorNaoResolvido,
+    ProjecaoIdentificadorIncoerente,
+    ProjecoesIdentidadeEtapa3,
+    montar_projecoes_identidade_etapa3,
+)
 from casa77_sdr.identity import (
     CandidatoAtendimento,
     ClasseCandidato,
@@ -65,6 +72,11 @@ from casa77_sdr.state_machine import (
 __all__ = [
     "KnowledgeError",
     "load_knowledge",
+    "ConjuntoHumanoIncoerente",
+    "IdentificadorNaoResolvido",
+    "ProjecaoIdentificadorIncoerente",
+    "ProjecoesIdentidadeEtapa3",
+    "montar_projecoes_identidade_etapa3",
     "DadosAtendimento",
     "MotivoViolacao",
     "Violacao",
