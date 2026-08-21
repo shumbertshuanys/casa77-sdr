@@ -385,12 +385,13 @@ a **pendência residual continua aberta**.
 17. **Existe planejamento técnico auditado pelo GPT como tecnicamente coerente.** Ele **não
     é uma autorização**: **nenhuma próxima entrega está autorizada por este documento**,
     nenhum rótulo novo é criado e nenhuma numeração é atribuída.
-18. **Próxima ação:** após a **integração e a auditoria desta reconciliação**, o GPT poderá
-    **autorizar ou não** uma **implementação funcional posterior** do contrato já arbitrado
-    pelo **PR #42**. **Esta reconciliação não autoriza implementação funcional por si
-    própria** e **nenhuma pendência é eleita aqui** como a implementação seguinte — nem
-    `transicoes_que_mudaram_estado`, nem **N-a-T3–T7**, nem **N-b**, nem **E4**, nem
-    **S2-D8**, nem **S3-D1**, nem o `OrquestradorMotor`.
+18. **Próxima ação:** após a **integração e a auditoria desta reconciliação**, o GPT
+    poderá **autorizar ou não** uma **nova entrega funcional** a partir das **pendências
+    reais ainda abertas**. **Esta reconciliação não autoriza implementação funcional por
+    si própria**, **não escolhe qual pendência vem a seguir** e **não cria numeração
+    nova**. **Nenhuma pendência é eleita aqui** como a implementação seguinte — nem
+    **N-a-T3–T7**, nem **N-b**, nem **E4**, nem **S2-D8**, nem **S3-D1**, nem o
+    `OrquestradorMotor`.
 19. As pendências permanecem abertas conforme seus próprios bloqueios: **B, C, S2-D5,
     S2-D7, S2-D8, S3-D1, a confirmação de entrega do handoff, N-b, E1, E3, E4, o retorno
     do controle ao bot após `atendimento_humano` sem `E14`/T34**, a **unicidade geral
