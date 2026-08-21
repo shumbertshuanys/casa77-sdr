@@ -402,9 +402,48 @@ O ciclo **não** para na primeira família aplicável. Ele percorre um **caminho
 | 4 | o caminho **pode conter mais de uma `Txx`**; |
 | 5 | ao final do ciclo existe **um único estado final** (I19), e é ele que a etapa 13 do doc 07 persiste; |
 | 6 | o caminho percorrido é **auditável**: a sequência de `Txx` aplicadas é registrada. |
+| 7 | além do caminho completo, a decisão expõe a **subsequência ordenada** das `Txx` que **efetivamente mudaram o estado** naquele percurso — contrato abaixo. |
 
 Os efeitos paralelos **P1–P6** (§4.3) e as inércias **N1–N4** (§4.4) continuam valendo
 **exatamente nas hipóteses enumeradas** — nem uma a mais.
+
+#### Projeção das transições que mudaram estado
+
+**Contrato arbitrado; ainda não materializado em código.** Esta subseção **define** a
+projeção. Ela **não** afirma que o campo já exista em runtime, e **não** implementa
+**N-a-T3–N-a-T7** do doc 07 §6.2, que **continuam não implementadas**.
+
+Conceitualmente, além de `caminho`, a decisão do ciclo expõe
+**`transicoes_que_mudaram_estado`**, de forma `tuple[Transicao, ...]`.
+
+| # | Regra da projeção |
+|---|---|
+| 1 | É a **subsequência ordenada de `caminho`** que contém **exatamente** as `Txx` cujo **destino diferiu do estado intermediário vigente no instante da aplicação**. |
+| 2 | A **pertença** à subsequência é o fato auditável de **"mudou estado"**; a **ausência** significa que aquela `Txx` do caminho **preservou** o estado. |
+| 3 | Cada `Txx` é classificada contra o **estado intermediário imediatamente anterior à sua própria aplicação** — nunca contra o estado inicial ou final do ciclo. |
+| 4 | A subsequência **preserva a ordem de `caminho`** e pode ser **vazia**, ter **uma** entrada ou ter **várias**. |
+| 5 | A informação **nasce dentro da máquina**, no mesmo ponto lógico em que a transição é aplicada — onde já são conhecidos o estado intermediário corrente, a transição aplicável e o destino efetivo. |
+| 6 | A **máquina é a autoridade** sobre "mudou estado". A projeção **não** é reconstruída pelo consumidor, **não** é derivada de `estado_inicial != estado_final`, **não** é obtida por *replay* externo do caminho, **não** cria tabela paralela de origem/destino e **não** exige que consumidor algum conheça a estrutura interna de regras da máquina. |
+| 7 | **Nenhuma lista nova das `Txx` que preservam estado é criada.** A **tabela da §3 continua sendo a fonte única** de origem, destino e condição de cada transição. |
+
+**Classificação é dinâmica, não estática.** Duas ilustrações, sem instituir enumeração
+paralela:
+
+- **T33** aplicada em `atendimento_humano` tem destino `atendimento_humano` e, portanto,
+  **preserva** o estado — não integra a subsequência;
+- **T35** tem origem declarada **aberta** — "qualquer exceto `atendimento_humano`" — e
+  destino `encerrado`. Ela **muda** o estado quando o estado intermediário corrente é
+  outro, e **preserva** o estado quando esse estado já é `encerrado`. **Não existe regra
+  estática dizendo que T35 sempre muda estado**: vale a regra geral do item 1.
+
+**Ciclo que muda e volta ao mesmo estado.** Um ciclo pode ter **estado inicial igual ao
+estado final** e ainda assim conter **mudança real de estado** — por exemplo `encerrado`
+→ reabertura → `encerrado` no mesmo ciclo. É exatamente por isso que
+`estado_inicial != estado_final` **não é critério válido**, e é o fundamento de
+**N-a-T5** (doc 07 §6.2).
+
+A composição desta projeção entre as **até três chamadas** por ciclo (§4.2, *Limite de
+chamadas*) e seu uso futuro pela **etapa 13** do pipeline estão no **doc 07 §6.2**.
 
 #### Consumo único
 
