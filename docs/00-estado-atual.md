@@ -12,17 +12,18 @@ Atualizado em: 2026-08-21.
 |---|---|
 | Projeto | Casa 77 SDR |
 | Branch de referência | `main` |
-| Último commit **funcional** aprovado | `f312eaa51cc14bc6dca954fa2df3ceb855560785` |
-| Merge correspondente na `main` | `10810506cac53d31fed8d5a85ca8467c9af389a8` |
-| Última **entrega funcional** concluída | **Montagem determinística das projeções de identidade da etapa 3** — fronteira **etapa 3 → identidade/etapa 5** (`src/casa77_sdr/context.py`, PR #38). **Sem numeração oficial de subetapa**: não é a 3B.8, que **não existe** |
-| Entrega funcional **anterior** | Implementação funcional da política N-a — produção determinística do conjunto elegível **E** (PR #36 — commit `51fae0d1…`, merge `383c5668…`). Também **sem numeração de subetapa** |
-| Entrega funcional **anterior a essa** | Evolução temporal do contrato de persistência operacional — `instante_ultima_transicao` (PR #33 — commit `0350e4ec…`, merge `1256628e…`). Também **sem numeração de subetapa** |
+| Último commit **funcional** aprovado | `2da532f150cd4024fbca4eb82af7440e5008b12a` |
+| Merge correspondente na `main` | `048a5483493774f53b46425a783afa9f8bccbc46` |
+| Última **entrega funcional** concluída | **Materialização em runtime da projeção `transicoes_que_mudaram_estado`** na `MaquinaEstados` / `DecisaoMaquina` (`src/casa77_sdr/state_machine.py`, PR #44). **Sem numeração oficial de subetapa**: não é a 3B.8, que **não existe** |
+| Entrega funcional **anterior** | Montagem determinística das projeções de identidade da etapa 3 — fronteira **etapa 3 → identidade/etapa 5** (`src/casa77_sdr/context.py`, PR #38 — commit `f312eaa5…`, merge `10810506…`). Também **sem numeração de subetapa** |
+| Entrega funcional **anterior a essa** | Implementação funcional da política N-a — produção determinística do conjunto elegível **E** (PR #36 — commit `51fae0d1…`, merge `383c5668…`). Também **sem numeração de subetapa** |
+| Entrega funcional **anterior a essa (3)** | Evolução temporal do contrato de persistência operacional — `instante_ultima_transicao` (PR #33 — commit `0350e4ec…`, merge `1256628e…`). Também **sem numeração de subetapa** |
 | Última **subetapa funcional numerada** concluída | 3B.7 — ResolvedorIdentidade determinístico (PR #29 — commit `25ab2726…`, merge `568919f5…`) |
 | Subetapa 3B.7 | **CONCLUÍDA** |
 | Arbitragem documental **N-a** | Arbitragem **N-a** — PR #31, commit `43774af5…`, merge `e8425410…`. **Não altera o marco funcional** |
-| Última **arbitragem documental** anterior a esta entrega | Arbitragem da **projeção de mudança de estado** (`docs/06` e `docs/07`) — PR #42, commit documental `f7b5d94cd22ce0d0fcf573823d9f5e56c853ac99`, merge `210ef72790f6317719340e8e0f842d272db6e137`. **Não altera o marco funcional** |
-| Última **reconciliação documental** anterior a esta entrega | Reconciliação de `docs/00` após o PR #40 — PR #41, commit documental `f23b016f6e8ffd0aba0f8d246ad4c0e80d0cfbcd`, merge `049fb62342d3e27a1b8680d17e5aac4767fad9bc`. **Não altera o marco funcional** |
-| Base da presente reconciliação | `210ef72790f6317719340e8e0f842d272db6e137` — HEAD da `main` verificado **antes** desta entrega (PR #42, **arbitragem documental**). O **marco funcional** permanece o do **PR #38** |
+| Arbitragem documental da **projeção de mudança de estado** | PR #42, commit documental `f7b5d94cd22ce0d0fcf573823d9f5e56c853ac99`, merge `210ef72790f6317719340e8e0f842d272db6e137`. **Não altera o marco funcional**. O contrato ali arbitrado foi **materializado depois** pelo **PR #44** |
+| Última **reconciliação documental** anterior a esta entrega | Reconciliação de `docs/00` após o PR #42 — PR #43, commit documental `900a618a50a040f2390ae5374bb67953f6217b0f`, merge `7610f06a7587168d70f13cc865a335d1f8b1ff2b`, branch de origem `docs/reconciliar-estado-pos-pr42`. Arquivo: **exclusivamente** `docs/00-estado-atual.md` — **51 adições, 35 remoções**. **Não altera o marco funcional** |
+| Base da presente reconciliação | `048a5483493774f53b46425a783afa9f8bccbc46` — HEAD da `main` verificado **antes** desta entrega (PR #44, **funcional**) |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -54,7 +55,9 @@ Atualizado em: 2026-08-21.
 | **Reconciliação do estado após o PR #38** (`docs/00`): registra o marco funcional `f312eaa…` / merge `10810506…`, o baseline **`749 passed`**, a série de baselines, as **três** entregas funcionais posteriores à 3B.7 e as pendências remanescentes | documental | PR #39 — **INTEGRADO à `main`** em 2026-08-21 (commit documental `1247c4e18a6f3ddc0e66346d6ffed51a6a1345ab`, merge `95fdf0197687cffd4a1aa930b6592f98d7f22e90`, branch de origem `docs/reconciliar-contexto-identidade-pos-merge`). Arquivo alterado: **exclusivamente** `docs/00-estado-atual.md`. **Não cria marco funcional** e **não altera** o marco do **PR #38** |
 | **Micro-reconciliação factual de `docs/07`** quanto ao estado de **N-a**: o **item 18** de §12 passa a distinguir a **política determinística já executável** — que recebe o limiar como **argumento explícito** e o valida — do **valor operacional** e do **mecanismo concreto de carga**, que continuam pendentes e seguem bloqueando a **integração operacional** e o `OrquestradorMotor`; o fecho de §12 passa a registrar que **N-a possui materialização PARCIAL em código** pelas entregas dos PRs **#33**, **#36** e **#38**, permanecendo pendentes **N-a-T3–N-a-T7**, o limiar e sua carga, **S4/S5** e o **destino do alerta**. **Nenhum número, tecnologia, variável de ambiente, arquivo ou serviço foi escolhido** | documental | PR #40 — **INTEGRADO à `main`** em 2026-08-21 (commit documental `903a5e92d1ceb70a338b718ac4439e6a2078405c`, merge `d358a333d8ac34f12f055d584a3cd6fe0fc702a6`, branch de origem `docs/reconciliar-na-pos-contexto-identidade`). Arquivo alterado: **exclusivamente** `docs/07-arquitetura-motor-respostas.md` — **1 file changed, 13 insertions(+), 6 deletions(-)**. **Zero código**, **zero teste** e **nenhum marco funcional novo** |
 | **Reconciliação do estado após o PR #40** (`docs/00`): registra os PRs **#39** e **#40** como integrados e documentais, reatribui as execuções reais de teste à reconciliação do **PR #39**, e substitui rótulos auto-invalidantes por formulações estáveis — "reconciliação documental anterior a esta entrega" e "Base da presente reconciliação" | documental | PR #41 — **INTEGRADO à `main`** em 2026-08-21 (commit documental `f23b016f6e8ffd0aba0f8d246ad4c0e80d0cfbcd`, merge `049fb62342d3e27a1b8680d17e5aac4767fad9bc`, branch de origem `docs/reconciliar-estado-pos-pr40`). Arquivo alterado: **exclusivamente** `docs/00-estado-atual.md` — **1 file changed, 41 insertions(+), 21 deletions(-)**. **Zero código**, **zero teste** e **nenhum marco funcional novo** |
-| **Arbitragem da projeção de mudança de estado** (`docs/06` §4.2 e `docs/07` §2, §6.2, §8.1, §12): arbitra o **contrato conceitual** `transicoes_que_mudaram_estado: tuple[Transicao, ...]` — **subsequência ordenada de `caminho`** com as `Txx` que **efetivamente mudaram o estado intermediário no instante da aplicação**. Fixa a **`MaquinaEstados` como fonte autoritativa** (sem *replay* externo, sem tabela paralela, sem exposição da estrutura interna de regras), rejeita `estado_inicial != estado_final` como critério, trata **T35 dinamicamente** pelo estado intermediário efetivo, avalia **cada `Txx` individualmente**, combina as **até três chamadas** do ciclo pela existência de **ao menos uma** decisão com projeção não vazia, e separa a **criação** de atendimento (**N-a-T3**) da **atualização** de atendimento existente (**N-a-T4/N-a-T5**). **Nenhuma lista normativa paralela** de transições é criada — `docs/06` §3 continua fonte única | arbitragem documental/governança | PR #42 — **INTEGRADO à `main`** em 2026-08-21 (commit documental `f7b5d94cd22ce0d0fcf573823d9f5e56c853ac99`, merge `210ef72790f6317719340e8e0f842d272db6e137`, branch de origem `docs/arbitragem-projecao-mudanca-estado`). Arquivos: `docs/06-maquina-de-estados.md`, `docs/07-arquitetura-motor-respostas.md` — **2 files changed, 70 insertions(+), 3 deletions(-)**. **Zero código**, **zero teste** e **nenhum marco funcional novo**: o contrato está **ARBITRADO**, mas **ainda não existe em runtime** |
+| **Arbitragem da projeção de mudança de estado** (`docs/06` §4.2 e `docs/07` §2, §6.2, §8.1, §12): arbitra o **contrato conceitual** `transicoes_que_mudaram_estado: tuple[Transicao, ...]` — **subsequência ordenada de `caminho`** com as `Txx` que **efetivamente mudaram o estado intermediário no instante da aplicação**. Fixa a **`MaquinaEstados` como fonte autoritativa** (sem *replay* externo, sem tabela paralela, sem exposição da estrutura interna de regras), rejeita `estado_inicial != estado_final` como critério, trata **T35 dinamicamente** pelo estado intermediário efetivo, avalia **cada `Txx` individualmente**, combina as **até três chamadas** do ciclo pela existência de **ao menos uma** decisão com projeção não vazia, e separa a **criação** de atendimento (**N-a-T3**) da **atualização** de atendimento existente (**N-a-T4/N-a-T5**). **Nenhuma lista normativa paralela** de transições é criada — `docs/06` §3 continua fonte única | arbitragem documental/governança | PR #42 — **INTEGRADO à `main`** em 2026-08-21 (commit documental `f7b5d94cd22ce0d0fcf573823d9f5e56c853ac99`, merge `210ef72790f6317719340e8e0f842d272db6e137`, branch de origem `docs/arbitragem-projecao-mudanca-estado`). Arquivos: `docs/06-maquina-de-estados.md`, `docs/07-arquitetura-motor-respostas.md` — **2 files changed, 70 insertions(+), 3 deletions(-)**. **Zero código**, **zero teste** e **nenhum marco funcional novo**: o contrato foi **ARBITRADO** ali e **materializado depois**, pelo **PR #44** |
+| **Reconciliação do estado após o PR #42** (`docs/00`): registra a integração do **PR #42**, mantém — **naquele momento** — o **PR #38** como marco funcional, preserva o baseline **`749 passed`** / **Python 3.14.5** e registra a projeção `transicoes_que_mudaram_estado` como **arbitrada porém ainda não materializada naquele momento histórico** | documental | PR #43 — **INTEGRADO à `main`** em 2026-08-21 (commit documental `900a618a50a040f2390ae5374bb67953f6217b0f`, merge `7610f06a7587168d70f13cc865a335d1f8b1ff2b`, branch de origem `docs/reconciliar-estado-pos-pr42`). Arquivo alterado: **exclusivamente** `docs/00-estado-atual.md` — **1 file changed, 51 insertions(+), 35 deletions(-)**. **Não criou marco funcional**; aquele estado histórico foi **superado funcionalmente depois** pelo **PR #44** |
+| **Materialização em runtime da projeção `transicoes_que_mudaram_estado`** (`src/casa77_sdr/state_machine.py` + testes, com reconciliação factual de `docs/06` e `docs/07`): `DecisaoMaquina` passa a expor `transicoes_que_mudaram_estado: tuple[Transicao, ...] = ()` como **último** campo, e a **`MaquinaEstados` é a fonte autoritativa** da projeção — a informação **nasce dentro dela**, no instante da aplicação de cada `Txx`. Cada transição é classificada contra o **estado intermediário imediatamente anterior à sua própria aplicação**; a saída **preserva a ordem** e é **subsequência de `caminho`**, podendo ser vazia, unitária ou múltipla. **T35 é coberta dinamicamente** pela regra genérica — muda o estado a partir de origem diferente de `encerrado` e o preserva quando a origem efetiva já é `encerrado` —, **sem regra estática**. **Zero replay externo**, **zero uso de `estado_inicial != estado_final` como algoritmo de produção**, **zero tabela paralela** e **zero lista normativa** de transições que preservam estado: `docs/06` §3 continua fonte única | **funcional** | PR #44 — **INTEGRADO à `main`** em 2026-08-21 (commit funcional `2da532f150cd4024fbca4eb82af7440e5008b12a`, merge `048a5483493774f53b46425a783afa9f8bccbc46`, branch de origem `feat/projecao-mudanca-estado`, mensagem `feat: project state-changing transitions`). Arquivos: `docs/06-maquina-de-estados.md`, `docs/07-arquitetura-motor-respostas.md`, `src/casa77_sdr/state_machine.py`, `tests/test_state_machine.py` — **4 files changed, 191 insertions(+), 11 deletions(-)**. **Não recebe numeração de subetapa** |
 
 O PR #4 atualiza base comercial e documentação a partir de decisões de Douglas Bianchi
 (2026-08-15). Ele **não** é implementação funcional do motor e não altera o marco
@@ -130,6 +133,16 @@ contexto, o conjunto **H**, o `havia_estado_esperado` e o produtor **N-I**. A cr
 é, portanto, **PR #31 especificou → PR #33 materializou o campo temporal → PR #36
 materializou E → PR #38 materializou as projeções de identidade da etapa 3**.
 
+O **PR #44** é a **entrega funcional seguinte** e **materializou em runtime** o contrato
+que o **PR #42** havia **arbitrado**: a projeção `transicoes_que_mudaram_estado`
+**agora existe** em `DecisaoMaquina` e é produzida pela `MaquinaEstados`. A distinção é
+normativa — o **PR #42 especificou**; o **PR #44 materializou**. Ele **não implementa
+N-a-T3–N-a-T7**, **não implementa a composição entre as até três chamadas** do ciclo,
+**não implementa a etapa 13** nem a **escrita operacional** de
+`instante_ultima_transicao`, e **não implementa o `OrquestradorMotor`**. O PR #44
+**também não recebeu numeração de subetapa**: **nenhuma 3B.8 foi criada, escolhida ou
+autorizada**.
+
 O **PR #38 não implementou a etapa 3 inteira**, **não integrou o pipeline completo** e
 **não implementou o `OrquestradorMotor`**. Continuam **não implementados**:
 **N-a-T3–N-a-T7**, o **tratamento operacional dos bloqueios** (S4, S5), o **destino do
@@ -138,17 +151,18 @@ recebeu numeração de subetapa**: **nenhuma 3B.8 foi criada, escolhida ou autor
 
 ## Testes
 
-Última execução real em **2026-08-21**, **reproduzida na reconciliação do PR #39** sobre
-o HEAD funcional integrado (`10810506…`), em **Python 3.14.5** — **três** execuções,
-nenhuma além destas:
+Última execução real em **2026-08-21**, **auditada antes do merge do PR #44**, em
+**Python 3.14.5** — **duas** execuções, nenhuma além destas:
 
 | Comando | Resultado |
 |---|---|
-| `./.venv/Scripts/python.exe -m pytest tests/test_eligibility.py -q -p no:cacheprovider` | **`87 passed`** |
-| `./.venv/Scripts/python.exe -m pytest tests/test_context.py -q -p no:cacheprovider` | **`65 passed`** |
-| `./.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider` | **`749 passed`** |
+| `./.venv/Scripts/python.exe -m pytest tests/test_state_machine.py -q -p no:cacheprovider` | **`257 passed`** |
+| `./.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider` | **`759 passed`** |
 
-**Zero failures, zero errors e zero skips** nas três. A suíte cobre o carregador/validação da base (3B.1,
+**Zero failures, zero errors e zero skips** nas duas. Os números do **PR #38** —
+**`87 passed`** em `tests/test_eligibility.py`, **`65 passed`** em `tests/test_context.py`
+e **`749 passed`** na suíte completa — permanecem registrados como o **baseline
+histórico daquela entrega**. A suíte cobre o carregador/validação da base (3B.1,
 `tests/test_knowledge.py`), as regras comerciais determinísticas (3B.2,
 `tests/test_rules.py`), a persistência operacional em memória (3B.3,
 `tests/test_persistence.py`), a normalização de entrada com a chave de idempotência
@@ -159,9 +173,10 @@ nenhuma além destas:
 o transporte e a validação de `instante_ultima_transicao`; o **PR #36** acrescentou
 `tests/test_eligibility.py` — a **produção determinística do conjunto elegível E**; e o
 **PR #38** acrescentou `tests/test_context.py` — a **montagem das projeções de
-identidade da etapa 3**.
+identidade da etapa 3**. O **PR #44** ampliou `tests/test_state_machine.py` com a
+**projeção `transicoes_que_mudaram_estado`**.
 
-**Baseline funcional atual: `749 passed`.**
+**Baseline funcional atual: `759 passed`.**
 
 Histórico: até a 3B.5 o baseline era `180 passed`, e assim permaneceu durante as
 arbitragens documentais S2 e S3 — elas não alteram código nem testes. O salto para
@@ -178,19 +193,21 @@ direcionado desse arquivo passou de **26** para **49** casos. O salto de **`597 
 acrescentou `tests/test_eligibility.py` com **87** casos. O salto de **`684 passed`**
 **para `749 passed`** — **delta +65** — decorre exclusivamente do **PR #38**, que
 acrescentou `tests/test_context.py` com **65** casos; **`tests/test_eligibility.py`
-permanece com 87 casos** e **nenhum** dos 65 é atribuído a ele. Os baselines históricos
-**`180`**, **`427`**, **`574`**, **`597`** e **`684`** permanecem registrados como
-acima; a série completa é **`180 → 427 → 574 → 597 → 684 → 749`**.
+permanece com 87 casos** e **nenhum** dos 65 é atribuído a ele. O salto de
+**`749 passed` para `759 passed`** — **delta +10** — decorre exclusivamente do
+**PR #44**, que acrescentou **10** casos a `tests/test_state_machine.py`, cujo teste
+direcionado passou a **`257 passed`**. Os baselines históricos **`180`**, **`427`**,
+**`574`**, **`597`**, **`684`** e **`749`** permanecem registrados como acima; a série
+completa é **`180 → 427 → 574 → 597 → 684 → 749 → 759`**.
 
 Os PRs **#23** (R), **#25** (R-H), **#27** (R-I), **#31** (N-a), **#32**, **#34**, **#35**,
-**#39**, **#40**, **#41** e **#42** (reconciliações, arbitragens e correções documentais) e a
+**#39**, **#40**, **#41**, **#42** e **#43** (reconciliações, arbitragens e correções documentais) e a
 presente reconciliação **não alteram código nem testes** e, portanto, **não alteram o
 baseline**. Em particular, o **PR #41** alterou **apenas** `docs/00` e o **PR #42** alterou
-**apenas** `docs/06` e `docs/07` — **nenhum dos dois** tocou `src/` ou `tests/`. As **três
-execuções acima foram reproduzidas na reconciliação do PR #39**, em 2026-08-21, sobre a
-`main` já integrada — elas **confirmam** os números declarados pelo **PR #38**. **Nenhuma
-execução de testes ocorre nesta reconciliação**, que é puramente documental, e nenhuma
-execução além das três reportadas é alegada.
+**apenas** `docs/06` e `docs/07` — **nenhum dos dois** tocou `src/` ou `tests/`. As **duas
+execuções acima foram realizadas e auditadas antes do merge do PR #44**, em 2026-08-21.
+**Nenhuma execução de testes ocorre nesta reconciliação**, que é puramente documental, e
+nenhuma execução além das duas reportadas é alegada.
 
 ## Roadmap (resumo — detalhe em `docs/05-roadmap.md`)
 
@@ -213,13 +230,15 @@ na **3B.7**, integrada pelo **PR #29** (merge `568919f5…`) — `src/casa77_sdr
 A **3B.7 está CONCLUÍDA e integrada à `main`**. Etapas 5 a 10 permanecem futuras e com a
 numeração preservada, conforme `docs/05-roadmap.md` — **não alterado por esta entrega**.
 
-Existem agora **três entregas funcionais posteriores à 3B.7 e SEM numeração oficial de
+Existem agora **quatro entregas funcionais posteriores à 3B.7 e SEM numeração oficial de
 subetapa**: (a) a **evolução temporal do contrato de persistência operacional**
 (`instante_ultima_transicao`), integrada pelo **PR #33**; (b) a **implementação
 funcional da política N-a** — produção determinística do conjunto elegível **E** em
-`src/casa77_sdr/eligibility.py` —, integrada pelo **PR #36**; e (c) a **montagem
+`src/casa77_sdr/eligibility.py` —, integrada pelo **PR #36**; (c) a **montagem
 determinística das projeções de identidade da etapa 3** — fronteira **etapa 3 →
-identidade/etapa 5** em `src/casa77_sdr/context.py` —, integrada pelo **PR #38**.
+identidade/etapa 5** em `src/casa77_sdr/context.py` —, integrada pelo **PR #38**; e
+(d) a **materialização em runtime da projeção `transicoes_que_mudaram_estado`** na
+`MaquinaEstados` / `DecisaoMaquina`, integrada pelo **PR #44**.
 Nenhuma delas é renomeada para **3B.8** — **a 3B.8 não existe** —, nenhuma **altera a
 numeração** do roadmap e nenhuma **significa que a próxima entrega tenha sido
 escolhida**. A **última subetapa funcional numerada** continua sendo a **3B.7**.
@@ -301,15 +320,16 @@ a **pendência residual continua aberta**.
 
 ## Próxima ação
 
-1. A **montagem determinística das projeções de identidade da etapa 3** — fronteira
-   **etapa 3 → identidade/etapa 5** — está **funcionalmente concluída e integrada à
-   `main`** pelo **PR #38** (**MERGED**). Ela **não recebeu numeração de subetapa**.
-2. Commit funcional atual: `f312eaa51cc14bc6dca954fa2df3ceb855560785`. Merge
-   correspondente: `10810506cac53d31fed8d5a85ca8467c9af389a8`.
-3. Baseline funcional atual: **`749 passed`**, com **`87 passed`** em
-   `tests/test_eligibility.py` e **`65 passed`** em `tests/test_context.py`, em
-   **Python 3.14.5** — zero failures, zero errors e zero skips. Baseline anterior:
-   **`684 passed`**; delta **+65**.
+1. A **materialização em runtime da projeção `transicoes_que_mudaram_estado`** na
+   `MaquinaEstados` / `DecisaoMaquina` está **funcionalmente concluída e integrada à
+   `main`** pelo **PR #44** (**MERGED**). Ela **não recebeu numeração de subetapa**. A
+   **entrega funcional anterior** é a **montagem determinística das projeções de
+   identidade da etapa 3** (PR #38), que permanece integrada.
+2. Commit funcional atual: `2da532f150cd4024fbca4eb82af7440e5008b12a`. Merge
+   correspondente: `048a5483493774f53b46425a783afa9f8bccbc46`.
+3. Baseline funcional atual: **`759 passed`**, com **`257 passed`** no teste direcionado
+   de `tests/test_state_machine.py`, em **Python 3.14.5** — zero failures, zero errors e
+   zero skips. Baseline anterior: **`749 passed`**; delta **+10**.
 4. A **última subetapa funcional numerada** continua sendo a **3B.7 — `ResolvedorIdentidade` determinístico** (PR #29, commit `25ab2726…`, merge
    `568919f5…`), que permanece **CONCLUÍDA**.
 5. **O conjunto H, o `havia_estado_esperado` e o produtor N-I agora possuem produtor em
@@ -336,28 +356,32 @@ a **pendência residual continua aberta**.
 11. Continuam **pendentes** o **valor numérico operacional do limiar** e o **mecanismo
     concreto de carga** da configuração.
 12. **Nenhuma subetapa 3B.8 foi criada, escolhida ou autorizada.** A **3B.8 não existe**.
-13. **A projeção de mudança de estado está ARBITRADA, não implementada.** O **PR #42**
-    fixou o contrato conceitual **`transicoes_que_mudaram_estado: tuple[Transicao, ...]`**
-    — a **subsequência ordenada de `caminho`** com as `Txx` que **efetivamente mudaram o
-    estado intermediário no instante da aplicação**, tendo a **`MaquinaEstados` como fonte
-    autoritativa**, **sem** *replay* externo e **sem** usar `estado_inicial != estado_final`
-    como critério; **T35** é tratada **dinamicamente**; as **até três chamadas** do ciclo são
-    combinadas pela existência de **ao menos uma** decisão com projeção **não vazia**; e a
-    **criação** de atendimento (**N-a-T3**) permanece **separada** da **atualização** de
-    atendimento existente (**N-a-T4/N-a-T5**). **O campo NÃO existe em runtime.**
-14. **Continuam NÃO implementados**: `transicoes_que_mudaram_estado` **em código**,
-    **`N-a-T3`, `N-a-T4`, `N-a-T5`, `N-a-T6` e `N-a-T7`**, o **`OrquestradorMotor`** e a
-    **integração completa do pipeline**. **Arbitrar o contrato não é implementá-lo.**
-15. **A base factual reconciliada nesta entrega é o merge `210ef727…`.** A reconciliação de
-    `docs/00` após o PR #40 foi **integrada pelo PR #41** (commit `f23b016…`, merge
-    `049fb623…`), e a **arbitragem da projeção de mudança de estado** foi **integrada pelo
-    PR #42** (commit `f7b5d94…`, merge `210ef727…`). **Ambos são documentais** e **não
-    alteram o marco funcional**, que permanece o do **PR #38**.
+13. **A projeção de mudança de estado EXISTE em runtime.** O **PR #42** arbitrou o
+    contrato e o **PR #44 o materializou**: `DecisaoMaquina` expõe
+    **`transicoes_que_mudaram_estado: tuple[Transicao, ...] = ()`** e a **`MaquinaEstados`
+    é a fonte autoritativa** — a informação nasce dentro dela, no instante da aplicação de
+    cada `Txx`. Cada transição é classificada contra o **estado intermediário imediatamente
+    anterior à própria aplicação**; a saída **preserva a ordem** e é **subsequência de
+    `caminho`**; **T35 é coberta dinamicamente** pela regra genérica; **sem** *replay*
+    externo, **sem** usar `estado_inicial != estado_final` como algoritmo de produção,
+    **sem** tabela paralela e **sem** lista normativa de transições que preservam estado.
+    **Ela deixou de ser pendência de implementação.**
+14. **Continuam NÃO implementados**: **`N-a-T3`, `N-a-T4`, `N-a-T5`, `N-a-T6` e
+    `N-a-T7`**; a **composição entre as até três chamadas** do ciclo; a **etapa 13** e a
+    **escrita operacional** de `instante_ultima_transicao`; o **`OrquestradorMotor`**; e a
+    **integração completa do pipeline**. **Materializar a projeção não é implementar a
+    escrita do marco temporal.**
+15. **A base factual reconciliada nesta entrega é o merge `048a5483…`.** A reconciliação de
+    `docs/00` após o PR #42 foi **integrada pelo PR #43**, e a **materialização da projeção
+    de mudança de estado** foi **integrada pelo PR #44** (commit funcional `2da532f1…`,
+    merge `048a5483…`) — esta **é funcional** e **cria o novo marco**, que passa a ser o do
+    **PR #44**.
 16. A presente entrega é **exclusivamente reconciliação documental de
-    `docs/00-estado-atual.md`** após o merge do **PR #42**: **não altera código, testes,
+    `docs/00-estado-atual.md`** após o merge do **PR #44**: **não altera código, testes,
     `docs/07`, `docs/06`, `docs/05`, base de conhecimento nem prompts**, e **nenhuma
-    execução de testes ocorre nela** — os números registrados são os reproduzidos na
-    reconciliação do **PR #39**.
+    execução de testes ocorre nela** — os números funcionais atuais registrados são os
+    **`257 passed`** / **`759 passed`** executados e auditados em **Python 3.14.5** antes
+    do merge do **PR #44**.
 17. **Existe planejamento técnico auditado pelo GPT como tecnicamente coerente.** Ele **não
     é uma autorização**: **nenhuma próxima entrega está autorizada por este documento**,
     nenhum rótulo novo é criado e nenhuma numeração é atribuída.
