@@ -12,10 +12,11 @@ Atualizado em: 2026-08-21.
 |---|---|
 | Projeto | Casa 77 SDR |
 | Branch de referência | `main` |
-| Último commit **funcional** aprovado | `51fae0d1d0388bb131fa8917709d30d10da5ac1a` |
-| Merge correspondente na `main` | `383c5668f483ce4c199f756ed581ba7fbac030d1` |
-| Última **entrega funcional** concluída | **Implementação funcional da política N-a** — produção determinística do conjunto elegível **E** (`src/casa77_sdr/eligibility.py`, PR #36). **Sem numeração oficial de subetapa**: não é a 3B.8, que **não existe** |
-| Entrega funcional **anterior** | Evolução temporal do contrato de persistência operacional — `instante_ultima_transicao` (PR #33 — commit `0350e4ec…`, merge `1256628e…`). Também **sem numeração de subetapa** |
+| Último commit **funcional** aprovado | `f312eaa51cc14bc6dca954fa2df3ceb855560785` |
+| Merge correspondente na `main` | `10810506cac53d31fed8d5a85ca8467c9af389a8` |
+| Última **entrega funcional** concluída | **Montagem determinística das projeções de identidade da etapa 3** — fronteira **etapa 3 → identidade/etapa 5** (`src/casa77_sdr/context.py`, PR #38). **Sem numeração oficial de subetapa**: não é a 3B.8, que **não existe** |
+| Entrega funcional **anterior** | Implementação funcional da política N-a — produção determinística do conjunto elegível **E** (PR #36 — commit `51fae0d1…`, merge `383c5668…`). Também **sem numeração de subetapa** |
+| Entrega funcional **anterior a essa** | Evolução temporal do contrato de persistência operacional — `instante_ultima_transicao` (PR #33 — commit `0350e4ec…`, merge `1256628e…`). Também **sem numeração de subetapa** |
 | Última **subetapa funcional numerada** concluída | 3B.7 — ResolvedorIdentidade determinístico (PR #29 — commit `25ab2726…`, merge `568919f5…`) |
 | Subetapa 3B.7 | **CONCLUÍDA** |
 | Última **arbitragem documental** integrada à `main` | Arbitragem **N-a** — PR #31, commit `43774af5…`, merge `e8425410…`. **Não altera o marco funcional** |
@@ -46,6 +47,7 @@ Atualizado em: 2026-08-21.
 | Arbitragem N-a — **política de produção do conjunto elegível da etapa 3** (`docs/07`): classificação **fechada dos oito estados**; recência aplicável **exclusivamente** a `encerrado`; `instante_ultima_transicao` como único marco temporal do MVP, alimentado pelo **timestamp do ciclo** e **nunca** por relógio vivo; limiar como **configuração operacional explícita, sem default**; projeção `RegistroAtendimento` → `CandidatoAtendimento`; composição de E; duplicatas não identificadas **preservadas**; ordem canônica **só para auditabilidade**; **N-a-F1**, **H1–H6**, **R5-P0** e **D0–D6** preservados; cenários **K-Na-1–K-Na-18** | documental/governança | PR #31 — **INTEGRADO à `main`** em 2026-08-20 (commit documental `43774af58877e3de3ecfda32cf0384a9fd047693`, merge `e8425410a7ced47c8d186bfceeea1cdd70f73b0c`, branch de origem `docs/arbitragem-na-contexto-elegivel`). Arquivo alterado: **exclusivamente** `docs/07-arquitetura-motor-respostas.md` — **1 file changed, 247 insertions(+), 12 deletions(-)**. **Não cria marco funcional** e **não altera** o marco **3B.7** |
 | **Evolução temporal do contrato de persistência operacional** — `instante_ultima_transicao` (`src/casa77_sdr/persistence.py` + testes, com reconciliação factual de `docs/07`): `RegistroAtendimento` passa a transportar `instante_ultima_transicao: datetime \| None = None`; **`None` permitido** no armazenamento; valor **não-`None` exige `datetime` com fuso efetivo**; **validação estrutural precede a falha simulada** em `criar` e `gravar`; **zero relógio vivo**; **zero preenchimento automático**; a persistência **não decide quando atualizar** o marco | **funcional** | PR #33 — **INTEGRADO à `main`** em 2026-08-20 (commit funcional `0350e4ec8391960d7f31c4af648406481367f181`, merge `1256628eebf25e31539b6be86fc6c9869ed8e9bd`, branch de origem `feat/persistencia-marco-temporal`). Arquivos: `docs/07-arquitetura-motor-respostas.md`, `src/casa77_sdr/persistence.py`, `tests/test_persistence.py` — **3 files changed, 491 insertions(+), 8 deletions(-)**. **Não implementa N-a** e **não recebe numeração de subetapa** |
 | **Implementação funcional da política N-a** — produção determinística do conjunto elegível **E** (`src/casa77_sdr/eligibility.py` + testes, com reconciliação factual de `docs/07`): cria o módulo e a função pura `produzir_conjunto_elegivel(...)`, que recebe os **registros já recuperados** e devolve **somente E** — `tuple[CandidatoAtendimento, ...]`. Materializa validação explícita do limiar, projeção `RegistroAtendimento` → `CandidatoAtendimento`, classificação fechada dos **oito** estados, recência **exclusiva** de `encerrado` com borda **inclusiva**, **N-a-F1**, preservação de duplicatas não identificadas e **ordem canônica** estrutural; sinaliza `ConfiguracaoTemporalInvalida`, `MarcoTemporalAusente`, `ContextoElegibilidadeCorrompido` e `IdentificadoIncoerente`. **Zero relógio vivo, zero I/O, zero YAML, zero LLM, zero rede.** **Não cria componente arquitetural novo** e **não implementa o `OrquestradorMotor`** | **funcional** | PR #36 — **INTEGRADO à `main`** em 2026-08-20 (commit funcional `51fae0d1d0388bb131fa8917709d30d10da5ac1a`, merge `383c5668f483ce4c199f756ed581ba7fbac030d1`, branch de origem `feat/na-conjunto-elegivel`). Arquivos: `docs/07-arquitetura-motor-respostas.md`, `src/casa77_sdr/eligibility.py`, `tests/test_eligibility.py` — **3 files changed, 889 insertions(+), 5 deletions(-)**. **Não recebe numeração de subetapa** |
+| **Montagem determinística das projeções de identidade da etapa 3** — fronteira **etapa 3 → identidade/etapa 5** (`src/casa77_sdr/context.py` + testes, com reconciliação factual de `docs/07`): cria o módulo e a função `montar_projecoes_identidade_etapa3(...)`, que lê a persistência operacional **somente para consulta** — `recuperar_por_id` e `consultar_por_contato` —, valida o identificador, projeta o contexto **integral**, constrói **H** por filtro estrutural de estado **fora de N-a**, determina **`havia_estado_esperado`** sobre o contexto recuperado (**nunca** sobre E), projeta **`id_atendimento_validado`** (**N-I**) e entrega o DTO fechado **`ProjecoesIdentidadeEtapa3`** de **cinco** campos. Altera `eligibility.py` para separar **seleção de E não canonicalizado** (`selecionar_conjunto_elegivel`) de **canonicalização** (`canonicalizar_conjunto_elegivel`), preservando `produzir_conjunto_elegivel(...)` como **composição compatível** das duas — sem mudança de semântica de N-a. Respeita a **ordem normativa** de `docs/07` §6.2, inclusive o **passo 12 antes do passo 13**. Sinaliza bloqueio por `IdentificadorNaoResolvido` (transporta **apenas o veredito fechado**, sem identificador, canal, contato ou PII), `ConjuntoHumanoIncoerente` e `ProjecaoIdentificadorIncoerente`. **Zero escrita na persistência, zero relógio vivo, zero YAML, zero LLM, zero rede.** **Não chama `resolver_identidade`**, **não chama a `MaquinaEstados`**, **não cria componente arquitetural novo** e **não implementa o `OrquestradorMotor`** | **funcional** | PR #38 — **INTEGRADO à `main`** em 2026-08-21 (commit funcional `f312eaa51cc14bc6dca954fa2df3ceb855560785`, merge `10810506cac53d31fed8d5a85ca8467c9af389a8`, branch de origem `feat/contexto-identidade-etapa3`). Arquivos: `docs/07-arquitetura-motor-respostas.md`, `src/casa77_sdr/__init__.py`, `src/casa77_sdr/context.py`, `src/casa77_sdr/eligibility.py`, `tests/test_context.py` — **5 files changed, 1476 insertions(+), 12 deletions(-)**. **Não recebe numeração de subetapa** |
 
 O PR #4 atualiza base comercial e documentação a partir de decisões de Douglas Bianchi
 (2026-08-15). Ele **não** é implementação funcional do motor e não altera o marco
@@ -109,26 +111,37 @@ de subetapa**.
 
 O **PR #36** é a **entrega funcional seguinte** e materializou a **produção
 determinística do conjunto elegível E**: `src/casa77_sdr/eligibility.py` **agora
-existe**, com a função pura `produzir_conjunto_elegivel(...)`. A cronologia é, portanto,
-**PR #31 especificou → PR #33 materializou o campo temporal → PR #36 materializou E**.
-Ele **não conclui a integração N-a**: **N-a-T3–N-a-T7 continuam não implementadas**,
-não existem produção de **H**, `havia_estado_esperado`, produtor **N-I**, wiring da
-etapa 3 nem tratamento operacional dos bloqueios, e o `OrquestradorMotor` **continua
-não implementado**. O PR #36 **também não recebeu numeração de subetapa**: **nenhuma
-3B.8 foi criada, escolhida ou autorizada**.
+existe**. Ele **não concluiu a integração N-a**: **à época daquele PR**, não existiam
+produção de **H**, `havia_estado_esperado` nem produtor **N-I**. O PR #36 **também não
+recebeu numeração de subetapa**.
+
+O **PR #38** é a **entrega funcional seguinte** e materializou a **montagem
+determinística das projeções de identidade da etapa 3** — a fronteira **etapa 3 →
+identidade/etapa 5**: `src/casa77_sdr/context.py` **agora existe**, com a consulta
+**somente-leitura** à persistência, a validação do identificador, a projeção integral do
+contexto, o conjunto **H**, o `havia_estado_esperado` e o produtor **N-I**. A cronologia
+é, portanto, **PR #31 especificou → PR #33 materializou o campo temporal → PR #36
+materializou E → PR #38 materializou as projeções de identidade da etapa 3**.
+
+O **PR #38 não implementou a etapa 3 inteira**, **não integrou o pipeline completo** e
+**não implementou o `OrquestradorMotor`**. Continuam **não implementados**:
+**N-a-T3–N-a-T7**, o **tratamento operacional dos bloqueios** (S4, S5), o **destino do
+alerta operacional**, **N-b**, **E4**, **S2-D8** e **S3-D1**. O PR #38 **também não
+recebeu numeração de subetapa**: **nenhuma 3B.8 foi criada, escolhida ou autorizada**.
 
 ## Testes
 
 Última execução real em **2026-08-21**, **reproduzida nesta reconciliação** sobre o
-HEAD funcional integrado (`383c5668…`), em **Python 3.14.5** — **duas** execuções,
+HEAD funcional integrado (`10810506…`), em **Python 3.14.5** — **três** execuções,
 nenhuma além destas:
 
 | Comando | Resultado |
 |---|---|
 | `./.venv/Scripts/python.exe -m pytest tests/test_eligibility.py -q -p no:cacheprovider` | **`87 passed`** |
-| `./.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider` | **`684 passed`** |
+| `./.venv/Scripts/python.exe -m pytest tests/test_context.py -q -p no:cacheprovider` | **`65 passed`** |
+| `./.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider` | **`749 passed`** |
 
-**Zero failures, zero errors e zero skips** em ambas. A suíte cobre o carregador/validação da base (3B.1,
+**Zero failures, zero errors e zero skips** nas três. A suíte cobre o carregador/validação da base (3B.1,
 `tests/test_knowledge.py`), as regras comerciais determinísticas (3B.2,
 `tests/test_rules.py`), a persistência operacional em memória (3B.3,
 `tests/test_persistence.py`), a normalização de entrada com a chave de idempotência
@@ -136,10 +149,12 @@ nenhuma além destas:
 `tests/test_qualification.py`), a máquina de estados determinística (3B.6,
 `tests/test_state_machine.py`) e a **resolução de identidade determinística** (3B.7,
 `tests/test_identity.py`). A cobertura da persistência foi **ampliada pelo PR #33** com
-o transporte e a validação de `instante_ultima_transicao`, e o **PR #36** acrescentou
-`tests/test_eligibility.py` — a **produção determinística do conjunto elegível E**.
+o transporte e a validação de `instante_ultima_transicao`; o **PR #36** acrescentou
+`tests/test_eligibility.py` — a **produção determinística do conjunto elegível E**; e o
+**PR #38** acrescentou `tests/test_context.py` — a **montagem das projeções de
+identidade da etapa 3**.
 
-**Baseline funcional atual: `684 passed`.**
+**Baseline funcional atual: `749 passed`.**
 
 Histórico: até a 3B.5 o baseline era `180 passed`, e assim permaneceu durante as
 arbitragens documentais S2 e S3 — elas não alteram código nem testes. O salto para
@@ -153,15 +168,18 @@ reconciliação (PR #32). O salto de **`574 passed` para `597 passed`** — **de
 decorre exclusivamente do **PR #33**, que ampliou `tests/test_persistence.py`; o teste
 direcionado desse arquivo passou de **26** para **49** casos. O salto de **`597 passed`**
 **para `684 passed`** — **delta +87** — decorre exclusivamente do **PR #36**, que
-acrescentou `tests/test_eligibility.py` com **87** casos. Os baselines históricos
-**`180`**, **`427`**, **`574`** e **`597`** permanecem registrados como acima; a série
-completa é **`180 → 427 → 574 → 597 → 684`**.
+acrescentou `tests/test_eligibility.py` com **87** casos. O salto de **`684 passed`**
+**para `749 passed`** — **delta +65** — decorre exclusivamente do **PR #38**, que
+acrescentou `tests/test_context.py` com **65** casos; **`tests/test_eligibility.py`
+permanece com 87 casos** e **nenhum** dos 65 é atribuído a ele. Os baselines históricos
+**`180`**, **`427`**, **`574`**, **`597`** e **`684`** permanecem registrados como
+acima; a série completa é **`180 → 427 → 574 → 597 → 684 → 749`**.
 
 Os PRs **#23** (R), **#25** (R-H), **#27** (R-I), **#31** (N-a), **#32**, **#34** e **#35** (reconciliações e correção documental)
 e a presente reconciliação **não alteram código nem testes** e, portanto, **não alteram
-o baseline**. As **duas execuções acima foram reproduzidas nesta reconciliação**, em
+o baseline**. As **três execuções acima foram reproduzidas nesta reconciliação**, em
 2026-08-21, sobre a `main` já integrada — elas **confirmam** os números declarados pelo
-**PR #36** e **não** alteram código nem testes. Nenhuma execução além das duas
+**PR #38** e **não** alteram código nem testes. Nenhuma execução além das três
 reportadas é alegada.
 
 ## Roadmap (resumo — detalhe em `docs/05-roadmap.md`)
@@ -185,18 +203,23 @@ na **3B.7**, integrada pelo **PR #29** (merge `568919f5…`) — `src/casa77_sdr
 A **3B.7 está CONCLUÍDA e integrada à `main`**. Etapas 5 a 10 permanecem futuras e com a
 numeração preservada, conforme `docs/05-roadmap.md` — **não alterado por esta entrega**.
 
-Existem agora **duas entregas funcionais posteriores à 3B.7 e SEM numeração oficial de
-subetapa**: (a) a **evolução temporal do contrato de persistência operacional** (`instante_ultima_transicao`), integrada pelo **PR #33**; e (b) a **implementação
+Existem agora **três entregas funcionais posteriores à 3B.7 e SEM numeração oficial de
+subetapa**: (a) a **evolução temporal do contrato de persistência operacional**
+(`instante_ultima_transicao`), integrada pelo **PR #33**; (b) a **implementação
 funcional da política N-a** — produção determinística do conjunto elegível **E** em
-`src/casa77_sdr/eligibility.py` —, integrada pelo **PR #36**. Nenhuma delas é renomeada
-para **3B.8** — **a 3B.8 não existe** —, nenhuma **altera a numeração** do roadmap e
-nenhuma **significa que a próxima entrega tenha sido escolhida**. A **última subetapa
-funcional numerada** continua sendo a **3B.7**.
+`src/casa77_sdr/eligibility.py` —, integrada pelo **PR #36**; e (c) a **montagem
+determinística das projeções de identidade da etapa 3** — fronteira **etapa 3 →
+identidade/etapa 5** em `src/casa77_sdr/context.py` —, integrada pelo **PR #38**.
+Nenhuma delas é renomeada para **3B.8** — **a 3B.8 não existe** —, nenhuma **altera a
+numeração** do roadmap e nenhuma **significa que a próxima entrega tenha sido
+escolhida**. A **última subetapa funcional numerada** continua sendo a **3B.7**.
 
-**Estado funcional do produto**: `src/casa77_sdr/eligibility.py` **existe** e o conjunto
-elegível **E** já é **produzido deterministicamente**; a política **N-a está
-parcialmente materializada**; a **integração do pipeline não está concluída** e o
-`OrquestradorMotor` **continua não implementado**.
+**Estado funcional do produto.** Estão **implementados**: a **produção determinística de
+E**; a **projeção integral reutilizável** dos registros recuperados; a **validação
+explícita do limiar**; o conjunto **H**; o **`havia_estado_esperado`**; o **produtor
+N-I** / `id_atendimento_validado`; e a **montagem da fronteira etapa 3 →
+identidade/etapa 5**. **Continuam NÃO implementados ou parciais**: a **etapa 3 inteira**,
+a **integração completa do pipeline** e o **`OrquestradorMotor`**.
 
 **Nenhuma subetapa 3B.8 foi escolhida, proposta ou autorizada por esta entrega.** Depois
 que esta reconciliação estiver integrada e auditada, o GPT reavaliará qual é a próxima
@@ -207,19 +230,24 @@ ser a seguinte, conforme o `docs/07` integrado:
 
 - **N-a — especificação documental: ARBITRADA / CONCLUÍDA** pelo **PR #31**. Deixou de ser
   bloqueador de **especificação**.
-- **N-a — produção determinística de E: IMPLEMENTADA** pelo **PR #36** (`src/casa77_sdr/eligibility.py`). **A integração N-a permanece PARCIAL**: a política
-  existe em código, mas **não está ligada ao pipeline**.
+- **N-a — produção determinística de E: IMPLEMENTADA** pelo **PR #36** (`src/casa77_sdr/eligibility.py`).
 - **Marco temporal — materialização parcial CONCLUÍDA** pelo **PR #33**: o **transporte e
   a validação da representação** de `instante_ultima_transicao` **já existem** em
   `src/casa77_sdr/persistence.py` (`docs/07` §6.2, M-T1–M-T6). **Deixou de ser
   pré-requisito pendente.**
+- **Produção de H, `havia_estado_esperado`, produtor N-I e o *wiring* da fronteira
+  etapa 3 → identidade/etapa 5: IMPLEMENTADOS** pelo **PR #38**
+  (`src/casa77_sdr/context.py`, `docs/07` §6.2, M-C1–M-C8). **Deixaram de ser
+  pré-requisitos pendentes.** Isso **não** significa que o *wiring* da **etapa 3 inteira**
+  esteja concluído: o que foi materializado é **a fronteira de identidade**, e a
+  **integração N-a permanece PARCIAL**.
 - Pré-requisitos concretos **ainda pendentes** da N-a, conforme `docs/07` §6.2 e §12:
   as regras **N-a-T3–N-a-T7** — quando inicializar, atualizar ou preservar o marco —,
-  que pertencem ao chamador da etapa 13; a produção de **H**; o `havia_estado_esperado`;
-  o **produtor N-I**; o **wiring da etapa 3**; o **tratamento operacional dos
-  bloqueios**; e o **valor numérico do limiar** com o **mecanismo concreto de carga**
-  da configuração. **Todos continuam não implementados/pendentes.**
-- **N-b**, **E4** e **S2-D8** **continuam abertas** e continuam bloqueando o
+  que pertencem ao chamador da etapa 13; o **tratamento operacional dos bloqueios**
+  (S4, S5); o **destino do alerta operacional**; e o **valor numérico do limiar** com o
+  **mecanismo concreto de carga** da configuração. **Todos continuam não
+  implementados/pendentes.**
+- **N-b**, **E4**, **S2-D8** e **S3-D1** **continuam abertas** e continuam bloqueando o
   `OrquestradorMotor` e a integração completa, conforme `docs/07` §12.
 
 Nenhum bloqueador além dos que o `docs/07` integrado sustenta é afirmado aqui.
@@ -260,48 +288,57 @@ a **pendência residual continua aberta**.
 
 ## Próxima ação
 
-1. A **implementação funcional da política N-a** — produção determinística do conjunto
-   elegível **E** — está **funcionalmente concluída e integrada à `main`** pelo
-   **PR #36** (**MERGED**). Ela **não recebeu numeração de subetapa**.
-2. Commit funcional atual: `51fae0d1d0388bb131fa8917709d30d10da5ac1a`. Merge
-   correspondente: `383c5668f483ce4c199f756ed581ba7fbac030d1`.
-3. Baseline funcional atual: **`684 passed`**, com **`87 passed`** no teste direcionado
-   de `tests/test_eligibility.py`, em **Python 3.14.5** — zero failures, zero errors e
-   zero skips. Baseline anterior: **`597 passed`**; delta **+87**.
+1. A **montagem determinística das projeções de identidade da etapa 3** — fronteira
+   **etapa 3 → identidade/etapa 5** — está **funcionalmente concluída e integrada à
+   `main`** pelo **PR #38** (**MERGED**). Ela **não recebeu numeração de subetapa**.
+2. Commit funcional atual: `f312eaa51cc14bc6dca954fa2df3ceb855560785`. Merge
+   correspondente: `10810506cac53d31fed8d5a85ca8467c9af389a8`.
+3. Baseline funcional atual: **`749 passed`**, com **`87 passed`** em
+   `tests/test_eligibility.py` e **`65 passed`** em `tests/test_context.py`, em
+   **Python 3.14.5** — zero failures, zero errors e zero skips. Baseline anterior:
+   **`684 passed`**; delta **+65**.
 4. A **última subetapa funcional numerada** continua sendo a **3B.7 — `ResolvedorIdentidade` determinístico** (PR #29, commit `25ab2726…`, merge
    `568919f5…`), que permanece **CONCLUÍDA**.
-5. **A produção determinística de E está implementada**: `eligibility.py` valida o
-   limiar antes de tudo, projeta todos os registros antes de filtrar, classifica os
-   **oito** estados, aplica recência **apenas** a `encerrado` com borda **inclusiva**,
-   honra **N-a-F1**, preserva duplicatas não identificadas e canonicaliza E — **sem
-   relógio vivo, sem I/O, sem YAML, sem LLM e sem rede**.
-6. **O transporte e a validação de `instante_ultima_transicao` continuam implementados**
-   na persistência operacional (PR #33).
-7. **`N-a-T3`, `N-a-T4`, `N-a-T5`, `N-a-T6` e `N-a-T7` continuam NÃO implementadas.**
+5. **O conjunto H, o `havia_estado_esperado` e o produtor N-I agora possuem produtor em
+   código**: `context.py` constrói **H** por filtro estrutural de estado **fora de N-a**,
+   calcula `havia_estado_esperado` sobre o **contexto recuperado** — **nunca** sobre E —
+   e projeta `id_atendimento_validado` **somente** sob `ENCONTRADO`.
+6. **A fronteira de identidade da etapa 3 está materializada**: leitura **somente de
+   consulta** da persistência, validação do identificador, projeção integral do contexto
+   e entrega do DTO fechado `ProjecoesIdentidadeEtapa3`, na ordem normativa de
+   `docs/07` §6.2 — inclusive o **passo 12 antes do passo 13**.
+7. **A produção determinística de E continua implementada** (PR #36), agora separada em
+   **seleção** e **canonicalização**, com `produzir_conjunto_elegivel(...)` preservado
+   como composição compatível. **O transporte e a validação de
+   `instante_ultima_transicao` continuam implementados** na persistência (PR #33).
+8. **`N-a-T3`, `N-a-T4`, `N-a-T5`, `N-a-T6` e `N-a-T7` continuam NÃO implementadas.**
    Decidir **quando** inicializar ou atualizar o marco permanece responsabilidade
    **futura** do chamador da etapa 13.
-8. **A integração N-a continua PARCIAL.** Continuam **não implementados**: a produção
-   de **H**, o `havia_estado_esperado`, o **produtor N-I**, o **wiring da etapa 3** e o
-   **tratamento operacional dos bloqueios**. **Produzir E não é integrar N-a.**
-9. O **`OrquestradorMotor` continua NÃO implementado** e **nenhuma integração de
-   pipeline foi iniciada**.
-10. Continuam **pendentes** o **valor numérico operacional do limiar** e o **mecanismo
+9. **A etapa 3 NÃO está inteiramente implementada** e **a integração N-a continua
+   PARCIAL.** Continuam **não implementados** o **tratamento operacional dos bloqueios**
+   (S4, S5) e o **destino do alerta operacional**. **Produzir as projeções de identidade
+   não é implementar a etapa 3 inteira.**
+10. O **`OrquestradorMotor` continua NÃO implementado** e **nenhuma integração completa
+    de pipeline foi iniciada**.
+11. Continuam **pendentes** o **valor numérico operacional do limiar** e o **mecanismo
     concreto de carga** da configuração.
-11. **Nenhuma subetapa 3B.8 foi criada, escolhida ou autorizada.** A **3B.8 não existe**.
-12. A presente entrega é **exclusivamente reconciliação documental de
-    `docs/00-estado-atual.md`** após o merge do **PR #36**: **não altera código, testes,
-    `docs/07`, `docs/06`, base de conhecimento nem prompts**. As **duas execuções de
-    testes reportadas foram reproduzidas nesta reconciliação** apenas para **verificar**
-    o HEAD integrado; nenhuma outra execução é alegada.
-13. **Próxima ação:** finalizar esta reconciliação documental. Depois de **integrada e
+12. **Nenhuma subetapa 3B.8 foi criada, escolhida ou autorizada.** A **3B.8 não existe**.
+13. A presente entrega é **exclusivamente reconciliação documental de
+    `docs/00-estado-atual.md`** após o merge do **PR #38**: **não altera código, testes,
+    `docs/07`, `docs/06`, `docs/05`, base de conhecimento nem prompts**. As **três
+    execuções de testes reportadas foram reproduzidas nesta reconciliação** apenas para
+    **verificar** o HEAD integrado; nenhuma outra execução é alegada.
+14. **Próxima ação:** finalizar esta reconciliação documental. Depois de **integrada e
     auditada**, a próxima entrega será **reavaliada conforme governança** — **nenhuma
-    pendência é eleita aqui** como a implementação seguinte, nem **H**, nem **N-I**,
-    nem **N-a-T3–T7**, nem **N-b**, nem **E4**, nem o `OrquestradorMotor`.
-14. As pendências permanecem abertas conforme seus próprios bloqueios: **B, C, S2-D5,
+    pendência é eleita aqui** como a implementação seguinte, nem **N-a-T3–T7**, nem
+    **N-b**, nem **E4**, nem **S2-D8**, nem **S3-D1**, nem o `OrquestradorMotor`.
+15. As pendências permanecem abertas conforme seus próprios bloqueios: **B, C, S2-D5,
     S2-D7, S2-D8, S3-D1, a confirmação de entrega do handoff, N-b, E1, E3, E4, o retorno
-    do controle ao bot após `atendimento_humano` sem `E14`/T34** e a **unicidade geral
-    de `id_atendimento` entre candidatos não identificados**. Nenhuma delas é resolvida
-    aqui.
+    do controle ao bot após `atendimento_humano` sem `E14`/T34**, a **unicidade geral
+    de `id_atendimento` entre candidatos não identificados**, a **persistência
+    operacional não volátil**, o **tratamento operacional dos bloqueios (S4/S5)** e o
+    **destino do alerta operacional**. Nenhuma delas é resolvida aqui.
+
 ## Arbitragens
 
 Decisões de governança. Não criam marco funcional nem código. A coluna Decisão informa o
@@ -340,7 +377,7 @@ componentes de `docs/07` §4.1 permanece com **14**.
 | N-a-k | **R5-P0, D0 e D1 preservados, nesta ordem.** H ≠ vazio → **R5-P0**, e D0–D6 **não executam**; contradição declarada → **D0**, mesmo com E vazio. **Restando H vazio e D0 não decisivo**, alcança-se **D1**: E vazio com histórico conhecido → `SEM_CANDIDATO_ELEGIVEL`; E vazio sem histórico → `PRIMEIRO_CONTATO_COMPROVADO`. `havia_estado_esperado` é calculado sobre o **contexto recuperado**, **nunca sobre E**. |
 | N-a-l | **Cenários K-Na-1 a K-Na-18** documentados em `docs/07` §6.2, **sem criar ou alterar teste algum**. |
 
-**A arbitragem N-a não implementou nada por si.** **À época do PR #31**, N-a não existia em código, `src/casa77_sdr/persistence.py` **não foi alterado por aquela arbitragem** e o campo `instante_ultima_transicao` ainda não havia sido implementado. **Estado atual**: o **transporte e a validação da representação** do campo foram materializados depois, pelo **PR #33** (`docs/07` §6.2, M-T1–M-T6); **N-a continua não implementada** — sem política que produza **E**, sem cálculo de recência e sem wiring da etapa 3 —, **N-a-T3–N-a-T7 continuam não implementadas**, o `OrquestradorMotor` **continua não implementado** e **nenhuma subetapa 3B.8 foi criada, escolhida ou autorizada**.
+**A arbitragem N-a não implementou nada por si.** **À época do PR #31**, N-a não existia em código, `src/casa77_sdr/persistence.py` **não foi alterado por aquela arbitragem** e o campo `instante_ultima_transicao` ainda não havia sido implementado. **Estado atual**: as materializações vieram depois, em entregas funcionais próprias — o **transporte e a validação da representação** do campo, pelo **PR #33** (`docs/07` §6.2, M-T1–M-T6); a **produção determinística de E**, com classificação e recência, pelo **PR #36** (M-E1–M-E6); e o conjunto **H**, o `havia_estado_esperado`, o **produtor N-I** e o ***wiring* da fronteira etapa 3 → identidade/etapa 5**, pelo **PR #38** (M-C1–M-C8). **A integração N-a permanece PARCIAL**: **N-a-T3–N-a-T7 continuam não implementadas**, o **tratamento operacional dos bloqueios** (S4, S5) e o **destino do alerta** continuam pendentes, a **etapa 3 não está inteiramente implementada**, o `OrquestradorMotor` **continua não implementado** e **nenhuma subetapa 3B.8 foi criada, escolhida ou autorizada**.
 
 **O que a N-a NÃO resolve.** Permanecem **abertas**, sem alteração: **E4**, **N-b**, **S2-D8**, **S3-D1**, **B**, **C**, **E1**, **E3**, **S2-D5**, **S2-D7**, a **confirmação física do handoff**, o **retorno do controle ao bot após `atendimento_humano` sem `E14`/T34** e a **unicidade geral de `id_atendimento` entre candidatos não identificados**. Ficam registradas como **pendências abertas da própria N-a** o **valor numérico do limiar temporal** e o **mecanismo concreto de carga** da configuração — `docs/07` §12, item 18.
 
@@ -397,7 +434,7 @@ Esse contrato foi **materializado depois na 3B.7**, pelo **PR #29**.
 
 **O que a R-H NÃO resolveu.** Ela **não resolveu N-a**. **À época da R-H**, a N-a
 permaneceu **aberta** quanto à **política de elegibilidade**, à **política de recência**,
-à **janela temporal** e à **produção concreta do conjunto elegível**. A R-H fixa **apenas** que **N-a não governa H**. **Registro posterior:** a **especificação** de N-a foi **arbitrada e integrada** depois, pelo **PR #31**; a **implementação funcional** de N-a **continua não iniciada**.
+à **janela temporal** e à **produção concreta do conjunto elegível**. A R-H fixa **apenas** que **N-a não governa H**. **Registro posterior:** a **especificação** de N-a foi **arbitrada e integrada** depois, pelo **PR #31**; a **produção determinística de E** foi materializada pelo **PR #36**; e o conjunto **H** e a **montagem da fronteira etapa 3 → identidade/etapa 5** foram materializados pelo **PR #38**, com **H1–H6 preservadas** e **H continuando fora de N-a**. A **integração N-a permanece PARCIAL**: a **etapa 3 inteira** não está implementada, o **pipeline completo** não está integrado e o `OrquestradorMotor` **continua não implementado**.
 Permanecem igualmente abertas, sem alteração: **N-b, E4, S2-D8, S3-D1, E1, E3, B, C, S2-D5,
 S2-D7**, a **confirmação física do handoff** e o **retorno do controle ao bot após
 `atendimento_humano` sem `E14`/T34**.
@@ -437,7 +474,7 @@ Esse contrato foi **materializado depois na 3B.7**, pelo **PR #29**.
 permaneceu **aberta** quanto à **política de elegibilidade dos demais candidatos**, à
 **definição de recência**, à **janela temporal**, à **composição concreta do conjunto** e
 à **consulta concreta da persistência**.
-A R-I fixa **apenas** a fronteira parcial **N-a-F1**. **Registro posterior:** o restante da **especificação** de N-a foi **arbitrado e integrado** depois, pelo **PR #31**, com **N-a-F1 preservada**; a **implementação funcional** de N-a **continua não iniciada**. Permanecem igualmente abertas, sem
+A R-I fixa **apenas** a fronteira parcial **N-a-F1**. **Registro posterior:** o restante da **especificação** de N-a foi **arbitrado e integrado** depois, pelo **PR #31**, com **N-a-F1 preservada**; a **produção determinística de E** foi materializada pelo **PR #36**, também **preservando N-a-F1**; e o **produtor N-I** — `id_atendimento_validado`, `havia_estado_esperado` e as obrigações **N-I-1–N-I-4** — passou a existir em código com a **montagem da fronteira etapa 3 → identidade/etapa 5** do **PR #38**. A **integração N-a permanece PARCIAL**: a **etapa 3 inteira** não está implementada, o **pipeline completo** não está integrado e o `OrquestradorMotor` **continua não implementado**. Permanecem igualmente abertas, sem
 alteração: **N-b, E4, S2-D8, S3-D1, E1, E3, B, C, S2-D5, S2-D7**, a **confirmação física do
 handoff** e o **retorno do controle ao bot após `atendimento_humano` sem `E14`/T34**. Fica
 registrada como **nova questão residual aberta** a **unicidade geral de `id_atendimento`
@@ -544,8 +581,8 @@ Detalhe em `docs/07` §12.
 
 | # | Pendência | Situação |
 |---|---|---|
-| N-a | Política de **elegibilidade e recência** que produz o conjunto elegível da etapa 3. **Especificação documental: ARBITRADA / CONCLUÍDA** pelo **PR #31**. **Materialização temporal parcial: IMPLEMENTADA** pelo **PR #33** — transporte e validação de `instante_ultima_transicao` em `src/casa77_sdr/persistence.py` (`docs/07` §6.2, M-T1–M-T6). **Produção determinística de E: IMPLEMENTADA** pelo **PR #36** — `src/casa77_sdr/eligibility.py`, função pura `produzir_conjunto_elegivel(...)` (`docs/07` §6.2, M-E1–M-E6). **Integração N-a: PARCIAL / NÃO CONCLUÍDA** — continuam **não implementados** **N-a-T3–N-a-T7**, a produção de **H**, o `havia_estado_esperado`, o **produtor N-I**, o **wiring da etapa 3** e o **tratamento operacional dos bloqueios**. O tratamento de `SEM_CANDIDATO_ELEGIVEL` na integração **não** é parte dela: é a **E4**, pendência distinta e **ainda aberta** | **especificação resolvida**; **campo temporal e produção de E materializados**; a **integração** ainda depende de **N-a-T3–N-a-T7**, **H**, `havia_estado_esperado`, **N-I**, **wiring**, **tratamento dos bloqueios** e do **valor/mecanismo do limiar** (linha abaixo) |
-| Limiar temporal de recência | **Valor numérico** do limiar e **mecanismo concreto de carga** da configuração. **Aberta pelo PR #31** (`docs/07` §12, item 18). **Nenhum número foi definido** e **nenhuma tecnologia, variável de ambiente, arquivo ou serviço foi escolhido**. **Não é dado comercial** — não entra em `knowledge/casa77.yaml`; depende de aprovação específica de Douglas Bianchi e de decisão operacional | **não bloqueia** a 3B.6, a 3B.7 nem a **produção determinística de E já implementada** (PR #36); **bloqueia** a **integração operacional de N-a no pipeline** e, por consequência, o `OrquestradorMotor` |
+| N-a | Política de **elegibilidade e recência** que produz o conjunto elegível da etapa 3. **Especificação documental: ARBITRADA / CONCLUÍDA** pelo **PR #31**. **Materialização temporal parcial: IMPLEMENTADA** pelo **PR #33** — transporte e validação de `instante_ultima_transicao` em `src/casa77_sdr/persistence.py` (`docs/07` §6.2, M-T1–M-T6). **Produção determinística de E: IMPLEMENTADA** pelo **PR #36** — `src/casa77_sdr/eligibility.py` (`docs/07` §6.2, M-E1–M-E6). **Conjunto H, `havia_estado_esperado`, produtor N-I e *wiring* da fronteira etapa 3 → identidade/etapa 5: IMPLEMENTADOS** pelo **PR #38** — `src/casa77_sdr/context.py` (`docs/07` §6.2, M-C1–M-C8). **Integração N-a: PARCIAL / NÃO CONCLUÍDA** — continuam **não implementados** **N-a-T3–N-a-T7**, o **tratamento operacional dos bloqueios** (S4, S5) e o **destino do alerta operacional**; a **etapa 3 inteira** e a **integração do pipeline** também **não** estão concluídas. O tratamento de `SEM_CANDIDATO_ELEGIVEL` na integração **não** é parte dela: é a **E4**, pendência distinta e **ainda aberta** | **especificação resolvida**; **campo temporal, produção de E e projeções de identidade materializados**; a **integração** ainda depende de **N-a-T3–N-a-T7**, do **tratamento dos bloqueios**, do **destino do alerta** e do **valor/mecanismo do limiar** (linha abaixo) |
+| Limiar temporal de recência | **Valor numérico** do limiar e **mecanismo concreto de carga** da configuração. **Aberta pelo PR #31** (`docs/07` §12, item 18). **Nenhum número foi definido** e **nenhuma tecnologia, variável de ambiente, arquivo ou serviço foi escolhido**. **Não é dado comercial** — não entra em `knowledge/casa77.yaml`; depende de aprovação específica de Douglas Bianchi e de decisão operacional | **não bloqueia** a 3B.6, a 3B.7, a **produção determinística de E** (PR #36) nem a **montagem das projeções de identidade da etapa 3** (PR #38) — ambas recebem o limiar como argumento explícito; **bloqueia** a **integração operacional de N-a no pipeline** e, por consequência, o `OrquestradorMotor` |
 | N-b | Contrato global da **interpretação**: quem produz a projeção estruturada consumida pelo resolvedor (`intencao_identidade`, referências, confianças binárias) e com que garantias. **Produtor não atribuído.** | **não bloqueia** a 3B.6; **bloqueia** a integração completa |
 | E1 | Distinção entre as entidades **conversa × atendimento × lead**. Já registrada como aberta desde a etapa de modelo de dados; a arbitragem R **não** a resolve. | **não bloqueia** a 3B.6 |
 | E3 | **Evento novo declarado durante atendimento ativo.** Hoje o resultado é **conservador** — `AMBIGUA` / `AMBIGUIDADE_DIVERGENCIA_EM_ATENDIMENTO_ATIVO`. **Nenhuma transição nova foi aprovada** para abrir atendimento paralelo. | **não bloqueia** a 3B.6 |
