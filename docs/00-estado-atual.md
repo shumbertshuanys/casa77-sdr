@@ -19,9 +19,10 @@ Atualizado em: 2026-08-21.
 | Entrega funcional **anterior a essa** | Evolução temporal do contrato de persistência operacional — `instante_ultima_transicao` (PR #33 — commit `0350e4ec…`, merge `1256628e…`). Também **sem numeração de subetapa** |
 | Última **subetapa funcional numerada** concluída | 3B.7 — ResolvedorIdentidade determinístico (PR #29 — commit `25ab2726…`, merge `568919f5…`) |
 | Subetapa 3B.7 | **CONCLUÍDA** |
-| Última **arbitragem documental** integrada à `main` | Arbitragem **N-a** — PR #31, commit `43774af5…`, merge `e8425410…`. **Não altera o marco funcional** |
-| Última **reconciliação documental** anterior a esta entrega | Micro-reconciliação factual de `docs/07` quanto ao estado de **N-a** — PR #40, commit documental `903a5e92d1ceb70a338b718ac4439e6a2078405c`, merge `d358a333d8ac34f12f055d584a3cd6fe0fc702a6`. **Não altera o marco funcional** |
-| Base da presente reconciliação | `d358a333d8ac34f12f055d584a3cd6fe0fc702a6` — HEAD da `main` verificado **antes** desta entrega (PR #40, **documental**). O **marco funcional** permanece o do **PR #38** |
+| Arbitragem documental **N-a** | Arbitragem **N-a** — PR #31, commit `43774af5…`, merge `e8425410…`. **Não altera o marco funcional** |
+| Última **arbitragem documental** anterior a esta entrega | Arbitragem da **projeção de mudança de estado** (`docs/06` e `docs/07`) — PR #42, commit documental `f7b5d94cd22ce0d0fcf573823d9f5e56c853ac99`, merge `210ef72790f6317719340e8e0f842d272db6e137`. **Não altera o marco funcional** |
+| Última **reconciliação documental** anterior a esta entrega | Reconciliação de `docs/00` após o PR #40 — PR #41, commit documental `f23b016f6e8ffd0aba0f8d246ad4c0e80d0cfbcd`, merge `049fb62342d3e27a1b8680d17e5aac4767fad9bc`. **Não altera o marco funcional** |
+| Base da presente reconciliação | `210ef72790f6317719340e8e0f842d272db6e137` — HEAD da `main` verificado **antes** desta entrega (PR #42, **arbitragem documental**). O **marco funcional** permanece o do **PR #38** |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -52,6 +53,8 @@ Atualizado em: 2026-08-21.
 | **Montagem determinística das projeções de identidade da etapa 3** — fronteira **etapa 3 → identidade/etapa 5** (`src/casa77_sdr/context.py` + testes, com reconciliação factual de `docs/07`): cria o módulo e a função `montar_projecoes_identidade_etapa3(...)`, que lê a persistência operacional **somente para consulta** — `recuperar_por_id` e `consultar_por_contato` —, valida o identificador, projeta o contexto **integral**, constrói **H** por filtro estrutural de estado **fora de N-a**, determina **`havia_estado_esperado`** sobre o contexto recuperado (**nunca** sobre E), projeta **`id_atendimento_validado`** (**N-I**) e entrega o DTO fechado **`ProjecoesIdentidadeEtapa3`** de **cinco** campos. Altera `eligibility.py` para separar **seleção de E não canonicalizado** (`selecionar_conjunto_elegivel`) de **canonicalização** (`canonicalizar_conjunto_elegivel`), preservando `produzir_conjunto_elegivel(...)` como **composição compatível** das duas — sem mudança de semântica de N-a. Respeita a **ordem normativa** de `docs/07` §6.2, inclusive o **passo 12 antes do passo 13**. Sinaliza bloqueio por `IdentificadorNaoResolvido` (transporta **apenas o veredito fechado**, sem identificador, canal, contato ou PII), `ConjuntoHumanoIncoerente` e `ProjecaoIdentificadorIncoerente`. **Zero escrita na persistência, zero relógio vivo, zero YAML, zero LLM, zero rede.** **Não chama `resolver_identidade`**, **não chama a `MaquinaEstados`**, **não cria componente arquitetural novo** e **não implementa o `OrquestradorMotor`** | **funcional** | PR #38 — **INTEGRADO à `main`** em 2026-08-21 (commit funcional `f312eaa51cc14bc6dca954fa2df3ceb855560785`, merge `10810506cac53d31fed8d5a85ca8467c9af389a8`, branch de origem `feat/contexto-identidade-etapa3`). Arquivos: `docs/07-arquitetura-motor-respostas.md`, `src/casa77_sdr/__init__.py`, `src/casa77_sdr/context.py`, `src/casa77_sdr/eligibility.py`, `tests/test_context.py` — **5 files changed, 1476 insertions(+), 12 deletions(-)**. **Não recebe numeração de subetapa** |
 | **Reconciliação do estado após o PR #38** (`docs/00`): registra o marco funcional `f312eaa…` / merge `10810506…`, o baseline **`749 passed`**, a série de baselines, as **três** entregas funcionais posteriores à 3B.7 e as pendências remanescentes | documental | PR #39 — **INTEGRADO à `main`** em 2026-08-21 (commit documental `1247c4e18a6f3ddc0e66346d6ffed51a6a1345ab`, merge `95fdf0197687cffd4a1aa930b6592f98d7f22e90`, branch de origem `docs/reconciliar-contexto-identidade-pos-merge`). Arquivo alterado: **exclusivamente** `docs/00-estado-atual.md`. **Não cria marco funcional** e **não altera** o marco do **PR #38** |
 | **Micro-reconciliação factual de `docs/07`** quanto ao estado de **N-a**: o **item 18** de §12 passa a distinguir a **política determinística já executável** — que recebe o limiar como **argumento explícito** e o valida — do **valor operacional** e do **mecanismo concreto de carga**, que continuam pendentes e seguem bloqueando a **integração operacional** e o `OrquestradorMotor`; o fecho de §12 passa a registrar que **N-a possui materialização PARCIAL em código** pelas entregas dos PRs **#33**, **#36** e **#38**, permanecendo pendentes **N-a-T3–N-a-T7**, o limiar e sua carga, **S4/S5** e o **destino do alerta**. **Nenhum número, tecnologia, variável de ambiente, arquivo ou serviço foi escolhido** | documental | PR #40 — **INTEGRADO à `main`** em 2026-08-21 (commit documental `903a5e92d1ceb70a338b718ac4439e6a2078405c`, merge `d358a333d8ac34f12f055d584a3cd6fe0fc702a6`, branch de origem `docs/reconciliar-na-pos-contexto-identidade`). Arquivo alterado: **exclusivamente** `docs/07-arquitetura-motor-respostas.md` — **1 file changed, 13 insertions(+), 6 deletions(-)**. **Zero código**, **zero teste** e **nenhum marco funcional novo** |
+| **Reconciliação do estado após o PR #40** (`docs/00`): registra os PRs **#39** e **#40** como integrados e documentais, reatribui as execuções reais de teste à reconciliação do **PR #39**, e substitui rótulos auto-invalidantes por formulações estáveis — "reconciliação documental anterior a esta entrega" e "Base da presente reconciliação" | documental | PR #41 — **INTEGRADO à `main`** em 2026-08-21 (commit documental `f23b016f6e8ffd0aba0f8d246ad4c0e80d0cfbcd`, merge `049fb62342d3e27a1b8680d17e5aac4767fad9bc`, branch de origem `docs/reconciliar-estado-pos-pr40`). Arquivo alterado: **exclusivamente** `docs/00-estado-atual.md` — **1 file changed, 41 insertions(+), 21 deletions(-)**. **Zero código**, **zero teste** e **nenhum marco funcional novo** |
+| **Arbitragem da projeção de mudança de estado** (`docs/06` §4.2 e `docs/07` §2, §6.2, §8.1, §12): arbitra o **contrato conceitual** `transicoes_que_mudaram_estado: tuple[Transicao, ...]` — **subsequência ordenada de `caminho`** com as `Txx` que **efetivamente mudaram o estado intermediário no instante da aplicação**. Fixa a **`MaquinaEstados` como fonte autoritativa** (sem *replay* externo, sem tabela paralela, sem exposição da estrutura interna de regras), rejeita `estado_inicial != estado_final` como critério, trata **T35 dinamicamente** pelo estado intermediário efetivo, avalia **cada `Txx` individualmente**, combina as **até três chamadas** do ciclo pela existência de **ao menos uma** decisão com projeção não vazia, e separa a **criação** de atendimento (**N-a-T3**) da **atualização** de atendimento existente (**N-a-T4/N-a-T5**). **Nenhuma lista normativa paralela** de transições é criada — `docs/06` §3 continua fonte única | arbitragem documental/governança | PR #42 — **INTEGRADO à `main`** em 2026-08-21 (commit documental `f7b5d94cd22ce0d0fcf573823d9f5e56c853ac99`, merge `210ef72790f6317719340e8e0f842d272db6e137`, branch de origem `docs/arbitragem-projecao-mudanca-estado`). Arquivos: `docs/06-maquina-de-estados.md`, `docs/07-arquitetura-motor-respostas.md` — **2 files changed, 70 insertions(+), 3 deletions(-)**. **Zero código**, **zero teste** e **nenhum marco funcional novo**: o contrato está **ARBITRADO**, mas **ainda não existe em runtime** |
 
 O PR #4 atualiza base comercial e documentação a partir de decisões de Douglas Bianchi
 (2026-08-15). Ele **não** é implementação funcional do motor e não altera o marco
@@ -180,12 +183,14 @@ permanece com 87 casos** e **nenhum** dos 65 é atribuído a ele. Os baselines h
 acima; a série completa é **`180 → 427 → 574 → 597 → 684 → 749`**.
 
 Os PRs **#23** (R), **#25** (R-H), **#27** (R-I), **#31** (N-a), **#32**, **#34**, **#35**,
-**#39** e **#40** (reconciliações, arbitragens e correções documentais) e a presente
-reconciliação **não alteram código nem testes** e, portanto, **não alteram o baseline**. As
-**três execuções acima foram reproduzidas na reconciliação do PR #39**, em 2026-08-21,
-sobre a `main` já integrada — elas **confirmam** os números declarados pelo **PR #38**.
-**Nenhuma execução de testes ocorre nesta reconciliação**, que é puramente documental, e
-nenhuma execução além das três reportadas é alegada.
+**#39**, **#40**, **#41** e **#42** (reconciliações, arbitragens e correções documentais) e a
+presente reconciliação **não alteram código nem testes** e, portanto, **não alteram o
+baseline**. Em particular, o **PR #41** alterou **apenas** `docs/00` e o **PR #42** alterou
+**apenas** `docs/06` e `docs/07` — **nenhum dos dois** tocou `src/` ou `tests/`. As **três
+execuções acima foram reproduzidas na reconciliação do PR #39**, em 2026-08-21, sobre a
+`main` já integrada — elas **confirmam** os números declarados pelo **PR #38**. **Nenhuma
+execução de testes ocorre nesta reconciliação**, que é puramente documental, e nenhuma
+execução além das três reportadas é alegada.
 
 ## Roadmap (resumo — detalhe em `docs/05-roadmap.md`)
 
@@ -227,9 +232,11 @@ identidade/etapa 5**. **Continuam NÃO implementados ou parciais**: a **etapa 3 
 a **integração completa do pipeline** e o **`OrquestradorMotor`**.
 
 **Nenhuma subetapa 3B.8 foi escolhida, proposta ou autorizada por esta entrega.** A
-reconciliação anterior foi **integrada e auditada** pelo **PR #39**, e o estado de **N-a**
-em `docs/07` foi **reconciliado pelo PR #40**; o GPT reavalia a próxima subetapa **à luz
-das pendências ainda abertas**, e **nenhuma delas é eleita aqui**. Em particular, **não** se afirma aqui que
+reconciliação anterior foi **integrada e auditada** pelos **PRs #39** e **#41**; o estado de
+**N-a** em `docs/07` foi **reconciliado pelo PR #40**; e a **projeção de mudança de estado**
+foi **arbitrada pelo PR #42** — **contrato definido, implementação funcional ainda
+inexistente**. O GPT reavalia a próxima subetapa **à luz das pendências ainda abertas**, e
+**nenhuma delas é eleita aqui**. Em particular, **não** se afirma aqui que
 o `OrquestradorMotor` seja a próxima implementação autorizada. A formulação genérica
 anterior — "bloqueado por N-a, N-b, E4 e S2-D8" — deixa de valer para **N-a**, e passa a
 ser a seguinte, conforme o `docs/07` integrado:
@@ -329,35 +336,44 @@ a **pendência residual continua aberta**.
 11. Continuam **pendentes** o **valor numérico operacional do limiar** e o **mecanismo
     concreto de carga** da configuração.
 12. **Nenhuma subetapa 3B.8 foi criada, escolhida ou autorizada.** A **3B.8 não existe**.
-13. **O estado documental está reconciliado até o merge `d358a333…`.** A reconciliação
-    de `docs/00` após o PR #38 foi **integrada pelo PR #39** (commit `1247c4e…`, merge
-    `95fdf019…`), e a **micro-reconciliação factual de `docs/07`** quanto ao estado de
-    **N-a** foi **integrada pelo PR #40** (commit `903a5e9…`, merge `d358a333…`).
-    **Ambos são documentais** e **não alteram o marco funcional**, que permanece o do
-    **PR #38**. Em particular, **`docs/07` já registra que N-a possui materialização
-    PARCIAL em código** e que a política determinística **já é executável** quando
-    recebe um limiar explícito — permanecendo pendentes o **valor operacional** do
-    limiar e seu **mecanismo concreto de carga**.
-14. A presente entrega é **exclusivamente reconciliação documental de
-    `docs/00-estado-atual.md`** após o merge do **PR #40**: **não altera código, testes,
+13. **A projeção de mudança de estado está ARBITRADA, não implementada.** O **PR #42**
+    fixou o contrato conceitual **`transicoes_que_mudaram_estado: tuple[Transicao, ...]`**
+    — a **subsequência ordenada de `caminho`** com as `Txx` que **efetivamente mudaram o
+    estado intermediário no instante da aplicação**, tendo a **`MaquinaEstados` como fonte
+    autoritativa**, **sem** *replay* externo e **sem** usar `estado_inicial != estado_final`
+    como critério; **T35** é tratada **dinamicamente**; as **até três chamadas** do ciclo são
+    combinadas pela existência de **ao menos uma** decisão com projeção **não vazia**; e a
+    **criação** de atendimento (**N-a-T3**) permanece **separada** da **atualização** de
+    atendimento existente (**N-a-T4/N-a-T5**). **O campo NÃO existe em runtime.**
+14. **Continuam NÃO implementados**: `transicoes_que_mudaram_estado` **em código**,
+    **`N-a-T3`, `N-a-T4`, `N-a-T5`, `N-a-T6` e `N-a-T7`**, o **`OrquestradorMotor`** e a
+    **integração completa do pipeline**. **Arbitrar o contrato não é implementá-lo.**
+15. **A base factual reconciliada nesta entrega é o merge `210ef727…`.** A reconciliação de
+    `docs/00` após o PR #40 foi **integrada pelo PR #41** (commit `f23b016…`, merge
+    `049fb623…`), e a **arbitragem da projeção de mudança de estado** foi **integrada pelo
+    PR #42** (commit `f7b5d94…`, merge `210ef727…`). **Ambos são documentais** e **não
+    alteram o marco funcional**, que permanece o do **PR #38**.
+16. A presente entrega é **exclusivamente reconciliação documental de
+    `docs/00-estado-atual.md`** após o merge do **PR #42**: **não altera código, testes,
     `docs/07`, `docs/06`, `docs/05`, base de conhecimento nem prompts**, e **nenhuma
     execução de testes ocorre nela** — os números registrados são os reproduzidos na
     reconciliação do **PR #39**.
-15. **Existe planejamento técnico posterior ao PR #40, produzido em modo somente-leitura
-    e auditado pelo GPT como tecnicamente coerente.** Ele **não é uma autorização**:
-    **nenhuma próxima entrega está autorizada por este documento**, nenhum rótulo novo é
-    criado e nenhuma numeração é atribuída.
-16. **Próxima ação:** após a **integração e a auditoria desta reconciliação**, o GPT
-    poderá **autorizar ou não** a próxima entrega com base no planejamento técnico já
-    produzido. **Nenhuma pendência é eleita aqui** como a implementação seguinte — nem
-    **N-a-T3–T7**, nem **N-b**, nem **E4**, nem **S2-D8**, nem **S3-D1**, nem o
-    `OrquestradorMotor`.
-17. As pendências permanecem abertas conforme seus próprios bloqueios: **B, C, S2-D5,
+17. **Existe planejamento técnico auditado pelo GPT como tecnicamente coerente.** Ele **não
+    é uma autorização**: **nenhuma próxima entrega está autorizada por este documento**,
+    nenhum rótulo novo é criado e nenhuma numeração é atribuída.
+18. **Próxima ação:** após a **integração e a auditoria desta reconciliação**, o GPT poderá
+    **autorizar ou não** uma **implementação funcional posterior** do contrato já arbitrado
+    pelo **PR #42**. **Esta reconciliação não autoriza implementação funcional por si
+    própria** e **nenhuma pendência é eleita aqui** como a implementação seguinte — nem
+    `transicoes_que_mudaram_estado`, nem **N-a-T3–T7**, nem **N-b**, nem **E4**, nem
+    **S2-D8**, nem **S3-D1**, nem o `OrquestradorMotor`.
+19. As pendências permanecem abertas conforme seus próprios bloqueios: **B, C, S2-D5,
     S2-D7, S2-D8, S3-D1, a confirmação de entrega do handoff, N-b, E1, E3, E4, o retorno
     do controle ao bot após `atendimento_humano` sem `E14`/T34**, a **unicidade geral
     de `id_atendimento` entre candidatos não identificados**, a **persistência
-    operacional não volátil**, o **tratamento operacional dos bloqueios (S4/S5)** e o
-    **destino do alerta operacional**. Nenhuma delas é resolvida aqui.
+    operacional não volátil**, o **tratamento operacional dos bloqueios (S4/S5)**, o
+    **destino do alerta operacional**, o **valor numérico operacional do limiar** e o
+    **mecanismo concreto de carga** da configuração. Nenhuma delas é resolvida aqui.
 
 ## Arbitragens
 
