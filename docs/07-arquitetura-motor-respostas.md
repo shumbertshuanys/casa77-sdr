@@ -1923,7 +1923,7 @@ commit e nenhum push. A Etapa 3B não foi iniciada.
 | 15 | **E4** — tratamento de **`SEM_CANDIDATO_ELEGIVEL`** pelo `OrquestradorMotor` | o resultado existe e é auditável, mas **o que o orquestrador faz com ele não está decidido**. Enquanto aberta, o resultado **encerra o ciclo sem transição** e **não autoriza avanço de integração** (doc 06 §4.5, G7) | arbitragem específica, antes do `OrquestradorMotor` |
 | 16 | **Retorno do controle ao bot** — não existe hoje **transição inversa de T31** que devolva o canal ao atendimento automático sem passar por `E14`/T34 | uma vez em `atendimento_humano`, a saída documentada é o encerramento (T34) ou o encerramento por T32 a partir de `encaminhado_humano`. **Nenhum evento ou transição é criado por esta arbitragem** | arbitragem futura — **não bloqueia** a materialização R5 |
 | 17 | **Duplicatas gerais de `id_atendimento` entre candidatos não identificados** | a arbitragem R-I exige unicidade **apenas do ID identificado** e **apenas** com `veredito_identificador == ENCONTRADO` (**P-I5**). **Não foi decidido** — e **não é decidido nesta entrega** — se IDs duplicados entre candidatos **não identificados** constituem erro geral de contrato. **Nenhuma regra global de unicidade foi adicionada** | arbitragem específica futura — **não bloqueia** nenhuma entrega já autorizada |
-| 18 | **Valor numérico do limiar temporal de recência** e **mecanismo concreto de carga** da configuração (§6.2, N-a-L6) | sem ele a política **N-a** está especificada mas **não é executável**: curto demais descarta `encerrado` que **T36** deveria reabrir; longo demais devolve histórico antigo à cascata. **Nenhum número é definido** e **nenhuma tecnologia, variável de ambiente, arquivo ou serviço é escolhido** nesta entrega. **Não é dado comercial** — não entra em `knowledge/casa77.yaml` | aprovação específica de Douglas Bianchi + decisão operacional, **antes do `OrquestradorMotor`** |
+| 18 | **Valor numérico do limiar temporal de recência** e **mecanismo concreto de carga** da configuração (§6.2, N-a-L6) | **A política determinística já é executável**: `eligibility.py` e `context.py` **recebem o limiar como argumento explícito** e o validam (N-a-L1–N-a-L6, M-E3, M-C3). O que continua faltando é a **configuração operacional concreta** — sem ela **não há como carregar o limiar no pipeline**, e portanto continuam bloqueadas a **integração operacional de N-a** e o **`OrquestradorMotor`**. A calibragem permanece a mesma questão de sempre: curto demais descarta `encerrado` que **T36** deveria reabrir; longo demais devolve histórico antigo à cascata. **Nenhum número é definido** e **nenhuma tecnologia, variável de ambiente, arquivo ou serviço é escolhido** — nem por esta entrega nem pelas materializações posteriores. **Não é dado comercial** — não entra em `knowledge/casa77.yaml` | aprovação específica de Douglas Bianchi + decisão operacional, **antes do `OrquestradorMotor`** |
 
 **Silêncio sob takeover não é decisão comercial nova** (arbitragem R5). Enquanto o canal
 está sob controle humano, o silêncio automático é **consequência do contrato já existente**,
@@ -1944,9 +1944,16 @@ resolução de identidade não produza um referente que contorne o silêncio já
 × lead.
 
 Nenhuma dessas pendências bloqueia especificamente a 3B.6 / `MaquinaEstados`, que já está
-implementada e integrada. **S2-D8**, **N-b** e **E4** bloqueiam o
-`OrquestradorMotor` e a integração completa; **N-a deixou de bloquear como especificação** — está
-**arbitrada documentalmente** —, mas sua **implementação não está autorizada** e o **valor do
-limiar temporal** (item 18) permanece pendente; **E1** e **E3** permanecem abertas sem bloquear
-a especificação já arbitrada; as demais mantêm os bloqueios indicados na própria tabela.
+implementada e integrada. **S2-D8**, **N-b** e **E4** bloqueiam o `OrquestradorMotor` e a
+integração completa. **N-a deixou de bloquear como especificação** — está **arbitrada
+documentalmente** — e deixou de existir apenas no papel: sua **materialização é parcial e
+já existe em código**, pelas entregas funcionais posteriores do **transporte e validação do
+marco temporal** (M-T1–M-T6), da **produção determinística de E** (M-E1–M-E6) e da
+**montagem das projeções de identidade da etapa 3** (M-C1–M-C8). **A integração N-a
+continua PARCIAL**: permanecem pendentes **N-a-T3–N-a-T7**, o **valor do limiar temporal** e
+seu **mecanismo de carga** (item 18), o **tratamento operacional dos bloqueios** (S4, S5) e o
+**destino do alerta operacional**. **A etapa 3 não está inteiramente implementada**, a
+**integração completa do pipeline não foi iniciada** e o **`OrquestradorMotor` continua não
+implementado**. **E1** e **E3** permanecem abertas sem bloquear a especificação já arbitrada;
+as demais mantêm os bloqueios indicados na própria tabela.
 **Nenhuma delas é resolvida por esta entrega.**
