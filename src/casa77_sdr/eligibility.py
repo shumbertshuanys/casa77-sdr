@@ -80,8 +80,13 @@ _GRUPO_I = frozenset(
 )
 
 
-def _exigir_limiar_valido(limiar_recencia: timedelta | None) -> timedelta:
+def exigir_limiar_valido(limiar_recencia: timedelta | None) -> timedelta:
     """Valida o limiar antes de qualquer filtragem (N-a-L1–N-a-L6).
+
+    **Pública** porque a regra pertence à etapa 3 inteira, não só a esta
+    política: o passo 1 da precedência conceitual (§6.2) valida o limiar
+    **antes de tocar a persistência**. A regra continua existindo em um
+    único lugar — quem monta as projeções reutiliza esta função.
 
     Nenhum valor padrão é definido e nenhum mecanismo de carga é escolhido: o
     limiar chega como argumento explícito e o valor concreto permanece
@@ -146,6 +151,24 @@ def _projetar(registro: RegistroAtendimento) -> CandidatoAtendimento:
     )
 
 
+def projetar_registros(
+    registros_recuperados: tuple[RegistroAtendimento, ...],
+) -> tuple[CandidatoAtendimento, ...]:
+    """Projeta **todos** os registros recuperados (passos 5 e 6 de §6.2).
+
+    Valida a integridade de cada registro (N-a-P1–N-a-P6) e devolve os
+    candidatos **na ordem recebida**. Não aplica classificação por estado,
+    não aplica recência, não aplica N-a-F1, não deduplica e **não
+    canonicaliza**: a filtragem é do passo 9 e a ordem canônica é do passo
+    13, ambos de `produzir_conjunto_elegivel`.
+
+    Existe para que a etapa 3 possa construir **H** e determinar
+    `havia_estado_esperado` sobre o contexto **integral** — os dois são
+    calculados fora de N-a (H1, H2) — sem reimplementar a projeção.
+    """
+    return tuple(_projetar(registro) for registro in registros_recuperados)
+
+
 def _e_recente(
     registro: RegistroAtendimento,
     instante_de_referencia_do_ciclo: datetime,
@@ -185,16 +208,21 @@ def _chave_canonica(candidato: CandidatoAtendimento) -> tuple[str, str, int, str
     )
 
 
-def produzir_conjunto_elegivel(
+def selecionar_conjunto_elegivel(
     registros_recuperados: tuple[RegistroAtendimento, ...],
     *,
     registro_identificado: RegistroAtendimento | None,
     instante_de_referencia_do_ciclo: datetime,
     limiar_recencia: timedelta | None,
 ) -> tuple[CandidatoAtendimento, ...]:
-    """Produz o conjunto elegível **E** a partir dos registros já recuperados.
+    """Seleciona o conjunto elegível **E**, **ainda não canonicalizado**.
 
-    Ordem interna, espelhando a precedência conceitual da etapa 3 (§6.2):
+    São os passos **9 e 10** da precedência conceitual da etapa 3 (§6.2). A
+    ordem canônica é o passo **13** e vive em `canonicalizar_conjunto_elegivel`:
+    separá-los é o que permite ao produtor verificar as invariantes do passo
+    **12** antes de ordenar.
+
+    Ordem interna:
 
     1. validar a configuração temporal (N-a-L4, N-a-L5);
     2. projetar **todos** os registros, validando integridade **antes** de
@@ -202,17 +230,18 @@ def produzir_conjunto_elegivel(
        seria excluído depois;
     3. validar a coerência do identificado, quando houver (N-a-F1, P-I5);
     4. aplicar classificação por estado e, só para `encerrado`, recência;
-    5. aplicar N-a-F1;
-    6. canonicalizar E (N-a-O1–N-a-O5);
-    7. devolver a tupla.
+    5. aplicar N-a-F1.
+
+    A saída preserva a **ordem de recuperação**; ela não é ordem canônica e
+    **não** deve ser tratada como tal.
 
     `registro_identificado` representa um atendimento que a etapa 3 **já**
     encontrou e validou; esta função não valida canal/contato, não recupera e
     não produz veredito — usa apenas sua existência para materializar N-a-F1.
     """
-    limiar = _exigir_limiar_valido(limiar_recencia)
+    limiar = exigir_limiar_valido(limiar_recencia)
 
-    projetados = tuple(_projetar(registro) for registro in registros_recuperados)
+    projetados = projetar_registros(registros_recuperados)
 
     id_identificado: str | None = None
     if registro_identificado is not None:
@@ -256,4 +285,43 @@ def produzir_conjunto_elegivel(
         # `atendimento_humano` fica fora de E por N-a (N-a-E2); H é produzido
         # à parte, fora desta política (H1, H2).
 
-    return tuple(sorted(elegiveis, key=_chave_canonica))
+    return tuple(elegiveis)
+
+
+def canonicalizar_conjunto_elegivel(
+    candidatos_selecionados: tuple[CandidatoAtendimento, ...],
+) -> tuple[CandidatoAtendimento, ...]:
+    """Aplica **exclusivamente** a ordem canônica de E (N-a-O1–N-a-O5).
+
+    É o passo **13** da precedência conceitual da etapa 3 (§6.2). A ordem
+    existe **só para auditabilidade**: D0–D6 contam e classificam, não
+    privilegiam posição. A canonicalização **não elimina candidato, não
+    deduplica, não muda cardinalidade** e não altera identidade, alvo nem
+    critério (N-a-O3), e **não usa recência nem a ordem de retorno da
+    persistência** (N-a-O4).
+    """
+    return tuple(sorted(candidatos_selecionados, key=_chave_canonica))
+
+
+def produzir_conjunto_elegivel(
+    registros_recuperados: tuple[RegistroAtendimento, ...],
+    *,
+    registro_identificado: RegistroAtendimento | None,
+    instante_de_referencia_do_ciclo: datetime,
+    limiar_recencia: timedelta | None,
+) -> tuple[CandidatoAtendimento, ...]:
+    """Produz o conjunto elegível **E** já canonicalizado.
+
+    API de conveniência, equivalente por construção a
+    `canonicalizar_conjunto_elegivel(selecionar_conjunto_elegivel(...))`.
+    Mantida para quem consome E pronto e não precisa observar a fronteira
+    entre os passos 9/10 e o passo 13.
+    """
+    return canonicalizar_conjunto_elegivel(
+        selecionar_conjunto_elegivel(
+            registros_recuperados,
+            registro_identificado=registro_identificado,
+            instante_de_referencia_do_ciclo=instante_de_referencia_do_ciclo,
+            limiar_recencia=limiar_recencia,
+        )
+    )
