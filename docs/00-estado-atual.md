@@ -4,7 +4,7 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-21.
+Atualizado em: 2026-08-22.
 
 ## Referências
 
@@ -12,20 +12,21 @@ Atualizado em: 2026-08-21.
 |---|---|
 | Projeto | Casa 77 SDR |
 | Branch de referência | `main` |
-| Último commit **funcional** aprovado | `b2f9f74d5586c481bf6f2af63861d06cdb655d55` |
-| Merge correspondente na `main` | `dd5a4cc76e70ab5c9b1ca640ecc2abcab46140a9` |
-| Última **entrega funcional** concluída | **Decisão determinística do marco temporal** — `decidir_instante_ultima_transicao(...)` e a **composição decisória das 0–3 `DecisaoMaquina`** do ciclo (`src/casa77_sdr/transition_marker.py`, PR #47). **Sem numeração oficial de subetapa**: não é a 3B.8, que **não existe** |
-| Entrega funcional **anterior** | Materialização em runtime da projeção `transicoes_que_mudaram_estado` na `MaquinaEstados` / `DecisaoMaquina` (PR #44 — commit `2da532f1…`, merge `048a5483…`). Também **sem numeração de subetapa** |
-| Entrega funcional **anterior a essa** | Montagem determinística das projeções de identidade da etapa 3 — fronteira **etapa 3 → identidade/etapa 5** (PR #38 — commit `f312eaa5…`, merge `10810506…`). Também **sem numeração de subetapa** |
-| Entrega funcional **anterior a essa (3)** | Implementação funcional da política N-a — produção determinística do conjunto elegível **E** (PR #36 — commit `51fae0d1…`, merge `383c5668…`). Também **sem numeração de subetapa** |
-| Entrega funcional **anterior a essa (4)** | Evolução temporal do contrato de persistência operacional — `instante_ultima_transicao` (PR #33 — commit `0350e4ec…`, merge `1256628e…`). Também **sem numeração de subetapa** |
+| Último commit **funcional** aprovado | `d621a2c7252b4e758278e51af3617bb9d00a97b6` |
+| Merge correspondente na `main` | `f82da69feb11ba3051fd595d02775171814f8f33` |
+| Última **entrega funcional** concluída | **Aplicação e escrita do marco temporal como fronteira chamável** — `criar_com_marco_de_transicao(...)` e `gravar_com_marco_de_transicao(...)` (`src/casa77_sdr/transition_marker_write.py`, PR #49). **Sem numeração oficial de subetapa**: não é a 3B.8, que **não existe** |
+| Entrega funcional **anterior** | Decisão determinística do marco temporal — `decidir_instante_ultima_transicao(...)` e a **composição decisória das 0–3 `DecisaoMaquina`** do ciclo (PR #47 — commit `b2f9f74d…`, merge `dd5a4cc7…`). Também **sem numeração de subetapa** |
+| Entrega funcional **anterior a essa** | Materialização em runtime da projeção `transicoes_que_mudaram_estado` na `MaquinaEstados` / `DecisaoMaquina` (PR #44 — commit `2da532f1…`, merge `048a5483…`). Também **sem numeração de subetapa** |
+| Entrega funcional **anterior a essa (3)** | Montagem determinística das projeções de identidade da etapa 3 — fronteira **etapa 3 → identidade/etapa 5** (PR #38 — commit `f312eaa5…`, merge `10810506…`). Também **sem numeração de subetapa** |
+| Entrega funcional **anterior a essa (4)** | Implementação funcional da política N-a — produção determinística do conjunto elegível **E** (PR #36 — commit `51fae0d1…`, merge `383c5668…`). Também **sem numeração de subetapa** |
+| Entrega funcional **anterior a essa (5)** | Evolução temporal do contrato de persistência operacional — `instante_ultima_transicao` (PR #33 — commit `0350e4ec…`, merge `1256628e…`). Também **sem numeração de subetapa** |
 | Última **subetapa funcional numerada** concluída | 3B.7 — ResolvedorIdentidade determinístico (PR #29 — commit `25ab2726…`, merge `568919f5…`) |
 | Subetapa 3B.7 | **CONCLUÍDA** |
 | Arbitragem documental **N-a** | Arbitragem **N-a** — PR #31, commit `43774af5…`, merge `e8425410…`. **Não altera o marco funcional** |
 | Arbitragem documental da **projeção de mudança de estado** | PR #42, commit documental `f7b5d94cd22ce0d0fcf573823d9f5e56c853ac99`, merge `210ef72790f6317719340e8e0f842d272db6e137`. **Não altera o marco funcional**. O contrato ali arbitrado foi **materializado depois** pelo **PR #44** |
-| Última **reconciliação documental** anterior a esta entrega | Microcorreção do item "Próxima ação" — PR #46, commit documental `cb2b39de255a6387ac5f080e3eba6e9d8ae0a966`, merge `4159fdafbfcf91fd7cb6892bc58df94c03cf96b0`, branch de origem `docs/corrigir-proxima-acao-pos-pr45`. Arquivo: **exclusivamente** `docs/00-estado-atual.md` — **7 adições, 6 remoções**. **Não altera o marco funcional** |
-| Reconciliação documental **anterior a essa** | Reconciliação de `docs/00` após o PR #44 — PR #45, commit documental `650589190b30b82ac4f3b2e0a6fdf5547c732eec`, merge `81383038c0bd43a7c2e95e23c3edd57553379da5`. **Não altera o marco funcional** |
-| Base da presente reconciliação | `dd5a4cc76e70ab5c9b1ca640ecc2abcab46140a9` — HEAD da `main` verificado **antes** desta entrega (PR #47, **funcional**) |
+| Última **reconciliação documental** anterior a esta entrega | Reconciliação de `docs/00` após o PR #47 — PR #48, commit documental `db9b202eeea95cbf249863a0cd4967627eae0156`, merge `5a059b4b7ba69e912c960bfa4d7a7990228a6792`, branch de origem `docs/reconciliar-estado-pos-pr47`. Arquivo: **exclusivamente** `docs/00-estado-atual.md` — **125 adições, 78 remoções**. **Não altera o marco funcional** |
+| Reconciliação documental **anterior a essa** | Microcorreção do item "Próxima ação" — PR #46, commit documental `cb2b39de255a6387ac5f080e3eba6e9d8ae0a966`, merge `4159fdafbfcf91fd7cb6892bc58df94c03cf96b0`. **Não altera o marco funcional** |
+| Base da presente reconciliação | `f82da69feb11ba3051fd595d02775171814f8f33` — HEAD da `main` verificado **antes** desta entrega (PR #49, **funcional**) |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -63,6 +64,8 @@ Atualizado em: 2026-08-21.
 | **Reconciliação do estado após o PR #44** (`docs/00`): registra o marco funcional `2da532f1…` / merge `048a5483…`, o baseline **`749 passed`** → **`759 passed`**, as **quatro** entregas funcionais posteriores à 3B.7 então existentes e o registro dos PRs **#43** e **#44** | documental | PR #45 — **INTEGRADO à `main`** em 2026-08-21 (commit documental `650589190b30b82ac4f3b2e0a6fdf5547c732eec`, merge `81383038c0bd43a7c2e95e23c3edd57553379da5`, branch de origem `docs/reconciliar-estado-pos-pr44`). Arquivo alterado: **exclusivamente** `docs/00-estado-atual.md` — **1 file changed, 83 insertions(+), 59 deletions(-)**. **Zero código**, **zero teste** e **nenhum marco funcional novo** |
 | **Microcorreção documental do item "Próxima ação"** (`docs/00`): remove a formulação obsoleta que ainda sugeria uma futura implementação do contrato arbitrado pelo **PR #42** e retira `transicoes_que_mudaram_estado` da lista de pendências, preservando **N-a-T3–T7**, **N-b**, **E4**, **S2-D8**, **S3-D1** e o `OrquestradorMotor` como exemplos ainda abertos | documental | PR #46 — **INTEGRADO à `main`** em 2026-08-21 (commit documental `cb2b39de255a6387ac5f080e3eba6e9d8ae0a966`, merge `4159fdafbfcf91fd7cb6892bc58df94c03cf96b0`, branch de origem `docs/corrigir-proxima-acao-pos-pr45`). Arquivo alterado: **exclusivamente** `docs/00-estado-atual.md` — **1 file changed, 7 insertions(+), 6 deletions(-)**. **Zero código**, **zero teste** e **nenhum marco funcional novo** |
 | **Decisão determinística do marco temporal** (`src/casa77_sdr/transition_marker.py` + testes, com reconciliação factual de `docs/07`): cria a função pura `decidir_instante_ultima_transicao(...)`, com **quatro argumentos nomeados e obrigatórios**, que responde **somente** qual valor de `instante_ultima_transicao` o futuro chamador da etapa 13 deverá usar. Materializa a **composição decisória das 0–3 `DecisaoMaquina`** efetivamente produzidas no ciclo, decidindo **exclusivamente** por `transicoes_que_mudaram_estado`: **criação** → `instante_de_referencia_do_ciclo`; **atendimento existente com ao menos uma mudança** → `instante_de_referencia_do_ciclo`; **sem mudança** → **preserva** `marco_atual`, inclusive `None`. **Zero relógio vivo, zero conversão de fuso, zero aritmética temporal** — o valor devolvido é sempre **o mesmo objeto** recebido. **Zero persistência, zero I/O, zero rede, zero YAML, zero LLM**; não importa `persistence`, `context`, `eligibility` nem `identity`, e **não é exportada** na superfície pública do pacote. **Não implementa** a aplicação dessa decisão pela **etapa 13**, a **escrita** via `criar`/`gravar`, a montagem/gravação do `RegistroAtendimento`, a criação operacional, a **persistência não volátil** nem o **`OrquestradorMotor`** | **funcional** | PR #47 — **INTEGRADO à `main`** em 2026-08-21 (commit funcional `b2f9f74d5586c481bf6f2af63861d06cdb655d55`, merge `dd5a4cc76e70ab5c9b1ca640ecc2abcab46140a9`, branch de origem `feat/decisao-marco-transicao`, mensagem `feat: decide transition timestamp`). Arquivos: `docs/07-arquitetura-motor-respostas.md`, `src/casa77_sdr/transition_marker.py`, `tests/test_transition_marker.py` — **3 files changed, 602 insertions(+), 12 deletions(-)**. **Não recebe numeração de subetapa** |
+| **Reconciliação do estado após o PR #47** (`docs/00`): registra o marco funcional `b2f9f74d…` / merge `dd5a4cc7…`, o baseline **`759 passed`** → **`795 passed`**, as **cinco** entregas funcionais posteriores à 3B.7 então existentes e o registro dos PRs **#46** e **#47** | documental | PR #48 — **INTEGRADO à `main`** em 2026-08-21 (commit documental `db9b202eeea95cbf249863a0cd4967627eae0156`, merge `5a059b4b7ba69e912c960bfa4d7a7990228a6792`, branch de origem `docs/reconciliar-estado-pos-pr47`). Alterou **exclusivamente** `docs/00-estado-atual.md` — **125 adições, 78 remoções**. **Não cria marco funcional novo** |
+| **Aplicação e escrita do marco temporal como fronteira chamável** (`src/casa77_sdr/transition_marker_write.py` + testes, com reconciliação factual de `docs/07`): cria o módulo com `criar_com_marco_de_transicao(...)` e `gravar_com_marco_de_transicao(...)` — ambos com **argumentos exclusivamente nomeados e obrigatórios, sem default**. A fronteira **delega** integralmente a decisão a `decidir_instante_ultima_transicao(...)`, **aplica** o valor decidido sobre um `RegistroAtendimento` **recebido pronto** substituindo **somente** `instante_ultima_transicao` (por `dataclasses.replace`, sem mutar o registro recebido) e **escreve** pelo contrato existente `PersistenciaOperacional.criar(...)` ou `PersistenciaOperacional.gravar(...)`. A operação **chega pronta** à função chamada: `criar` chama **somente** `criar`, `gravar` chama **somente** `gravar`, e a fronteira **não deriva** criar × gravar de nada. **Zero leitura da persistência**, **zero idempotência**, **zero preservação de pendente**, **zero `try`/`except`** — exceções propagam intactas —, **zero relógio vivo**, **zero *replay***, **zero tipo/enum/dataclass novo** e **zero export em `__init__.py`**. `src/casa77_sdr/persistence.py` **permanece inalterado**. Documenta **M-AE1–M-AE7** em `docs/07` §6.2 | **funcional** | PR #49 — **INTEGRADO à `main`** em 2026-08-22 (commit funcional `d621a2c7252b4e758278e51af3617bb9d00a97b6`, merge `f82da69feb11ba3051fd595d02775171814f8f33`, branch de origem `feat/escrita-marco-transicao`) — **3 arquivos, 865 adições, 19 remoções**. **Cria o novo marco funcional.** **Não recebeu numeração de subetapa** |
 O PR #4 atualiza base comercial e documentação a partir de decisões de Douglas Bianchi
 (2026-08-15). Ele **não** é implementação funcional do motor e não altera o marco
 funcional acima.
@@ -153,45 +156,92 @@ PR #44 materializou a projeção por chamada → PR #47 materializou a decisão 
 composição**. Deixou de ser verdade que "a composição entre as até três chamadas não
 existe em código".
 
-O **PR #47 não conclui N-a-T3–N-a-T7**: continuam **NÃO implementadas** a **aplicação**
-dessa decisão pelo chamador da **etapa 13**, a **escrita efetiva** via `criar`/`gravar`, a
-**montagem/gravação** do `RegistroAtendimento`, a **criação operacional** do atendimento, a
-**persistência não volátil** e o **`OrquestradorMotor`** — e a **integração completa do
-pipeline continua não iniciada**. **N-a-T3–N-a-T7 não estão operacionalmente concluídas.**
-O PR #47 **também não recebeu numeração de subetapa**: **nenhuma 3B.8 foi criada, escolhida
-ou autorizada**.
+O **PR #47 não concluiu N-a-T3–N-a-T7**: **à época daquele PR**, continuavam **NÃO
+implementadas** a **aplicação** dessa decisão pelo chamador da **etapa 13** e a **escrita
+efetiva** via `criar`/`gravar`. Ele **também não recebeu numeração de subetapa**: **nenhuma
+3B.8 foi criada, escolhida ou autorizada**.
+
+O **PR #48** é a **reconciliação exclusivamente documental** de `docs/00` posterior ao
+**PR #47**: commit documental `db9b202eeea95cbf249863a0cd4967627eae0156`, merge
+`5a059b4b7ba69e912c960bfa4d7a7990228a6792`, branch de origem
+`docs/reconciliar-estado-pos-pr47`. Alterou **exclusivamente** `docs/00-estado-atual.md`
+— **125 adições, 78 remoções** —, **não tocou** `src/`, `tests/`, `docs/07`, `knowledge/`
+nem `prompts/`, **não alterou o baseline** e **não criou marco funcional novo**: o marco
+funcional continuava sendo o do **PR #47**.
+
+O **PR #49** é a **entrega funcional seguinte** e materializou a **aplicação** da decisão
+e a **escrita** do marco como **fronteira chamável**: `criar_com_marco_de_transicao(...)`
+e `gravar_com_marco_de_transicao(...)` **agora existem** em
+`src/casa77_sdr/transition_marker_write.py`. Commit funcional
+`d621a2c7252b4e758278e51af3617bb9d00a97b6`, merge
+`f82da69feb11ba3051fd595d02775171814f8f33` — **3 arquivos, 865 adições, 19 remoções**
+(`docs/07-arquitetura-motor-respostas.md`, `src/casa77_sdr/transition_marker_write.py` e
+`tests/test_transition_marker_write.py`). A cronologia é, portanto: **PR #42 arbitrou o
+contrato → PR #44 materializou a projeção por chamada → PR #47 materializou a decisão e a
+composição → PR #48 reconciliou `docs/00` → PR #49 materializou a aplicação e a escrita**.
+Deixou de ser verdade que "a aplicação da decisão e a escrita efetiva do marco não existem
+em código". O PR #49 **também não recebeu numeração de subetapa**: **nenhuma 3B.8 foi
+criada, escolhida ou autorizada**.
+
+O **PR #49 não conclui operacionalmente N-a-T3–N-a-T7**. O que existe é uma **fronteira
+chamável** (`docs/07` §6.2, **M-AE1–M-AE7**): ela **delega** a decisão a
+`decidir_instante_ultima_transicao(...)`, **aplica** o valor decidido sobre um
+`RegistroAtendimento` **recebido pronto** — substituindo **somente**
+`instante_ultima_transicao` — e **escreve** pelo contrato existente
+`PersistenciaOperacional.criar(...)` ou `PersistenciaOperacional.gravar(...)`. Continuam
+**NÃO implementados ou NÃO integrados**: a **montagem completa** do `RegistroAtendimento`;
+a **decisão de se a etapa 13 executa**; a **escolha entre criar e gravar** no pipeline; a
+**geração de `id_atendimento`**; a **criação operacional** do atendimento; a **marcação de
+idempotência**; a **preservação de pendente**; o **tratamento operacional de falha**
+(S4, S5); o **destino do alerta operacional**; a **persistência não volátil**; o
+**`OrquestradorMotor`**; e o **pipeline completo**. A **etapa 13 continua NÃO integrada** e
+**N-a-T3–N-a-T7 não estão operacionalmente concluídas**.
 
 O **PR #38 não implementou a etapa 3 inteira**, **não integrou o pipeline completo** e
 **não implementou o `OrquestradorMotor`**. **À época daquele PR**, também não existiam a
-decisão nem a composição de **N-a-T3–N-a-T7** — materializadas depois, pelo **PR #47**.
-Continuam **não implementados**: a **aplicação e a escrita** do marco (**N-a-T3–N-a-T7 não
-estão operacionalmente concluídas**), o **tratamento operacional dos bloqueios** (S4, S5),
-o **destino do alerta operacional**, **N-b**, **E4**, **S2-D8** e **S3-D1**. O PR #38 **também não
-recebeu numeração de subetapa**: **nenhuma 3B.8 foi criada, escolhida ou autorizada**.
+decisão nem a composição de **N-a-T3–N-a-T7** — materializadas depois, pelo **PR #47** —,
+nem a **aplicação** e a **escrita** do marco — materializadas depois ainda, pelo
+**PR #49**. Continuam **não implementados**: a **integração operacional da etapa 13**, o
+**tratamento operacional dos bloqueios** (S4, S5), o **destino do alerta operacional**,
+**N-b**, **E4**, **S2-D8** e **S3-D1**. O PR #38 **também não recebeu numeração de
+subetapa**: **nenhuma 3B.8 foi criada, escolhida ou autorizada**.
 
 ## Testes
 
-Última execução real em **2026-08-21**, **auditada antes do merge do PR #47**, em
-**Python 3.14.5** — **três** execuções, nenhuma além destas:
+Última execução real em **2026-08-22**, **auditada antes do merge do PR #49**, em
+**Python 3.14.5** — **três execuções finais aprovadas**, além de uma **fase RED esperada**
+do ciclo TDD, registrada abaixo e **distinta** delas:
 
 | Momento | Comando | Resultado |
 |---|---|---|
-| **pré-edição** (antes de qualquer alteração da entrega) | `./.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider` | **`759 passed`** |
-| **pós-implementação — direcionado** | `./.venv/Scripts/python.exe -m pytest tests/test_transition_marker.py -q -p no:cacheprovider` | **`36 passed`** |
-| **pós-implementação — suíte completa** | `./.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider` | **`795 passed`** |
+| **pré-edição** (antes de qualquer alteração da entrega) | `./.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider` | **`795 passed`** |
+| **pós-implementação — direcionado** | `./.venv/Scripts/python.exe -m pytest tests/test_transition_marker_write.py -q -p no:cacheprovider` | **`52 passed`** |
+| **pós-implementação — suíte completa** | `./.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider` | **`847 passed`** |
 
-**Zero failures, zero errors e zero skips** nas três. A execução **pré-edição** da
-**PR #47** é uma **execução real própria daquela entrega**, ainda que coincida
-numericamente com o **baseline histórico** produzido pelo **PR #44**: "baseline anterior =
-`759`" e "execução pré-edição da PR #47 = `759`" são **fatos distintos**. Baselines **históricos** de entregas
-anteriores, preservados como tais: o **PR #44** registrou **`257 passed`** em
-`tests/test_state_machine.py` e **`759 passed`** na suíte completa; o **PR #38** registrou
-**`87 passed`** em `tests/test_eligibility.py`, **`65 passed`** em `tests/test_context.py`
-e **`749 passed`** na suíte completa. A suíte cobre o carregador/validação da base (3B.1,
-`tests/test_knowledge.py`), as regras comerciais determinísticas (3B.2,
-`tests/test_rules.py`), a persistência operacional em memória (3B.3,
-`tests/test_persistence.py`), a normalização de entrada com a chave de idempotência
-(3B.4, `tests/test_normalization.py`), a qualificação determinística (3B.5,
+**Zero failures, zero errors e zero skips** nas três execuções finais.
+
+**Fase RED do ciclo TDD — registrada, não ocultada.** Antes da existência do módulo, a
+execução do arquivo de teste recém-criado falhou com **`ModuleNotFoundError`**:
+`src/casa77_sdr/transition_marker_write.py` ainda não havia sido escrito. Essa é a **fase
+RED esperada** do TDD — **não** é resultado final da entrega e **não** é falha do que foi
+integrado. **Nenhuma contagem de casos é atribuída a ela**: o executor relatou o erro de
+coleta, e **nenhum número dessa execução é alegado aqui**, por não ser literalmente
+verificável neste documento. Os **resultados finais aprovados** da entrega são,
+exclusivamente, **`52 passed`** no direcionado e **`847 passed`** na suíte completa.
+
+A execução **pré-edição** da **PR #49** é uma **execução real própria daquela entrega**,
+ainda que coincida numericamente com o **baseline histórico** produzido pelo **PR #47**:
+"baseline anterior = `795`" e "execução pré-edição da PR #49 = `795`" são **fatos
+distintos**. Baselines **históricos** de entregas anteriores, preservados como tais: o
+**PR #47** registrou **`759 passed`** na execução pré-edição, **`36 passed`** em
+`tests/test_transition_marker.py` e **`795 passed`** na suíte completa; o **PR #44**
+registrou **`257 passed`** em `tests/test_state_machine.py` e **`759 passed`** na suíte
+completa; e o **PR #38** registrou **`87 passed`** em `tests/test_eligibility.py`,
+**`65 passed`** em `tests/test_context.py` e **`749 passed`** na suíte completa. A suíte
+cobre o carregador/validação da base (3B.1, `tests/test_knowledge.py`), as regras
+comerciais determinísticas (3B.2, `tests/test_rules.py`), a persistência operacional em
+memória (3B.3, `tests/test_persistence.py`), a normalização de entrada com a chave de
+idempotência (3B.4, `tests/test_normalization.py`), a qualificação determinística (3B.5,
 `tests/test_qualification.py`), a máquina de estados determinística (3B.6,
 `tests/test_state_machine.py`) e a **resolução de identidade determinística** (3B.7,
 `tests/test_identity.py`). A cobertura da persistência foi **ampliada pelo PR #33** com
@@ -200,9 +250,12 @@ o transporte e a validação de `instante_ultima_transicao`; o **PR #36** acresc
 **PR #38** acrescentou `tests/test_context.py` — a **montagem das projeções de
 identidade da etapa 3**. O **PR #44** ampliou `tests/test_state_machine.py` com a
 **projeção `transicoes_que_mudaram_estado`**. O **PR #47** acrescentou
-`tests/test_transition_marker.py` — a **decisão determinística do marco temporal**.
+`tests/test_transition_marker.py` — a **decisão determinística do marco temporal**. O
+**PR #49** acrescentou `tests/test_transition_marker_write.py` — a **aplicação e a escrita
+do marco temporal como fronteira chamável**.
 
-**Baseline funcional atual: `795 passed`.**
+**Baseline funcional atual: `847 passed`.** Baseline anterior: **`795 passed`** — delta
+**+52**.
 
 Histórico: até a 3B.5 o baseline era `180 passed`, e assim permaneceu durante as
 arbitragens documentais S2 e S3 — elas não alteram código nem testes. O salto para
@@ -224,21 +277,25 @@ permanece com 87 casos** e **nenhum** dos 65 é atribuído a ele. O salto de
 **PR #44**, que acrescentou **10** casos a `tests/test_state_machine.py`, cujo teste
 direcionado passou a **`257 passed`**. O salto de **`759 passed` para `795 passed`** —
 **delta +36** — decorre exclusivamente do **PR #47**, que acrescentou
-`tests/test_transition_marker.py` com **36** casos; **nenhum** desses 36 é atribuído a
+`tests/test_transition_marker.py` com **36** casos. O salto de **`795 passed` para
+`847 passed`** — **delta +52** — decorre exclusivamente do **PR #49**, que acrescentou
+`tests/test_transition_marker_write.py` com **52** casos; **nenhum** desses 52 é atribuído
+a `tests/test_transition_marker.py`, que permanece com **36**, nem a
 `tests/test_state_machine.py`, que permanece com **257**. Os baselines históricos
-**`180`**, **`427`**, **`574`**, **`597`**, **`684`**, **`749`** e **`759`** permanecem
-registrados como acima; a série completa é
-**`180 → 427 → 574 → 597 → 684 → 749 → 759 → 795`**.
+**`180`**, **`427`**, **`574`**, **`597`**, **`684`**, **`749`**, **`759`** e **`795`**
+permanecem registrados como acima; a série completa é
+**`180 → 427 → 574 → 597 → 684 → 749 → 759 → 795 → 847`**.
 
 Os PRs **#23** (R), **#25** (R-H), **#27** (R-I), **#31** (N-a), **#32**, **#34**, **#35**,
-**#39**, **#40**, **#41**, **#42**, **#43**, **#45** e **#46** (reconciliações, arbitragens e correções documentais) e a
+**#39**, **#40**, **#41**, **#42**, **#43**, **#45**, **#46** e **#48** (reconciliações,
+arbitragens e correções documentais) e a
 presente reconciliação **não alteram código nem testes** e, portanto, **não alteram o
 baseline**. Em particular, o **PR #41** alterou **apenas** `docs/00` e o **PR #42** alterou
-**apenas** `docs/06` e `docs/07`; os **PRs #45 e #46** alteraram **apenas** `docs/00` —
-**nenhum deles** tocou `src/` ou `tests/` e **nenhum alterou o baseline**. As **três
-execuções acima foram realizadas e auditadas antes do merge do PR #47**, em 2026-08-21.
-**Nenhuma execução de testes ocorre nesta reconciliação**, que é puramente documental, e
-nenhuma execução além das três reportadas é alegada.
+**apenas** `docs/06` e `docs/07`; os **PRs #45, #46 e #48** alteraram **apenas** `docs/00`
+— **nenhum deles** tocou `src/` ou `tests/` e **nenhum alterou o baseline**. As **três
+execuções finais acima foram realizadas e auditadas antes do merge do PR #49**, em
+2026-08-22. **Nenhuma execução de testes ocorre nesta reconciliação**, que é puramente
+documental, e nenhuma execução além das reportadas é alegada.
 
 ## Roadmap (resumo — detalhe em `docs/05-roadmap.md`)
 
@@ -261,18 +318,21 @@ na **3B.7**, integrada pelo **PR #29** (merge `568919f5…`) — `src/casa77_sdr
 A **3B.7 está CONCLUÍDA e integrada à `main`**. Etapas 5 a 10 permanecem futuras e com a
 numeração preservada, conforme `docs/05-roadmap.md` — **não alterado por esta entrega**.
 
-Existem agora **cinco entregas funcionais posteriores à 3B.7 e SEM numeração oficial de
+Existem agora **seis entregas funcionais posteriores à 3B.7 e SEM numeração oficial de
 subetapa**: (a) a **evolução temporal do contrato de persistência operacional**
 (`instante_ultima_transicao`), integrada pelo **PR #33**; (b) a **implementação
 funcional da política N-a** — produção determinística do conjunto elegível **E** em
 `src/casa77_sdr/eligibility.py` —, integrada pelo **PR #36**; (c) a **montagem
 determinística das projeções de identidade da etapa 3** — fronteira **etapa 3 →
-identidade/etapa 5** em `src/casa77_sdr/context.py` —, integrada pelo **PR #38**; e
+identidade/etapa 5** em `src/casa77_sdr/context.py` —, integrada pelo **PR #38**;
 (d) a **materialização em runtime da projeção `transicoes_que_mudaram_estado`** na
-`MaquinaEstados` / `DecisaoMaquina`, integrada pelo **PR #44**; e (e) a **decisão
+`MaquinaEstados` / `DecisaoMaquina`, integrada pelo **PR #44**; (e) a **decisão
 determinística do marco temporal** — `decidir_instante_ultima_transicao(...)` e a
 **composição decisória das 0–3 `DecisaoMaquina`** em
-`src/casa77_sdr/transition_marker.py` —, integrada pelo **PR #47**.
+`src/casa77_sdr/transition_marker.py` —, integrada pelo **PR #47**; e (f) a **aplicação e
+a escrita do marco temporal como fronteira chamável** —
+`criar_com_marco_de_transicao(...)` e `gravar_com_marco_de_transicao(...)` em
+`src/casa77_sdr/transition_marker_write.py` —, integrada pelo **PR #49**.
 Nenhuma delas é renomeada para **3B.8** — **a 3B.8 não existe** —, nenhuma **altera a
 numeração** do roadmap e nenhuma **significa que a próxima entrega tenha sido
 escolhida**. A **última subetapa funcional numerada** continua sendo a **3B.7**.
@@ -281,17 +341,25 @@ escolhida**. A **última subetapa funcional numerada** continua sendo a **3B.7**
 E**; a **projeção integral reutilizável** dos registros recuperados; a **validação
 explícita do limiar**; o conjunto **H**; o **`havia_estado_esperado`**; o **produtor
 N-I** / `id_atendimento_validado`; a **montagem da fronteira etapa 3 →
-identidade/etapa 5**; a **projeção `transicoes_que_mudaram_estado`**; e a **decisão pura
-do marco temporal** com a **composição decisória das 0–3 chamadas** do ciclo.
-**Continuam NÃO implementados ou parciais**: a **aplicação** dessa decisão e a **escrita
-efetiva** do marco pela **etapa 13**, a **etapa 3 inteira**, a **persistência não
-volátil**, a **integração completa do pipeline** e o **`OrquestradorMotor`**.
+identidade/etapa 5**; a **projeção `transicoes_que_mudaram_estado`**; a **decisão pura
+do marco temporal** com a **composição decisória das 0–3 chamadas** do ciclo; e a
+**aplicação do valor decidido sobre um `RegistroAtendimento` recebido pronto** com a
+**escrita efetiva** via `PersistenciaOperacional.criar(...)` ou
+`PersistenciaOperacional.gravar(...)`, como **fronteira chamável**.
+**Continuam NÃO implementados, parciais ou NÃO integrados**: a **integração operacional
+da etapa 13 no pipeline** — inclusive a **montagem completa** do `RegistroAtendimento`, a
+**decisão de se a etapa 13 executa**, a **escolha entre criar e gravar**, a **geração de
+`id_atendimento`**, a **criação operacional** do atendimento, a **marcação de
+idempotência** e a **preservação de pendente** —; o **tratamento operacional de falha**
+(S4, S5); o **destino do alerta operacional**; a **etapa 3 inteira**; a **persistência
+não volátil**; a **integração completa do pipeline**; e o **`OrquestradorMotor`**.
+**N-a-T3–N-a-T7 não estão operacionalmente concluídas.**
 
 **Nenhuma subetapa 3B.8 foi escolhida, proposta ou autorizada por esta entrega.** A
 reconciliação anterior foi **integrada e auditada** pelos **PRs #39** e **#41**; o estado de
 **N-a** em `docs/07` foi **reconciliado pelo PR #40**; e a **projeção de mudança de estado**
-foi **arbitrada pelo PR #42** — **contrato definido, implementação funcional ainda
-inexistente**. O GPT reavalia a próxima subetapa **à luz das pendências ainda abertas**, e
+foi **arbitrada pelo PR #42** — **contrato definido naquele momento** e **materializado**
+**depois pelo PR #44**. O GPT reavalia a próxima subetapa **à luz das pendências ainda abertas**, e
 **nenhuma delas é eleita aqui**. Em particular, **não** se afirma aqui que
 o `OrquestradorMotor` seja a próxima implementação autorizada. A formulação genérica
 anterior — "bloqueado por N-a, N-b, E4 e S2-D8" — deixa de valer para **N-a**, e passa a
@@ -314,12 +382,23 @@ ser a seguinte, conforme o `docs/07` integrado:
   (`src/casa77_sdr/transition_marker.py`, `docs/07` §6.2, M-DT1–M-DT7): a **decisão pura**
   de inicializar, atualizar ou preservar o marco e a **composição decisória das 0–3
   `DecisaoMaquina`** do ciclo **já existem em código**.
+- **N-a-T3–N-a-T7 — aplicação e escrita: MATERIALIZADAS COMO FRONTEIRA CHAMÁVEL** pelo
+  **PR #49** (`src/casa77_sdr/transition_marker_write.py`, `docs/07` §6.2, M-AE1–M-AE7):
+  `criar_com_marco_de_transicao(...)` e `gravar_com_marco_de_transicao(...)` **delegam** a
+  decisão, **aplicam** o valor decidido sobre um `RegistroAtendimento` **recebido pronto**
+  — alterando **somente** `instante_ultima_transicao` — e **escrevem** por
+  `PersistenciaOperacional.criar(...)` ou `PersistenciaOperacional.gravar(...)`.
+  `src/casa77_sdr/persistence.py` **permanece inalterado**. Isso **não** conclui
+  operacionalmente N-a-T3–N-a-T7.
 - Pré-requisitos concretos **ainda pendentes** da N-a, conforme `docs/07` §6.2 e §12: a
-  **aplicação** dessa decisão pelo futuro chamador da **etapa 13** e a **escrita efetiva**
-  do marco via `criar`/`gravar` — **N-a-T3–N-a-T7 não estão operacionalmente
-  concluídas** —; o **tratamento operacional dos bloqueios** (S4, S5); o **destino do
-  alerta operacional**; e o **valor numérico do limiar** com o **mecanismo concreto de
-  carga** da configuração. **Todos continuam não implementados/pendentes.**
+  **integração operacional da etapa 13 no pipeline** — a **montagem completa** do
+  `RegistroAtendimento`, a **decisão de se a etapa 13 executa**, a **escolha entre criar e
+  gravar**, a **geração de `id_atendimento`**, a **criação operacional** do atendimento, a
+  **marcação de idempotência** e a **preservação de pendente** —, de modo que
+  **N-a-T3–N-a-T7 não estão operacionalmente concluídas**; o **tratamento operacional dos
+  bloqueios** (S4, S5); o **destino do alerta operacional**; e o **valor numérico do
+  limiar** com o **mecanismo concreto de carga** da configuração. **Todos continuam não
+  implementados/pendentes.**
 - **N-b**, **E4**, **S2-D8** e **S3-D1** **continuam abertas** e continuam bloqueando o
   `OrquestradorMotor` e a integração completa, conforme `docs/07` §12.
 
@@ -361,44 +440,57 @@ a **pendência residual continua aberta**.
 
 ## Próxima ação
 
-1. A **decisão determinística do marco temporal** — `decidir_instante_ultima_transicao(...)`
-   e a **composição decisória das 0–3 `DecisaoMaquina`** do ciclo — está **funcionalmente
-   concluída e integrada à `main`** pelo **PR #47** (**MERGED**). Ela **não recebeu
-   numeração de subetapa**. A **entrega funcional anterior** é a **materialização em
-   runtime da projeção `transicoes_que_mudaram_estado`** (PR #44), que permanece integrada.
-2. Commit funcional atual: `b2f9f74d5586c481bf6f2af63861d06cdb655d55`. Merge
-   correspondente: `dd5a4cc76e70ab5c9b1ca640ecc2abcab46140a9`.
-3. Baseline funcional atual: **`795 passed`**, com **`36 passed`** no teste direcionado
-   de `tests/test_transition_marker.py`, em **Python 3.14.5** — zero failures, zero errors
-   e zero skips. Baseline anterior: **`759 passed`**; delta **+36**.
+1. A **aplicação e a escrita do marco temporal como fronteira chamável** —
+   `criar_com_marco_de_transicao(...)` e `gravar_com_marco_de_transicao(...)` em
+   `src/casa77_sdr/transition_marker_write.py` — está **funcionalmente concluída e
+   integrada à `main`** pelo **PR #49** (**MERGED**). Ela **não recebeu numeração de
+   subetapa**. A **entrega funcional anterior** é a **decisão determinística do marco
+   temporal** (PR #47), que permanece integrada.
+2. Commit funcional atual: `d621a2c7252b4e758278e51af3617bb9d00a97b6`. Merge
+   correspondente: `f82da69feb11ba3051fd595d02775171814f8f33`.
+3. Baseline funcional atual: **`847 passed`**, com **`52 passed`** no teste direcionado
+   de `tests/test_transition_marker_write.py`, em **Python 3.14.5** — zero failures, zero
+   errors e zero skips. Baseline anterior: **`795 passed`**; delta **+52**. Houve uma
+   **fase RED esperada** do ciclo TDD antes da implementação (`ModuleNotFoundError`),
+   registrada na seção **Testes** e **distinta** dos resultados finais aprovados.
 4. A **última subetapa funcional numerada** continua sendo a **3B.7 — `ResolvedorIdentidade` determinístico** (PR #29, commit `25ab2726…`, merge
    `568919f5…`), que permanece **CONCLUÍDA**.
-5. **O conjunto H, o `havia_estado_esperado` e o produtor N-I agora possuem produtor em
+5. **O conjunto H, o `havia_estado_esperado` e o produtor N-I continuam com produtor em
    código**: `context.py` constrói **H** por filtro estrutural de estado **fora de N-a**,
    calcula `havia_estado_esperado` sobre o **contexto recuperado** — **nunca** sobre E —
    e projeta `id_atendimento_validado` **somente** sob `ENCONTRADO`.
-6. **A fronteira de identidade da etapa 3 está materializada**: leitura **somente de
+6. **A fronteira de identidade da etapa 3 continua materializada**: leitura **somente de
    consulta** da persistência, validação do identificador, projeção integral do contexto
    e entrega do DTO fechado `ProjecoesIdentidadeEtapa3`, na ordem normativa de
    `docs/07` §6.2 — inclusive o **passo 12 antes do passo 13**.
-7. **A produção determinística de E continua implementada** (PR #36), agora separada em
+7. **A produção determinística de E continua implementada** (PR #36), separada em
    **seleção** e **canonicalização**, com `produzir_conjunto_elegivel(...)` preservado
    como composição compatível. **O transporte e a validação de
-   `instante_ultima_transicao` continuam implementados** na persistência (PR #33).
-8. **A DECISÃO de `N-a-T3`–`N-a-T7` está materializada; a APLICAÇÃO não.** Decidir
-   **qual valor** de `instante_ultima_transicao` usar — inicializar na criação, atualizar
-   havendo mudança ou preservar o marco — já existe em código (PR #47), com a **composição
-   das 0–3 chamadas** do ciclo. Continuam **NÃO implementadas** a **aplicação** dessa
-   decisão pelo chamador da **etapa 13** e a **escrita efetiva** do marco via
-   `criar`/`gravar`. **N-a-T3–N-a-T7 não estão operacionalmente concluídas.**
+   `instante_ultima_transicao` continuam implementados** na persistência (PR #33), que
+   **não foi alterada** pelo PR #49.
+8. **A DECISÃO, a APLICAÇÃO e a ESCRITA de `N-a-T3`–`N-a-T7` estão materializadas; a
+   INTEGRAÇÃO OPERACIONAL não.** Decidir **qual valor** de `instante_ultima_transicao`
+   usar — inicializar na criação, atualizar havendo mudança ou preservar o marco — existe
+   em código desde o **PR #47**, com a **composição das 0–3 chamadas** do ciclo;
+   **aplicar** esse valor sobre um `RegistroAtendimento` **recebido pronto** e
+   **escrevê-lo** por `PersistenciaOperacional.criar(...)` ou
+   `PersistenciaOperacional.gravar(...)` existe em código desde o **PR #49**, como
+   **fronteira chamável** (`docs/07` §6.2, **M-AE1–M-AE7**). Continuam **NÃO
+   implementados ou NÃO integrados**: a **montagem completa** do `RegistroAtendimento`;
+   a **decisão de se a etapa 13 executa**; a **escolha entre criar e gravar** no pipeline;
+   a **geração de `id_atendimento`**; a **criação operacional** do atendimento; a
+   **marcação de idempotência**; a **preservação de pendente**; o **tratamento
+   operacional de falha** (S4, S5); e o **destino do alerta operacional**. **A etapa 13
+   NÃO está integrada** e **N-a-T3–N-a-T7 não estão operacionalmente concluídas.**
 9. **A etapa 3 NÃO está inteiramente implementada** e **a integração N-a continua
    PARCIAL.** Continuam **não implementados** o **tratamento operacional dos bloqueios**
    (S4, S5) e o **destino do alerta operacional**. **Produzir as projeções de identidade
-   não é implementar a etapa 3 inteira.**
+   não é implementar a etapa 3 inteira**, e **poder escrever o marco por uma fronteira
+   chamável não é ter a etapa 13 integrada.**
 10. O **`OrquestradorMotor` continua NÃO implementado** e **nenhuma integração completa
     de pipeline foi iniciada**.
-11. Continuam **pendentes** o **valor numérico operacional do limiar** e o **mecanismo
-    concreto de carga** da configuração.
+11. Continuam **pendentes** o **valor numérico operacional do limiar**, o **mecanismo
+    concreto de carga** da configuração e a **persistência operacional não volátil**.
 12. **Nenhuma subetapa 3B.8 foi criada, escolhida ou autorizada.** A **3B.8 não existe**.
 13. **A projeção de mudança de estado EXISTE em runtime.** O **PR #42** arbitrou o
     contrato e o **PR #44 o materializou**: `DecisaoMaquina` expõe
@@ -410,42 +502,47 @@ a **pendência residual continua aberta**.
     externo, **sem** usar `estado_inicial != estado_final` como algoritmo de produção,
     **sem** tabela paralela e **sem** lista normativa de transições que preservam estado.
     **Ela deixou de ser pendência de implementação.**
-14. **A composição entre as até três chamadas do ciclo DEIXOU de ser pendência**: foi
-    materializada pelo **PR #47**, junto da decisão pura. **Continuam NÃO implementados**:
-    a **aplicação** dessa decisão pelo chamador da **etapa 13**; a **escrita efetiva** do
-    marco via `criar`/`gravar`; a **montagem/gravação** do `RegistroAtendimento`; a
-    **criação operacional** do atendimento; a **persistência não volátil**; o
-    **`OrquestradorMotor`**; e a **integração completa do pipeline**. **Decidir o valor do
-    marco não é escrevê-lo.**
-15. **A base factual reconciliada nesta entrega é o merge `dd5a4cc7…`.** A reconciliação de
-    `docs/00` após o PR #44 foi **integrada pelo PR #45** (commit `6505891…`, merge
-    `8138303…`) e corrigida pelo **PR #46** (commit `cb2b39d…`, merge `4159fda…`) — ambos
-    **documentais**. A **decisão determinística do marco temporal** foi **integrada pelo
-    PR #47** (commit funcional `b2f9f74d…`, merge `dd5a4cc7…`) — esta **é funcional** e
-    **cria o novo marco**, que passa a ser o do **PR #47**.
+14. **A composição entre as até três chamadas do ciclo e a aplicação/escrita do marco
+    DEIXARAM de ser pendências de materialização**: a composição foi materializada pelo
+    **PR #47**, junto da decisão pura, e a aplicação com a escrita pelo **PR #49**, como
+    fronteira chamável. **Decidir o valor do marco não é escrevê-lo, e poder escrevê-lo
+    não é tê-lo integrado ao pipeline**: o que resta é a **integração operacional da
+    etapa 13**, enumerada no item 8, além da **persistência não volátil**, do
+    **`OrquestradorMotor`** e da **integração completa do pipeline**.
+15. **A base factual reconciliada nesta entrega é o merge `f82da69f…`.** A reconciliação de
+    `docs/00` após o **PR #47** foi **integrada pelo PR #48** (commit documental
+    `db9b202e…`, merge `5a059b4b…`) — **documental**, **exclusivamente**
+    `docs/00-estado-atual.md`, **125 adições / 78 remoções**, **sem marco funcional novo**.
+    A **aplicação e a escrita do marco temporal** foram **integradas pelo PR #49** (commit
+    funcional `d621a2c7…`, merge `f82da69f…`) — esta **é funcional** e **cria o novo
+    marco**, que passa a ser o do **PR #49**: **3 arquivos, 865 adições / 19 remoções**.
 16. A presente entrega é **exclusivamente reconciliação documental de
-    `docs/00-estado-atual.md`** após o merge do **PR #47**: **não altera código, testes,
+    `docs/00-estado-atual.md`** após o merge do **PR #49**: **não altera código, testes,
     `docs/07`, `docs/06`, `docs/05`, base de conhecimento nem prompts**, e **nenhuma
     execução de testes ocorre nela** — os números funcionais atuais registrados são os
-    **`36 passed`** / **`795 passed`** executados e auditados em **Python 3.14.5** antes
-    do merge do **PR #47**.
+    **`52 passed`** / **`847 passed`** executados e auditados em **Python 3.14.5** antes
+    do merge do **PR #49**.
 17. **Existe planejamento técnico auditado pelo GPT como tecnicamente coerente.** Ele **não
     é uma autorização**: **nenhuma próxima entrega está autorizada por este documento**,
     nenhum rótulo novo é criado e nenhuma numeração é atribuída.
-18. **Próxima ação:** após a **integração e a auditoria desta reconciliação**, o GPT
-    poderá **autorizar ou não** uma **nova entrega funcional** a partir das **pendências
-    reais ainda abertas**. **Esta reconciliação não autoriza implementação funcional por
-    si própria**, **não escolhe qual pendência vem a seguir** e **não cria numeração
-    nova**. **Nenhuma pendência é eleita aqui** como a implementação seguinte — nem a
-    **aplicação/escrita operacional de N-a-T3–T7**, nem **N-b**, nem **E4**, nem
-    **S2-D8**, nem **S3-D1**, nem o `OrquestradorMotor`.
+18. **Próxima ação:** após a **integração e a auditoria desta reconciliação documental**,
+    o GPT poderá **selecionar uma única próxima entrega** a partir das **pendências reais
+    ainda abertas**. **Esta reconciliação não autoriza implementação funcional por si
+    própria**, **não escolhe qual pendência vem a seguir** e **não cria numeração nova**.
+    **Nenhuma pendência é eleita aqui** como a implementação seguinte — nem a **integração
+    operacional da etapa 13**, nem **N-b**, nem **E4**, nem **S2-D8**, nem **S3-D1**, nem
+    o `OrquestradorMotor`, nem qualquer outra.
 19. As pendências permanecem abertas conforme seus próprios bloqueios: **B, C, S2-D5,
     S2-D7, S2-D8, S3-D1, a confirmação de entrega do handoff, N-b, E1, E3, E4, o retorno
     do controle ao bot após `atendimento_humano` sem `E14`/T34**, a **unicidade geral
     de `id_atendimento` entre candidatos não identificados**, a **persistência
-    operacional não volátil**, o **tratamento operacional dos bloqueios (S4/S5)**, o
-    **destino do alerta operacional**, o **valor numérico operacional do limiar** e o
-    **mecanismo concreto de carga** da configuração. Nenhuma delas é resolvida aqui.
+    operacional não volátil**, a **montagem completa do `RegistroAtendimento`**, a
+    **decisão de execução da etapa 13**, a **escolha entre criar e gravar no pipeline**,
+    a **geração/origem de `id_atendimento`**, a **criação operacional do atendimento**, a
+    **idempotência**, a **preservação de pendente**, o **tratamento operacional dos
+    bloqueios (S4/S5)**, o **destino do alerta operacional**, o **valor numérico
+    operacional do limiar** e o **mecanismo concreto de carga** da configuração. Nenhuma
+    delas é resolvida aqui.
 
 ## Arbitragens
 
@@ -485,7 +582,7 @@ componentes de `docs/07` §4.1 permanece com **14**.
 | N-a-k | **R5-P0, D0 e D1 preservados, nesta ordem.** H ≠ vazio → **R5-P0**, e D0–D6 **não executam**; contradição declarada → **D0**, mesmo com E vazio. **Restando H vazio e D0 não decisivo**, alcança-se **D1**: E vazio com histórico conhecido → `SEM_CANDIDATO_ELEGIVEL`; E vazio sem histórico → `PRIMEIRO_CONTATO_COMPROVADO`. `havia_estado_esperado` é calculado sobre o **contexto recuperado**, **nunca sobre E**. |
 | N-a-l | **Cenários K-Na-1 a K-Na-18** documentados em `docs/07` §6.2, **sem criar ou alterar teste algum**. |
 
-**A arbitragem N-a não implementou nada por si.** **À época do PR #31**, N-a não existia em código, `src/casa77_sdr/persistence.py` **não foi alterado por aquela arbitragem** e o campo `instante_ultima_transicao` ainda não havia sido implementado. **Estado atual**: as materializações vieram depois, em entregas funcionais próprias — o **transporte e a validação da representação** do campo, pelo **PR #33** (`docs/07` §6.2, M-T1–M-T6); a **produção determinística de E**, com classificação e recência, pelo **PR #36** (M-E1–M-E6); e o conjunto **H**, o `havia_estado_esperado`, o **produtor N-I** e o ***wiring* da fronteira etapa 3 → identidade/etapa 5**, pelo **PR #38** (M-C1–M-C8). **A integração N-a permanece PARCIAL**: **N-a-T3–N-a-T7 continuam não implementadas**, o **tratamento operacional dos bloqueios** (S4, S5) e o **destino do alerta** continuam pendentes, a **etapa 3 não está inteiramente implementada**, o `OrquestradorMotor` **continua não implementado** e **nenhuma subetapa 3B.8 foi criada, escolhida ou autorizada**.
+**A arbitragem N-a não implementou nada por si.** **À época do PR #31**, N-a não existia em código, `src/casa77_sdr/persistence.py` **não foi alterado por aquela arbitragem** e o campo `instante_ultima_transicao` ainda não havia sido implementado. **Estado atual**: as materializações vieram depois, em entregas funcionais próprias — o **transporte e a validação da representação** do campo, pelo **PR #33** (`docs/07` §6.2, M-T1–M-T6); a **produção determinística de E**, com classificação e recência, pelo **PR #36** (M-E1–M-E6); e o conjunto **H**, o `havia_estado_esperado`, o **produtor N-I** e o ***wiring* da fronteira etapa 3 → identidade/etapa 5**, pelo **PR #38** (M-C1–M-C8). **A integração N-a permanece PARCIAL**: a **decisão** do marco veio pelo **PR #47** (M-DT1–M-DT7) e a **aplicação com a escrita**, como **fronteira chamável**, pelo **PR #49** (M-AE1–M-AE7), mas a **integração operacional da etapa 13 no pipeline** permanece pendente — **N-a-T3–N-a-T7 não estão operacionalmente concluídas** —, o **tratamento operacional dos bloqueios** (S4, S5) e o **destino do alerta** continuam pendentes, a **etapa 3 não está inteiramente implementada**, o `OrquestradorMotor` **continua não implementado** e **nenhuma subetapa 3B.8 foi criada, escolhida ou autorizada**.
 
 **O que a N-a NÃO resolve.** Permanecem **abertas**, sem alteração: **E4**, **N-b**, **S2-D8**, **S3-D1**, **B**, **C**, **E1**, **E3**, **S2-D5**, **S2-D7**, a **confirmação física do handoff**, o **retorno do controle ao bot após `atendimento_humano` sem `E14`/T34** e a **unicidade geral de `id_atendimento` entre candidatos não identificados**. Ficam registradas como **pendências abertas da própria N-a** o **valor numérico do limiar temporal** e o **mecanismo concreto de carga** da configuração — `docs/07` §12, item 18.
 
@@ -689,7 +786,7 @@ Detalhe em `docs/07` §12.
 
 | # | Pendência | Situação |
 |---|---|---|
-| N-a | Política de **elegibilidade e recência** que produz o conjunto elegível da etapa 3. **Especificação documental: ARBITRADA / CONCLUÍDA** pelo **PR #31**. **Materialização temporal parcial: IMPLEMENTADA** pelo **PR #33** — transporte e validação de `instante_ultima_transicao` em `src/casa77_sdr/persistence.py` (`docs/07` §6.2, M-T1–M-T6). **Produção determinística de E: IMPLEMENTADA** pelo **PR #36** — `src/casa77_sdr/eligibility.py` (`docs/07` §6.2, M-E1–M-E6). **Conjunto H, `havia_estado_esperado`, produtor N-I e *wiring* da fronteira etapa 3 → identidade/etapa 5: IMPLEMENTADOS** pelo **PR #38** — `src/casa77_sdr/context.py` (`docs/07` §6.2, M-C1–M-C8). **Integração N-a: PARCIAL / NÃO CONCLUÍDA** — continuam **não implementadas** a **aplicação** e a **escrita** do marco de **N-a-T3–N-a-T7** — cuja **decisão pura** e **composição decisória das 0–3 chamadas** foram materializadas pelo **PR #47** (`src/casa77_sdr/transition_marker.py`) —, o **tratamento operacional dos bloqueios** (S4, S5) e o **destino do alerta operacional**; a **etapa 3 inteira** e a **integração do pipeline** também **não** estão concluídas. O tratamento de `SEM_CANDIDATO_ELEGIVEL` na integração **não** é parte dela: é a **E4**, pendência distinta e **ainda aberta** | **especificação resolvida**; **campo temporal, produção de E e projeções de identidade materializados**; a **integração** ainda depende da **aplicação/escrita** de **N-a-T3–N-a-T7**, do **tratamento dos bloqueios**, do **destino do alerta** e do **valor/mecanismo do limiar** (linha abaixo) |
+| N-a | Política de **elegibilidade e recência** que produz o conjunto elegível da etapa 3. **Especificação documental: ARBITRADA / CONCLUÍDA** pelo **PR #31**. **Materialização temporal parcial: IMPLEMENTADA** pelo **PR #33** — transporte e validação de `instante_ultima_transicao` em `src/casa77_sdr/persistence.py` (`docs/07` §6.2, M-T1–M-T6). **Produção determinística de E: IMPLEMENTADA** pelo **PR #36** — `src/casa77_sdr/eligibility.py` (`docs/07` §6.2, M-E1–M-E6). **Conjunto H, `havia_estado_esperado`, produtor N-I e *wiring* da fronteira etapa 3 → identidade/etapa 5: IMPLEMENTADOS** pelo **PR #38** — `src/casa77_sdr/context.py` (`docs/07` §6.2, M-C1–M-C8). **Decisão, aplicação e escrita do marco: MATERIALIZADAS** — a **decisão pura** e a **composição decisória das 0–3 chamadas** pelo **PR #47** (`src/casa77_sdr/transition_marker.py`, `docs/07` §6.2, M-DT1–M-DT7), e a **aplicação com a escrita**, como **fronteira chamável**, pelo **PR #49** (`src/casa77_sdr/transition_marker_write.py`, `docs/07` §6.2, M-AE1–M-AE7). **Integração N-a: PARCIAL / NÃO CONCLUÍDA** — continua **não integrada** a **etapa 13 no pipeline** (montagem completa do `RegistroAtendimento`, decisão de se a etapa 13 executa, escolha entre criar e gravar, geração de `id_atendimento`, criação operacional, marcação de idempotência e preservação de pendente), de modo que **N-a-T3–N-a-T7 não estão operacionalmente concluídas**; continuam pendentes o **tratamento operacional dos bloqueios** (S4, S5) e o **destino do alerta operacional**; a **etapa 3 inteira** e a **integração do pipeline** também **não** estão concluídas. O tratamento de `SEM_CANDIDATO_ELEGIVEL` na integração **não** é parte dela: é a **E4**, pendência distinta e **ainda aberta** | **especificação resolvida**; **campo temporal, produção de E, projeções de identidade, decisão do marco e aplicação/escrita materializados**; a **integração** ainda depende da **integração operacional da etapa 13**, do **tratamento dos bloqueios**, do **destino do alerta** e do **valor/mecanismo do limiar** (linha abaixo) |
 | Limiar temporal de recência | **Valor numérico** do limiar e **mecanismo concreto de carga** da configuração. **Aberta pelo PR #31** (`docs/07` §12, item 18). **Nenhum número foi definido** e **nenhuma tecnologia, variável de ambiente, arquivo ou serviço foi escolhido**. **Não é dado comercial** — não entra em `knowledge/casa77.yaml`; depende de aprovação específica de Douglas Bianchi e de decisão operacional | **não bloqueia** a 3B.6, a 3B.7, a **produção determinística de E** (PR #36) nem a **montagem das projeções de identidade da etapa 3** (PR #38) — ambas recebem o limiar como argumento explícito; **bloqueia** a **integração operacional de N-a no pipeline** e, por consequência, o `OrquestradorMotor` |
 | N-b | Contrato global da **interpretação**: quem produz a projeção estruturada consumida pelo resolvedor (`intencao_identidade`, referências, confianças binárias) e com que garantias. **Produtor não atribuído.** | **não bloqueia** a 3B.6; **bloqueia** a integração completa |
 | E1 | Distinção entre as entidades **conversa × atendimento × lead**. Já registrada como aberta desde a etapa de modelo de dados; a arbitragem R **não** a resolve. | **não bloqueia** a 3B.6 |
