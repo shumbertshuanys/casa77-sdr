@@ -202,6 +202,11 @@ que, por construção, já é consistente com o YAML. Texto literal vindo de
 `respostas-aprovadas.md` **também** passa pelo validador; ser aprovado não isenta de
 conferência.
 
+**§4.1 permanece inalterada, com 14 componentes.** A arbitragem **N-b** (§6.3) fecha o
+contrato da **saída da etapa 4** sem criar componente algum: o "produtor de interpretação
+da etapa 4" é **fronteira funcional** dentro do **limite único de LLM** de §4.2 e §9
+(N-b-F1, N-b-F2), **não** um `Interpretador` determinístico e **não** um componente 15.
+
 ### 4.2 Somente LLM
 
 Permitido: interpretar intenção; extrair campos da mensagem; identificar perguntas; redigir
@@ -256,13 +261,27 @@ campo carrega dado pessoal (PII), texto de mensagem ou valor comercial.
 | 2 | `pendencia_impeditiva` | `bool \| None` | **não atribuído — S2-D8** (doc 06 §11) |
 | 3 | `motivos_handoff` | conjunto/tupla de **identificadores textuais opacos** | `DetectorHandoff` (gatilhos 3–10, doc 06 §9) |
 | 4 | `resposta_aprovada_disponivel` | `bool \| None` | **não atribuído — S2-D8** (doc 06 §11) |
-| 5 | `interesse_confirmar_disponibilidade` | `bool \| None` | interpretação estruturada a montante |
+| 5 | `interesse_confirmar_disponibilidade` | `bool \| None` | **fronteira da etapa 4** (arbitragem N-b, §6.3): derivada da `Interpretacao` pela **função total** N-b-CD1–N-b-CD4, abaixo. Único produtor de `CondicoesCiclo` que N-b atribui |
 | 6 | `calendario_integrado` | `bool \| None` | configuração/integração avaliada a montante |
 | 7 | `identidade` | resultado estruturado do `ResolvedorIdentidade` (§7.1) | `ResolvedorIdentidade` (etapa 5) |
 | 8 | `motivo_encerramento` | motivo estruturado entre as **quatro** modalidades aprovadas de T35 (doc 06 §3) | **não atribuído — S3-D1** |
 
 Onde o produtor está pendente, ele **permanece pendente**: esta seção descreve a fronteira,
 não escolhe componente concreto.
+
+**Condição 5 — função total** (arbitragem N-b, §6.3). Esta é a **única** linha da tabela acima
+alterada por N-b. As demais **sete** condições permanecem exatamente como estão, e as condições
+**2**, **4** e **8** continuam **NÃO ATRIBUÍDAS**.
+
+| # | Entrada | `interesse_confirmar_disponibilidade` |
+|---|---|---|
+| N-b-CD1 | `Interpretacao` válida + `INTERESSE_CONFIRMAR_DISPONIBILIDADE` com confiança `ALTA` | `True` |
+| N-b-CD2 | `Interpretacao` válida + `INTERESSE_CONFIRMAR_DISPONIBILIDADE` com confiança `BAIXA` | `False` |
+| N-b-CD3 | `Interpretacao` válida + intenção **ausente** | `False` |
+| N-b-CD4 | **Sem `Interpretacao`** — produtor indisponível ou erro de contrato na fronteira da etapa 4 | `None` |
+
+`True`/`False` significam **avaliado neste ciclo**; `None` significa **não avaliado neste
+ciclo**. `None` **não** é "falso implícito".
 
 ### 4.5 Contrato das ações da `MaquinaEstados`
 
@@ -346,7 +365,7 @@ adivinhar.
 | 1 | Receber e normalizar mensagem | entrada no contrato comum de §6.1, **com a mensagem bruta** | mensagem normalizada + origem do identificador | mensagem vazia → não processar, sem transição |
 | 2 | Verificar idempotência | mensagem normalizada + metadados | chave de idempotência (§4.3) + veredito duplicada/nova | duplicata → encerrar o ciclo sem efeito (doc 06 §4 passo 1); sem identificador de canal → chave composta, marcada como heurística no log |
 | 3 | **Recuperar contexto persistido** | canal + contato + identificador do atendimento, quando houver + **instante de referência do ciclo** — o campo "data e hora" de §6.1 — + **limiar temporal de recência**, argumento explícito de configuração operacional (§6.2, N-a-L1–N-a-L6) | contexto recuperado (§6.2), com **duas projeções distintas** para a identidade: **(A)** o **conjunto elegível fechado** do contato, produzido pela política **N-a** — **arbitrada** em §6.2, nunca o histórico inteiro; e **(B)** **`ids_em_atendimento_humano`** — o conjunto **H**, os IDs dos atendimentos recuperados cujo estado é `atendimento_humano`. **(B) não passa por N-a**: nenhuma política de elegibilidade ou recência pode remover um atendimento humano de H (H2). Além disso: estado, dados, qualificação, pendências, motivos | atendimento indicado e **não recuperado** → erro operacional: bloquear, preservar, alertar. Estado corrompido → bloqueio (§7.1). **Marco temporal exigido ausente** ou **projeção incoerente do registro recuperado** → bloqueio de **integridade** por **E5/S7** (§7.1, **S9**, **S11**); **limiar ausente, de tipo inválido ou não positivo** → bloqueio por **erro de contrato da configuração** (§7.1, **S10**) — mesmo tratamento observável, atribuição normativa distinta. **Nunca criar atendimento novo por não encontrar o indicado** |
-| 4 | Interpretar e extrair | mensagem normalizada | intenções, campos, perguntas, referências ao evento anterior, confiança | LLM indisponível → modo degradado (§7); confiança baixa → campo **não** é registrado |
+| 4 | Interpretar e extrair — **fronteira da etapa 4** (arbitragem N-b, §6.3) | mensagem normalizada | **`Interpretacao`**: as **oito** categorias de §6.3 preservadas, com **`IntencaoConversacional`** fechada em **11** códigos (partição A1/A2/B), confiança **binária** por item e `confianca_global` sempre presente. Derivadas **deterministicamente dentro da própria fronteira**: a **projeção estruturada** consumida pela etapa 5 (N-b-K1–N-b-K7) e a condição **`interesse_confirmar_disponibilidade`** de §4.4 (N-b-CD1–N-b-CD4). **A etapa 4 não emite `Exx`, `Txx`, `Rxx`, qualificação, violação, estado, pendência nem `motivo_encerramento`** (N-b-G2) | produtor indisponível → **nenhuma `Interpretacao`** e **nenhuma projeção**; a etapa 5 não executa e `interesse_confirmar_disponibilidade = None` (N-b-M1–N-b-M8, §7). **Erro de contrato** (E-Nb-1–E-Nb-19) **bloqueia na fronteira da etapa 4**, sem projeção e **nunca** convertido em `Identidade.AMBIGUA`. Confiança `BAIXA` **não é erro**: é **ausência para consumo estruturado**, com a **única exceção** de `pedido_de_humano` (N-b-PH3, N-b-PH4) |
 | 5 | **Resolver identidade do atendimento** | conjunto elegível fechado (3) + **conjunto H — `ids_em_atendimento_humano`** (3) + projeção estruturada da interpretação (4) + veredito do identificador já validado (§6.1.1) + **`id_atendimento_validado`** (3) — o **ID técnico opaco** do atendimento identificado, **obrigatório** quando o veredito é `ENCONTRADO` e **`None`** quando é `NAO_INFORMADO` (§6.1.1, §6.2; pré-condições **P-I1–P-I5** de §7.1) + `havia_estado_esperado` (§6.2) | **primeiro** `situacao_takeover` (§6.3); se `SEM_TAKEOVER`, um de **seis** resultados conceituais: `ATENDIMENTO_ATIVO`, `MESMA_SOLICITACAO` (T36), `NOVA_SOLICITACAO` (T37), `AMBIGUA`, `PRIMEIRO_CONTATO_COMPROVADO` (identidade `None`) e `SEM_CANDIDATO_ELEGIVEL` (identidade `None`) — sempre com `criterio` do vocabulário fechado de §7.1 | ambíguo → **não decidir**: pedir esclarecimento, sem herdar nem sobrescrever dado algum (§7.1, A1–A7); persistir o processamento pendente quando possível. `SEM_CANDIDATO_ELEGIVEL` → **encerra sem transição**; tratamento pelo orquestrador **bloqueado pela pendência E4**. `situacao_takeover != SEM_TAKEOVER` → **D0–D6 não executam** e a identidade **não é calculada** (R5, abaixo) |
 | 6 | Registrar dados e correções | campos extraídos + atendimento resolvido | dados atualizados + correções + **sinal de mutação efetiva de insumo da qualificação** (`insumo_qualificacao_atualizado`, doc 06 §4.1) | conflito entre mensagem e estado → §7; dado incerto nunca é gravado; identidade ambígua → nada é registrado no atendimento anterior |
 | 7 | Executar a ordem determinística do doc 06 §4 — **primeira decisão determinística do ciclo** | dados + eventos + avaliação comercial feita **a montante** contra o YAML (`RegrasComerciais`, `Qualificador`) + **todas as condições estruturadas de §4.4** já determinadas — `insumo_qualificacao_atualizado`, classificação de `E09`, `resposta_aprovada_disponivel`, `interesse_confirmar_disponibilidade`, `calendario_integrado`, `identidade`, `motivos_handoff` e `motivo_encerramento`. A `MaquinaEstados` recebe tudo já estruturado e **não lê o YAML** (doc 06 I23) | eventos confirmados, violações, motivos, qualificação recalculada e o **estado intermediário** resultante da **primeira chamada da `MaquinaEstados`** — caminho percorrido (uma ou mais `Txx`, doc 06 §4.2), ainda sujeito ao fechamento da etapa 12 | `E07`, `E08`, `E09` e `E18` são **recebidos/confirmados a partir das saídas determinísticas a montante**, não fabricados aqui; violação da precedência (ex.: `E07` sobre incompatibilidade) é erro de programa, não caso de negócio → bloquear envio. **O produtor concreto de `E09` não é definido nesta arquitetura — S2-D8 permanece aberta** (doc 06 §11) |
@@ -388,6 +407,13 @@ Regras do pipeline:
   qualquer resposta automática;
 - a etapa 4 pode rodar sobre contexto inválido **apenas para diagnóstico** — nesse caso
   nenhuma transição e nenhuma gravação comercial ocorrem (§7.1).
+
+**Residual de eventos `Exx` na etapa 4** (arbitragem N-b, §6.3). A etapa 4 **não emite `Exx`**
+(N-b-G2, N-b-RES1). A **transformação posterior** dos sinais interpretados em **eventos
+confirmados** **ainda não possui produtor concreto**: é **residual explícito de integração**
+(N-b-RES2). Ele **não** é componente, **não** é linha de pendência nova e **não** é atribuído
+ao `OrquestradorMotor`, ao `DetectorHandoff` nem ao `Qualificador` (N-b-RES3). **Nenhum
+identificador de pendência novo é criado.**
 
 **Precedência de takeover na etapa 5** (arbitragem R5). **Antes** da restrição por
 identificador e **antes de D0**, a etapa 5 determina `situacao_takeover` (§6.3). O resultado
@@ -929,7 +955,7 @@ devolvesse a palavra ao bot num canal que uma pessoa está conduzindo.
 
 | Campo | Conteúdo |
 |---|---|
-| intenções detectadas | lista mapeável aos eventos `E02`–`E11`, `E17` |
+| intenções detectadas (`intencoes_detectadas`) | conjunto de códigos de **`IntencaoConversacional`** — vocabulário conceitual **fechado em 11 valores** (arbitragem N-b, adiante), na partição **A1 (6 derivados)**, **A2 (2 autônomos mapeáveis a evento)** e **B (3 autônomos não mapeáveis diretamente a evento)**. O grupo **A2** contém **exatamente dois** sinais — `INTERESSE_EM_VISITA` e `EXCECAO_SOLICITADA` —, cujas **correspondências semânticas** são, respectivamente, `E10` e `E17`. **A etapa 4 não emite `Exx`**: a transformação posterior desses sinais em evento confirmado **não possui produtor concreto** e é **residual explícito de integração** (N-b-G2, N-b-RES1–N-b-RES3) |
 | dados extraídos | tipo de evento, data, convidados, formato, nome, contato — cada um com confiança própria |
 | correções | campos que contradizem valor já registrado |
 | perguntas comerciais | perguntas identificadas, em texto |
@@ -942,6 +968,273 @@ O interpretador **não** classifica compatibilidade, **não** decide handoff e *
 identidade de atendimento. Ele apenas relata o que leu. `pedido de humano` é um sinal, não
 uma decisão: quem emite `E18` é o `DetectorHandoff`. `referências ao evento anterior` também
 é sinal: quem decide T36 × T37 é o `ResolvedorIdentidade`, na etapa 5.
+
+#### N-b — contrato global da interpretação da etapa 4 (arbitragem N-b)
+
+Arbitragem **exclusivamente documental**. Fecha o contrato da **saída da etapa 4**,
+conceitualmente denominada **`Interpretacao`**. **Nenhum tipo Python é criado**, nenhum JSON
+Schema, nenhuma biblioteca, nenhum fornecedor, nenhum modelo, nenhum SDK, nenhuma API, nenhum
+formato de transporte e nenhum arquivo ou diretório novo. **§4.1 permanece inalterada, com 14
+componentes**, e §2 permanece com **nove** responsabilidades: **não** existe `Interpretador`
+determinístico e **não** existe componente 15.
+
+**Invariantes gerais.**
+
+| # | Invariante |
+|---|---|
+| N-b-G1 | A `Interpretacao` **relata o que foi lido**. Ela **não** classifica compatibilidade, **não** decide handoff, **não** resolve identidade, **não** qualifica, **não** escolhe pacote, **não** consulta o YAML e **não** recebe o YAML. |
+| N-b-G2 | A `Interpretacao` **não produz** `Exx`, `Txx`, `Rxx`, `Qualificacao`, `Violacao`, estado, pendência nem `motivo_encerramento`. |
+| N-b-G3 | A **única** condição de `CondicoesCiclo` (§4.4) cujo produtor esta arbitragem fecha é a **condição 5**, `interesse_confirmar_disponibilidade`. As condições **2**, **4** e **8** permanecem **NÃO ATRIBUÍDAS**. |
+| N-b-G4 | A `Interpretacao` **não é entrada direta** do `ResolvedorIdentidade`. O resolvedor recebe **exclusivamente** a `ProjecaoInterpretacao` já existente, com **sete** campos (§7.1). |
+| N-b-G5 | `Interpretacao` → `ProjecaoInterpretacao` é **derivação pura e determinística** (N-b-K1–N-b-K7), feita **dentro da fronteira da etapa 4**. |
+| N-b-G6 | Exigem confiança **declarada**: cada **campo presente** de `dados_extraidos`; cada `CorrecaoInterpretada`; cada `PerguntaComercial`; cada `ReferenciaAoEventoAnterior`; cada intenção **autônoma** dos grupos **A2** e **B**; e `pedido_de_humano == verdadeiro`. |
+| N-b-G6b | **Não** declaram confiança: `trechos_ambiguos`; `confianca_global` — ela própria **é** a confiança; `pedido_de_humano == falso`, cujo `confianca_pedido_de_humano` é obrigatoriamente `None`; as intenções **derivadas** do grupo **A1**, cuja confiança é **calculada** (N-b-X3); e **campos ausentes**, cuja confiança é `None`. |
+| N-b-G6c | **Confiança declarada sem valor correspondente é erro de contrato** (E-Nb-2), simétrico a **C2** de §7.1 — valor presente sem confiança declarada é erro de contrato (E-Nb-1). |
+| N-b-G7 | A confiança é **binária**: `ALTA` \| `BAIXA`. **Nenhum threshold numérico** é criado. |
+| N-b-G8 | **Ausência de `Interpretacao` não equivale a `Interpretacao` vazia.** São situações distintas, com consequências distintas (N-b-M1). |
+
+**As oito responsabilidades da `Interpretacao`.** As oito categorias da tabela acima
+permanecem, sem supressão nem fusão. Designação conceitual:
+
+| # | Categoria de §6.3 | Designação conceitual |
+|---|---|---|
+| 1 | intenções detectadas | `intencoes_detectadas` |
+| 2 | dados extraídos | `dados_extraidos` |
+| 3 | correções | `correcoes` |
+| 4 | perguntas comerciais | `perguntas_comerciais` |
+| 5 | pedido de humano | `pedido_de_humano` |
+| 6 | referências ao evento anterior | `referencias_evento_anterior` |
+| 7 | nível de confiança | `confianca_global` (mais a confiança **por item**, distribuída nas demais categorias) |
+| 8 | trechos ambíguos | `trechos_ambiguos` |
+
+**`IntencaoConversacional` — vocabulário conceitual fechado com exatamente 11 valores.**
+Partição obrigatória em **A1**, **A2** e **B**:
+
+| Grupo | # | Código | Natureza |
+|---|---|---|---|
+| **A1 — derivados (6)** | 1 | `TIPO_EVENTO_INFORMADO` | derivado de `dados_extraidos.tipo_evento` |
+| | 2 | `DATA_INFORMADA` | derivado de `dados_extraidos.data_nomeada` |
+| | 3 | `CONVIDADOS_INFORMADOS` | derivado de `dados_extraidos.convidados` |
+| | 4 | `FORMATO_INFORMADO` | derivado de `dados_extraidos.formato` |
+| | 5 | `PERGUNTA_COMERCIAL` | derivado da coleção `perguntas_comerciais` |
+| | 6 | `PEDIDO_DE_HUMANO` | derivado do booleano `pedido_de_humano` |
+| **A2 — autônomos mapeáveis a evento (2)** | 7 | `INTERESSE_EM_VISITA` | autônomo |
+| | 8 | `EXCECAO_SOLICITADA` | autônomo |
+| **B — autônomos não mapeáveis diretamente a evento (3)** | 9 | `INTERESSE_CONFIRMAR_DISPONIBILIDADE` | autônomo; alimenta a **condição 5** de §4.4 |
+| | 10 | `CONTINUIDADE_DE_EVENTO_DECLARADA` | autônomo; alimenta `intencao_identidade` |
+| | 11 | `EVENTO_NOVO_DECLARADO` | autônomo; alimenta `intencao_identidade` |
+
+Os **seis códigos do grupo A1 são derivações determinísticas dentro da fronteira da etapa 4**.
+Eles **não** são classificações independentes produzidas pelo LLM: o **payload estruturado
+dedicado é a fonte autoritativa**, e o código apenas o espelha.
+
+**Consistência cruzada.**
+
+| # | Regra |
+|---|---|
+| N-b-X1 | Quando um fato existe em **duas zonas** da `Interpretacao`, o **payload dedicado é autoritativo**; o código em `intencoes_detectadas` é **derivado**. |
+| N-b-X2 | A **presença** do código derivado depende **somente da presença** do payload — **nunca** da confiança. |
+| N-b-X3 | A **confiança** do código derivado é **calculada**, não declarada independentemente. Payload **unitário**: mesma confiança do payload. Payload **0..N**: **ao menos um `ALTA` → `ALTA`**; **não vazio e todos `BAIXA` → `BAIXA`**. |
+| N-b-X4 | **Bi-implicação obrigatória**: código presente ⟺ payload presente. Violação é **erro de contrato**. |
+| N-b-X5 | As **oito** responsabilidades de §6.3 permanecem; a linha `intencoes_detectadas` passa a conter códigos **derivados** e **autônomos**. |
+| N-b-X6 | A partição **A1 / A2 / B** acima é **preservada** e fechada. |
+
+**Os seis pares com representação dupla.** Para **A–F**: bi-implicação obrigatória, código
+**derivado**, divergência é **erro de contrato**, e o código derivado **não acrescenta
+semântica** ao payload.
+
+| Par | Código derivado | Bi-implicação | Fonte autoritativa |
+|---|---|---|---|
+| A | `TIPO_EVENTO_INFORMADO` | ⟺ `dados_extraidos.tipo_evento` presente | `dados_extraidos.tipo_evento` |
+| B | `DATA_INFORMADA` | ⟺ `dados_extraidos.data_nomeada` presente | `dados_extraidos.data_nomeada` |
+| C | `CONVIDADOS_INFORMADOS` | ⟺ `dados_extraidos.convidados` presente | `dados_extraidos.convidados` |
+| D | `FORMATO_INFORMADO` | ⟺ `dados_extraidos.formato` presente | `dados_extraidos.formato` |
+| E | `PERGUNTA_COMERCIAL` | ⟺ `perguntas_comerciais` **não vazia** | coleção `perguntas_comerciais` |
+| F | `PEDIDO_DE_HUMANO` | ⟺ `pedido_de_humano == verdadeiro` | `pedido_de_humano` |
+
+**Dados extraídos — exatamente seis campos.**
+
+| # | Regra |
+|---|---|
+| N-b-D1 | `dados_extraidos` tem **exatamente seis** campos: `tipo_evento`, `data_nomeada`, `convidados`, `formato`, `nome`, `contato`. |
+| N-b-D2 | `tipo_evento` é o **texto nominal do interessado**. **Sem** sinônimo, **sem** categoria comercial, **sem** consulta ao YAML. |
+| N-b-D3 | `data_nomeada` é **texto nominal**. **Zero parsing de calendário.** |
+| N-b-D4 | `convidados` é **inteiro não negativo**. `bool` é **inválido**. |
+| N-b-D5 | `formato` é vocabulário **fechado**: `sentado` \| `coquetel`. |
+| N-b-D6 | `nome` e `contato` são **texto** e são **PII** (§6.6). |
+| N-b-D7 | Confiança é **obrigatória** para **todo campo presente**; **campo ausente** tem confiança `None`. Confiança `BAIXA`: o campo **permanece na `Interpretacao` para diagnóstico**, mas é **não efetivo para consumo estruturado**. |
+| N-b-D8 | A etapa 4 **não compara** os dados com estado ou contexto, **não grava** e **não produz** `insumo_qualificacao_atualizado` (doc 06 §4.1). |
+
+**Correções.** `CorrecaoInterpretada` tem **três** campos: `campo`, `valor_novo`, `confianca`.
+
+| # | Regra |
+|---|---|
+| N-b-C1 | `campo` é **um dos seis** de `dados_extraidos`; `valor_novo` pertence ao **mesmo domínio** do campo; `confianca` é `ALTA` \| `BAIXA`, **obrigatória**. |
+| N-b-C2 | Correção significa **retificação explicitamente declarada** pelo interessado. **Contradição sem declaração explícita não é correção.** |
+| N-b-C3 | A correção **não carrega o valor anterior**: o valor anterior permanece no **contexto** (§6.2). |
+| N-b-C4 | Todo campo presente em `correcoes` deve **também existir** em `dados_extraidos`, com o **mesmo campo**, o **mesmo valor** e a **mesma confiança**. Divergência é **erro de contrato**. |
+| N-b-C5 | A etapa 4 **relata**. A **etapa 6** é quem futuramente decide gravação e comparação (§5). |
+| N-b-C6 | Esta arbitragem **não resolve a pendência B**. |
+
+**Perguntas comerciais.** `PerguntaComercial` tem **dois** campos: `texto`, `confianca`.
+Cardinalidade **0..N**.
+
+| # | Regra |
+|---|---|
+| N-b-Q1 | O `texto` é **preservado no runtime da `Interpretacao`**. Texto **vazio ou em branco** é **erro de contrato**. |
+| N-b-Q2 | `ALTA` → pergunta **efetiva**. `BAIXA` → texto **preservado apenas para diagnóstico**. |
+| N-b-Q3 | **Somente perguntas `ALTA`** entram em consumo estruturado futuro. Logo, uma pergunta `BAIXA` **não** é consumida futuramente pelo produtor de `E09`/**S2-D8** nem pelo `SeletorFatos`. |
+| N-b-Q4 | Isso **não resolve** **S2-D8**, **SeletorFatos**, **C**, `Rxx` nem mapeamento YAML. |
+| N-b-Q5 | `PERGUNTA_COMERCIAL` está presente em `intencoes_detectadas` **se a coleção não for vazia**, **independentemente** da efetividade de cada item. |
+| N-b-Q6 | Confiança **derivada** do código: **ao menos uma `ALTA` ⇒ `ALTA`**; **todas `BAIXA` ⇒ `BAIXA`**. |
+
+**Pedido de humano.** Campos conceituais: `pedido_de_humano: bool` e
+`confianca_pedido_de_humano: ALTA | BAIXA | None`.
+
+| # | Regra |
+|---|---|
+| N-b-PH1 | `pedido_de_humano == falso` ⇒ `confianca_pedido_de_humano` é obrigatoriamente `None`. `pedido_de_humano == verdadeiro` ⇒ confiança **obrigatória**. |
+| N-b-PH2 | A **fonte autoritativa** é `pedido_de_humano`; `PEDIDO_DE_HUMANO` é **derivado** do booleano. |
+| N-b-PH3 | `pedido_de_humano = verdadeiro` com confiança `BAIXA` **permanece sinal efetivo** para o futuro `DetectorHandoff`. |
+| N-b-PH4 | N-b-PH3 é a **única exceção** à regra "`BAIXA` = ausência para consumo estruturado". A exceção **não chega à `ProjecaoInterpretacao`**, **não altera C1–C3** de identidade (§7.1), **não cria `E18`** e **não cria precedente** para nenhum outro campo. |
+| N-b-PH5 | `EXCECAO_SOLICITADA` é **autônoma** e segue a regra geral: `BAIXA` = ausência para consumo estruturado. |
+| N-b-PH6 | Quem emite `E18` continua sendo o `DetectorHandoff` — **não** a etapa 4 (N-b-G2). |
+
+**Referências ao evento anterior.** `ReferenciaAoEventoAnterior` tem **dois** campos: `texto`,
+`confianca`. Cardinalidade **0..N**.
+
+| # | Regra |
+|---|---|
+| N-b-R1 | O `texto` é **preservado na `Interpretacao`** e **não chega ao `ResolvedorIdentidade`**. Texto **vazio ou em branco** é **erro de contrato**. |
+| N-b-R2 | Coleção **vazia** ⇒ `referencia_evento_anterior = SEM_REFERENCIA` e `confianca_referencia = None`. |
+| N-b-R3 | Coleção **não vazia** ⇒ `referencia_evento_anterior = COM_REFERENCIA`. |
+| N-b-R4 | **Ao menos uma `ALTA`** ⇒ `confianca_referencia = ALTA`; **todas `BAIXA`** ⇒ `confianca_referencia = BAIXA`. |
+| N-b-R5 | As regras **C1–C3** de §7.1 permanecem **exatamente como estão**: é o consumidor que trata `BAIXA` como ausência. |
+
+**Trechos ambíguos.** `TrechoAmbiguo` tem **um** campo: `texto`. **Sem confiança.**
+Cardinalidade **0..N**.
+
+| # | Regra |
+|---|---|
+| N-b-T1 | Texto **vazio ou em branco** é **erro de contrato**. |
+| N-b-T2 | Função **exclusivamente diagnóstica**: **não** altera identidade, qualificação, evento, pendência nem bloqueio. |
+| N-b-T3 | **Não entra** na `ProjecaoInterpretacao`. |
+| N-b-T4 | **Não logar por padrão**, **não incluir em mensagem de erro** e **não usar em exemplo versionado** (§6.6, L3, L4). |
+| N-b-T5 | Declarar confiança em `trechos_ambiguos` é **erro de contrato** (N-b-G6b). |
+
+**Confiança global.**
+
+| # | Regra |
+|---|---|
+| N-b-CG1 | `confianca_global` está **sempre presente**: `ALTA` \| `BAIXA`. Ausência é **erro de contrato**. |
+| N-b-CG2 | É **metadado diagnóstico**. **Não** gera alerta, **não** bloqueia, **não** altera identidade, **não** produz evento, transição, resposta nem gravação. **Não participa** da `ProjecaoInterpretacao`. |
+| N-b-CG3 | Divergência entre `confianca_global` e a confiança de um campo **não é erro**, **não é alerta**, **não exige reconciliação** e **não muda comportamento**. A **confiança do campo prevalece** para consumo estruturado. |
+| N-b-CG4 | **Nenhum threshold**, **nenhuma agregação** e **nenhuma derivação automática**. O uso operacional futuro está **fora do escopo** desta arbitragem. |
+
+**Intenções autônomas.** Para `INTERESSE_EM_VISITA`, `EXCECAO_SOLICITADA`,
+`INTERESSE_CONFIRMAR_DISPONIBILIDADE`, `CONTINUIDADE_DE_EVENTO_DECLARADA` e
+`EVENTO_NOVO_DECLARADO`: presença/ausência; confiança `ALTA`/`BAIXA` **obrigatória** quando
+presente; e **`BAIXA` = ausência para consumo estruturado, sem exceção alguma neste grupo**.
+`CONTINUIDADE_DE_EVENTO_DECLARADA` e `EVENTO_NOVO_DECLARADO` são **mutuamente exclusivas**:
+coexistência é **erro de contrato**.
+
+**Condição 5 de §4.4 — função total.**
+
+| # | Entrada | `interesse_confirmar_disponibilidade` |
+|---|---|---|
+| N-b-CD1 | `Interpretacao` válida + `INTERESSE_CONFIRMAR_DISPONIBILIDADE` com confiança `ALTA` | `True` |
+| N-b-CD2 | `Interpretacao` válida + `INTERESSE_CONFIRMAR_DISPONIBILIDADE` com confiança `BAIXA` | `False` |
+| N-b-CD3 | `Interpretacao` válida + intenção **ausente** | `False` |
+| N-b-CD4 | **Sem `Interpretacao`** | `None` |
+
+`True`/`False` significam **avaliado neste ciclo**; `None` significa **não avaliado neste
+ciclo**. **Somente a linha 5** de §4.4 muda: as outras **sete** condições permanecem
+exatamente como estão, e as condições **2**, **4** e **8** continuam **não atribuídas**.
+
+**Derivação para a `ProjecaoInterpretacao`.** Tabela **total** sobre os **sete** campos de
+§7.1. A derivação **não aplica C3**: ela **transporta valor e confiança**, e o consumidor
+`ResolvedorIdentidade` é quem já aplica a semântica de `BAIXA` como ausência.
+
+| # | Campo da projeção | Derivação |
+|---|---|---|
+| N-b-K1 | `intencao_identidade` | `EVENTO_NOVO_DECLARADO` com `ALTA` → `NOVO_EVENTO_DECLARADO`; **senão** `CONTINUIDADE_DE_EVENTO_DECLARADA` com `ALTA` → `CONTINUIDADE_DECLARADA`; **todo o resto** → `NAO_DISCRIMINANTE`. As duas intenções são **mutuamente exclusivas**; a ordem acima é apenas **defensiva**. |
+| N-b-K2 | `referencia_evento_anterior` | `referencias_evento_anterior` **não vazia** → `COM_REFERENCIA`; **vazia** → `SEM_REFERENCIA`. |
+| N-b-K3 | `confianca_referencia` | **ao menos uma `ALTA`** → `ALTA`; **não vazia e todas `BAIXA`** → `BAIXA`; **vazia** → `None`. |
+| N-b-K4 | `tipo_evento_extraido` | transportar o **valor nominal**, **inclusive** com confiança `BAIXA`; **ausente** → `None`. |
+| N-b-K5 | `confianca_tipo` | a **confiança do campo**; `None` quando o campo está ausente. |
+| N-b-K6 | `data_nomeada_extraida` | transportar o **valor nominal**, **inclusive** com confiança `BAIXA`; **ausente** → `None`. |
+| N-b-K7 | `confianca_data` | a **confiança do campo**; `None` quando o campo está ausente. |
+| N-b-K8 | **Campos que NÃO atravessam para a identidade — lista fechada** | `convidados`, `formato`, `nome`, `contato`, `correcoes`, `perguntas_comerciais`, `pedido_de_humano`, `trechos_ambiguos`, `confianca_global` e as **demais intenções que não produzem `intencao_identidade`**. **Nenhuma pergunta, citação, nome, contato ou trecho conversacional chega ao `ResolvedorIdentidade`.** |
+
+**Erros de contrato — lista fechada `E-Nb-1` a `E-Nb-19`.**
+
+| # | Erro |
+|---|---|
+| E-Nb-1 | Valor presente **sem confiança** nas categorias que exigem confiança (N-b-G6). |
+| E-Nb-2 | Confiança declarada **sem valor correspondente**. |
+| E-Nb-3 | Confiança declarada **onde é proibida**: `trechos_ambiguos`; intenção **derivada** do grupo **A1**; `pedido_de_humano == falso`; campo de dado **ausente**. |
+| E-Nb-4 | `confianca_global` **ausente**. |
+| E-Nb-5 | Valor **fora de vocabulário fechado**: `IntencaoConversacional`; identificador de campo; `formato`. |
+| E-Nb-6 | Código **repetido** em `intencoes_detectadas`. |
+| E-Nb-7 | Campo **repetido** em `correcoes`. |
+| E-Nb-8 | `convidados` **negativo**, `bool` ou **não inteiro**. |
+| E-Nb-9 | `formato` fora de `sentado` \| `coquetel`. |
+| E-Nb-10 | Texto **vazio ou em branco** em pergunta, referência ou trecho ambíguo. |
+| E-Nb-11 | Dado **A–D** presente **sem** o código derivado correspondente. |
+| E-Nb-12 | Código **A–D** presente **sem** o dado correspondente. |
+| E-Nb-13 | Confiança de código **derivado divergente** do payload ou da agregação de N-b-X3. |
+| E-Nb-14 | `perguntas_comerciais` **não vazia** sem `PERGUNTA_COMERCIAL`. |
+| E-Nb-15 | `PERGUNTA_COMERCIAL` presente com a coleção **vazia**. |
+| E-Nb-16 | `pedido_de_humano = verdadeiro` **sem** `PEDIDO_DE_HUMANO`, **ou** `PEDIDO_DE_HUMANO` presente com o booleano **falso**. |
+| E-Nb-17 | Correção cujo **campo não existe** em `dados_extraidos`, ou com **valor divergente**, ou com **confiança divergente**. |
+| E-Nb-18 | `CONTINUIDADE_DE_EVENTO_DECLARADA` e `EVENTO_NOVO_DECLARADO` **simultâneas**. |
+| E-Nb-19 | Produção, pela etapa 4, de `Exx`, `Txx`, `Rxx`, qualificação, violação, estado, pendência, `motivo_encerramento` — ou de **qualquer condição de §4.4 além da condição 5**. |
+
+**Tratamento.** Erro de contrato **bloqueia na fronteira da etapa 4**: **nenhuma
+`ProjecaoInterpretacao`** é produzida e **a etapa 5 não executa**. Nunca converter erro de
+contrato em `Identidade.AMBIGUA`. Três coisas permanecem **distintas** e não podem ser
+confundidas: **erro de contrato**, **confiança `BAIXA`** e **ambiguidade linguística
+legítima** — esta última é o que alimenta `trechos_ambiguos`.
+
+**Modo degradado — produtor de interpretação indisponível.**
+
+| # | Regra |
+|---|---|
+| N-b-M1 | **Nenhuma `Interpretacao`.** Ausência **não** é interpretação vazia (N-b-G8). |
+| N-b-M2 | **Nenhuma `ProjecaoInterpretacao`.** A **etapa 5 não executa** e a `MaquinaEstados` **não é chamada por esse caminho**. |
+| N-b-M3 | N-b **não cria gatilho de alerta novo**. Preservação e alerta seguem **somente** os contratos já vigentes de §7 e §7.2 e a coordenação futura. |
+| N-b-M4 | A política atual de §7 **permanece**: sem extração nova; textos aprovados literais; se a mensagem exigir interpretação, **R03 + handoff**; **nunca adivinhar**. N-b **não escolhe** literal × `Rxx` e **não decide** a resposta final. |
+| N-b-M5 | **Nada derivado de interpretação inexistente é gravado.** |
+| N-b-M6 | `interesse_confirmar_disponibilidade = None` (N-b-CD4). |
+| N-b-M7 | **Zero** fila, **zero** retry, **zero** cache, **zero** palavra-chave, **zero** segundo modelo e **zero** tecnologia nova. |
+| N-b-M8 | A **coordenação do modo degradado** pertence ao pipeline / `OrquestradorMotor` **futuro**. Qualquer emissão continua sujeita a §7.2. |
+
+**Fronteira do produtor.**
+
+| # | Regra |
+|---|---|
+| N-b-F1 | A etapa 4 usa o **limite único de LLM já previsto** em §4.2 e §9. A designação conceitual é **"produtor de interpretação da etapa 4"**. |
+| N-b-F2 | É **fronteira funcional**, **não** componente determinístico novo. **§4.1 permanece com 14 componentes**; §2 permanece com **nove** responsabilidades. |
+| N-b-F3 | Fornecedor, modelo, SDK, API, biblioteca e formato de transporte **não são escolhidos**. |
+| N-b-F4 | O produtor **não lê o YAML**, **não recebe o YAML**, **não decide comercial**, **não produz `Exx`/`Rxx`**, **não persiste** e **não consulta a persistência**. |
+| N-b-F5 | Ele entrega **uma `Interpretacao` válida** **ou** **nada**. A derivação dos códigos **A1**, da `ProjecaoInterpretacao` e da **condição 5** é **determinística dentro da fronteira da etapa 4** e **não constitui decisão independente do LLM**. |
+
+**Residual de eventos `Exx` — registro explícito, sem identificador novo.**
+
+| # | Registro |
+|---|---|
+| N-b-RES1 | **A etapa 4 não emite `Exx`** (N-b-G2, E-Nb-19). |
+| N-b-RES2 | A **transformação posterior** dos sinais interpretados em **eventos confirmados** **ainda não possui produtor concreto**. Isso é **residual explícito de integração**. |
+| N-b-RES3 | O residual **não** é componente, **não** é linha de pendência nova e **não** é atribuído ao `OrquestradorMotor`, ao `DetectorHandoff` nem ao `Qualificador`. Se futuramente revelar decisão própria, exigirá **arbitragem específica**. |
+
+**PII e texto.** No **runtime** da `Interpretacao`, `nome`, `contato`, textos de pergunta,
+referência e trecho ambíguo **podem existir**. Na **`ProjecaoInterpretacao`**, `nome`,
+`contato`, pergunta, referência e trecho ambíguo são **proibidos** (N-b-K8). A
+**persistência** não tem seu contrato alterado por N-b. Em **log e auditoria**: PII
+**mascarada**, texto **não** por padrão, e qualquer exceção segue **§6.6**. A **saída do
+resolvedor** permanece com **zero PII e zero texto conversacional**. **Mensagem de erro**:
+**zero PII e zero trecho real**. O repositório é **público**: **zero conversa real**, **zero
+PII**, somente exemplos **genéricos ou fictícios**.
 
 #### Projeção estruturada para a identidade (arbitragem R3)
 
@@ -1152,10 +1445,10 @@ Princípio obrigatório:
 | **Atendimento ambíguo (T36 × T37)** | Não decidir. Pedir esclarecimento; nada é herdado nem sobrescrito; processamento pendente persistido quando possível (A1–A7). |
 | **Falha de persistência** | Bloquear a emissão que depende da transição não gravada. Não afirmar handoff não registrado. Preservar a mensagem para reprocessamento idempotente (§7.2). |
 | Mensagem vazia | Não processar, não transicionar, não responder. Se o canal exigir retorno, pedir que a pessoa escreva a dúvida. |
-| Extração com baixa confiança | Campo **não** é registrado. Permanecer no estado atual e pedir esclarecimento do ponto específico (doc 06 §7). |
+| Extração com baixa confiança | **Caso geral** — itens sujeitos a "`BAIXA` = ausência para consumo estruturado": o campo **não** é registrado, é tratado como **não efetivo**, e aplica-se o comportamento vigente de **permanecer no estado atual e pedir esclarecimento do ponto específico** (doc 06 §7). **Reconciliação N-b** (§6.3): confiança `BAIXA` **não é erro de contrato** — o item **permanece na `Interpretacao` para diagnóstico** e é **não efetivo para consumo estruturado** (N-b-D7, N-b-Q2). **Exceção única, fora do caso geral** — `pedido_de_humano = verdadeiro` com confiança `BAIXA` **permanece sinal efetivo** e **não é governado pela frase "permanecer no estado atual e pedir esclarecimento"**: ele segue **destinado ao futuro `DetectorHandoff`** (N-b-PH3, N-b-PH4). N-b **não emite `E18`**, **não decide transição** e **não implementa regra alguma do `DetectorHandoff`**; a exceção **não** atravessa para a projeção de identidade. |
 | Múltiplas intenções | Registrar todas e aplicar a precedência do doc 06 §4. Uma única decisão final. |
 | Conflito entre mensagem e estado | Correção explícita sobrescreve e força recálculo (§4 passos 3 e 9). Contradição sem correção explícita → não gravar, pedir confirmação do dado. |
-| LLM indisponível | Modo degradado: sem extração nova; usar apenas textos aprovados literais. Se a mensagem exigir interpretação, aplicar R03 + handoff. **Nunca adivinhar.** |
+| LLM indisponível | Modo degradado: sem extração nova; usar apenas textos aprovados literais. Se a mensagem exigir interpretação, aplicar R03 + handoff. **Nunca adivinhar.** **Reconciliação N-b** (§6.3, N-b-M1–N-b-M8): **não existe `Interpretacao`** — e **ausência não é `Interpretacao` vazia** (N-b-G8) —, **não existe projeção** para a etapa 5, a `MaquinaEstados` **não é chamada por esse caminho** e `interesse_confirmar_disponibilidade = None`. **Nenhum gatilho de alerta novo é criado**: preservação e alerta seguem os contratos já vigentes de §7 e §7.2. |
 | Resposta com valor não autorizado | Bloquear. Substituir pelo texto aprovado literal; sem texto disponível, R03 + handoff. Registrar o bloqueio no log. Uma única retentativa de redação, no máximo. |
 | Tentativa de manipulação do prompt | Não obedecer, não expor instrução interna, não discutir → handoff (doc 03; C17; pergunta crítica 54). A mensagem entra no resumo. |
 | Erro inesperado | Não responder com texto gerado. Emitir resposta segura e acionar handoff **desde que possam ser registrados** (§7.2). Registrar a exceção sanitizada (L6). |
@@ -1848,6 +2141,56 @@ Em nenhum dos casos de erro acima o resolvedor devolve `AMBIGUA` e em nenhum del
 identidade é devolvida. Nenhum cenário R-I exige membro novo em `Identidade`, critério novo
 em `CriterioIdentidade`, valor novo em `VeredictoIdentificador` ou campo novo na saída.
 
+Casos conceituais obrigatórios da interpretação da etapa 4 (arbitragem N-b, §6.3).
+**Cenários conceituais — nenhum teste Python é criado por esta arbitragem.**
+
+| # | Caso | Resultado esperado |
+|---|---|---|
+| K-Nb-1 | `CONTINUIDADE_DE_EVENTO_DECLARADA` com confiança `ALTA` | `intencao_identidade = CONTINUIDADE_DECLARADA` (N-b-K1) |
+| K-Nb-2 | `CONTINUIDADE_DE_EVENTO_DECLARADA` com confiança `BAIXA` | `intencao_identidade = NAO_DISCRIMINANTE`: `BAIXA` é **ausência** para consumo estruturado |
+| K-Nb-3 | `EVENTO_NOVO_DECLARADO` com confiança `ALTA` | `intencao_identidade = NOVO_EVENTO_DECLARADO` (N-b-K1) |
+| K-Nb-4 | `EVENTO_NOVO_DECLARADO` com confiança `BAIXA` | `intencao_identidade = NAO_DISCRIMINANTE` |
+| K-Nb-5 | Nenhuma das duas intenções do grupo **B** ligadas à identidade | `intencao_identidade = NAO_DISCRIMINANTE` |
+| K-Nb-6 | `CONTINUIDADE_DE_EVENTO_DECLARADA` e `EVENTO_NOVO_DECLARADO` **simultâneas** | **erro de contrato** `E-Nb-18`; **nenhuma projeção**; a etapa 5 **não executa** |
+| K-Nb-7 | Uma referência ao evento anterior com confiança `ALTA` | `COM_REFERENCIA` + `confianca_referencia = ALTA` (N-b-R3, N-b-R4) |
+| K-Nb-8 | Referências com confianças **`ALTA` e `BAIXA`** misturadas | `COM_REFERENCIA` + `confianca_referencia = ALTA` (N-b-R4) |
+| K-Nb-9 | Referências **todas** com confiança `BAIXA` | `COM_REFERENCIA` + `confianca_referencia = BAIXA`; o consumidor aplica **C3** (N-b-R5) |
+| K-Nb-10 | Coleção de referências **vazia** | `SEM_REFERENCIA` + `confianca_referencia = None` (N-b-R2) |
+| K-Nb-11 | Referência **sem confiança declarada** | **erro de contrato** `E-Nb-1` |
+| K-Nb-12 | Texto **vazio ou em branco** em pergunta, referência ou trecho ambíguo | **erro de contrato** `E-Nb-10` |
+| K-Nb-13 | `tipo_evento` e `data_nomeada` presentes com confiança `ALTA` | valores **nominais transportados** com `ALTA` (N-b-K4–N-b-K7) |
+| K-Nb-14 | `tipo_evento` e `data_nomeada` presentes com confiança `BAIXA` | valores **transportados mesmo assim**, com `BAIXA`: a derivação **não aplica C3** — quem aplica é o `ResolvedorIdentidade` |
+| K-Nb-15 | `tipo_evento` e `data_nomeada` **ausentes** | valores e confianças `None` (N-b-K4–N-b-K7) |
+| K-Nb-16 | Dado **A–D** presente **sem** o código derivado correspondente | **erro de contrato** `E-Nb-11` (N-b-X4) |
+| K-Nb-17 | Código **A–D** presente **sem** o dado correspondente | **erro de contrato** `E-Nb-12` (N-b-X4) |
+| K-Nb-18 | Código derivado com confiança **divergente** do payload ou da agregação | **erro de contrato** `E-Nb-13` (N-b-X3) |
+| K-Nb-19 | `convidados` e `formato` válidos e presentes | relatados na `Interpretacao`; **não atravessam** para a identidade (N-b-K8) |
+| K-Nb-20 | `convidados` **negativo**, `bool` ou não inteiro | **erro de contrato** `E-Nb-8` (N-b-D4) |
+| K-Nb-21 | `formato` fora de `sentado` \| `coquetel` | **erro de contrato** `E-Nb-9` (N-b-D5); vocabulário fechado, `E-Nb-5` quando o valor é de outro domínio |
+| K-Nb-22 | `nome` e `contato` presentes | permanecem **apenas no runtime** da `Interpretacao`; **proibidos** na projeção (N-b-K8, §6.6) |
+| K-Nb-23 | Uma pergunta comercial com confiança `ALTA` | `PERGUNTA_COMERCIAL` com `ALTA`; pergunta **efetiva** (N-b-Q2, N-b-Q6) |
+| K-Nb-24 | Uma única pergunta comercial com confiança `BAIXA` | `PERGUNTA_COMERCIAL` com `BAIXA`; texto **preservado para diagnóstico** e **não efetivo**: não é consumida pelo produtor de `E09`/S2-D8 nem pelo `SeletorFatos` (N-b-Q3) |
+| K-Nb-25 | Perguntas com confianças **`ALTA` e `BAIXA`** misturadas | `PERGUNTA_COMERCIAL` com `ALTA` (N-b-Q6); somente as `ALTA` são efetivas |
+| K-Nb-26 | `perguntas_comerciais` **não vazia** sem `PERGUNTA_COMERCIAL` | **erro de contrato** `E-Nb-14` |
+| K-Nb-27 | `PERGUNTA_COMERCIAL` presente com a coleção **vazia** | **erro de contrato** `E-Nb-15` |
+| K-Nb-28 | `pedido_de_humano = verdadeiro` com confiança `ALTA` | sinal **efetivo**; `PEDIDO_DE_HUMANO` presente; quem emite `E18` continua sendo o `DetectorHandoff` (N-b-PH6) |
+| K-Nb-29 | `pedido_de_humano = verdadeiro` com confiança `BAIXA` | **permanece sinal efetivo** — **única exceção** à regra "`BAIXA` = ausência" (N-b-PH3, N-b-PH4). **Não** chega à projeção, **não** altera C1–C3, **não** cria `E18` e **não** cria precedente |
+| K-Nb-30 | `pedido_de_humano = falso` com confiança **declarada** | **erro de contrato** `E-Nb-3` (N-b-PH1) |
+| K-Nb-31 | `pedido_de_humano = verdadeiro` sem `PEDIDO_DE_HUMANO`, ou `PEDIDO_DE_HUMANO` com booleano falso | **erro de contrato** `E-Nb-16` |
+| K-Nb-32 | Correção declarada explicitamente, coerente com `dados_extraidos` em campo, valor e confiança | **válida**; a etapa 4 **relata** e **não grava**; a etapa 6 decide depois (N-b-C4, N-b-C5) |
+| K-Nb-33 | Correção com campo **ausente** de `dados_extraidos`, valor divergente ou confiança divergente | **erro de contrato** `E-Nb-17` |
+| K-Nb-34 | Confiança declarada em `trechos_ambiguos` ou em código **derivado** do grupo **A1** | **erro de contrato** `E-Nb-3` (N-b-G6b, N-b-T5) |
+| K-Nb-35 | `confianca_global = BAIXA` com campos de confiança `ALTA` | **sem efeito algum**: não é erro, não é alerta, não exige reconciliação; a **confiança do campo prevalece** (N-b-CG3) |
+| K-Nb-36 | `confianca_global` **ausente** | **erro de contrato** `E-Nb-4` (N-b-CG1) |
+| K-Nb-37 | Múltiplas intenções autônomas simultâneas — por exemplo `INTERESSE_EM_VISITA`, `EXCECAO_SOLICITADA` e `INTERESSE_CONFIRMAR_DISPONIBILIDADE` | **todas relatadas**, cada uma com confiança própria obrigatória; nenhuma precedência é criada aqui e **nenhuma vira `Exx`** (N-b-G2) |
+| K-Nb-38 | `INTERESSE_CONFIRMAR_DISPONIBILIDADE` com `ALTA`, com `BAIXA` e **ausente**, sobre `Interpretacao` válida | condição 5 de §4.4 = `True`, `False` e `False`, respectivamente (N-b-CD1–N-b-CD3) |
+| K-Nb-39 | **Modo degradado** — produtor indisponível, **sem `Interpretacao`** | condição 5 = `None` (N-b-CD4, N-b-M6); **nenhuma projeção** (N-b-M2); a etapa 5 **não executa**; a `MaquinaEstados` **não é chamada por esse caminho**; **nada é gravado** (N-b-M5); **nenhum alerta novo** é criado (N-b-M3); ausência **≠** interpretação vazia (N-b-G8) |
+| K-Nb-40 | **Proteção da projeção e zero `Exx`** — `Interpretacao` completa com perguntas, nome, contato e trechos ambíguos | a `ProjecaoInterpretacao` continua com **exatamente sete** campos e **zero texto conversacional e zero PII** (N-b-K8); e a etapa 4 **não emite** `Exx`, `Txx`, `Rxx`, qualificação, violação, estado, pendência nem `motivo_encerramento` — tentativa disso é `E-Nb-19` (N-b-RES1) |
+
+Nenhum cenário `K-Nb` exige membro novo em `Identidade`, critério novo em
+`CriterioIdentidade`, valor novo em `VeredictoIdentificador`, campo novo em
+`ProjecaoInterpretacao` ou componente novo em §4.1.
+
 ### 8.3 Testáveis somente com LLM real (poucos, manuais)
 
 - qualidade da extração em português coloquial de WhatsApp;
@@ -1922,6 +2265,15 @@ O modo literal permanece disponível para sempre, como fallback de indisponibili
 
 Fornecedor e modelo não são escolhidos nesta etapa. O adaptador de `src/llm/` deve isolar
 essa escolha atrás de um limite único.
+
+**Fronteira do produtor de interpretação da etapa 4** (arbitragem N-b, §6.3). O **limite único**
+acima **cobre a etapa 4**: o "produtor de interpretação da etapa 4" é **fronteira funcional**
+dentro desse limite, **não** um componente determinístico novo — **§4.1 permanece com 14
+componentes** e §2 com **nove** responsabilidades (N-b-F1, N-b-F2). Fornecedor, modelo, SDK,
+API, biblioteca e formato de transporte **continuam não escolhidos** (N-b-F3), e a **Estratégia
+2 não é reaberta**. A derivação dos **seis códigos A1**, da `ProjecaoInterpretacao` e da
+**condição 5** de §4.4 é **determinística dentro da fronteira da etapa 4** e **não constitui
+decisão independente do LLM** (N-b-F5).
 
 ---
 
@@ -2001,7 +2353,7 @@ commit e nenhum push. A Etapa 3B não foi iniciada.
 | 10 | **S2-D8** — contrato de detecção e classificação de pendências: detectar campo `null`/`pendente` relevante e ausência de resposta aprovada, classificar impeditiva × acessória, fornecer os identificadores técnicos ao `Qualificador` e confirmar `E09` | **não bloqueia** a `MaquinaEstados`, que recebe `E09` pronto; **bloqueia** o `OrquestradorMotor` e a integração completa. Nenhum componente concreto foi escolhido — não é o `CarregadorYaml` nem o `ValidadorYaml` | arbitragem específica, antes da integração do pipeline (doc 06 §11) |
 
 | 11 | **N-a** — política de **elegibilidade e recência** que produz o conjunto elegível da etapa 3 | **ARBITRADA DOCUMENTALMENTE** (arbitragem N-a, §6.2): classificação **fechada dos oito estados**; recência aplicável **exclusivamente** a `encerrado`; `instante_ultima_transicao` como **único** marco temporal do MVP — **quando inicializado ou atualizado, recebe o `instante_de_referencia_do_ciclo` daquele ciclo**, **nunca** o relógio vivo; atualização decidida pelo **caminho de transições**; limiar como **configuração operacional validada explicitamente**; projeção do registro em `CandidatoAtendimento`; composição de E; duplicatas; **ordem canônica** só para auditabilidade; e a precedência conceitual da etapa 3 — materializados em §5, §6.2 e §7.1, com **N-a-F1**, **N-I**, **P-I**, **R5-P0**, **H1–H6** e **D0–D6** preservados. **Não é implementação**: a **arbitragem N-a** não alterou `persistence.py` e o `OrquestradorMotor` **continua não autorizado**. **Materializações posteriores**, em entregas funcionais próprias: (a) o **transporte e a validação da representação** de `instante_ultima_transicao` na persistência operacional (§6.2, M-T1–M-T6); e (b) a **produção determinística de E** — projeção, classificação dos oito estados, recência de `encerrado`, N-a-F1, duplicatas e ordem canônica — como função pura em `src/casa77_sdr/eligibility.py` (§6.2, M-E1–M-E6); e (c) a **montagem determinística das projeções de identidade da etapa 3** — leitura da persistência, validação do identificador, projeção do contexto, conjunto **H**, `havia_estado_esperado` e projeção **N-I** — em `src/casa77_sdr/context.py` (§6.2, M-C1–M-C8), que cobre a **fronteira etapa 3 → identidade/etapa 5** e **não** a etapa 3 inteira. **A integração N-a continua PARCIAL**: a **decisão determinística** exigida por **N-a-T3–N-a-T7** foi materializada em `src/casa77_sdr/transition_marker.py` (§6.2, M-DT1–M-DT7), e a **aplicação** dessa decisão com a **escrita** pelo contrato da persistência existe como **fronteira chamável** em `src/casa77_sdr/transition_marker_write.py` (§6.2, M-AE1–M-AE7). Ainda assim, **N-a-T3–N-a-T7 NÃO estão operacionalmente concluídas** — a **integração da etapa 13 no pipeline** permanece pendente, assim como o **tratamento operacional dos bloqueios** (S4, S5), o **destino do alerta** e o **`OrquestradorMotor`**. A **projeção `transicoes_que_mudaram_estado`** (§6.2) foi **ARBITRADA** e depois **materializada em runtime** na `MaquinaEstados`. Isso **não** encerra o item: a **decisão pura** e a **composição decisória entre as 0–3 chamadas** do ciclo estão materializadas em **M-DT1–M-DT7**, mas continuam **NÃO implementadas/integradas** a **montagem completa** do `RegistroAtendimento`, a **decisão de se a etapa 13 executa**, a **escolha entre criar e gravar** no pipeline, a **geração de `id_atendimento`**, a **criação operacional** do atendimento, a **marcação de idempotência**, a **preservação de pendente**, o **tratamento operacional de falha** e a **integração da etapa 13**; o **valor numérico do limiar** e o **mecanismo de carga** continuam pendentes no **item 18**, a **E4** continua **distinta e aberta** no **item 15**, e o **`OrquestradorMotor` continua fora** | **especificação resolvida** — §6.2. **Aquela arbitragem não autorizou implementação alguma** — o PR #31 foi entrega documental e, à época, N-a não existia em código. O **valor numérico do limiar** e o **mecanismo concreto de carga** da configuração são o **item 18**. **E4** é pendência **distinta e ainda aberta**, no **item 15**, e **não é resolvida aqui** |
-| 12 | **N-b** — contrato global da **interpretação**: quem produz a projeção estruturada de §6.3 (`intencao_identidade`, referências, confianças binárias) e com que garantias | sem ele, a entrada do resolvedor não tem produtor atribuído | arbitragem específica, antes da integração |
+| 12 | **N-b** — contrato global da **interpretação** da etapa 4: quem produz a projeção estruturada de §6.3 (`intencao_identidade`, referências, confianças binárias) e com que garantias | **ARBITRADA DOCUMENTALMENTE / NÃO IMPLEMENTADA** (arbitragem N-b, §6.3): o contrato da **`Interpretacao`** está **fechado** — as **oito** categorias de §6.3 preservadas; **`IntencaoConversacional`** com **exatamente 11** códigos na partição **A1 (6 derivados) / A2 (2 autônomos) / B (3 autônomos)**; consistência cruzada **N-b-X1–N-b-X6** sobre os **seis pares de representação dupla**; regras de confiança **N-b-G6/G6b/G6c**; lista fechada de erros **E-Nb-1–E-Nb-19**; modo degradado **N-b-M1–N-b-M8**; fronteira do produtor **N-b-F1–N-b-F5**; e cenários **K-Nb-1–K-Nb-40** (§8.2). **Produtor atribuído**: o "produtor de interpretação da etapa 4" é **fronteira funcional** do limite único de LLM (§4.2, §9), **não componente novo** — §4.1 permanece com **14** componentes. Passam a ter produtor a **derivação para a projeção da etapa 5** (**N-b-K1–N-b-K7**) e a **condição 5** de §4.4 (**N-b-CD1–N-b-CD4**); as condições **2**, **4** e **8** continuam **não atribuídas**. **Residual explícito**: a etapa 4 **não emite `Exx`**, e a transformação posterior dos sinais interpretados em eventos confirmados **continua sem produtor concreto** (**N-b-RES1–N-b-RES3**) — **sem identificador de pendência novo**. **Nenhum código, tipo Python, JSON Schema, biblioteca, fornecedor, modelo, SDK, API ou formato de transporte foi criado ou escolhido** | **especificação resolvida**; a **implementação** e a **integração** permanecem futuras, junto do `OrquestradorMotor` |
 | 13 | **E1** — distinção entre as entidades **conversa × atendimento × lead** | atravessa identidade, persistência e registro de leads; hoje o motor opera com "atendimento" como unidade única | modelo de dados |
 | 14 | **E3** — **evento novo declarado durante atendimento ativo** | hoje o resultado é **conservador**: `AMBIGUA` / `AMBIGUIDADE_DIVERGENCIA_EM_ATENDIMENTO_ATIVO` (D3). **Nenhuma transição nova foi aprovada** para abrir atendimento paralelo | arbitragem específica |
 | 15 | **E4** — tratamento de **`SEM_CANDIDATO_ELEGIVEL`** pelo `OrquestradorMotor` | o resultado existe e é auditável, mas **o que o orquestrador faz com ele não está decidido**. Enquanto aberta, o resultado **encerra o ciclo sem transição** e **não autoriza avanço de integração** (doc 06 §4.5, G7) | arbitragem específica, antes do `OrquestradorMotor` |
@@ -2028,8 +2380,13 @@ resolução de identidade não produza um referente que contorne o silêncio já
 × lead.
 
 Nenhuma dessas pendências bloqueia especificamente a 3B.6 / `MaquinaEstados`, que já está
-implementada e integrada. **S2-D8**, **N-b** e **E4** bloqueiam o `OrquestradorMotor` e a
-integração completa. **N-a deixou de bloquear como especificação** — está **arbitrada
+implementada e integrada. **S2-D8** e **E4** bloqueiam o `OrquestradorMotor` e a
+integração completa. **N-b deixou de bloquear como especificação** — está **arbitrada
+documentalmente** (item 12, §6.3): o contrato da `Interpretacao`, a derivação para a projeção
+da etapa 5 e a condição 5 de §4.4 estão fechados. Ela **continua bloqueando como
+implementação**: **nenhum produtor concreto de `Interpretacao` existe em código**, e a
+transformação de sinais interpretados em `Exx` segue como **residual explícito**
+(N-b-RES1–N-b-RES3). **N-a deixou de bloquear como especificação** — está **arbitrada
 documentalmente** — e deixou de existir apenas no papel: sua **materialização é parcial e
 já existe em código**, pelas entregas funcionais posteriores do **transporte e validação do
 marco temporal** (M-T1–M-T6), da **produção determinística de E** (M-E1–M-E6) e da
