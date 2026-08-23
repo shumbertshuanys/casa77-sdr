@@ -1236,6 +1236,129 @@ resolvedor** permanece com **zero PII e zero texto conversacional**. **Mensagem 
 **zero PII e zero trecho real**. O repositório é **público**: **zero conversa real**, **zero
 PII**, somente exemplos **genéricos ou fictícios**.
 
+#### AJ1 — micro-arbitragem de representação e canonicalização de N-b (arbitragem AJ1)
+
+Micro-arbitragem **exclusivamente documental**. Fecha a **representação e a canonicalização
+determinística** da `Interpretacao` **antes** de qualquer materialização em código.
+
+**AJ1 não reabre N-b**, **não implementa N-b**, **não cria componente**, **não cria
+subetapa** e **não cria exceção pública nova**. Nenhum arquivo de `src/`, `tests/`,
+`knowledge/` ou `prompts/` é criado ou alterado. **§4.1 permanece com 14 componentes** e §2
+com **nove** responsabilidades. `IntencaoConversacional` continua com **exatamente 11**
+valores; a lista de erros de contrato continua com **exatamente 19** códigos `E-Nb`; §8.2
+continua com **40** cenários `K-Nb`. Nenhuma intenção nova, nenhum erro novo, nenhum cenário
+novo. **A 3B.8 não existe** e **não é criada aqui**.
+
+**Decisão normativa central — o que o produtor não determinístico entrega.**
+
+| # | Decisão AJ1 |
+|---|---|
+| AJ1-1 | **`A1` não é entrada semântica independente do produtor não determinístico.** Os seis códigos do grupo **A1** **nunca** recebem valor semântico próprio vindo do LLM. |
+| AJ1-2 | O produtor não determinístico entrega **somente**: `dados_extraidos`; `correcoes`; `perguntas_comerciais`; `pedido_de_humano` — mais a confiança correspondente quando aplicável (N-b-PH1); `referencias_evento_anterior`; `trechos_ambiguos`; `confianca_global`; e as intenções **autônomas** dos grupos **A2** e **B**. |
+| AJ1-3 | O **slot de intenções autônomas** aceita **exatamente** cinco valores: `INTERESSE_EM_VISITA`, `EXCECAO_SOLICITADA`, `INTERESSE_CONFIRMAR_DISPONIBILIDADE`, `CONTINUIDADE_DE_EVENTO_DECLARADA` e `EVENTO_NOVO_DECLARADO`. |
+| AJ1-4 | Dentro da fronteira da etapa 4, a camada **determinística** (a) **valida** a entrada realmente recebida; (b) **deriva** a presença dos seis códigos **A1**; (c) **calcula** a confiança **A1** por **N-b-X3**; (d) **verifica** as pós-condições; e (e) produz **uma `Interpretacao` canônica válida** **ou** um **erro de contrato**. |
+| AJ1-5 | **N-b-X1, N-b-X2, N-b-X3, N-b-X4, N-b-G6b e N-b-F5 são preservadas integralmente.** O **payload dedicado continua autoritativo** (N-b-X1). |
+
+**A1 canônico.**
+
+| # | Regra AJ1 |
+|---|---|
+| AJ1-A1a | A **presença** de cada código **A1** é **derivada** do payload correspondente (N-b-X2, N-b-X4). |
+| AJ1-A1b | A **confiança** de cada código **A1** é **calculada** por **N-b-X3** — nunca declarada (N-b-G6b). |
+| AJ1-A1c | A confiança **A1 calculada pode ser armazenada** na `Interpretacao` canônica **para auditabilidade**. **Armazenada não significa declarada**: o valor armazenado é **resultado** da derivação, não insumo dela. |
+| AJ1-A1d | `intencoes_detectadas` canônica contém **os A1 derivados mais as A2/B autônomas**, **sem repetição**. |
+| AJ1-A1e | A **ordem canônica** de `intencoes_detectadas` existe **apenas para auditabilidade** e **não estabelece precedência semântica** alguma. |
+
+**Precedência entre `E-Nb-3` e `E-Nb-5` no slot autônomo.** O slot de intenções autônomas
+possui **vocabulário fechado A2/B** (AJ1-3). Tentativa de apresentar um código **A1** nesse
+slot é resolvida assim:
+
+| Caso | Situação | Erro |
+|---|---|---|
+| A | Código **A1** no slot autônomo **acompanhado de confiança declarada** | **`E-Nb-3` prevalece** — é tentativa explícita de **declarar confiança em intenção derivada**, o que **N-b-G6b** proíbe |
+| B | Código **A1** no slot autônomo **sem confiança declarada** | **`E-Nb-5`** — valor **fora do vocabulário fechado admissível** naquele slot |
+
+**Isso não torna `A1` entrada válida.** Ambos os casos são **rejeitados antes da
+canonicalização**: nenhuma `Interpretacao` canônica é produzida.
+
+**Clarificação de `E-Nb-5`, sem ampliar nada**: "vocabulário fechado" inclui o **vocabulário
+fechado admissível para a categoria/slot em que o valor aparece**. O **vocabulário global de
+`IntencaoConversacional` não é alterado** — ele continua com **11** valores.
+
+**Classificação AJ1 dos erros `E-Nb`.** Nenhum código é removido, renomeado ou acrescentado:
+a lista permanece **`E-Nb-1`–`E-Nb-19`**. A classificação abaixo descreve **de onde cada erro
+pode vir**, não o que ele significa.
+
+| Classe AJ1 | Códigos |
+|---|---|
+| **Recebíveis / runtime** — provocáveis pela entrada realmente recebida | `E-Nb-1`, `E-Nb-2`, `E-Nb-3`, `E-Nb-4`, `E-Nb-5`, `E-Nb-6` **somente** para **duplicação de intenção autônoma recebida**, `E-Nb-7`, `E-Nb-8`, `E-Nb-9`, `E-Nb-10`, `E-Nb-17`, `E-Nb-18` |
+| **Invariantes internos / program error da canonicalização** | `E-Nb-6` **no ramo A1**, `E-Nb-11`, `E-Nb-12`, `E-Nb-13`, `E-Nb-14`, `E-Nb-15`, `E-Nb-16` |
+| **Invariante estrutural do módulo** | `E-Nb-19` |
+
+**Não se afirma que todo `E-Nb` precisa ser provocável pelo futuro LLM.** Um erro pode ser
+**semanticamente válido** e, ainda assim, **impossível por construção** numa canonicalização
+correta — é o caso dos invariantes internos.
+
+**`E-Nb-13` e a confiança A1.**
+
+| # | Fixação AJ1 |
+|---|---|
+| AJ1-13a | `E-Nb-13` é **invariante / program error da derivação determinística**, não erro recebível. |
+| AJ1-13b | A confiança **A1 calculada internamente** deve **sempre** corresponder a **N-b-X3**. |
+| AJ1-13c | **Nenhuma confiança A1 independente é aceita do produtor** — tentar declará-la é `E-Nb-3` (AJ1, caso A), não `E-Nb-13`. |
+
+**Invariantes de bi-implicação e derivação — `E-Nb-11` a `E-Nb-16`.** Registrados como
+invariantes, **semanticamente válidos mesmo sendo impossíveis** numa canonicalização correta
+por construção:
+
+| # | Invariante |
+|---|---|
+| `E-Nb-11` | payload **A–D** ⇒ código correspondente presente |
+| `E-Nb-12` | código **A–D** ⇒ payload correspondente presente |
+| `E-Nb-14` | `perguntas_comerciais` **não vazia** ⇒ `PERGUNTA_COMERCIAL` presente |
+| `E-Nb-15` | `PERGUNTA_COMERCIAL` presente ⇒ `perguntas_comerciais` **não vazia** |
+| `E-Nb-16` | `pedido_de_humano` verdadeiro ⟺ `PEDIDO_DE_HUMANO` presente |
+
+**`E-Nb-19` — estratégia futura de prova estrutural.** A prova de `E-Nb-19` é **estrutural**,
+sobre a superfície do futuro módulo: **superfície pública fechada**; **tipos de retorno
+fechados**; **campos das estruturas fechados**; **produtores públicos fechados**; e a
+**condição 5 como única condição de §4.4 produzida**. O **fechamento de imports** é
+**somente evidência complementar de pureza**: **import, por si só, não prova `E-Nb-19`**.
+
+**Condição 5 — preservada.** A **condição 5** de §4.4 **já possui produtor conceitualmente
+atribuído** por N-b (N-b-G3, N-b-CD1–N-b-CD4). A futura implementação apenas **materializa**
+esse produtor — **não** o cria. As condições **2**, **4** e **8** continuam as **únicas
+NÃO ATRIBUÍDAS**, e **nenhuma outra condição é alterada**.
+
+**`FormatoEvento` — decisão para a futura materialização.** É **permitido reutilizar, por
+import**, o `FormatoEvento` de `src/casa77_sdr/qualification.py`, porque: é **vocabulário
+técnico fechado**, **exatamente** `sentado` \| `coquetel` (N-b-D5); a **cadeia de imports é
+pura**; **não cria ciclo** (D7); **não lê YAML**; e **não avalia regra comercial**.
+`qualification.py` **permanece inalterado**.
+
+| # | Fronteira |
+|---|---|
+| AJ1-F1 | Importar `FormatoEvento` **não** significa produzir `Qualificacao` e **não** viola `E-Nb-19`. |
+| AJ1-F2 | O enum **não é movido**, **não é redeclarado** e **nenhum** `shared/domain/types` é criado. |
+
+**Futura materialização — não autorizada por esta micro-arbitragem.** Após AJ1 integrada e
+reconciliada, a candidata funcional poderá ter **lista fechada**: **criar**
+`src/casa77_sdr/interpretation.py` e `tests/test_interpretation.py`; **alterar**
+`docs/07-arquitetura-motor-respostas.md` **somente** para registrar a materialização.
+**Nada disso é autorizado aqui**: AJ1 é documental e **N-b permanece NÃO IMPLEMENTADA**.
+
+**Fora do escopo de AJ1.** `N-b-RES1`–`N-b-RES3` permanecem **inalteradas**: `N-b-RES1`
+preserva a **proibição de a etapa 4 emitir `Exx`**; `N-b-RES2` permanece como **residual
+explícito aberto** da **transformação posterior** dos sinais interpretados em **eventos
+confirmados**, ainda **sem produtor concreto**; e `N-b-RES3` preserva a **classificação**
+desse residual, **sem criar componente, pendência nova ou atribuição automática de
+produtor**. Permanecem igualmente **abertas e inalteradas**: **S2-D8**; **S3-D1**; **E4**;
+**B**; **C**; o `DetectorHandoff`; o `SeletorFatos`; o `ValidadorResposta`; o
+`ValidadorConsistenciaBase`; o `OrquestradorMotor`; a integração da **etapa 13**; a escolha
+de **persistência**; o **limiar**; **S4**/**S5**; e o **destino do alerta**. **Fornecedor,
+modelo, SDK, API, biblioteca, formato de transporte e JSON Schema continuam não escolhidos**
+(N-b-F3).
+
 #### Projeção estruturada para a identidade (arbitragem R3)
 
 O `ResolvedorIdentidade` **não recebe esta tabela nem texto conversacional**. Ele recebe uma
@@ -2191,6 +2314,21 @@ Nenhum cenário `K-Nb` exige membro novo em `Identidade`, critério novo em
 `CriterioIdentidade`, valor novo em `VeredictoIdentificador`, campo novo em
 `ProjecaoInterpretacao` ou componente novo em §4.1.
 
+**Classificação e alcance de `K-Nb-18`, `K-Nb-34` e `K-Nb-39`** (micro-arbitragem **AJ1**,
+§6.3). Os **40** cenários `K-Nb` permanecem **os mesmos**, com o **mesmo resultado esperado**:
+AJ1 esclarece **como cada um se prova**, não **o que ele afirma**. Nenhum cenário é
+acrescentado, removido, renumerado ou reescrito.
+
+| Cenário | Classificação AJ1 | Alcance da prova |
+|---|---|---|
+| `K-Nb-18` | **estrutural** da canonicalização — `E-Nb-13` é **invariante / program error** (AJ1-13a) | Provado por **pós-condição / propriedade**: para **toda** `Interpretacao` canônica, a **confiança A1 == resultado de N-b-X3** (AJ1-13b). **Não se exige** prova por exceção levantada a partir de entrada externa: nenhuma confiança **A1** independente é aceita do produtor (AJ1-13c) |
+| `K-Nb-34` | **recebível / runtime** — permanece exatamente como está | Cobre **dois** casos, ambos resolvidos em **`E-Nb-3`**: (a) **confiança declarada em `trecho_ambiguo`** (N-b-T5); e (b) **tentativa de apresentar código A1 com confiança no slot de intenções autônomas** (AJ1, caso A). **Nenhuma precedência de `E-Nb-13` sobre `E-Nb-3`** é criada, e **nenhum código novo** — de erro ou de cenário — é introduzido |
+| `K-Nb-39` | **parcialmente local, parcialmente futuro** | **Localmente** verificável na futura fronteira: **sem `Interpretacao`**, `interesse_confirmar_disponibilidade = None` (N-b-CD4); **ausência de `Interpretacao` ≠ `Interpretacao` válida sem sinais** (N-b-G8); e a `ProjecaoInterpretacao` **exige `Interpretacao` canônica válida** (N-b-M2). **Permanecem futuros**, dependentes de orquestração: a etapa 5 **não executar**; a `MaquinaEstados` **não ser chamada**; **nada ser gravado**; os **alertas**; e a **coordenação do modo degradado** (N-b-M3, N-b-M8) |
+
+Consequência de método: **não** se deve afirmar cobertura das propriedades **futuras** de
+`K-Nb-39` a partir de um teste isolado da fronteira da etapa 4. Elas pertencem à
+**orquestração**, que **não existe** (§12, itens 10, 11, 15 e 18).
+
 ### 8.3 Testáveis somente com LLM real (poucos, manuais)
 
 - qualidade da extração em português coloquial de WhatsApp;
@@ -2353,13 +2491,30 @@ commit e nenhum push. A Etapa 3B não foi iniciada.
 | 10 | **S2-D8** — contrato de detecção e classificação de pendências: detectar campo `null`/`pendente` relevante e ausência de resposta aprovada, classificar impeditiva × acessória, fornecer os identificadores técnicos ao `Qualificador` e confirmar `E09` | **não bloqueia** a `MaquinaEstados`, que recebe `E09` pronto; **bloqueia** o `OrquestradorMotor` e a integração completa. Nenhum componente concreto foi escolhido — não é o `CarregadorYaml` nem o `ValidadorYaml` | arbitragem específica, antes da integração do pipeline (doc 06 §11) |
 
 | 11 | **N-a** — política de **elegibilidade e recência** que produz o conjunto elegível da etapa 3 | **ARBITRADA DOCUMENTALMENTE** (arbitragem N-a, §6.2): classificação **fechada dos oito estados**; recência aplicável **exclusivamente** a `encerrado`; `instante_ultima_transicao` como **único** marco temporal do MVP — **quando inicializado ou atualizado, recebe o `instante_de_referencia_do_ciclo` daquele ciclo**, **nunca** o relógio vivo; atualização decidida pelo **caminho de transições**; limiar como **configuração operacional validada explicitamente**; projeção do registro em `CandidatoAtendimento`; composição de E; duplicatas; **ordem canônica** só para auditabilidade; e a precedência conceitual da etapa 3 — materializados em §5, §6.2 e §7.1, com **N-a-F1**, **N-I**, **P-I**, **R5-P0**, **H1–H6** e **D0–D6** preservados. **Não é implementação**: a **arbitragem N-a** não alterou `persistence.py` e o `OrquestradorMotor` **continua não autorizado**. **Materializações posteriores**, em entregas funcionais próprias: (a) o **transporte e a validação da representação** de `instante_ultima_transicao` na persistência operacional (§6.2, M-T1–M-T6); e (b) a **produção determinística de E** — projeção, classificação dos oito estados, recência de `encerrado`, N-a-F1, duplicatas e ordem canônica — como função pura em `src/casa77_sdr/eligibility.py` (§6.2, M-E1–M-E6); e (c) a **montagem determinística das projeções de identidade da etapa 3** — leitura da persistência, validação do identificador, projeção do contexto, conjunto **H**, `havia_estado_esperado` e projeção **N-I** — em `src/casa77_sdr/context.py` (§6.2, M-C1–M-C8), que cobre a **fronteira etapa 3 → identidade/etapa 5** e **não** a etapa 3 inteira. **A integração N-a continua PARCIAL**: a **decisão determinística** exigida por **N-a-T3–N-a-T7** foi materializada em `src/casa77_sdr/transition_marker.py` (§6.2, M-DT1–M-DT7), e a **aplicação** dessa decisão com a **escrita** pelo contrato da persistência existe como **fronteira chamável** em `src/casa77_sdr/transition_marker_write.py` (§6.2, M-AE1–M-AE7). Ainda assim, **N-a-T3–N-a-T7 NÃO estão operacionalmente concluídas** — a **integração da etapa 13 no pipeline** permanece pendente, assim como o **tratamento operacional dos bloqueios** (S4, S5), o **destino do alerta** e o **`OrquestradorMotor`**. A **projeção `transicoes_que_mudaram_estado`** (§6.2) foi **ARBITRADA** e depois **materializada em runtime** na `MaquinaEstados`. Isso **não** encerra o item: a **decisão pura** e a **composição decisória entre as 0–3 chamadas** do ciclo estão materializadas em **M-DT1–M-DT7**, mas continuam **NÃO implementadas/integradas** a **montagem completa** do `RegistroAtendimento`, a **decisão de se a etapa 13 executa**, a **escolha entre criar e gravar** no pipeline, a **geração de `id_atendimento`**, a **criação operacional** do atendimento, a **marcação de idempotência**, a **preservação de pendente**, o **tratamento operacional de falha** e a **integração da etapa 13**; o **valor numérico do limiar** e o **mecanismo de carga** continuam pendentes no **item 18**, a **E4** continua **distinta e aberta** no **item 15**, e o **`OrquestradorMotor` continua fora** | **especificação resolvida** — §6.2. **Aquela arbitragem não autorizou implementação alguma** — o PR #31 foi entrega documental e, à época, N-a não existia em código. O **valor numérico do limiar** e o **mecanismo concreto de carga** da configuração são o **item 18**. **E4** é pendência **distinta e ainda aberta**, no **item 15**, e **não é resolvida aqui** |
-| 12 | **N-b** — contrato global da **interpretação** da etapa 4: quem produz a projeção estruturada de §6.3 (`intencao_identidade`, referências, confianças binárias) e com que garantias | **ARBITRADA DOCUMENTALMENTE / NÃO IMPLEMENTADA** (arbitragem N-b, §6.3): o contrato da **`Interpretacao`** está **fechado** — as **oito** categorias de §6.3 preservadas; **`IntencaoConversacional`** com **exatamente 11** códigos na partição **A1 (6 derivados) / A2 (2 autônomos) / B (3 autônomos)**; consistência cruzada **N-b-X1–N-b-X6** sobre os **seis pares de representação dupla**; regras de confiança **N-b-G6/G6b/G6c**; lista fechada de erros **E-Nb-1–E-Nb-19**; modo degradado **N-b-M1–N-b-M8**; fronteira do produtor **N-b-F1–N-b-F5**; e cenários **K-Nb-1–K-Nb-40** (§8.2). **Produtor atribuído**: o "produtor de interpretação da etapa 4" é **fronteira funcional** do limite único de LLM (§4.2, §9), **não componente novo** — §4.1 permanece com **14** componentes. Passam a ter produtor a **derivação para a projeção da etapa 5** (**N-b-K1–N-b-K7**) e a **condição 5** de §4.4 (**N-b-CD1–N-b-CD4**); as condições **2**, **4** e **8** continuam **não atribuídas**. **Residual explícito**: a etapa 4 **não emite `Exx`**, e a transformação posterior dos sinais interpretados em eventos confirmados **continua sem produtor concreto** (**N-b-RES1–N-b-RES3**) — **sem identificador de pendência novo**. **Nenhum código, tipo Python, JSON Schema, biblioteca, fornecedor, modelo, SDK, API ou formato de transporte foi criado ou escolhido** | **especificação resolvida**; a **implementação** e a **integração** permanecem futuras, junto do `OrquestradorMotor` |
+| 12 | **N-b** — contrato global da **interpretação** da etapa 4: quem produz a projeção estruturada de §6.3 (`intencao_identidade`, referências, confianças binárias) e com que garantias | **ARBITRADA DOCUMENTALMENTE / NÃO IMPLEMENTADA** (arbitragem N-b, §6.3): o contrato da **`Interpretacao`** está **fechado** — as **oito** categorias de §6.3 preservadas; **`IntencaoConversacional`** com **exatamente 11** códigos na partição **A1 (6 derivados) / A2 (2 autônomos) / B (3 autônomos)**; consistência cruzada **N-b-X1–N-b-X6** sobre os **seis pares de representação dupla**; regras de confiança **N-b-G6/G6b/G6c**; lista fechada de erros **E-Nb-1–E-Nb-19**; modo degradado **N-b-M1–N-b-M8**; fronteira do produtor **N-b-F1–N-b-F5**; e cenários **K-Nb-1–K-Nb-40** (§8.2). **Produtor atribuído**: o "produtor de interpretação da etapa 4" é **fronteira funcional** do limite único de LLM (§4.2, §9), **não componente novo** — §4.1 permanece com **14** componentes. Passam a ter produtor a **derivação para a projeção da etapa 5** (**N-b-K1–N-b-K7**) e a **condição 5** de §4.4 (**N-b-CD1–N-b-CD4**); as condições **2**, **4** e **8** continuam **não atribuídas**. **Residual explícito**: a etapa 4 **não emite `Exx`**, e a transformação posterior dos sinais interpretados em eventos confirmados **continua sem produtor concreto** (**N-b-RES1–N-b-RES3**) — **sem identificador de pendência novo**. **Nenhum código, tipo Python, JSON Schema, biblioteca, fornecedor, modelo, SDK, API ou formato de transporte foi criado ou escolhido**. **Micro-arbitragem AJ1** (§6.3, §8.2): fecha a **representação/canonicalização determinística** de N-b — **`A1` não é entrada semântica** do produtor não determinístico, presença **derivada** e confiança **calculada** por **N-b-X3**, **precedência `E-Nb-3` × `E-Nb-5`** no slot autônomo, **classificação AJ1** dos 19 erros em recebíveis × invariantes internos × invariante estrutural, **alcance de prova** de `K-Nb-18`, `K-Nb-34` e `K-Nb-39`, estratégia estrutural de `E-Nb-19`, preservação da **condição 5** e reutilização por **import** de `FormatoEvento`. **AJ1 não reabre N-b, não a implementa, não cria componente e não cria subetapa** | **especificação resolvida**; a **implementação** e a **integração** permanecem futuras, junto do `OrquestradorMotor` |
 | 13 | **E1** — distinção entre as entidades **conversa × atendimento × lead** | atravessa identidade, persistência e registro de leads; hoje o motor opera com "atendimento" como unidade única | modelo de dados |
 | 14 | **E3** — **evento novo declarado durante atendimento ativo** | hoje o resultado é **conservador**: `AMBIGUA` / `AMBIGUIDADE_DIVERGENCIA_EM_ATENDIMENTO_ATIVO` (D3). **Nenhuma transição nova foi aprovada** para abrir atendimento paralelo | arbitragem específica |
 | 15 | **E4** — tratamento de **`SEM_CANDIDATO_ELEGIVEL`** pelo `OrquestradorMotor` | o resultado existe e é auditável, mas **o que o orquestrador faz com ele não está decidido**. Enquanto aberta, o resultado **encerra o ciclo sem transição** e **não autoriza avanço de integração** (doc 06 §4.5, G7) | arbitragem específica, antes do `OrquestradorMotor` |
 | 16 | **Retorno do controle ao bot** — não existe hoje **transição inversa de T31** que devolva o canal ao atendimento automático sem passar por `E14`/T34 | uma vez em `atendimento_humano`, a saída documentada é o encerramento (T34) ou o encerramento por T32 a partir de `encaminhado_humano`. **Nenhum evento ou transição é criado por esta arbitragem** | arbitragem futura — **não bloqueia** a materialização R5 |
 | 17 | **Duplicatas gerais de `id_atendimento` entre candidatos não identificados** | a arbitragem R-I exige unicidade **apenas do ID identificado** e **apenas** com `veredito_identificador == ENCONTRADO` (**P-I5**). **Não foi decidido** — e **não é decidido nesta entrega** — se IDs duplicados entre candidatos **não identificados** constituem erro geral de contrato. **Nenhuma regra global de unicidade foi adicionada** | arbitragem específica futura — **não bloqueia** nenhuma entrega já autorizada |
 | 18 | **Valor numérico do limiar temporal de recência** e **mecanismo concreto de carga** da configuração (§6.2, N-a-L6) | **A política determinística já é executável**: `eligibility.py` e `context.py` **recebem o limiar como argumento explícito** e o validam (N-a-L1–N-a-L6, M-E3, M-C3). O que continua faltando é a **configuração operacional concreta** — sem ela **não há como carregar o limiar no pipeline**, e portanto continuam bloqueadas a **integração operacional de N-a** e o **`OrquestradorMotor`**. A calibragem permanece a mesma questão de sempre: curto demais descarta `encerrado` que **T36** deveria reabrir; longo demais devolve histórico antigo à cascata. **Nenhum número é definido** e **nenhuma tecnologia, variável de ambiente, arquivo ou serviço é escolhido** — nem por esta entrega nem pelas materializações posteriores. **Não é dado comercial** — não entra em `knowledge/casa77.yaml` | aprovação específica de Douglas Bianchi + decisão operacional, **antes do `OrquestradorMotor`** |
+
+**AJ1 — micro-arbitragem documental fechada** (§6.3, §8.2). AJ1 é **exclusivamente
+documental** e está **fechada**: ela **não** cria pendência nova, **não** resolve pendência
+alguma da tabela acima e **não** altera nenhuma linha dela além da nota registrada no
+**item 12**. Em particular, permanecem **abertas e inalteradas**: **S2-D8** (item 10),
+**E4** (item 15), **S3-D1**, **E1** (item 13), **E3** (item 14), **B**, **C**, o **valor do
+limiar** e seu **mecanismo de carga** (item 18), o **destino do alerta operacional**
+(item 3a) e o **`OrquestradorMotor`**.
+
+**N-b permanece NÃO IMPLEMENTADA.** AJ1 fecha a **representação e a canonicalização** que
+antecedem a materialização — não a materialização. Continua verdadeiro, sem atenuação:
+**não existe produtor concreto de `Interpretacao` em código**, **a etapa 4 não é funcional**,
+**nenhum arquivo de `src/` ou `tests/` foi criado ou alterado** por AJ1, **`§4.1` permanece
+com 14 componentes**, **§2 permanece com nove responsabilidades**, **`IntencaoConversacional`
+permanece com 11 valores**, os **erros permanecem `E-Nb-1`–`E-Nb-19`** e os **cenários
+permanecem `K-Nb-1`–`K-Nb-40`**. **Nenhuma subetapa foi criada, escolhida ou autorizada — a
+3B.8 não existe.**
 
 **Silêncio sob takeover não é decisão comercial nova** (arbitragem R5). Enquanto o canal
 está sob controle humano, o silêncio automático é **consequência do contrato já existente**,
