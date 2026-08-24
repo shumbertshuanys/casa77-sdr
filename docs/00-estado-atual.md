@@ -4,7 +4,7 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-24.
+Atualizado em: 2026-08-24 (arbitragem AJ2).
 
 ## Referências
 
@@ -30,7 +30,10 @@ Atualizado em: 2026-08-24.
 | Reconciliação documental **anterior a essa** | Reconciliação de `docs/00` após o PR #51 — PR #52, commit documental `f3fafee09b7d6bad464134fd9d20d603ebbb0122`, merge `cc7f4493b97935ef92efe2e821d7a032d16db1a4`, branch de origem `docs/reconciliar-estado-pos-pr51` — **148 adições, 40 remoções**. **Não altera o marco funcional** |
 | Reconciliação documental **anterior a essa (2)** | Reconciliação de `docs/00` após o PR #49 — PR #50, commit documental `5509a3f2e01a79cf52acde427794b1de4ec07ff1`, merge `60701aaaf7a85614e27cf3e95b6a25870769aee5`, branch de origem `docs/reconciliar-estado-pos-pr49` — **217 adições, 120 remoções**. **Não altera o marco funcional** |
 | Reconciliação documental **anterior a essa (3)** | Reconciliação de `docs/00` após o PR #47 — PR #48, commit documental `db9b202eeea95cbf249863a0cd4967627eae0156`, merge `5a059b4b7ba69e912c960bfa4d7a7990228a6792` — **125 adições, 78 remoções**. **Não altera o marco funcional** |
-| Base da presente reconciliação | `ba412502124bac3ce3f38554f81c265ed739672b` — HEAD da `main` verificado **antes** desta entrega (PR #55, **funcional**) |
+| Base da presente reconciliação | `ba412502124bac3ce3f38554f81c265ed739672b` — HEAD da `main` verificado **antes** da reconciliação pós-PR #55 (PR #55, **funcional**) |
+| Integração da **reconciliação pós-PR #55** | **PR #56** — merge na `main` `86258cfe0b99fc737b3bac042a521ed162aca152`, a partir da branch `docs/reconciliar-estado-pos-pr55`. **Documental**: **não altera o marco funcional** |
+| Integração da **arbitragem C** | **PR #57** — commit documental `2ba5a2833350844f6148f1c3223bca1783342737`, merge na `main` `89458bb7efea23d8f7889a0b5ab076a1d0c7f130`, branch de origem `docs/arbitragem-c-indice-respostas`. Arquivos: **exclusivamente** `docs/00-estado-atual.md` e `docs/07-arquitetura-motor-respostas.md` — **401 adições, 6 remoções**. **Documental**: **não altera o marco funcional** e **não implementa código** |
+| Base da presente entrega (**AJ2**) | `89458bb7efea23d8f7889a0b5ab076a1d0c7f130` — HEAD da `main` verificado **antes** desta entrega |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -741,6 +744,32 @@ a **pendência residual continua aberta**.
     identificador de pendência novo**. **Nem a AJ1 nem o PR #55 resolveram qualquer outra
     pendência da lista acima**: nenhuma é removida, reclassificada ou fechada.
     Nenhuma delas é resolvida aqui.
+21. **A arbitragem C está INTEGRADA À `main` pelo PR #57** — commit documental
+    `2ba5a283…`, merge `89458bb7…`, branch de origem `docs/arbitragem-c-indice-respostas`,
+    **exclusivamente** `docs/00-estado-atual.md` e `docs/07-arquitetura-motor-respostas.md`,
+    **401 adições / 6 remoções**. **C continua ARBITRADA / NÃO MATERIALIZADA**: o contrato
+    documental existe (`docs/07` §2.3), o índice
+    `knowledge/indice-respostas-aprovadas.yaml` **não existe**,
+    `knowledge/respostas-aprovadas.md` **não foi convertido** e **nenhum status foi removido
+    do Markdown**. A reconciliação anterior foi integrada pelo **PR #56** (merge
+    `86258cfe…`), também documental.
+22. **A micro-arbitragem AJ2 está ARBITRADA / NÃO MATERIALIZADA.** Ela **ESTENDE
+    FORMALMENTE N-b** (`docs/07` §6.3): `PerguntaComercial` passa conceitualmente de dois
+    para **três** campos, com **`assunto`** obrigatório do enum fechado
+    **`AssuntoComercial`** de **54** valores — **53 específicos + `ASSUNTO_NAO_CLASSIFICADO`**
+    —, **sem confiança própria**; `E-Nb-5` é **ampliado** e a lista permanece
+    **`E-Nb-1`–`E-Nb-19`**; os cenários passam de `K-Nb-1`–`K-Nb-40` para
+    **`K-Nb-1`–`K-Nb-51`**. **O contrato documental está fechado e o CÓDIGO NÃO FOI
+    ALTERADO**: `src/`, `tests/`, `knowledge/` e `prompts/` permanecem intactos. **O PR #55
+    continua sendo o último funcional** e sua implementação — descrita por
+    **`M-NB1`–`M-NB9`** — é **anterior a AJ2** e **ainda não possui `assunto`**; o **delta
+    AJ2 está pendente de materialização futura, não autorizada aqui**. **AJ2 não antecipa
+    S2-D8**: `ASSUNTO_NAO_CLASSIFICADO` **não implica** ausência de `Rxx`,
+    `resposta_aprovada_disponivel = false`, `E09`, `pendencia_impeditiva`, `R03` nem
+    handoff — **S2-D8 decidirá futuramente** o seu tratamento e **continua ABERTA**. Nada
+    muda no marco funcional: **baseline `1167 passed` / Python 3.14.5** permanece vigente,
+    a **3B.7** continua a última subetapa numerada, a **3B.8 não existe**, **C continua não
+    materializada** e a **próxima implementação funcional continua NÃO ESCOLHIDA**.
 
 ## Arbitragens
 
@@ -750,6 +779,7 @@ já alcançou a `main`.
 
 | # | Arbitragem | Decisão | Evidência |
 |---|---|---|---|
+| AJ2 | **Origem semântica do assunto de `PerguntaComercial`** (`docs/07-arquitetura-motor-respostas.md` §6.3, §8.2 e §12, item 20) | **ARBITRADA / NÃO MATERIALIZADA.** Micro-arbitragem **exclusivamente documental** que **ESTENDE FORMALMENTE N-b**: `PerguntaComercial` passa conceitualmente de **dois** para **três** campos, com **`assunto`** obrigatório do enum fechado **`AssuntoComercial`** (**54** valores). **Não cria componente, estado, evento, transição, condição, critério, pendência nem subetapa**, e **não implementa código nem altera testes** — `src/`, `tests/`, `knowledge/` e `prompts/` permanecem **fora** dela. **Não cria marco funcional.** **O delta NÃO está materializado**: o **PR #55 permanece o último funcional** e sua implementação **ainda não possui `assunto`**. Escopo abaixo | Entrega **exclusivamente documental**, em `docs/07-arquitetura-motor-respostas.md` (§6.3, §8.2 e §12, item 20) e `docs/00-estado-atual.md`. Branch de origem: `docs/aj2-assunto-pergunta-comercial`. Base: `89458bb7efea23d8f7889a0b5ab076a1d0c7f130` |
 | C | **Contrato do índice estruturado de respostas aprovadas** (`docs/07-arquitetura-motor-respostas.md` §2.3 e §12, item 19) | **ARBITRADA / NÃO MATERIALIZADA.** Fecha **documentalmente** o contrato do futuro índice `knowledge/indice-respostas-aprovadas.yaml`, **sem criá-lo** e **sem criar componente, estado, evento, transição, condição, critério, pendência ou subetapa**. **Não implementa código, não converte `knowledge/respostas-aprovadas.md`, não remove status do Markdown e não altera `knowledge/`, `src/` ou `tests/`** — esses diretórios permanecem **fora** desta arbitragem. **Não cria marco funcional.** A **materialização do índice permanece futura** e **não é autorizada** por ela. Escopo abaixo | Entrega **exclusivamente documental**, em `docs/07-arquitetura-motor-respostas.md` (§2.3 e §12, item 19) e `docs/00-estado-atual.md`. Branch de origem: `docs/arbitragem-c-indice-respostas` |
 | AJ1 | **Representação e canonicalização determinística de N-b** (`docs/07-arquitetura-motor-respostas.md` §6.3, §8.2 e §12) | **APROVADA — INTEGRADA À MAIN.** Micro-arbitragem **exclusivamente documental** que fecha a **representação/canonicalização** da `Interpretacao` **antes** de qualquer materialização em código, **sem criar componente, estado, evento, transição, critério, campo, erro, cenário ou subetapa**. Aprovada pelo GPT e **integrada à `main`** pelo **PR #53** (**MERGED**). **AJ1 não reabriu N-b, não a implementou, não tornou a etapa 4 funcional e não criou produtor LLM** — seu contrato foi **materializado depois**, na parte determinística, pelo **PR #55**. **N-b permanece ARBITRADA e PARCIALMENTE MATERIALIZADA.** Escopo resumido abaixo | PR #53 — commit documental `d1137cf67c42eae37ec8e837a56350da6c7fbabe`, merge `2e9df1f4dfcd11903d410ba7a42ba12d86eb2b15`, branch de origem `docs/nb-aj1-canonicalizacao`. Alterou **exclusivamente** `docs/07-arquitetura-motor-respostas.md` — **156 adições, 1 remoção** |
 | N-b | **Contrato global da interpretação da etapa 4** — a `Interpretacao` (`docs/07-arquitetura-motor-respostas.md` §6.3) | **APROVADA — INTEGRADA À MAIN.** Fecha **documentalmente** o contrato da **saída da etapa 4**, **sem criar componente, estado, evento, transição, critério ou campo**. Arbitragem documental **aprovada pelo GPT** e **integrada à `main`** pelo **PR #51** (**MERGED**). **Não implementa código** e **não cria marco funcional.** **ARBITRADA e PARCIALMENTE MATERIALIZADA**: a **fronteira determinística** foi integrada pelo **PR #55** (`src/casa77_sdr/interpretation.py`); o **produtor não determinístico / LLM**, **N-b-RES2** e a **integração operacional da etapa 4** continuam pendentes, e o `OrquestradorMotor` continua não implementado. Escopo resumido abaixo | PR #51 — commit documental `6f1cb6fe5ef12096117f1292225a761af5889025`, merge `85dbc709799f30c59a458c3ea8725fc072a15364`, branch de origem `docs/arbitragem-nb-interpretacao`. Alterou **exclusivamente** `docs/07-arquitetura-motor-respostas.md` — **365 adições, 8 remoções** |
@@ -760,6 +790,51 @@ já alcançou a `main`.
 | S3 | Arbitragem residual da `MaquinaEstados` (`docs/06-maquina-de-estados.md` × `docs/07-arquitetura-motor-respostas.md`) | **APROVADA — INTEGRADA À MAIN.** Fecha as ambiguidades residuais posteriores à S2 sem redesenhar a máquina: materialização de T04, precedência entre classes de `E08`, `T09 > T04`, `T32 > T35`, contrato semântico de ações, condição estruturada de T35, fronteira temporal da resposta aprovada e `CondicoesCiclo`. Arbitragem documental **aprovada pelo GPT** e **integrada à `main`** pelo **PR #18** (**MERGED**). **Não implementa código** e **não cria marco funcional.** Escopo abaixo. | PR #18 — head integrado `40841a3ef6ef00b83313d41e95c52c4f6c1045a8`, merge `ac49758771efe00596e27a9d8eec034d4c85df04`; commit documental principal `541aa765ac0e956620e3a78c19b38c0d24a40885`, a partir da branch `docs/s3-arbitragem-residual-maquina-estados`; alterações em `docs/06` (notas da §3, §4.2, §11) e `docs/07` (§4.1, §4.4, §4.5, §5) |
 | A | Fronteira de Qualificação entre `docs/05-roadmap.md` e `docs/07-arquitetura-motor-respostas.md` | **ARBITRADA** (S1): o `Qualificador` permanece componente do motor e sua implementação pertence à Etapa 3B; a antiga Etapa 4 deixa de ser aberta como etapa autônoma e é absorvida pela 3B; as etapas 5 a 10 mantêm a numeração; o `Qualificador` precede a `MaquinaEstados`. O `Qualificador` foi **implementado na 3B.5** (PR #14) e a `MaquinaEstados` foi **implementada na 3B.6** (PR #21); a precedência entre os dois foi respeitada na ordem de entrega. | reconciliação documental de `docs/05`, `docs/07` §8.4/§9 e deste documento |
 | S2 | Semântica de ciclo da `MaquinaEstados` (`docs/06-maquina-de-estados.md` × `docs/07-arquitetura-motor-respostas.md`) | **APROVADA — INTEGRADA À MAIN.** Arbitragem documental **aprovada pelo GPT** na auditoria da entrega e **integrada à `main`** pelo **PR #16** (**MERGED**), a partir da branch `docs/s2-arbitragem-maquina-estados`. **Não implementa código** e **não cria marco funcional.** Escopo abaixo. | PR #16 — head integrado `e4746d8b350b65388672ecfb5233a558031ff352`, merge `1a719546b922e0a89d30912de745046eb11849d9`; núcleo documental no commit `0be5a022d2b30b5cfa2bca501e77c06bed501419` — `docs/06` (§1.1, §2.2, §3, §4.1–§4.5, §9, §10, §11) e `docs/07` (§4.1, §5, §7.2, §8.1, §9, §12) |
+
+### Arbitragem AJ2 — escopo arbitrado, NÃO materializado
+
+Micro-arbitragem sobre a **origem semântica do assunto** de `PerguntaComercial`: de onde
+vem, e com que garantias, a informação de **sobre o que** o interessado consultou. Entrega
+**exclusivamente documental**, materializada em `docs/07-arquitetura-motor-respostas.md`
+§6.3, com reflexo em §8.2 e registro em §12, item 20.
+
+**AJ2 ESTENDE FORMALMENTE N-b.** O contrato vigente da etapa 4 **muda documentalmente**; a
+implementação atual **ainda não materializa esse delta**.
+
+Contrato aprovado:
+
+| # | Item |
+|---|---|
+| 1 | `PerguntaComercial` passa de **dois** para **três** campos: `texto`, `confianca` e **`assunto`** obrigatório, **sem confiança própria**; cardinalidade da coleção continua **0..N** |
+| 2 | **`AssuntoComercial`** — vocabulário conceitual fechado de **54** valores: **53 específicos + `ASSUNTO_NAO_CLASSIFICADO`**. **Nenhum 55º membro** |
+| 3 | A categoria cobre **consultas comerciais** — pergunta, pedido informacional e solicitação de material —, **sem** absorver os sinais dedicados `pedido_de_humano`, `INTERESSE_EM_VISITA`, `INTERESSE_CONFIRMAR_DISPONIBILIDADE` e `EXCECAO_SOLICITADA`, que **permanecem autoritativos** |
+| 4 | **`ASSUNTO_NAO_CLASSIFICADO`** é **valor legítimo de totalidade** — **não** é erro, **não** é confiança `BAIXA`, **não** é ausência e **não** é `TrechoAmbiguo`. **Nunca escolher "o mais próximo"** |
+| 5 | **`N-b-Q7`–`N-b-Q12`**: um assunto por item, segmentação de consulta composta, preservação textual, totalidade sem aproximação, duplicatas permitidas e **o assunto não atravessa** para a projeção nem produz condição |
+| 6 | **`E-Nb-5` ampliado** para `assunto` ausente ou fora do vocabulário. A lista permanece **`E-Nb-1`–`E-Nb-19`** — **sem nenhum código novo**. `ASSUNTO_NAO_CLASSIFICADO` **não** gera `E-Nb-5` |
+| 7 | Cenários passam de `K-Nb-1`–`K-Nb-40` para **`K-Nb-1`–`K-Nb-51`**, com `K-Nb-40` **complementado**. **Nenhum teste Python é criado** |
+| 8 | **Fronteira preservada**: `IntencaoConversacional` continua com **11** valores, `ProjecaoInterpretacao` com **sete** campos, §4.1 com **14** componentes, §2 com **nove** responsabilidades, e as condições **2**, **4** e **8** de §4.4 continuam **NÃO ATRIBUÍDAS** |
+
+O que esta micro-arbitragem **NÃO** faz: implementar `AssuntoComercial`; materializar AJ2 em
+Python; alterar `src/`, `tests/`, `knowledge/`, `prompts/`, `docs/06`, `docs/05`, `docs/08`
+ou `CLAUDE.md`; **antecipar S2-D8** — `ASSUNTO_NAO_CLASSIFICADO` **não implica** ausência de
+`Rxx`, `resposta_aprovada_disponivel = false`, `E09`, `pendencia_impeditiva`, `R03` nem
+handoff; mapear `assunto` → `Rxx` ou → fragmento; materializar **C**; escolher LLM, modelo,
+fornecedor, SDK, API ou JSON Schema; resolver `Q53`/`Q54`; resolver `R10`, `R13`, `R17` ou
+`R20`; escolher a próxima implementação funcional; ou criar a **3B.8**, que **continua não
+existindo**. A **materialização do delta AJ2 não é autorizada** por ela.
+
+**Impacto FUTURO em `tests/`, verificado mecanicamente** e **sem nenhuma alteração agora**:
+`tests/test_interpretation.py` tem **2098** linhas e **132** funções `test_*`.
+**Exigem edição direta: 16 funções — 15 testes + 1 auxiliar**, assim compostas: **13**
+testes que constroem `PerguntaComercial`; **1** auxiliar que também a constrói
+(`_combinacoes_para_propriedade`); e **2** testes cujas **asserções passam a ser falsas**
+sem construírem a estrutura — `test_pergunta_comercial_tem_dois_campos` e
+`test_superficie_publica_e_exatamente_a_declarada`. **Afetados indiretamente, sem edição
+própria: 3 testes** que dependem do auxiliar, conjunto **disjunto** do anterior. **Total
+amplo: 19 funções — 18 testes + 1 auxiliar.** As duas métricas são registradas
+separadamente: **"exige edição" não se confunde com "afetado indiretamente"**. **A
+quantidade de funções NOVAS de pytest não é estimada**: a parametrização é decisão futura
+de materialização.
 
 ### Arbitragem C — escopo arbitrado, NÃO materializado
 
@@ -1100,7 +1175,7 @@ Detalhe em `docs/07` §12.
 |---|---|---|
 | N-a | Política de **elegibilidade e recência** que produz o conjunto elegível da etapa 3. **Especificação documental: ARBITRADA / CONCLUÍDA** pelo **PR #31**. **Materialização temporal parcial: IMPLEMENTADA** pelo **PR #33** — transporte e validação de `instante_ultima_transicao` em `src/casa77_sdr/persistence.py` (`docs/07` §6.2, M-T1–M-T6). **Produção determinística de E: IMPLEMENTADA** pelo **PR #36** — `src/casa77_sdr/eligibility.py` (`docs/07` §6.2, M-E1–M-E6). **Conjunto H, `havia_estado_esperado`, produtor N-I e *wiring* da fronteira etapa 3 → identidade/etapa 5: IMPLEMENTADOS** pelo **PR #38** — `src/casa77_sdr/context.py` (`docs/07` §6.2, M-C1–M-C8). **Decisão, aplicação e escrita do marco: MATERIALIZADAS** — a **decisão pura** e a **composição decisória das 0–3 chamadas** pelo **PR #47** (`src/casa77_sdr/transition_marker.py`, `docs/07` §6.2, M-DT1–M-DT7), e a **aplicação com a escrita**, como **fronteira chamável**, pelo **PR #49** (`src/casa77_sdr/transition_marker_write.py`, `docs/07` §6.2, M-AE1–M-AE7). **Integração N-a: PARCIAL / NÃO CONCLUÍDA** — continua **não integrada** a **etapa 13 no pipeline** (montagem completa do `RegistroAtendimento`, decisão de se a etapa 13 executa, escolha entre criar e gravar, geração de `id_atendimento`, criação operacional, marcação de idempotência e preservação de pendente), de modo que **N-a-T3–N-a-T7 não estão operacionalmente concluídas**; continuam pendentes o **tratamento operacional dos bloqueios** (S4, S5) e o **destino do alerta operacional**; a **etapa 3 inteira** e a **integração do pipeline** também **não** estão concluídas. O tratamento de `SEM_CANDIDATO_ELEGIVEL` na integração **não** é parte dela: é a **E4**, pendência distinta e **ainda aberta** | **especificação resolvida**; **campo temporal, produção de E, projeções de identidade, decisão do marco e aplicação/escrita materializados**; a **integração** ainda depende da **integração operacional da etapa 13**, do **tratamento dos bloqueios**, do **destino do alerta** e do **valor/mecanismo do limiar** (linha abaixo) |
 | Limiar temporal de recência | **Valor numérico** do limiar e **mecanismo concreto de carga** da configuração. **Aberta pelo PR #31** (`docs/07` §12, item 18). **Nenhum número foi definido** e **nenhuma tecnologia, variável de ambiente, arquivo ou serviço foi escolhido**. **Não é dado comercial** — não entra em `knowledge/casa77.yaml`; depende de aprovação específica de Douglas Bianchi e de decisão operacional | **não bloqueia** a 3B.6, a 3B.7, a **produção determinística de E** (PR #36) nem a **montagem das projeções de identidade da etapa 3** (PR #38) — ambas recebem o limiar como argumento explícito; **bloqueia** a **integração operacional de N-a no pipeline** e, por consequência, o `OrquestradorMotor` |
-| N-b | Contrato global da **interpretação**: quem produz a projeção estruturada consumida pelo resolvedor (`intencao_identidade`, referências, confianças binárias) e com que garantias. **Especificação documental: ARBITRADA / CONCLUÍDA** pelo **PR #51** — contrato global da `Interpretacao` da etapa 4 (`docs/07` §6.3), com as oito categorias preservadas, `IntencaoConversacional` fechada em **11** valores, derivação determinística para a `ProjecaoInterpretacao`, **condição 5** de §4.4, consistência cruzada, regras de confiança, modo degradado, **E-Nb-1–E-Nb-19**, **K-Nb-1–K-Nb-40** e a **fronteira conceitual do produtor**. **IMPLEMENTAÇÃO: PARCIAL** — a **fronteira determinística** foi materializada e integrada pelo **PR #55** em `src/casa77_sdr/interpretation.py` (canonicalização, `A1` derivado, confiança por N-b-X3, projeção e condição 5); continuam pendentes o **produtor não determinístico / LLM**, a **interpretação real de texto livre** e a **integração operacional da etapa 4**, e a **transformação posterior dos sinais interpretados em eventos confirmados** (**N-b-RES2**) permanece como **residual explícito aberto de integração**, **sem identificador de pendência novo** | **especificação resolvida**; **não bloqueia** a 3B.6; a **implementação** continua **bloqueando** a integração completa e o `OrquestradorMotor` |
+| N-b | Contrato global da **interpretação**: quem produz a projeção estruturada consumida pelo resolvedor (`intencao_identidade`, referências, confianças binárias) e com que garantias. **Especificação documental: ARBITRADA / CONCLUÍDA** pelo **PR #51** — contrato global da `Interpretacao` da etapa 4 (`docs/07` §6.3), com as oito categorias preservadas, `IntencaoConversacional` fechada em **11** valores, derivação determinística para a `ProjecaoInterpretacao`, **condição 5** de §4.4, consistência cruzada, regras de confiança, modo degradado, **E-Nb-1–E-Nb-19**, **K-Nb-1–K-Nb-40** e a **fronteira conceitual do produtor**. **IMPLEMENTAÇÃO: PARCIAL** — a **fronteira determinística** foi materializada e integrada pelo **PR #55** em `src/casa77_sdr/interpretation.py` (canonicalização, `A1` derivado, confiança por N-b-X3, projeção e condição 5); continuam pendentes o **produtor não determinístico / LLM**, a **interpretação real de texto livre** e a **integração operacional da etapa 4**, e a **transformação posterior dos sinais interpretados em eventos confirmados** (**N-b-RES2**) permanece como **residual explícito aberto de integração**, **sem identificador de pendência novo**. **ESTENDIDA DOCUMENTALMENTE POR AJ2**, posterior: `PerguntaComercial` ganha o campo **`assunto`** (`AssuntoComercial`, **54** valores), `E-Nb-5` é ampliado — a lista continua **E-Nb-1–E-Nb-19** — e os cenários passam a **K-Nb-1–K-Nb-51**. **Esse delta NÃO está materializado**: a implementação do PR #55 é **anterior a AJ2** e **não possui `assunto`** | **especificação resolvida**, agora **estendida por AJ2**; **não bloqueia** a 3B.6; a **implementação** continua **bloqueando** a integração completa e o `OrquestradorMotor`, e o **delta AJ2 permanece não materializado** |
 | E1 | Distinção entre as entidades **conversa × atendimento × lead**. Já registrada como aberta desde a etapa de modelo de dados; a arbitragem R **não** a resolve. | **não bloqueia** a 3B.6 |
 | E3 | **Evento novo declarado durante atendimento ativo.** Hoje o resultado é **conservador** — `AMBIGUA` / `AMBIGUIDADE_DIVERGENCIA_EM_ATENDIMENTO_ATIVO`. **Nenhuma transição nova foi aprovada** para abrir atendimento paralelo. | **não bloqueia** a 3B.6 |
 | E4 | Tratamento de **`SEM_CANDIDATO_ELEGIVEL`** pelo `OrquestradorMotor`. O resultado existe e é auditável, mas o que o orquestrador faz com ele **não está decidido**; enquanto aberta, o resultado encerra o ciclo sem transição e **não autoriza avanço de integração**. | **não bloqueia** a 3B.6; **bloqueia** o `OrquestradorMotor` |
