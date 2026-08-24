@@ -105,6 +105,368 @@ Consequência operacional: a divergência é **defeito de base de conhecimento**
 negócio. Não vira "não sei responder" silencioso — vira alerta para quem mantém os arquivos,
 enquanto o interessado recebe R03 + handoff.
 
+### 2.3 Arbitragem C — contrato do índice estruturado de respostas aprovadas
+
+**Estado: ARBITRADA / NÃO MATERIALIZADA.** O contrato descrito nesta seção está **fechado**
+e existe **apenas documentalmente, aqui**; **nenhuma de suas materializações futuras existe
+ainda** em `knowledge/`, em `src/` ou em `tests/`. Em particular, e sem atenuação:
+
+| # | Continua verdadeiro |
+|---|---|
+| C-E1 | o **índice não existe** — nenhum arquivo foi criado |
+| C-E2 | `knowledge/respostas-aprovadas.md` **não foi convertido** e **não foi alterado** |
+| C-E3 | **nenhum renderizador** existe |
+| C-E4 | **nenhum analisador do índice** existe |
+| C-E5 | `ValidadorConsistenciaBase` continua **não implementado** |
+| C-E6 | `SeletorFatos` continua **não implementado** |
+| C-E7 | `ValidadorResposta` continua **não implementado** |
+| C-E8 | **S2-D8 continua ABERTA** (doc 06 §11; §12, item 10) |
+| C-E9 | **nenhuma condição de ciclo nova** foi criada (§4.4) |
+
+**C não está implementada.** Esta seção fecha o contrato futuro; ela não o materializa.
+
+Pendência **C**, registrada em `docs/00-estado-atual.md`: falta um contrato estruturado,
+**legível por máquina**, relacionando cada `Rxx` aos campos de `knowledge/casa77.yaml`.
+Esta seção **fecha esse contrato**; o **artefato que o materializa continua inexistente**.
+Enquanto a materialização não existir, **F3**–**F5** (§2.2) seguem sendo política sem
+mecanismo — a conferência depende de alguém reler o Markdown, que é exatamente o que §2.2
+recusa como garantia.
+
+#### C-1 — Artefato futuro aprovado
+
+Nome aprovado para a futura materialização:
+
+**`knowledge/indice-respostas-aprovadas.yaml`**
+
+**Este arquivo NÃO é criado por esta arbitragem.** O nome é fixado agora para que a
+materialização futura não invente um caminho alternativo nem espalhe o contrato por vários
+arquivos.
+
+| # | O índice futuro **conterá somente** |
+|---|---|
+| C-1a | identificadores |
+| C-1b | status |
+| C-1c | *bindings* |
+| C-1d | caminhos YAML |
+| C-1e | predicados |
+| C-1f | formatos |
+| C-1g | metadados estruturais permitidos |
+
+| # | O índice futuro **NUNCA conterá** |
+|---|---|
+| C-1h | preço, capacidade, horário, prazo ou qualquer condição comercial |
+| C-1i | endereço |
+| C-1j | texto de resposta |
+| C-1k | *snapshot* de valor |
+| C-1l | versão congelada do YAML |
+| C-1m | *hash* de valor |
+
+A razão é a de **P8** e **F1**: qualquer valor copiado para o índice cria uma segunda fonte
+de fato comercial e reintroduz, dentro do próprio mecanismo antidivergência, a divergência
+que ele existe para detectar.
+
+#### C-2 — Modelo conceitual
+
+```text
+Rxx
+  └─► fragmentos emitíveis
+         └─► bindings (RENDERIZADO | ASSERTIVA)
+```
+
+**`Rxx`:**
+
+| # | Regra |
+|---|---|
+| C-2a | `id` obrigatório e único |
+| C-2b | padrão fechado `Rxx` |
+| C-2c | um ou mais fragmentos |
+| C-2d | **sem status armazenado no nível do `Rxx`** |
+| C-2e | sem título duplicado |
+| C-2f | **sem campo `handoff_obrigatorio`** |
+| C-2g | **sem campo `cita_fato_comercial`** |
+
+**Fragmento emitível:**
+
+| # | Regra |
+|---|---|
+| C-2h | `id` obrigatório e único **dentro do `Rxx`** |
+| C-2i | **status obrigatório** |
+| C-2j | **zero ou um** `itera_sobre` |
+| C-2k | *bindings*, **inclusive lista vazia explícita** |
+| C-2l | corresponde **somente** a conteúdo que **pode ser emitido ao interessado** |
+
+**Notas e instruções internas do Markdown** — os trechos que hoje explicam origem, motivo,
+aplicação ou encaminhamento:
+
+| # | Regra |
+|---|---|
+| C-2m | **não são fragmentos** |
+| C-2n | **não recebem status** |
+| C-2o | **não recebem *bindings*** |
+| C-2p | **não podem ser emitidas por acidente** |
+
+A separação é a garantia central do modelo: hoje texto emitível e instrução operacional
+convivem no mesmo `Rxx` sem marcação estrutural, e nada impede que uma instrução interna
+chegue ao interessado como se fosse resposta aprovada.
+
+#### C-3 — Status canônico
+
+Vocabulário **fechado**:
+
+| # | Status |
+|---|---|
+| C-3a | `APROVADO` |
+| C-3b | `AGUARDA_APROVACAO` |
+| C-3c | `BLOQUEADO` |
+
+**Sem valor padrão.** Fragmento sem status é **erro de contrato**, nunca `APROVADO`
+implícito.
+
+**Sem `PARCIAL`.** Um `Rxx` agregado pode ser parcial apenas como **derivação** dos status
+dos seus fragmentos — nunca como valor armazenado.
+
+`R01` e `R15` permanecem **não aprovados** (§12, item 4). **Nenhum status comercial é
+alterado por esta arbitragem.**
+
+#### C-4 — *Binding* `RENDERIZADO`
+
+Insere no texto um valor lido do YAML carregado.
+
+| # | Regra |
+|---|---|
+| C-4a | nome obrigatório e único no fragmento |
+| C-4b | caminho YAML **explícito** |
+| C-4c | *placeholder* correspondente **obrigatório** |
+| C-4d | formato **fechado** obrigatório (C-6) |
+| C-4e | o valor é **sempre** obtido do YAML carregado |
+| C-4f | o índice **nunca** armazena o valor |
+
+Em iteração:
+
+| # | Regra |
+|---|---|
+| C-4g | `itera_sobre` aponta para uma **coleção** |
+| C-4h | os *bindings* do item podem usar **caminho relativo** |
+| C-4i | **sem índice posicional** |
+
+**Nenhuma leitura oculta de outro campo é permitida.** O que não estiver declarado como
+*binding* não é lido.
+
+#### C-5 — *Binding* `ASSERTIVA`
+
+Não insere valor algum no texto. Declara uma condição que precisa ser verdadeira sobre o
+YAML carregado para que a **redação já aprovada** continue verdadeira.
+
+| # | Regra |
+|---|---|
+| C-5a | nome obrigatório e único |
+| C-5b | caminho YAML **explícito** |
+| C-5c | **predicado obrigatório** |
+| C-5d | **sem *placeholder*** |
+| C-5e | **sem formato** |
+| C-5f | **não insere o valor no texto** |
+
+Vocabulário de predicados, **fechado**:
+
+| # | Predicado |
+|---|---|
+| C-5g | `EH_VERDADEIRO` |
+| C-5h | `EH_FALSO` |
+
+Significado **único** de `ASSERTIVA`:
+
+> a redação deste fragmento é consistente **somente se** este predicado for verdadeiro sobre
+> o YAML carregado.
+
+`ASSERTIVA` **NÃO**:
+
+| # | Não faz |
+|---|---|
+| C-5i | cria regra comercial |
+| C-5j | altera dado |
+| C-5k | produz ação (§4.5) |
+| C-5l | produz evento |
+| C-5m | produz handoff |
+| C-5n | produz `E18` |
+| C-5o | produz condição de ciclo (§4.4) |
+| C-5p | decide `resposta_aprovada_disponivel` |
+| C-5q | decide `pendencia_impeditiva` |
+
+#### C-5.1 — `ASSERTIVA` sobre campo relacionado a handoff: **consistency-only**
+
+Um campo do YAML relacionado a handoff **pode** aparecer como caminho de uma `ASSERTIVA`
+**somente** quando ela serve para **conferir a veracidade de uma frase já existente do
+`Rxx`**. Esse uso é **CONSISTENCY-ONLY**.
+
+Ele **não** torna o índice fonte da política de handoff. Ele **não** pode ser usado como:
+
+| # | Uso proibido |
+|---|---|
+| C-5r | gatilho |
+| C-5s | produtor de `E18` |
+| C-5t | produtor de handoff |
+| C-5u | regra da `MaquinaEstados` |
+| C-5v | condição de §4.4 |
+| C-5w | substituto de `docs/04-handoff-humano.md` |
+| C-5x | substituto de `docs/06-maquina-de-estados.md` |
+| C-5y | substituto do próprio YAML |
+
+O índice continua **sem campo `handoff_obrigatorio`** (C-2f). A regra correta é a **não
+duplicação de política**, e não a proibição do caminho:
+
+> **Nenhuma POLÍTICA de handoff é duplicada no índice.**
+
+Formular a regra como "nenhum campo relacionado a handoff pode aparecer" seria **falso**:
+ela impediria justamente a conferência de consistência que a pendência C existe para
+viabilizar.
+
+#### C-6 — Formatos: apresentação pura, sem dependência oculta
+
+Vocabulário **fechado** de **apresentação pura**:
+
+| # | Formato | Regra mínima |
+|---|---|---|
+| C-6a | `inteiro` | representação decimal do inteiro, **sem alterar o valor** |
+| C-6b | `inteiro_agrupado` | o **mesmo** inteiro, com agrupamento visual de milhar |
+| C-6c | `simbolo_moeda` | transformação **exclusivamente de apresentação** do código monetário **explicitamente recebido por *binding***. No corpus atual, `BRL` pode ser apresentado pelo símbolo correspondente. Código não suportado **falha**, e nunca é inferido |
+| C-6d | `hora` | somente apresentação **da mesma hora**. **Não** introduz fuso nem cálculo. Formato incompatível **falha** |
+| C-6e | `texto` | identidade: insere o valor **sem modificação** |
+| C-6f | `lista` | preserva **todos** os itens e **a ordem**; somente pontuação e conjunção de apresentação. Nenhum item pode ser filtrado, reordenado ou parafraseado |
+
+Proibido em qualquer formato: função customizada, expressão regular, recorte de string,
+resumo, paráfrase, cálculo, regra específica por `Rxx`, **leitura implícita de campo
+adicional**, transformação semântica e arredondamento.
+
+**Sem dependência oculta.** Um formato composto de moeda — que devolvesse símbolo e valor
+juntos — esconderia a leitura de `precos.moeda` dentro do formatador. Ele **não é
+versionado**. Quando o símbolo monetário aparece no *template*, **`precos.moeda` precisa ser
+um *binding* EXPLÍCITO**. Exemplo **conceitual** e futuro:
+
+| *Placeholder* | *Binding* explícito | Formato |
+|---|---|---|
+| `{{moeda}}` | `precos.moeda` | `simbolo_moeda` |
+| `{{valor}}` | caminho numérico correspondente | `inteiro_agrupado` |
+
+**Nenhum formatador de valor pode buscar `precos.moeda` por conta própria.**
+
+#### C-7 — `null` e `pendente`
+
+**Não existe `politica_ausencia` no modelo.** C **não** atribui significado positivo a
+`null` e **não** atribui significado positivo a `pendente`: a regra normativa continua
+**fora** do índice, nas fontes já existentes (doc 06 §1.3, `knowledge/casa77.yaml`,
+`knowledge/informacoes-pendentes.md`).
+
+Para C, a consequência é estrutural: se um *binding* **necessário** a um fragmento que se
+pretende `APROVADO` resolve para `null`, ou para uma estrutura cujo `status` seja
+`pendente`, o fragmento **não pode ser tratado como materializado e aprovado** pelo novo
+contrato. O caso é **bloqueado e reportado** — **sem exceção local no índice**.
+
+#### C-8 — Apresentação pura × transformação semântica
+
+Somente **apresentação pura** integra os formatos fechados de C-6. São **proibidos** como
+formatador, entre outros: remover o CEP de um endereço; resumir uma observação; escolher
+parte de uma string; parafrasear; reordenar conteúdo; omitir item de lista; traduzir uma
+regra; calcular um valor; converter uma ausência em conclusão comercial.
+
+**Se o texto aprovado exigir transformação semântica para corresponder ao YAML, a
+materialização é BLOQUEADA.** A solução dependerá de fonte estruturada adequada ou de
+decisão de conteúdo futura — nunca de um formatador que "quase" acerta.
+
+#### C-9 — Conflitos já identificados
+
+Registro **factual**, sem valores comerciais: a auditoria de planejamento identificou casos
+que **não podem ser convertidos silenciosamente**. **Nenhum deles é decidido aqui.**
+
+| `Rxx` | Natureza do conflito |
+|---|---|
+| `R10` | conflito entre campo `null`, observação textual e redação aprovada sobre **mínimo de convidados** (`capacidade.minimo_convidados`, `capacidade.observacao_minimo`) |
+| `R20` | **mais de um campo candidato** sustenta partes distintas da frase de **retenção/entrada**; vínculo incorreto pode produzir **afirmação falsa** (`cancelamento`, `pagamento.opcoes`) |
+| `R13` | a representação estruturada atual do **endereço** não é **textualmente equivalente** à redação aprovada (`localizacao.endereco_completo`) |
+| `R17` | o **fragmento emitível é genérico**; a **enumeração divergente** é **NOTA INTERNA**, não texto emitível (`eventos.nao_aceitos`, `eventos.observacao_nao_aceitos`) |
+
+Cada um é exatamente o tipo de caso que C-8 manda **bloquear** em vez de acomodar.
+
+#### C-10 — Completude dos literais
+
+**Não é invariante** que "nenhum fragmento contém qualquer número fora de *placeholder*":
+essa formulação produziria falso positivo para identificador, nome próprio ou texto estático
+que **não representa valor comercial variável**.
+
+A regra normativa correta é:
+
+> Todo **fato comercial ou operacional VARIÁVEL** cuja fonte seja o YAML deve ser
+> **`RENDERIZADO`**, ou **coberto por `ASSERTIVA`** quando isso for necessário para provar a
+> consistência da redação.
+
+A materialização futura deverá **auditar cada fragmento emitível de todos os `Rxx`**. Nenhum
+literal com origem no YAML pode permanecer silenciosamente fora desse mapeamento. **Literal
+estático não derivado do YAML não ganha autoridade comercial por estar no Markdown** (§2.2,
+**F2**, **F6**).
+
+Contagens da auditoria de planejamento **não são versionadas aqui** e **não viram requisito
+arquitetural**.
+
+#### C-11 — Fontes autoritativas: estado atual × modelo futuro
+
+Esta arbitragem **não cria o índice** e, portanto, **não cria lacuna de fonte de verdade**.
+
+| Insumo | **ESTADO ATUAL** — vigente até a materialização | **MODELO FUTURO** — somente após materialização validada |
+|---|---|---|
+| texto / *template* | `knowledge/respostas-aprovadas.md` | `knowledge/respostas-aprovadas.md` |
+| status | `knowledge/respostas-aprovadas.md` | `knowledge/indice-respostas-aprovadas.yaml` |
+| valores | `knowledge/casa77.yaml` | `knowledge/casa77.yaml` |
+| *bindings*, predicados, formatos | **não existem** | `knowledge/indice-respostas-aprovadas.yaml` |
+
+**A migração da autoridade do STATUS só ocorre quando a materialização do índice e a bijeção
+entre `Rxx` e fragmentos forem validadas.** Até lá, **o status NÃO é removido do Markdown**.
+
+#### C-12 — Fronteira C × S2-D8
+
+C **NÃO**:
+
+| # | Não faz |
+|---|---|
+| C-12a | mapeia pergunta para `Rxx` |
+| C-12b | categoriza pergunta |
+| C-12c | determina `resposta_aprovada_disponivel` |
+| C-12d | determina `pendencia_impeditiva` |
+| C-12e | confirma `E09` |
+| C-12f | atribui produtor |
+| C-12g | cria `DetectorHandoff` |
+| C-12h | cria condição de ciclo |
+
+**S2-D8 permanece ABERTA** (doc 06 §11; §12, item 10). O status `BLOQUEADO` de um fragmento
+**não é, por si só**, `E09` nem `pendencia_impeditiva`: ele é um fato sobre a base, não uma
+decisão de ciclo. **O consumo futuro pertence à arbitragem S2-D8**, não a C.
+
+#### C-13 — Efeito sobre F3–F5
+
+O contrato torna **F3**–**F5** (§2.2) **implementáveis futuramente**, e **não os
+implementa**:
+
+| # | Efeito |
+|---|---|
+| C-13a | `RENDERIZADO` **elimina divergência de valor por construção** — o valor vem do YAML carregado, não de uma cópia no texto |
+| C-13b | `ASSERTIVA` torna **verificável** uma afirmação sobre o estado do YAML que hoje só existe em prosa |
+| C-13c | a falha é **localizável** conceitualmente como `Rxx` + fragmento + caminho YAML |
+
+**Nenhum conciliador. Nenhum LLM arbitra divergência. O YAML prevalece** (**F5**, **P8**).
+
+#### C-14 — O que C não cria
+
+| # | Preservado sem alteração |
+|---|---|
+| C-14a | os **14 componentes** de §4.1 |
+| C-14b | as **nove responsabilidades** arquiteturais de §2 |
+| C-14c | o **pipeline de 14 etapas** (§5) |
+| C-14d | todos os estados, eventos e transições do doc 06 |
+| C-14e | as **oito condições** de §4.4 |
+| C-14f | as **11** `IntencaoConversacional`, os erros `E-Nb-1`–`E-Nb-19` e os cenários `K-Nb-1`–`K-Nb-40` (§6.3) |
+| C-14g | os **12** `CriterioIdentidade` e os **oito** campos de `DecisaoIdentidade` (§7.1) |
+
+C **não cria** componente, estado, evento, transição, condição, critério, enum de execução,
+pendência nova nem subetapa. **A 3B.8 não existe.**
+
 ---
 
 ## 3. Comparação técnica — Opção A × Opção B
@@ -2501,7 +2863,7 @@ commit e nenhum push. A Etapa 3B não foi iniciada.
 | 3 | Critério técnico de "mesmo evento × nova solicitação" (T36/T37) | **ARBITRADO** nesta entrega (arbitragem R3): cascata determinística **D0–D6**, comparação exclusivamente nominal e vocabulário fechado de 12 critérios, materializados em §7.1 e refletidos em doc 06 §3. **À época daquela arbitragem, nenhum código foi criado** e a implementação ainda não estava autorizada. **Estado atual**: o `ResolvedorIdentidade` foi **implementado depois**, na **3B.7**, e está **integrado à `main`** pelo **PR #29** — commit funcional `25ab2726e15daeb7710bc0bcce9cfe7e092ce9f4`, merge `568919f5976361fa236e46a67909366e52ee85c3` (`src/casa77_sdr/identity.py`). O item **não bloqueia** nem a especificação nem a implementação do `ResolvedorIdentidade` | **resolvido** — §7.1; **implementado** na 3B.7 |
 | 3a | Destino do alerta operacional não definido | S5, Q5 e F4 exigem um canal separado da conversa; hoje não existe | etapa 5 / etapa 8 |
 | 3b | Janela temporal da chave composta de idempotência (§4.3) | curta demais duplica resposta; longa demais engole repetição humana legítima | Etapa 3B, com medição |
-| 3c | Divergência `Rxx` × YAML depende de mapear cada `Rxx` ao campo que ele cita | mapeamento incompleto deixa divergência passar sem detecção | Etapa 3B |
+| 3c | Divergência `Rxx` × YAML depende de mapear cada `Rxx` ao campo que ele cita | mapeamento incompleto deixa divergência passar sem detecção. O **contrato** desse mapeamento está **arbitrado** em §2.3 (pendência **C**, item 19) e **ainda não foi materializado** | Etapa 3B, sobre o contrato de §2.3 |
 | 4 | `R01` e `R15` ainda em **AGUARDA APROVAÇÃO** | saudação e encerramento sem texto aprovado | Douglas Bianchi |
 | 5 | Canal de entrega do resumo e SLA indefinidos; **confirmação física de entrega do resumo** | etapa 14 do pipeline fica sem destino. `encaminhado_humano` afirma handoff **registrado**, nunca recebimento confirmado (doc 06 §10) — a confirmação física permanece futura | etapa 5 |
 | 6 | Comportamento fora do horário de atendimento indefinido | resposta fora de horário não especificada | Douglas Bianchi |
@@ -2518,12 +2880,13 @@ commit e nenhum push. A Etapa 3B não foi iniciada.
 | 16 | **Retorno do controle ao bot** — não existe hoje **transição inversa de T31** que devolva o canal ao atendimento automático sem passar por `E14`/T34 | uma vez em `atendimento_humano`, a saída documentada é o encerramento (T34) ou o encerramento por T32 a partir de `encaminhado_humano`. **Nenhum evento ou transição é criado por esta arbitragem** | arbitragem futura — **não bloqueia** a materialização R5 |
 | 17 | **Duplicatas gerais de `id_atendimento` entre candidatos não identificados** | a arbitragem R-I exige unicidade **apenas do ID identificado** e **apenas** com `veredito_identificador == ENCONTRADO` (**P-I5**). **Não foi decidido** — e **não é decidido nesta entrega** — se IDs duplicados entre candidatos **não identificados** constituem erro geral de contrato. **Nenhuma regra global de unicidade foi adicionada** | arbitragem específica futura — **não bloqueia** nenhuma entrega já autorizada |
 | 18 | **Valor numérico do limiar temporal de recência** e **mecanismo concreto de carga** da configuração (§6.2, N-a-L6) | **A política determinística já é executável**: `eligibility.py` e `context.py` **recebem o limiar como argumento explícito** e o validam (N-a-L1–N-a-L6, M-E3, M-C3). O que continua faltando é a **configuração operacional concreta** — sem ela **não há como carregar o limiar no pipeline**, e portanto continuam bloqueadas a **integração operacional de N-a** e o **`OrquestradorMotor`**. A calibragem permanece a mesma questão de sempre: curto demais descarta `encerrado` que **T36** deveria reabrir; longo demais devolve histórico antigo à cascata. **Nenhum número é definido** e **nenhuma tecnologia, variável de ambiente, arquivo ou serviço é escolhido** — nem por esta entrega nem pelas materializações posteriores. **Não é dado comercial** — não entra em `knowledge/casa77.yaml` | aprovação específica de Douglas Bianchi + decisão operacional, **antes do `OrquestradorMotor`** |
+| 19 | **C** — contrato estruturado, legível por máquina, ligando cada `Rxx` aos campos de `knowledge/casa77.yaml`, e o artefato que o materializa | **ARBITRADA / NÃO MATERIALIZADA** (§2.3). **CONTRATO: ARBITRADO** — está **fechado** — artefato aprovado `knowledge/indice-respostas-aprovadas.yaml`, modelo `Rxx` → **fragmentos emitíveis**, status fechado `APROVADO`/`AGUARDA_APROVACAO`/`BLOQUEADO` sem valor padrão, *bindings* **`RENDERIZADO`** e **`ASSERTIVA`** (`EH_VERDADEIRO`/`EH_FALSO`), regra **consistency-only** para `ASSERTIVA` sobre campo relacionado a handoff, formatos de **apresentação pura** sem dependência oculta, bloqueio de **transformação semântica**, tratamento de `null`/`pendente`, fontes autoritativas em transição e a separação **C × S2-D8**. **MATERIALIZAÇÃO: NÃO EXISTE** — o **índice não foi criado**, `knowledge/respostas-aprovadas.md` **não foi convertido nem alterado**, **nenhum status foi removido do Markdown**, e `ValidadorConsistenciaBase`, `SeletorFatos` e `ValidadorResposta` continuam **não implementados**. **Nenhum componente, estado, evento, transição, condição, critério, pendência ou subetapa foi criado** — a **3B.8 não existe**. Os conflitos `R10`, `R20`, `R13` e `R17` ficam **registrados e não decididos** (C-9) | **contrato resolvido** — §2.3. A **materialização** — criar o índice, converter o Markdown em *templates* e auditar a bijeção — permanece **futura e não autorizada por esta arbitragem**, antes de `ValidadorConsistenciaBase` e, em cascata, `SeletorFatos` e `ValidadorResposta` |
 
 **AJ1 — micro-arbitragem documental fechada** (§6.3, §8.2). AJ1 é **exclusivamente
 documental** e está **fechada**: ela **não** cria pendência nova, **não** resolve pendência
 alguma da tabela acima e **não** altera nenhuma linha dela além da nota registrada no
 **item 12**. Em particular, permanecem **abertas e inalteradas**: **S2-D8** (item 10),
-**E4** (item 15), **S3-D1**, **E1** (item 13), **E3** (item 14), **B**, **C**, o **valor do
+**E4** (item 15), **S3-D1**, **E1** (item 13), **E3** (item 14), **B**, **C** — esta **arbitrada documentalmente depois**, em §2.3, e **NÃO MATERIALIZADA** (item 19) —, o **valor do
 limiar** e seu **mecanismo de carga** (item 18), o **destino do alerta operacional**
 (item 3a) e o **`OrquestradorMotor`**.
 

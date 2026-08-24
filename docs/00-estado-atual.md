@@ -4,7 +4,7 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-23.
+Atualizado em: 2026-08-24.
 
 ## Referências
 
@@ -721,7 +721,9 @@ a **pendência residual continua aberta**.
     da etapa 4**, nem a **integração operacional da etapa 13**, nem **E4**, nem **S2-D8**,
     nem **S3-D1**, nem o `OrquestradorMotor`, nem qualquer outra. **Nenhuma numeração nova
     é criada** e a **3B.8 continua não existindo**.
-20. As pendências permanecem abertas conforme seus próprios bloqueios: **B, C, S2-D5,
+20. As pendências permanecem abertas conforme seus próprios bloqueios: **B**, **C** —
+    esta com o **contrato ARBITRADO** em `docs/07` §2.3 e **NÃO MATERIALIZADA**, aberta
+    como materialização —, **S2-D5,
     S2-D7, S2-D8, S3-D1, a confirmação de entrega do handoff, E1, E3, E4, o retorno
     do controle ao bot após `atendimento_humano` sem `E14`/T34**, a **unicidade geral
     de `id_atendimento` entre candidatos não identificados**, a **persistência
@@ -748,6 +750,7 @@ já alcançou a `main`.
 
 | # | Arbitragem | Decisão | Evidência |
 |---|---|---|---|
+| C | **Contrato do índice estruturado de respostas aprovadas** (`docs/07-arquitetura-motor-respostas.md` §2.3 e §12, item 19) | **ARBITRADA / NÃO MATERIALIZADA.** Fecha **documentalmente** o contrato do futuro índice `knowledge/indice-respostas-aprovadas.yaml`, **sem criá-lo** e **sem criar componente, estado, evento, transição, condição, critério, pendência ou subetapa**. **Não implementa código, não converte `knowledge/respostas-aprovadas.md`, não remove status do Markdown e não altera `knowledge/`, `src/` ou `tests/`** — esses diretórios permanecem **fora** desta arbitragem. **Não cria marco funcional.** A **materialização do índice permanece futura** e **não é autorizada** por ela. Escopo abaixo | Entrega **exclusivamente documental**, em `docs/07-arquitetura-motor-respostas.md` (§2.3 e §12, item 19) e `docs/00-estado-atual.md`. Branch de origem: `docs/arbitragem-c-indice-respostas` |
 | AJ1 | **Representação e canonicalização determinística de N-b** (`docs/07-arquitetura-motor-respostas.md` §6.3, §8.2 e §12) | **APROVADA — INTEGRADA À MAIN.** Micro-arbitragem **exclusivamente documental** que fecha a **representação/canonicalização** da `Interpretacao` **antes** de qualquer materialização em código, **sem criar componente, estado, evento, transição, critério, campo, erro, cenário ou subetapa**. Aprovada pelo GPT e **integrada à `main`** pelo **PR #53** (**MERGED**). **AJ1 não reabriu N-b, não a implementou, não tornou a etapa 4 funcional e não criou produtor LLM** — seu contrato foi **materializado depois**, na parte determinística, pelo **PR #55**. **N-b permanece ARBITRADA e PARCIALMENTE MATERIALIZADA.** Escopo resumido abaixo | PR #53 — commit documental `d1137cf67c42eae37ec8e837a56350da6c7fbabe`, merge `2e9df1f4dfcd11903d410ba7a42ba12d86eb2b15`, branch de origem `docs/nb-aj1-canonicalizacao`. Alterou **exclusivamente** `docs/07-arquitetura-motor-respostas.md` — **156 adições, 1 remoção** |
 | N-b | **Contrato global da interpretação da etapa 4** — a `Interpretacao` (`docs/07-arquitetura-motor-respostas.md` §6.3) | **APROVADA — INTEGRADA À MAIN.** Fecha **documentalmente** o contrato da **saída da etapa 4**, **sem criar componente, estado, evento, transição, critério ou campo**. Arbitragem documental **aprovada pelo GPT** e **integrada à `main`** pelo **PR #51** (**MERGED**). **Não implementa código** e **não cria marco funcional.** **ARBITRADA e PARCIALMENTE MATERIALIZADA**: a **fronteira determinística** foi integrada pelo **PR #55** (`src/casa77_sdr/interpretation.py`); o **produtor não determinístico / LLM**, **N-b-RES2** e a **integração operacional da etapa 4** continuam pendentes, e o `OrquestradorMotor` continua não implementado. Escopo resumido abaixo | PR #51 — commit documental `6f1cb6fe5ef12096117f1292225a761af5889025`, merge `85dbc709799f30c59a458c3ea8725fc072a15364`, branch de origem `docs/arbitragem-nb-interpretacao`. Alterou **exclusivamente** `docs/07-arquitetura-motor-respostas.md` — **365 adições, 8 remoções** |
 | N-a | **Política de produção do conjunto elegível da etapa 3** (`docs/07-arquitetura-motor-respostas.md`) | **APROVADA — INTEGRADA À MAIN.** Fecha **documentalmente** a política de elegibilidade e recência que a etapa 3 aplica sobre os registros recuperados, **sem criar componente, estado, evento, transição ou critério**. Arbitragem documental **aprovada pelo GPT** e **integrada à `main`** pelo **PR #31** (**MERGED**). **Não implementa código**, **não implementa a persistência**, **não implementa o `OrquestradorMotor`** e **não cria marco funcional.** Escopo abaixo. | PR #31 — commit documental `43774af58877e3de3ecfda32cf0384a9fd047693`, merge `e8425410a7ced47c8d186bfceeea1cdd70f73b0c`, branch de origem `docs/arbitragem-na-contexto-elegivel`; alterações **exclusivamente** em `docs/07` (`+247 / -12`: §5 etapas 3 e 13, §6.2 subseção N-a completa, §7.1 S9–S11 e classe I, §12 item 11 e novo item 18) |
@@ -757,6 +760,34 @@ já alcançou a `main`.
 | S3 | Arbitragem residual da `MaquinaEstados` (`docs/06-maquina-de-estados.md` × `docs/07-arquitetura-motor-respostas.md`) | **APROVADA — INTEGRADA À MAIN.** Fecha as ambiguidades residuais posteriores à S2 sem redesenhar a máquina: materialização de T04, precedência entre classes de `E08`, `T09 > T04`, `T32 > T35`, contrato semântico de ações, condição estruturada de T35, fronteira temporal da resposta aprovada e `CondicoesCiclo`. Arbitragem documental **aprovada pelo GPT** e **integrada à `main`** pelo **PR #18** (**MERGED**). **Não implementa código** e **não cria marco funcional.** Escopo abaixo. | PR #18 — head integrado `40841a3ef6ef00b83313d41e95c52c4f6c1045a8`, merge `ac49758771efe00596e27a9d8eec034d4c85df04`; commit documental principal `541aa765ac0e956620e3a78c19b38c0d24a40885`, a partir da branch `docs/s3-arbitragem-residual-maquina-estados`; alterações em `docs/06` (notas da §3, §4.2, §11) e `docs/07` (§4.1, §4.4, §4.5, §5) |
 | A | Fronteira de Qualificação entre `docs/05-roadmap.md` e `docs/07-arquitetura-motor-respostas.md` | **ARBITRADA** (S1): o `Qualificador` permanece componente do motor e sua implementação pertence à Etapa 3B; a antiga Etapa 4 deixa de ser aberta como etapa autônoma e é absorvida pela 3B; as etapas 5 a 10 mantêm a numeração; o `Qualificador` precede a `MaquinaEstados`. O `Qualificador` foi **implementado na 3B.5** (PR #14) e a `MaquinaEstados` foi **implementada na 3B.6** (PR #21); a precedência entre os dois foi respeitada na ordem de entrega. | reconciliação documental de `docs/05`, `docs/07` §8.4/§9 e deste documento |
 | S2 | Semântica de ciclo da `MaquinaEstados` (`docs/06-maquina-de-estados.md` × `docs/07-arquitetura-motor-respostas.md`) | **APROVADA — INTEGRADA À MAIN.** Arbitragem documental **aprovada pelo GPT** na auditoria da entrega e **integrada à `main`** pelo **PR #16** (**MERGED**), a partir da branch `docs/s2-arbitragem-maquina-estados`. **Não implementa código** e **não cria marco funcional.** Escopo abaixo. | PR #16 — head integrado `e4746d8b350b65388672ecfb5233a558031ff352`, merge `1a719546b922e0a89d30912de745046eb11849d9`; núcleo documental no commit `0be5a022d2b30b5cfa2bca501e77c06bed501419` — `docs/06` (§1.1, §2.2, §3, §4.1–§4.5, §9, §10, §11) e `docs/07` (§4.1, §5, §7.2, §8.1, §9, §12) |
+
+### Arbitragem C — escopo arbitrado, NÃO materializado
+
+Arbitragem sobre o **contrato do índice estruturado que liga cada `Rxx` aos campos de
+`knowledge/casa77.yaml`**. Entrega **exclusivamente documental**, materializada em
+`docs/07-arquitetura-motor-respostas.md` §2.3 e registrada em §12, item 19.
+
+Contrato aprovado:
+
+| # | Item |
+|---|---|
+| 1 | **índice estruturado futuro** — nome aprovado `knowledge/indice-respostas-aprovadas.yaml`, **não criado** |
+| 2 | **fragmentos emitíveis** — `Rxx` → fragmentos; notas e instruções internas **não** são fragmentos, **não** recebem status nem *bindings* e **não** podem ser emitidas |
+| 3 | ***binding* `RENDERIZADO`** — caminho YAML explícito, *placeholder* obrigatório, formato fechado; o valor vem **sempre** do YAML carregado e **nunca** é armazenado no índice |
+| 4 | ***binding* `ASSERTIVA`** — predicado obrigatório do vocabulário fechado `EH_VERDADEIRO`/`EH_FALSO`, sem *placeholder* e sem formato; **consistency-only**, inclusive sobre campo relacionado a handoff — **nenhuma política de handoff é duplicada no índice** e **não existe campo `handoff_obrigatorio`** |
+| 5 | **status fechado** — `APROVADO`, `AGUARDA_APROVACAO`, `BLOQUEADO`; **sem valor padrão** e **sem `PARCIAL`** |
+| 6 | **fontes autoritativas** — a autoridade do **status** só migra para o índice **depois** da materialização e da bijeção validadas; **até lá o status NÃO sai do Markdown** |
+| 7 | **anti-drift** — formatos de **apresentação pura**, sem função customizada, sem cálculo e **sem leitura implícita de campo adicional**; o símbolo monetário exige *binding* explícito |
+| 8 | **bloqueio de transformação semântica** — se o texto aprovado exigir transformação semântica para corresponder ao YAML, a materialização é **BLOQUEADA** |
+| 9 | **separação C × S2-D8** — C **não** mapeia pergunta para `Rxx`, **não** determina `resposta_aprovada_disponivel` nem `pendencia_impeditiva`, **não** confirma `E09` e **não** atribui produtor |
+
+O que esta arbitragem **NÃO** faz: criar o índice; converter
+`knowledge/respostas-aprovadas.md` em *templates*; remover status do Markdown; implementar
+*parser*, *renderer* ou validador; alterar `knowledge/`, `src/`, `tests/`, `docs/06`,
+`docs/05`, `docs/08`, `prompts/` ou `CLAUDE.md`; decidir `R10`, `R20`, `R13` ou `R17` —
+todos **registrados e não decididos** —; resolver **S2-D8**; escolher a próxima
+implementação funcional; criar a **3B.8**, que **continua não existindo**. A
+**materialização do índice não é autorizada** por esta entrega.
 
 ### Arbitragem N-b — escopo aprovado e integrado à `main`
 
@@ -1037,10 +1068,11 @@ Registradas aqui como estado, não resolvidas nesta entrega.
 | # | Pendência | Antes de quê precisa ser arbitrada |
 |---|---|---|
 | B | Colisão conceitual de nome: `RegistroAtendimento` já existe em `src/casa77_sdr/persistence.py` como dataclass de transporte, enquanto `docs/07` usa o mesmo nome para uma responsabilidade futura | implementar o componente `RegistroAtendimento` descrito em `docs/07` |
-| C | Não existe contrato estruturado, legível por máquina, relacionando as respostas aprovadas (`Rxx`) aos campos do YAML | implementar `ValidadorConsistenciaBase` e, em cascata, `SeletorFatos` e `ValidadorResposta` |
+| C | Contrato estruturado, legível por máquina, ligando as respostas aprovadas (`Rxx`) aos campos do YAML. **ARBITRADA / NÃO MATERIALIZADA.** **CONTRATO: ARBITRADO** — o contrato documental estruturado do futuro índice está **fechado e aprovado** em `docs/07` §2.3, registrado em `docs/07` §12, item 19. **MATERIALIZAÇÃO: NÃO EXISTE** — o arquivo `knowledge/indice-respostas-aprovadas.yaml` **não existe**, `knowledge/respostas-aprovadas.md` **não foi convertido nem alterado**, **nenhum status foi removido do Markdown** e não há *parser*, *renderer* nem validador. **C continua aberta SOMENTE quanto à materialização.** **S2-D8 é pendência separada e continua ABERTA** | **materializar** o índice `knowledge/indice-respostas-aprovadas.yaml` pelo contrato de `docs/07` §2.3 e, só então, implementar `ValidadorConsistenciaBase` e, em cascata, `SeletorFatos` e `ValidadorResposta` |
 
 As pendências **B e C permanecem inalteradas** pelas arbitragens S2, S3, R, R-H e R-I e
-pela implementação funcional da **3B.7** (PR #29).
+pela implementação funcional da **3B.7** (PR #29). **B continua integralmente aberta.**
+**C teve apenas o CONTRATO arbitrado**, em entrega documental posterior (`docs/07` §2.3): ela passa a **ARBITRADA / NÃO MATERIALIZADA** e **continua aberta como materialização**. **Nada foi implementado, convertido ou criado** por essa arbitragem, e **S2-D8 permanece ABERTA** — o status `BLOQUEADO` de um fragmento **não é** `E09` nem `pendencia_impeditiva`.
 
 ### Pendências da arbitragem S2 — não bloqueadoras da 3B.6
 
