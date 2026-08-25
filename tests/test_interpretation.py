@@ -40,6 +40,7 @@ from casa77_sdr.identity import (
     ReferenciaEventoAnterior,
 )
 from casa77_sdr.interpretation import (
+    AssuntoComercial,
     CorrecaoInterpretada,
     DadosExtraidos,
     EntradaInterpretacao,
@@ -63,6 +64,70 @@ MODULO_INTERPRETACAO = (
 
 ALTA = Confianca.ALTA
 BAIXA = Confianca.BAIXA
+
+# Assuntos genéricos usados como terceiro campo de `PerguntaComercial` (AJ2).
+# São **categorias semânticas**, nunca valores comerciais (N-b-Q7).
+ASSUNTO = AssuntoComercial.PRECO_LOCACAO
+ASSUNTO_B = AssuntoComercial.LOCALIZACAO
+NAO_CLASSIFICADO = AssuntoComercial.ASSUNTO_NAO_CLASSIFICADO
+
+#: Ordem documental de `docs/07` §6.3 — **53 específicos + a totalidade**.
+ASSUNTOS_DOCUMENTAIS = [
+    "PRECO_LOCACAO",
+    "PRECO_HORA_ADICIONAL",
+    "PRECO_VARIACAO_POR_DIA_DA_SEMANA",
+    "PRECO_VARIACAO_POR_TEMPORADA",
+    "PRECO_SUITE_DA_NOIVA",
+    "DESCONTO",
+    "PAGAMENTO_E_PARCELAMENTO",
+    "CAUCAO",
+    "VALIDADE_DA_PROPOSTA",
+    "REAJUSTE_DE_PRECO",
+    "PARCERIA_OU_PERMUTA",
+    "MULTAS_E_PENALIDADES",
+    "TIPO_DE_EVENTO",
+    "DATA_BLOQUEADA",
+    "DISPONIBILIDADE_DE_DATA",
+    "CAPACIDADE_MAXIMA_E_FORMATO",
+    "CAPACIDADE_MINIMA",
+    "HORARIO_LIMITE_E_DURACAO",
+    "MONTAGEM_E_DESMONTAGEM",
+    "CONTRATACAO",
+    "CANCELAMENTO",
+    "ALTERACAO_DE_DATA",
+    "LOCALIZACAO",
+    "ESTACIONAMENTO",
+    "ACESSIBILIDADE",
+    "BANHEIROS",
+    "COZINHA",
+    "SUITE_DA_NOIVA",
+    "MOBILIARIO",
+    "CLIMATIZACAO",
+    "ESPACO_INFANTIL",
+    "COBERTURA_E_PLANO_DE_CHUVA",
+    "SOM_E_ILUMINACAO",
+    "GERADOR_E_ENERGIA",
+    "ITENS_INCLUSOS",
+    "EQUIPE_E_LIMPEZA",
+    "FORNECEDOR_PROPRIO",
+    "FORNECEDOR_RECOMENDADO",
+    "RESTRICAO_USO_DE_AREA",
+    "RESTRICAO_FOGOS",
+    "RESTRICAO_ANIMAIS",
+    "RESTRICAO_VELAS",
+    "RESTRICAO_DRONES",
+    "RESTRICAO_DECORACAO",
+    "VISITA",
+    "PRAZO_DE_RETORNO",
+    "HORARIO_DE_ATENDIMENTO",
+    "MATERIAL_FOTOS",
+    "MATERIAL_VIDEOS",
+    "MATERIAL_PLANTA",
+    "MATERIAL_PORTFOLIO",
+    "MATERIAL_APRESENTACAO_COMERCIAL",
+    "LINK_DE_MAPA",
+    "ASSUNTO_NAO_CLASSIFICADO",
+]
 
 
 # --------------------------------------------------------------------------
@@ -255,7 +320,7 @@ def test_payload_ausente_nao_deriva_nenhum_a1() -> None:
 
 def test_perguntas_nao_vazias_derivam_pergunta_comercial() -> None:
     resultado = canonicalizar_interpretacao(
-        entrada(perguntas_comerciais=(PerguntaComercial("tem estacionamento?", ALTA),))
+        entrada(perguntas_comerciais=(PerguntaComercial("tem estacionamento?", ALTA, ASSUNTO),))
     )
     assert confianca_de(resultado, IntencaoConversacional.PERGUNTA_COMERCIAL) is ALTA
 
@@ -312,7 +377,7 @@ def test_agregacao_de_perguntas_segue_n_b_x3(
     confiancas: tuple[Confianca, ...], esperada: Confianca
 ) -> None:
     perguntas = tuple(
-        PerguntaComercial(f"pergunta generica {indice}", confianca)
+        PerguntaComercial(f"pergunta generica {indice}", confianca, ASSUNTO)
         for indice, confianca in enumerate(confiancas)
     )
     resultado = canonicalizar_interpretacao(entrada(perguntas_comerciais=perguntas))
@@ -328,10 +393,10 @@ def _combinacoes_para_propriedade() -> list[EntradaInterpretacao]:
         for confianca_data in (ALTA, BAIXA):
             for perguntas in (
                 (),
-                (PerguntaComercial("pergunta generica", BAIXA),),
+                (PerguntaComercial("pergunta generica", BAIXA, ASSUNTO),),
                 (
-                    PerguntaComercial("pergunta generica a", BAIXA),
-                    PerguntaComercial("pergunta generica b", ALTA),
+                    PerguntaComercial("pergunta generica a", BAIXA, ASSUNTO),
+                    PerguntaComercial("pergunta generica b", ALTA, ASSUNTO),
                 ),
             ):
                 for pedido, confianca_pedido in (
@@ -408,8 +473,8 @@ def test_confianca_a1_armazenada_nao_significa_declarada() -> None:
     resultado = canonicalizar_interpretacao(
         entrada(
             perguntas_comerciais=(
-                PerguntaComercial("pergunta generica a", BAIXA),
-                PerguntaComercial("pergunta generica b", ALTA),
+                PerguntaComercial("pergunta generica a", BAIXA, ASSUNTO),
+                PerguntaComercial("pergunta generica b", ALTA, ASSUNTO),
             )
         )
     )
@@ -725,17 +790,36 @@ def test_correcao_nao_carrega_valor_anterior() -> None:
 # --------------------------------------------------------------------------
 
 
-def test_pergunta_comercial_tem_dois_campos() -> None:
+def test_pergunta_comercial_tem_tres_campos() -> None:
+    """N-b-Q7 (AJ2) — `texto`, `confianca` e `assunto`, nesta ordem."""
     assert [campo.name for campo in dataclasses.fields(PerguntaComercial)] == [
         "texto",
         "confianca",
+        "assunto",
     ]
+
+
+def test_pergunta_comercial_nao_ganhou_campo_auxiliar() -> None:
+    """AJ2 não cria `id`, posição, *offset*, contador nem confiança de assunto."""
+    nomes = {campo.name for campo in dataclasses.fields(PerguntaComercial)}
+    for proibido in (
+        "id",
+        "indice",
+        "posicao",
+        "offset",
+        "ocorrencia",
+        "contador",
+        "confianca_assunto",
+        "rxx",
+        "fragmento",
+    ):
+        assert proibido not in nomes
 
 
 def test_pergunta_alta_e_efetiva() -> None:
     """K-Nb-23."""
     resultado = canonicalizar_interpretacao(
-        entrada(perguntas_comerciais=(PerguntaComercial("pergunta generica", ALTA),))
+        entrada(perguntas_comerciais=(PerguntaComercial("pergunta generica", ALTA, ASSUNTO),))
     )
     assert confianca_de(resultado, IntencaoConversacional.PERGUNTA_COMERCIAL) is ALTA
 
@@ -743,7 +827,7 @@ def test_pergunta_alta_e_efetiva() -> None:
 def test_pergunta_baixa_preserva_texto_e_deriva_baixa() -> None:
     """K-Nb-24 — texto preservado para diagnóstico, não efetivo."""
     resultado = canonicalizar_interpretacao(
-        entrada(perguntas_comerciais=(PerguntaComercial("pergunta generica", BAIXA),))
+        entrada(perguntas_comerciais=(PerguntaComercial("pergunta generica", BAIXA, ASSUNTO),))
     )
     assert resultado.perguntas_comerciais[0].texto == "pergunta generica"
     assert confianca_de(resultado, IntencaoConversacional.PERGUNTA_COMERCIAL) is BAIXA
@@ -754,8 +838,8 @@ def test_pergunta_mista_deriva_alta() -> None:
     resultado = canonicalizar_interpretacao(
         entrada(
             perguntas_comerciais=(
-                PerguntaComercial("pergunta generica a", BAIXA),
-                PerguntaComercial("pergunta generica b", ALTA),
+                PerguntaComercial("pergunta generica a", BAIXA, ASSUNTO),
+                PerguntaComercial("pergunta generica b", ALTA, ASSUNTO),
             )
         )
     )
@@ -765,14 +849,14 @@ def test_pergunta_mista_deriva_alta() -> None:
 def test_pergunta_sem_confianca_e_e_nb_1() -> None:
     with pytest.raises(ValueError, match="E-Nb-1"):
         canonicalizar_interpretacao(
-            entrada(perguntas_comerciais=(PerguntaComercial("pergunta generica", None),))
+            entrada(perguntas_comerciais=(PerguntaComercial("pergunta generica", None, ASSUNTO),))
         )
 
 
 def test_confianca_declarada_sem_valor_correspondente_e_e_nb_2() -> None:
     with pytest.raises(ValueError, match="E-Nb-2"):
         canonicalizar_interpretacao(
-            entrada(perguntas_comerciais=(PerguntaComercial(None, ALTA),))
+            entrada(perguntas_comerciais=(PerguntaComercial(None, ALTA, ASSUNTO),))
         )
 
 
@@ -944,7 +1028,7 @@ def test_trecho_ambiguo_nao_atravessa_a_projecao() -> None:
 def test_texto_vazio_ou_em_branco_e_e_nb_10(texto: str, categoria: str) -> None:
     """K-Nb-12."""
     construtores = {
-        "perguntas_comerciais": lambda: (PerguntaComercial(texto, ALTA),),
+        "perguntas_comerciais": lambda: (PerguntaComercial(texto, ALTA, ASSUNTO),),
         "referencias_evento_anterior": lambda: (
             ReferenciaAoEventoAnterior(texto, ALTA),
         ),
@@ -1179,7 +1263,7 @@ def test_projecao_nao_carrega_pii_nem_texto_conversacional() -> None:
                 contato="contato-ficticio",
                 confianca_contato=ALTA,
             ),
-            perguntas_comerciais=(PerguntaComercial("pergunta generica", ALTA),),
+            perguntas_comerciais=(PerguntaComercial("pergunta generica", ALTA, ASSUNTO),),
             pedido_de_humano=True,
             confianca_pedido_de_humano=ALTA,
             trechos_ambiguos=(TrechoAmbiguoRecebido("trecho generico"),),
@@ -1317,6 +1401,7 @@ def test_condicao_5_e_a_unica_condicao_produzida() -> None:
 def test_superficie_publica_e_exatamente_a_declarada() -> None:
     assert interpretation.__all__ == [
         "IntencaoConversacional",
+        "AssuntoComercial",
         "DadosExtraidos",
         "CorrecaoInterpretada",
         "PerguntaComercial",
@@ -1483,7 +1568,7 @@ def test_canonicalizacao_e_deterministica() -> None:
         dados_extraidos=DadosExtraidos(
             tipo_evento="evento generico", confianca_tipo_evento=ALTA
         ),
-        perguntas_comerciais=(PerguntaComercial("pergunta generica", BAIXA),),
+        perguntas_comerciais=(PerguntaComercial("pergunta generica", BAIXA, ASSUNTO),),
         intencoes_autonomas=autonoma(IntencaoConversacional.INTERESSE_EM_VISITA, ALTA),
     )
     primeiro = canonicalizar_interpretacao(caso)
@@ -1708,8 +1793,8 @@ def test_manual_com_confianca_a1_divergente_e_e_nb_13(consumidor) -> None:
 def test_manual_com_agregacao_de_perguntas_divergente_e_e_nb_13(consumidor) -> None:
     invalida = interpretacao_manual(
         perguntas_comerciais=(
-            PerguntaComercial("pergunta generica a", ALTA),
-            PerguntaComercial("pergunta generica b", BAIXA),
+            PerguntaComercial("pergunta generica a", ALTA, ASSUNTO),
+            PerguntaComercial("pergunta generica b", BAIXA, ASSUNTO),
         ),
         intencoes_detectadas=(
             IntencaoDetectada(IntencaoConversacional.PERGUNTA_COMERCIAL, BAIXA),
@@ -2023,7 +2108,7 @@ def test_dado_textual_em_branco_ainda_deriva_o_a1(texto: str) -> None:
 def test_e_nb_10_continua_produzido_nas_tres_categorias() -> None:
     """K-Nb-12 **não** é alterado."""
     for construir in (
-        lambda: entrada(perguntas_comerciais=(PerguntaComercial("  ", ALTA),)),
+        lambda: entrada(perguntas_comerciais=(PerguntaComercial("  ", ALTA, ASSUNTO),)),
         lambda: entrada(
             referencias_evento_anterior=(ReferenciaAoEventoAnterior("  ", ALTA),)
         ),
@@ -2074,6 +2159,454 @@ def test_e_nb_17_continua_para_divergencia_real() -> None:
                 correcoes=(CorrecaoInterpretada("convidados", 51, ALTA),),
             )
         )
+
+
+# --------------------------------------------------------------------------
+# W. AJ2 — `assunto` de `PerguntaComercial` (K-Nb-41–K-Nb-51)
+# --------------------------------------------------------------------------
+
+
+def pergunta(texto: str, confianca, assunto) -> tuple[PerguntaComercial, ...]:
+    """Coleção de uma consulta comercial, com o terceiro campo explícito."""
+    return (PerguntaComercial(texto, confianca, assunto),)
+
+
+def manual_com_pergunta(*perguntas: PerguntaComercial) -> Interpretacao:
+    """`Interpretacao` montada à mão, canônica **exceto** pelo que o teste varia."""
+    confiancas = tuple(p.confianca for p in perguntas if p.confianca is not None)
+    return interpretacao_manual(
+        perguntas_comerciais=perguntas,
+        intencoes_detectadas=(
+            IntencaoDetectada(
+                IntencaoConversacional.PERGUNTA_COMERCIAL,
+                agregacao_de_referencia(confiancas),
+            ),
+        ),
+    )
+
+
+# --- Vocabulário fechado ---------------------------------------------------
+
+
+def test_assunto_comercial_tem_exatamente_54_valores() -> None:
+    """N-b-Q7 — 53 específicos + `ASSUNTO_NAO_CLASSIFICADO`; nenhum 55º."""
+    assert len(list(AssuntoComercial)) == 54
+
+
+def test_assunto_comercial_segue_a_ordem_documental() -> None:
+    """A ordem de declaração é a de `docs/07` §6.3, membro a membro."""
+    assert [membro.name for membro in AssuntoComercial] == ASSUNTOS_DOCUMENTAIS
+
+
+def test_assunto_comercial_tem_53_especificos_mais_a_totalidade() -> None:
+    especificos = [
+        membro
+        for membro in AssuntoComercial
+        if membro is not AssuntoComercial.ASSUNTO_NAO_CLASSIFICADO
+    ]
+    assert len(especificos) == 53
+    assert AssuntoComercial.ASSUNTO_NAO_CLASSIFICADO in list(AssuntoComercial)
+
+
+def test_assunto_comercial_nao_tem_alias_nem_valor_repetido() -> None:
+    membros = list(AssuntoComercial)
+    assert len({m.name for m in membros}) == 54
+    assert len({m.value for m in membros}) == 54
+    assert len(AssuntoComercial.__members__) == 54
+
+
+def test_assunto_comercial_nao_carrega_valor_comercial() -> None:
+    """São **categorias semânticas**: nenhum membro embute número ou preço."""
+    for membro in AssuntoComercial:
+        assert re.search(r"\d", membro.name) is None
+        assert membro.value == membro.name.lower()
+
+
+# --- Cenários K-Nb-41 a K-Nb-51 -------------------------------------------
+
+
+def test_k_nb_41_assunto_especifico_com_confianca_alta() -> None:
+    """K-Nb-41 — pergunta efetiva; nenhuma condição de §4.4 produzida."""
+    resultado = canonicalizar_interpretacao(
+        entrada(perguntas_comerciais=pergunta("pergunta generica", ALTA, ASSUNTO))
+    )
+    assert resultado.perguntas_comerciais[0].assunto is ASSUNTO
+    assert confianca_de(resultado, IntencaoConversacional.PERGUNTA_COMERCIAL) is ALTA
+    assert decidir_interesse_confirmar_disponibilidade(resultado) is False
+
+
+def test_k_nb_42_assunto_fora_do_vocabulario_e_e_nb_5() -> None:
+    """K-Nb-42 / AJ2-X2 — texto que não é membro de `AssuntoComercial`."""
+    with pytest.raises(ValueError, match="E-Nb-5"):
+        canonicalizar_interpretacao(
+            entrada(
+                perguntas_comerciais=pergunta(
+                    "pergunta generica", ALTA, "assunto inexistente"
+                )
+            )
+        )
+
+
+def test_k_nb_43_assunto_ausente_e_e_nb_5() -> None:
+    """K-Nb-43 / AJ2-X1 — o assunto é obrigatório numa interpretação válida."""
+    with pytest.raises(ValueError, match="E-Nb-5"):
+        canonicalizar_interpretacao(
+            entrada(perguntas_comerciais=pergunta("pergunta generica", ALTA, None))
+        )
+
+
+@pytest.mark.parametrize("invalido", [1, True, 3.5, object(), ["x"], {"a": 1}])
+def test_k_nb_44_assunto_com_tipo_incompativel_e_type_error(invalido: object) -> None:
+    """K-Nb-44 / M-NB4 — tipo runtime incompatível é `TypeError`, **sem código**."""
+    with pytest.raises(TypeError) as capturado:
+        canonicalizar_interpretacao(
+            entrada(
+                perguntas_comerciais=pergunta("pergunta generica", ALTA, invalido)
+            )
+        )
+    assert "E-Nb" not in str(capturado.value)
+
+
+def test_k_nb_45_assunto_nao_classificado_com_alta_e_valido() -> None:
+    """K-Nb-45 / AJ2-N1–AJ2-N4 — não é erro, não é `BAIXA`, não é ausência."""
+    resultado = canonicalizar_interpretacao(
+        entrada(perguntas_comerciais=pergunta("pergunta generica", ALTA, NAO_CLASSIFICADO))
+    )
+    item = resultado.perguntas_comerciais[0]
+    assert item.assunto is NAO_CLASSIFICADO
+    assert item.confianca is ALTA
+    assert confianca_de(resultado, IntencaoConversacional.PERGUNTA_COMERCIAL) is ALTA
+    assert resultado.trechos_ambiguos == ()
+
+
+def test_k_nb_46_pergunta_baixa_com_assunto_valido() -> None:
+    """K-Nb-46 — texto e assunto preservados para diagnóstico; não efetiva."""
+    resultado = canonicalizar_interpretacao(
+        entrada(perguntas_comerciais=pergunta("pergunta generica", BAIXA, ASSUNTO))
+    )
+    item = resultado.perguntas_comerciais[0]
+    assert item.texto == "pergunta generica"
+    assert item.assunto is ASSUNTO
+    assert confianca_de(resultado, IntencaoConversacional.PERGUNTA_COMERCIAL) is BAIXA
+
+
+def test_k_nb_47_representacao_pre_segmentada_e_preservada() -> None:
+    """K-Nb-47 / N-b-Q8 — um assunto por item; texto conforme N-b-Q9.
+
+    A segmentação da consulta composta é responsabilidade do **futuro produtor
+    semântico**: a fronteira **recebe** os itens **já segmentados**, valida os
+    assuntos e **preserva** cada um. `canonicalizar_interpretacao(...)` **não
+    divide texto livre** — este teste fornece duas `PerguntaComercial` e prova
+    que ambas sobrevivem com assuntos distintos e textos literais.
+    """
+    resultado = canonicalizar_interpretacao(
+        entrada(
+            perguntas_comerciais=(
+                PerguntaComercial("primeiro trecho generico", ALTA, ASSUNTO),
+                PerguntaComercial("segundo trecho generico", ALTA, ASSUNTO_B),
+            )
+        )
+    )
+    assert [p.assunto for p in resultado.perguntas_comerciais] == [ASSUNTO, ASSUNTO_B]
+    assert [p.texto for p in resultado.perguntas_comerciais] == [
+        "primeiro trecho generico",
+        "segundo trecho generico",
+    ]
+
+
+def test_k_nb_48_mesmo_assunto_com_textos_diferentes() -> None:
+    """K-Nb-48 — duas `PerguntaComercial` distintas, ambas válidas."""
+    resultado = canonicalizar_interpretacao(
+        entrada(
+            perguntas_comerciais=(
+                PerguntaComercial("pergunta generica a", ALTA, ASSUNTO),
+                PerguntaComercial("pergunta generica b", ALTA, ASSUNTO),
+            )
+        )
+    )
+    assert len(resultado.perguntas_comerciais) == 2
+    assert {p.assunto for p in resultado.perguntas_comerciais} == {ASSUNTO}
+
+
+def test_k_nb_49_duplicata_exata_e_permitida() -> None:
+    """K-Nb-49 / N-b-Q11 — duplicata exata é permitida; nenhum `E-Nb`."""
+    item = PerguntaComercial("pergunta generica", ALTA, ASSUNTO)
+    resultado = canonicalizar_interpretacao(
+        entrada(perguntas_comerciais=(item, item))
+    )
+    assert len(resultado.perguntas_comerciais) == 2
+    assert resultado.perguntas_comerciais[0] == resultado.perguntas_comerciais[1]
+
+
+def test_k_nb_50_mesmo_texto_com_assuntos_distintos() -> None:
+    """K-Nb-50 — um assunto por item (N-b-Q8); texto não exige unicidade."""
+    resultado = canonicalizar_interpretacao(
+        entrada(
+            perguntas_comerciais=(
+                PerguntaComercial("pergunta generica", ALTA, ASSUNTO),
+                PerguntaComercial("pergunta generica", ALTA, ASSUNTO_B),
+            )
+        )
+    )
+    assert [p.assunto for p in resultado.perguntas_comerciais] == [ASSUNTO, ASSUNTO_B]
+    assert {p.texto for p in resultado.perguntas_comerciais} == {"pergunta generica"}
+
+
+def test_k_nb_51_nao_classificado_coexiste_com_trecho_ambiguo() -> None:
+    """K-Nb-51 / AJ2-N5 — coexistem; o trecho continua só diagnóstico."""
+    resultado = canonicalizar_interpretacao(
+        entrada(
+            perguntas_comerciais=pergunta("pergunta generica", ALTA, NAO_CLASSIFICADO),
+            trechos_ambiguos=(TrechoAmbiguoRecebido("trecho generico"),),
+        )
+    )
+    assert resultado.perguntas_comerciais[0].assunto is NAO_CLASSIFICADO
+    assert resultado.trechos_ambiguos == (TrechoAmbiguo("trecho generico"),)
+    projecao = projetar_para_identidade(resultado)
+    assert "trecho generico" not in str(projecao)
+
+
+# --- N-b-Q9: preservação textual literal ----------------------------------
+
+
+@pytest.mark.parametrize("texto", ["  com espacos  ", "MAIUSCULAS", "com\tacento e ~"])
+def test_texto_da_pergunta_permanece_literal_com_assunto(texto: str) -> None:
+    """N-b-Q9 — sem `strip`, sem normalização, sem resumo, sem paráfrase."""
+    resultado = canonicalizar_interpretacao(
+        entrada(perguntas_comerciais=pergunta(texto, ALTA, ASSUNTO))
+    )
+    assert resultado.perguntas_comerciais[0].texto == texto
+
+
+# --- N-b-Q12: o assunto não atravessa nem produz condição ------------------
+
+
+def test_assunto_nao_atravessa_a_projecao() -> None:
+    """N-b-Q12 / N-b-K8 — a projeção continua com **sete** campos, sem assunto."""
+    resultado = canonicalizar_interpretacao(
+        entrada(perguntas_comerciais=pergunta("pergunta generica", ALTA, ASSUNTO))
+    )
+    projecao = projetar_para_identidade(resultado)
+    assert len(dataclasses.fields(ProjecaoInterpretacao)) == 7
+    nomes = {campo.name for campo in dataclasses.fields(ProjecaoInterpretacao)}
+    assert "assunto" not in nomes
+    texto = str(projecao)
+    assert ASSUNTO.name not in texto
+    assert ASSUNTO.value not in texto
+    assert "pergunta generica" not in texto
+
+
+def test_assunto_nao_altera_a_condicao_5() -> None:
+    """N-b-Q12 — a condição 5 continua a única, e o assunto não a move."""
+    for assunto in (ASSUNTO, ASSUNTO_B, NAO_CLASSIFICADO):
+        resultado = canonicalizar_interpretacao(
+            entrada(perguntas_comerciais=pergunta("pergunta generica", ALTA, assunto))
+        )
+        assert decidir_interesse_confirmar_disponibilidade(resultado) is False
+        com_intencao = canonicalizar_interpretacao(
+            entrada(
+                perguntas_comerciais=pergunta("pergunta generica", ALTA, assunto),
+                intencoes_autonomas=autonoma(
+                    IntencaoConversacional.INTERESSE_CONFIRMAR_DISPONIBILIDADE, ALTA
+                ),
+            )
+        )
+        assert decidir_interesse_confirmar_disponibilidade(com_intencao) is True
+
+
+def test_assunto_nao_participa_da_agregacao_n_b_x3() -> None:
+    """N-b-Q6/N-b-Q7 — a agregação depende **somente** das confianças."""
+    for primeiro, segundo in (
+        (ASSUNTO, ASSUNTO),
+        (ASSUNTO, ASSUNTO_B),
+        (NAO_CLASSIFICADO, ASSUNTO),
+    ):
+        resultado = canonicalizar_interpretacao(
+            entrada(
+                perguntas_comerciais=(
+                    PerguntaComercial("pergunta generica a", BAIXA, primeiro),
+                    PerguntaComercial("pergunta generica b", ALTA, segundo),
+                )
+            )
+        )
+        assert confianca_de(
+            resultado, IntencaoConversacional.PERGUNTA_COMERCIAL
+        ) is agregacao_de_referencia((BAIXA, ALTA))
+
+
+# --- Fronteira estrutural --------------------------------------------------
+
+
+def test_assunto_comercial_esta_no_all_do_modulo() -> None:
+    assert "AssuntoComercial" in interpretation.__all__
+
+
+def test_fronteira_continua_fora_do_package_init() -> None:
+    """M-NB1 preservado: nada da fronteira é exportado por `casa77_sdr`."""
+    import casa77_sdr
+
+    for nome in interpretation.__all__:
+        assert nome not in casa77_sdr.__all__
+        assert not hasattr(casa77_sdr, nome)
+
+
+def test_nenhum_codigo_e_nb_novo_foi_criado() -> None:
+    """A lista permanece `E-Nb-1`–`E-Nb-19`: AJ2 amplia `E-Nb-5`, não cria código."""
+    fonte = MODULO_INTERPRETACAO.read_text(encoding="utf-8")
+    codigos = {int(numero) for numero in re.findall(r"E-Nb-(\d+)", fonte)}
+    assert codigos
+    assert max(codigos) == 19
+    assert 20 not in codigos
+
+
+def test_validacao_de_assunto_nao_entra_na_superficie_publica() -> None:
+    """Função privada compartilhada: nenhuma superfície pública nova (D-AJ2-2)."""
+    assert hasattr(interpretation, "_validar_assuntos")
+    assert "_validar_assuntos" not in interpretation.__all__
+
+
+def test_assunto_nao_referencia_rxx_nem_fragmento() -> None:
+    """N-b-Q12 — o assunto não mapeia para `Rxx`, fragmento ou índice de C.
+
+    A prova incide sobre o **código efetivo**: a docstring pode — e deve —
+    dizer o que o módulo deliberadamente **não** faz.
+    """
+    codigo = _codigo_do_modulo_sem_docstrings()
+    for proibido in (
+        "fragmento",
+        "indice-respostas",
+        "respostas-aprovadas",
+        "Rxx",
+    ):
+        assert proibido not in codigo
+
+
+# --- Os dois caminhos de validação ----------------------------------------
+
+
+@pytest.mark.parametrize("consumidor", CONSUMIDORES)
+@pytest.mark.parametrize("assunto", [None, "assunto inexistente"])
+def test_manual_com_assunto_invalido_nao_atravessa(consumidor, assunto) -> None:
+    """Uma `Interpretacao` construída diretamente também é rejeitada."""
+    invalida = manual_com_pergunta(
+        PerguntaComercial("pergunta generica", ALTA, assunto)
+    )
+    with pytest.raises(ValueError, match="E-Nb-5"):
+        consumidor(invalida)
+
+
+@pytest.mark.parametrize("consumidor", CONSUMIDORES)
+def test_manual_com_assunto_de_tipo_incompativel_nao_atravessa(consumidor) -> None:
+    invalida = manual_com_pergunta(PerguntaComercial("pergunta generica", ALTA, 7))
+    with pytest.raises(TypeError):
+        consumidor(invalida)
+
+
+def test_manual_com_assunto_valido_e_aceito_pelos_consumidores() -> None:
+    """Validade, não proveniência: montada à mão com assunto válido → aceita."""
+    valida = manual_com_pergunta(PerguntaComercial("pergunta generica", ALTA, ASSUNTO))
+    projecao = projetar_para_identidade(valida)
+    assert isinstance(projecao, ProjecaoInterpretacao)
+    assert projecao.intencao_identidade is IntencaoIdentidade.NAO_DISCRIMINANTE
+    assert decidir_interesse_confirmar_disponibilidade(valida) is False
+
+
+# --- D-AJ2-2: precedência histórica dos erros N-b/AJ1 ---------------------
+
+
+def test_precedencia_texto_vazio_vence_assunto_ausente() -> None:
+    """E-Nb-10 antes de AJ2 (D-AJ2-2)."""
+    with pytest.raises(ValueError, match="E-Nb-10"):
+        canonicalizar_interpretacao(
+            entrada(perguntas_comerciais=pergunta("   ", ALTA, None))
+        )
+
+
+def test_precedencia_confianca_sem_valor_vence_assunto_ausente() -> None:
+    """E-Nb-2 antes de AJ2 (D-AJ2-2)."""
+    with pytest.raises(ValueError, match="E-Nb-2"):
+        canonicalizar_interpretacao(
+            entrada(perguntas_comerciais=(PerguntaComercial(None, ALTA, None),))
+        )
+
+
+def test_precedencia_valor_sem_confianca_vence_assunto_ausente() -> None:
+    """E-Nb-1 antes de AJ2 (D-AJ2-2)."""
+    with pytest.raises(ValueError, match="E-Nb-1"):
+        canonicalizar_interpretacao(
+            entrada(perguntas_comerciais=pergunta("pergunta generica", None, None))
+        )
+
+
+def test_precedencia_type_error_de_texto_vence_assunto_invalido() -> None:
+    """`TypeError` de texto antes de AJ2 (D-AJ2-2)."""
+    with pytest.raises(TypeError) as capturado:
+        canonicalizar_interpretacao(
+            entrada(
+                perguntas_comerciais=(PerguntaComercial(7, ALTA, "inexistente"),)
+            )
+        )
+    assert "texto" in str(capturado.value)
+
+
+def test_precedencia_confianca_global_vence_assunto_ausente() -> None:
+    """E-Nb-4 antes de AJ2 (D-AJ2-2)."""
+    with pytest.raises(ValueError, match="E-Nb-4"):
+        canonicalizar_interpretacao(
+            entrada(
+                confianca_global=None,
+                perguntas_comerciais=pergunta("pergunta generica", ALTA, None),
+            )
+        )
+
+
+def test_precedencia_e_nb_8_vence_assunto_ausente() -> None:
+    """Validação de `dados_extraidos` antes de AJ2 (D-AJ2-2)."""
+    with pytest.raises(ValueError, match="E-Nb-8"):
+        canonicalizar_interpretacao(
+            entrada(
+                dados_extraidos=DadosExtraidos(convidados=-1, confianca_convidados=ALTA),
+                perguntas_comerciais=pergunta("pergunta generica", ALTA, None),
+            )
+        )
+
+
+def test_precedencia_e_nb_18_vence_assunto_ausente() -> None:
+    """Exclusão mútua das intenções autônomas antes de AJ2 (D-AJ2-2)."""
+    with pytest.raises(ValueError, match="E-Nb-18"):
+        canonicalizar_interpretacao(
+            entrada(
+                intencoes_autonomas=(
+                    IntencaoAutonomaRecebida(
+                        IntencaoConversacional.CONTINUIDADE_DE_EVENTO_DECLARADA, ALTA
+                    ),
+                    IntencaoAutonomaRecebida(
+                        IntencaoConversacional.EVENTO_NOVO_DECLARADO, ALTA
+                    ),
+                ),
+                perguntas_comerciais=pergunta("pergunta generica", ALTA, None),
+            )
+        )
+
+
+def test_k_nb_1_a_k_nb_40_nao_mudam_de_semantica() -> None:
+    """A extensão AJ2 não altera nada do que já era válido com assunto correto."""
+    resultado = canonicalizar_interpretacao(
+        entrada(
+            dados_extraidos=DadosExtraidos(
+                tipo_evento="evento generico", confianca_tipo_evento=ALTA
+            ),
+            perguntas_comerciais=pergunta("pergunta generica", BAIXA, ASSUNTO),
+            intencoes_autonomas=autonoma(
+                IntencaoConversacional.INTERESSE_EM_VISITA, ALTA
+            ),
+        )
+    )
+    assert confianca_de(resultado, IntencaoConversacional.PERGUNTA_COMERCIAL) is BAIXA
+    assert (
+        confianca_de(resultado, IntencaoConversacional.TIPO_EVENTO_INFORMADO) is ALTA
+    )
+    assert projetar_para_identidade(resultado).tipo_evento_extraido == "evento generico"
 
 
 # --------------------------------------------------------------------------
