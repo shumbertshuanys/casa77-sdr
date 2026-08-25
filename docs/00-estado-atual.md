@@ -4,7 +4,7 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-25 (arbitragem S2-D8).
+Atualizado em: 2026-08-25 (reconciliação pós-PR #59).
 
 ## Referências
 
@@ -30,12 +30,14 @@ Atualizado em: 2026-08-25 (arbitragem S2-D8).
 | Reconciliação documental **anterior a essa** | Reconciliação de `docs/00` após o PR #51 — PR #52, commit documental `f3fafee09b7d6bad464134fd9d20d603ebbb0122`, merge `cc7f4493b97935ef92efe2e821d7a032d16db1a4`, branch de origem `docs/reconciliar-estado-pos-pr51` — **148 adições, 40 remoções**. **Não altera o marco funcional** |
 | Reconciliação documental **anterior a essa (2)** | Reconciliação de `docs/00` após o PR #49 — PR #50, commit documental `5509a3f2e01a79cf52acde427794b1de4ec07ff1`, merge `60701aaaf7a85614e27cf3e95b6a25870769aee5`, branch de origem `docs/reconciliar-estado-pos-pr49` — **217 adições, 120 remoções**. **Não altera o marco funcional** |
 | Reconciliação documental **anterior a essa (3)** | Reconciliação de `docs/00` após o PR #47 — PR #48, commit documental `db9b202eeea95cbf249863a0cd4967627eae0156`, merge `5a059b4b7ba69e912c960bfa4d7a7990228a6792` — **125 adições, 78 remoções**. **Não altera o marco funcional** |
-| Base da presente reconciliação | `ba412502124bac3ce3f38554f81c265ed739672b` — HEAD da `main` verificado **antes** da reconciliação pós-PR #55 (PR #55, **funcional**) |
+| Base da reconciliação **pós-PR #55** | `ba412502124bac3ce3f38554f81c265ed739672b` — HEAD da `main` verificado **antes** daquela reconciliação (PR #55, **funcional**) |
 | Integração da **reconciliação pós-PR #55** | **PR #56** — merge na `main` `86258cfe0b99fc737b3bac042a521ed162aca152`, a partir da branch `docs/reconciliar-estado-pos-pr55`. **Documental**: **não altera o marco funcional** |
 | Integração da **arbitragem C** | **PR #57** — commit documental `2ba5a2833350844f6148f1c3223bca1783342737`, merge na `main` `89458bb7efea23d8f7889a0b5ab076a1d0c7f130`, branch de origem `docs/arbitragem-c-indice-respostas`. Arquivos: **exclusivamente** `docs/00-estado-atual.md` e `docs/07-arquitetura-motor-respostas.md` — **401 adições, 6 remoções**. **Documental**: **não altera o marco funcional** e **não implementa código** |
 | Base da entrega **AJ2** | `89458bb7efea23d8f7889a0b5ab076a1d0c7f130` — HEAD da `main` verificado **antes** daquela entrega |
 | Integração da **arbitragem AJ2** | **PR #58** — commit documental `2dea157abee04407791ade56017b6fe159e91c74`, merge na `main` `111e5c31826ba839ff4e0599b45bc98d34620128`, branch de origem `docs/aj2-assunto-pergunta-comercial`. Arquivos: **exclusivamente** `docs/00-estado-atual.md` e `docs/07-arquitetura-motor-respostas.md` — **402 adições, 18 remoções**. **Documental**: **não altera o marco funcional** e **não implementa código** |
-| Base da presente entrega (**S2-D8**) | `111e5c31826ba839ff4e0599b45bc98d34620128` — HEAD da `main` verificado **antes** desta entrega |
+| Base da entrega **S2-D8** | `111e5c31826ba839ff4e0599b45bc98d34620128` — HEAD da `main` verificado **antes** daquela entrega |
+| Integração da **arbitragem S2-D8** | **PR #59** — commit documental `6bbd1185d3a31cc3b307ce3c7c2abe67085e7c66`, merge na `main` `eff50138ce9e10ff71f34920077b843bbc201264`, branch de origem `docs/arbitragem-s2-d8`. Arquivos: **exclusivamente** `docs/00-estado-atual.md`, `docs/06-maquina-de-estados.md` e `docs/07-arquitetura-motor-respostas.md` — **673 adições, 36 remoções**. **Documental**: **não altera o marco funcional** e **não implementa código** |
+| Base da presente reconciliação (**pós-PR #59**) | `eff50138ce9e10ff71f34920077b843bbc201264` — HEAD da `main` verificado **antes** desta reconciliação |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -774,8 +776,12 @@ a **pendência residual continua aberta**.
     muda no marco funcional: **baseline `1167 passed` / Python 3.14.5** permanece vigente,
     a **3B.7** continua a última subetapa numerada, a **3B.8 não existe**, **C continua não
     materializada** e a **próxima implementação funcional continua NÃO ESCOLHIDA**.
-23. **A arbitragem S2-D8 está ARBITRADA / NÃO MATERIALIZADA.** Esta entrega é
-    **exclusivamente documental** e fecha o **contrato** de detecção e classificação de
+23. **A arbitragem S2-D8 está ARBITRADA / NÃO MATERIALIZADA e INTEGRADA À `main` pelo
+    PR #59** — commit documental `6bbd1185d3a31cc3b307ce3c7c2abe67085e7c66`, merge
+    `eff50138ce9e10ff71f34920077b843bbc201264`, branch de origem `docs/arbitragem-s2-d8`,
+    **exclusivamente** `docs/00-estado-atual.md`, `docs/06-maquina-de-estados.md` e
+    `docs/07-arquitetura-motor-respostas.md`, **673 adições / 36 remoções**. Aquela entrega
+    foi **exclusivamente documental** e fechou o **contrato** de detecção e classificação de
     pendências e de cobertura de resposta aprovada, **antes da etapa 7**, em
     `docs/07-arquitetura-motor-respostas.md` §4.4.1, com reflexos em §2.2, §4.4, §5, §6.3,
     §7, §8.2 e §12 (item 10), e em `docs/06-maquina-de-estados.md` §1.2, §1.3, §2.2, §3
@@ -803,6 +809,21 @@ a **pendência residual continua aberta**.
     funcional: **o PR #55 continua o último funcional**, a **baseline `1167 passed` / Python
     3.14.5** permanece vigente, a **3B.7** continua a última subetapa numerada, a **3B.8 não
     existe** e a **próxima implementação funcional continua NÃO ESCOLHIDA**.
+24. **A presente entrega é exclusivamente reconciliação documental de
+    `docs/00-estado-atual.md` após o merge do PR #59.** Base reconciliada:
+    `eff50138ce9e10ff71f34920077b843bbc201264`. Ela **não altera código, testes,
+    `docs/06`, `docs/07`, `docs/05`, `docs/08`, base de conhecimento nem prompts**, e
+    **nenhuma execução de testes ocorre nela** — os números funcionais registrados
+    continuam sendo os **`320 passed`** / **`1167 passed`** executados e auditados em
+    **Python 3.14.5** antes do merge do **PR #55**. **Nada é materializado aqui**: o
+    contrato de S2-D8 continua **ARBITRADO / NÃO MATERIALIZADO**, **AJ2** e **C** continuam
+    **ARBITRADAS / NÃO MATERIALIZADAS**, **`N-b-RES2` continua ABERTO**, o índice
+    `knowledge/indice-respostas-aprovadas.yaml` e o **mapa de cobertura R2** continuam
+    **inexistentes** e o **`OrquestradorMotor` continua não implementado**. **O marco
+    funcional permanece o do PR #55** (`3f24e216…` / merge `ba412502…`), a **baseline
+    permanece `1167 passed` / Python 3.14.5**, a **3B.7** permanece a **última subetapa
+    funcional numerada**, a **3B.8 NÃO EXISTE** e a **próxima implementação funcional
+    continua NÃO ESCOLHIDA** — esta reconciliação **não a escolhe**.
 
 ## Arbitragens
 
@@ -812,7 +833,7 @@ já alcançou a `main`.
 
 | # | Arbitragem | Decisão | Evidência |
 |---|---|---|---|
-| S2-D8 | **Contrato de detecção e classificação de pendências, e de cobertura de resposta aprovada** (`docs/07-arquitetura-motor-respostas.md` §2.2, §4.4, §4.4.1, §5, §6.3, §7, §8.2 e §12, item 10; `docs/06-maquina-de-estados.md` §1.2, §1.3, §2.2, §3, §4.3, §9 e §11) | **ARBITRADA / NÃO MATERIALIZADA.** Fecha **documentalmente** o contrato do produtor de `E09`, de `pendencia_impeditiva` e de `resposta_aprovada_disponivel`, em **dois eixos** — **A**, de qualificação, e **B**, de resposta. **Não cria componente, estado, evento, transição, condição, critério, ação, efeito paralelo, inércia, pendência nem subetapa**, e **não implementa código nem altera testes** — `src/`, `tests/`, `knowledge/` e `prompts/` permanecem **fora** dela. **Não cria marco funcional.** **Não materializa AJ2**, **não materializa C** e **não fecha `N-b-RES2`**, que **continua ABERTO**. As condições **2** e **4** de `docs/07` §4.4 passam a ter **produtor conceitual**; a **condição 8 continua NÃO ATRIBUÍDA**. Escopo abaixo | Entrega **exclusivamente documental**, em `docs/00-estado-atual.md`, `docs/06-maquina-de-estados.md` e `docs/07-arquitetura-motor-respostas.md`. Branch de origem: `docs/arbitragem-s2-d8`. Base: `111e5c31826ba839ff4e0599b45bc98d34620128` |
+| S2-D8 | **Contrato de detecção e classificação de pendências, e de cobertura de resposta aprovada** (`docs/07-arquitetura-motor-respostas.md` §2.2, §4.4, §4.4.1, §5, §6.3, §7, §8.2 e §12, item 10; `docs/06-maquina-de-estados.md` §1.2, §1.3, §2.2, §3, §4.3, §9 e §11) | **ARBITRADA / NÃO MATERIALIZADA.** Fecha **documentalmente** o contrato do produtor de `E09`, de `pendencia_impeditiva` e de `resposta_aprovada_disponivel`, em **dois eixos** — **A**, de qualificação, e **B**, de resposta. **Não cria componente, estado, evento, transição, condição, critério, ação, efeito paralelo, inércia, pendência nem subetapa**, e **não implementa código nem altera testes** — `src/`, `tests/`, `knowledge/` e `prompts/` permanecem **fora** dela. **Não cria marco funcional.** **Não materializa AJ2**, **não materializa C** e **não fecha `N-b-RES2`**, que **continua ABERTO**. As condições **2** e **4** de `docs/07` §4.4 passam a ter **produtor conceitual**; a **condição 8 continua NÃO ATRIBUÍDA**. Escopo abaixo | **INTEGRADA À `main` pelo PR #59** — commit documental `6bbd1185d3a31cc3b307ce3c7c2abe67085e7c66`, merge `eff50138ce9e10ff71f34920077b843bbc201264`, branch de origem `docs/arbitragem-s2-d8`. Entrega **exclusivamente documental**, em `docs/00-estado-atual.md`, `docs/06-maquina-de-estados.md` e `docs/07-arquitetura-motor-respostas.md` — **673 adições, 36 remoções**. Base: `111e5c31826ba839ff4e0599b45bc98d34620128`. **A integração documental não materializa S2-D8** |
 | AJ2 | **Origem semântica do assunto de `PerguntaComercial`** (`docs/07-arquitetura-motor-respostas.md` §6.3, §8.2 e §12, item 20) | **ARBITRADA / NÃO MATERIALIZADA.** Micro-arbitragem **exclusivamente documental** que **ESTENDE FORMALMENTE N-b**: `PerguntaComercial` passa conceitualmente de **dois** para **três** campos, com **`assunto`** obrigatório do enum fechado **`AssuntoComercial`** (**54** valores). **Não cria componente, estado, evento, transição, condição, critério, pendência nem subetapa**, e **não implementa código nem altera testes** — `src/`, `tests/`, `knowledge/` e `prompts/` permanecem **fora** dela. **Não cria marco funcional.** **O delta NÃO está materializado**: o **PR #55 permanece o último funcional** e sua implementação **ainda não possui `assunto`**. Escopo abaixo | **INTEGRADA À `main` pelo PR #58** — commit documental `2dea157abee04407791ade56017b6fe159e91c74`, merge `111e5c31826ba839ff4e0599b45bc98d34620128`, branch de origem `docs/aj2-assunto-pergunta-comercial`. Entrega **exclusivamente documental**, em `docs/07-arquitetura-motor-respostas.md` (§6.3, §8.2 e §12, item 20) e `docs/00-estado-atual.md` — **402 adições, 18 remoções**. Base: `89458bb7efea23d8f7889a0b5ab076a1d0c7f130`. **A integração documental não materializa o delta AJ2** |
 | C | **Contrato do índice estruturado de respostas aprovadas** (`docs/07-arquitetura-motor-respostas.md` §2.3 e §12, item 19) | **ARBITRADA / NÃO MATERIALIZADA.** Fecha **documentalmente** o contrato do futuro índice `knowledge/indice-respostas-aprovadas.yaml`, **sem criá-lo** e **sem criar componente, estado, evento, transição, condição, critério, pendência ou subetapa**. **Não implementa código, não converte `knowledge/respostas-aprovadas.md`, não remove status do Markdown e não altera `knowledge/`, `src/` ou `tests/`** — esses diretórios permanecem **fora** desta arbitragem. **Não cria marco funcional.** A **materialização do índice permanece futura** e **não é autorizada** por ela. Escopo abaixo | Entrega **exclusivamente documental**, em `docs/07-arquitetura-motor-respostas.md` (§2.3 e §12, item 19) e `docs/00-estado-atual.md`. Branch de origem: `docs/arbitragem-c-indice-respostas` |
 | AJ1 | **Representação e canonicalização determinística de N-b** (`docs/07-arquitetura-motor-respostas.md` §6.3, §8.2 e §12) | **APROVADA — INTEGRADA À MAIN.** Micro-arbitragem **exclusivamente documental** que fecha a **representação/canonicalização** da `Interpretacao` **antes** de qualquer materialização em código, **sem criar componente, estado, evento, transição, critério, campo, erro, cenário ou subetapa**. Aprovada pelo GPT e **integrada à `main`** pelo **PR #53** (**MERGED**). **AJ1 não reabriu N-b, não a implementou, não tornou a etapa 4 funcional e não criou produtor LLM** — seu contrato foi **materializado depois**, na parte determinística, pelo **PR #55**. **N-b permanece ARBITRADA e PARCIALMENTE MATERIALIZADA.** Escopo resumido abaixo | PR #53 — commit documental `d1137cf67c42eae37ec8e837a56350da6c7fbabe`, merge `2e9df1f4dfcd11903d410ba7a42ba12d86eb2b15`, branch de origem `docs/nb-aj1-canonicalizacao`. Alterou **exclusivamente** `docs/07-arquitetura-motor-respostas.md` — **156 adições, 1 remoção** |
