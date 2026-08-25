@@ -4,7 +4,7 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-25 (reconciliação pós-PR #61).
+Atualizado em: 2026-08-25 (micro-arbitragem C-A1).
 
 ## Referências
 
@@ -42,7 +42,9 @@ Atualizado em: 2026-08-25 (reconciliação pós-PR #61).
 | Integração da **reconciliação pós-PR #59** | **PR #60** — commit documental `be592a800934d2eab5c9bc21877792bae5ed8e83`, merge na `main` `5a1cd85ff6814750bfb2740fa2155f3bf528d029`, branch de origem `docs/reconciliar-estado-pos-pr59`. Arquivo: **exclusivamente** `docs/00-estado-atual.md` — **27 adições, 6 remoções**. **Documental**: **não altera o marco funcional** |
 | Base da **materialização funcional AJ2** | `5a1cd85ff6814750bfb2740fa2155f3bf528d029` — HEAD da `main` verificado **antes** daquela entrega |
 | Integração da **materialização funcional AJ2** | **PR #61** — commit **funcional** `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`, merge na `main` `5a722a5cc648149330362434694e7e76a40c1b57`, branch de origem `feat/materializar-aj2-assunto`. Arquivos: **exclusivamente** `src/casa77_sdr/interpretation.py`, `tests/test_interpretation.py` e `docs/07-arquitetura-motor-respostas.md` — **762 adições, 28 remoções**. **FUNCIONAL**: **passa a ser o marco funcional** da `main`, **sem numeração de subetapa** |
-| Base da presente reconciliação (**pós-PR #61**) | `5a722a5cc648149330362434694e7e76a40c1b57` — HEAD da `main` verificado **antes** desta reconciliação |
+| Base da reconciliação **pós-PR #61** | `5a722a5cc648149330362434694e7e76a40c1b57` — HEAD da `main` verificado **antes** daquela reconciliação |
+| Integração da **reconciliação pós-PR #61** | **PR #62** — commit documental `72310436d479fcb8494f9957fb42e7da1ac63a83`, merge na `main` `4ba1cdfe4397e90692efdec06357cb079e44ca8a`, branch de origem `docs/reconciliar-estado-pos-pr61`. Arquivo: **exclusivamente** `docs/00-estado-atual.md` — **116 adições, 39 remoções**. **Documental**: **não altera o marco funcional** |
+| Base da presente entrega (**C-A1**) | `4ba1cdfe4397e90692efdec06357cb079e44ca8a` — HEAD da `main` verificado **antes** desta entrega |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -885,6 +887,65 @@ a **pendência residual continua aberta**.
     do merge do **PR #61**. **Nada é materializado aqui**, **nenhuma numeração é criada** e
     **a 3B.8 continua não existindo**. **Esta é a única reconciliação pós-PR #61**: nenhuma
     "reconciliação da reconciliação" será criada.
+27. **A micro-arbitragem C-A1 é a presente entrega e está ARBITRADA DOCUMENTALMENTE.** Ela é
+    **exclusivamente documental**, **posterior** à arbitragem C, e **fecha o contrato de
+    MATERIALIZAÇÃO** de C em `docs/07-arquitetura-motor-respostas.md` §2.3, com registro em
+    §12, item 19. Base: `4ba1cdfe4397e90692efdec06357cb079e44ca8a`. **O que ela fecha**: a
+    **equivalência de *template*** **`C-15a`**–**`C-15e`** — vínculo explícito ao fato
+    afirmado, equivalência textual do **fragmento inteiro** sob **NFC** e quebras suaves,
+    **fail-closed** sem equivalência, e proibição de guardar valor, *snapshot*, *hash* ou
+    versão congelada no índice —; os **refinamentos de C-6** (`inteiro_agrupado`,
+    `simbolo_moeda` com tabela fechada e falha para código não suportado, `hora` com
+    `HH:MM` e `Hh` **apenas** quando os minutos são `00`); a **convenção final do formato
+    `lista`**; a **preservação de C-5** com **sete rejeições explícitas**; a **proibição de
+    seleção posicional** em coleção, com exigência de **identificador estrutural estável e
+    não comercial**; a **unidade de bijeção** no **fragmento emitível**; a
+    **canonicalização de status** e as **cinco condições** de migração de autoridade; a
+    **prioridade de modelagem** e a regra de **prosa não duplicada**; a **auditoria
+    obrigatória de consumidores** antes de qualquer alteração física do YAML; os **alvos de
+    modelo `MD-1`–`MD-18`** — com **`MD-3` REMOVIDO / NÃO ARBITRADO** e **`MD-16` REMOVIDO /
+    NÃO NECESSÁRIO PARA C** —; e a **matriz `G1`–`G14`**. **`C-1`–`C-14` permanecem registro
+    histórico** e **não foram reescritas**. **Nenhum pytest foi executado nesta entrega.**
+    **C-A1 NÃO cria o índice, NÃO altera o YAML, NÃO converte respostas em *templates*, NÃO
+    muda status real, NÃO implementa renderizador nem carregador e NÃO materializa C, R2 ou
+    S2-D8.** Ela **não cria marco funcional**: o **último funcional continua o PR #61** —
+    commit `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`, merge
+    `5a722a5cc648149330362434694e7e76a40c1b57` —, a **baseline permanece `1215 passed` /
+    Python 3.14.5**, a **3B.7** continua a **última subetapa funcional numerada** e a
+    **3B.8 NÃO EXISTE**. **Preserva sem alteração**: `docs/07` §4.1 com **14** componentes,
+    §2 com **nove** responsabilidades, §4.4 com **oito** condições, `AssuntoComercial` com
+    **54** valores, `IntencaoConversacional` com **11**, os erros **`E-Nb-1`–`E-Nb-19`**, os
+    cenários **`K-Nb-1`–`K-Nb-51`**, os **20** códigos de `AcaoMaquina` e os **12**
+    `CriterioIdentidade`. **Contagens PROJETADAS de fragmentos, não estado físico atual**:
+    **35** fragmentos emitíveis no total; **7** estruturalmente representáveis no contrato
+    **original**; **11** após os refinamentos normativos de C-A1, **sem** alterar o YAML e
+    **sem** decisão humana; **29** após C-A1 mais os alvos de modelo e as confirmações
+    factuais; e **6** residuais dependentes de **C-A2** — **29 + 6 = 35**. No nível `Rxx`, no
+    **cenário futuro projetado**: **24** integralmente materializáveis, **4** parcialmente e
+    **2** integralmente bloqueados — **24 + 4 + 2 = 30**. **Hoje nada está materializado.**
+28. **`C-A2` fica ABERTA como arbitragem residual humana.** Ela é o **rótulo** da futura
+    arbitragem dos **fatos humanos** — **`A1`** forma de tratamento autorizada do
+    responsável; **`A2`** política explícita sobre existência ou inexistência de mínimo;
+    **`A3`** semântica factual necessária para modelar a retenção integral; **`A4`**
+    capacidade operacional do bot de confirmar disponibilidade — e do **conteúdo humano
+    residual**: **`B1`** `R11` `F2`; **`B2`** `R12` `F1`; **`B3`** `R18`; **`B4`** `R19`;
+    **`B5`** `R23` `F1`; **`B6`** `R25` `F1`. **Nenhuma dessas pendências é resolvida aqui**,
+    **nenhuma redação nova é escrita** e **nenhuma decisão comercial é tomada**. **`R17` e
+    `R20` não entram como pendência de redação.** **Nem C-A1 nem C-A2 são subetapa do
+    roadmap**, e **nenhum dos dois cria a 3B.8**. Os **alvos `MD-x` são ALVOS FUTUROS, não
+    alterações autorizadas**: nenhum deles é executado, e **todos** exigem **auditoria
+    read-only de consumidores em todo o repositório** antes de qualquer alteração física de
+    `knowledge/casa77.yaml`. **C continua ARBITRADA / NÃO MATERIALIZADA**, **S2-D8 continua
+    ARBITRADA / NÃO MATERIALIZADA**, **AJ2 continua MATERIALIZADA na fronteira
+    determinística**, **`N-b-RES2` continua ABERTO**, o **`OrquestradorMotor` continua não
+    implementado** e a **próxima implementação funcional continua NÃO ESCOLHIDA**.
+29. **Evidência factual de C-A1 — auditoria read-only `Rxx` × YAML.** A base factual da
+    micro-arbitragem é um **relatório sanitizado**, identificado pelo SHA-256
+    `c0cf81d6e1a93c8ba19ed5a1863c93be4f1c37954702a8e94720a8a6b4ec79b0`. Ele **NÃO é
+    versionado**, **vive fora do repositório** e **não contém fonte comercial nova**: usa
+    apenas identificadores `Rxx`, identificadores locais de fragmento, **caminhos** YAML,
+    tipos estruturais, categorias de auditoria e descrições abstratas. A auditoria foi
+    **read-only** e **não alterou** `knowledge/`, `src/`, `tests/` nem documento algum.
 
 ## Arbitragens
 
@@ -896,6 +957,8 @@ já alcançou a `main`.
 |---|---|---|---|
 | S2-D8 | **Contrato de detecção e classificação de pendências, e de cobertura de resposta aprovada** (`docs/07-arquitetura-motor-respostas.md` §2.2, §4.4, §4.4.1, §5, §6.3, §7, §8.2 e §12, item 10; `docs/06-maquina-de-estados.md` §1.2, §1.3, §2.2, §3, §4.3, §9 e §11) | **ARBITRADA / NÃO MATERIALIZADA.** Fecha **documentalmente** o contrato do produtor de `E09`, de `pendencia_impeditiva` e de `resposta_aprovada_disponivel`, em **dois eixos** — **A**, de qualificação, e **B**, de resposta. **Não cria componente, estado, evento, transição, condição, critério, ação, efeito paralelo, inércia, pendência nem subetapa**, e **não implementa código nem altera testes** — `src/`, `tests/`, `knowledge/` e `prompts/` permanecem **fora** dela. **Não cria marco funcional.** **Não materializa AJ2**, **não materializa C** e **não fecha `N-b-RES2`**, que **continua ABERTO**. As condições **2** e **4** de `docs/07` §4.4 passam a ter **produtor conceitual**; a **condição 8 continua NÃO ATRIBUÍDA**. Escopo abaixo | **INTEGRADA À `main` pelo PR #59** — commit documental `6bbd1185d3a31cc3b307ce3c7c2abe67085e7c66`, merge `eff50138ce9e10ff71f34920077b843bbc201264`, branch de origem `docs/arbitragem-s2-d8`. Entrega **exclusivamente documental**, em `docs/00-estado-atual.md`, `docs/06-maquina-de-estados.md` e `docs/07-arquitetura-motor-respostas.md` — **673 adições, 36 remoções**. Base: `111e5c31826ba839ff4e0599b45bc98d34620128`. **A integração documental não materializa S2-D8** |
 | AJ2 | **Origem semântica do assunto de `PerguntaComercial`** (`docs/07-arquitetura-motor-respostas.md` §6.3, §8.2 e §12, item 20) | **ARBITRADA / MATERIALIZADA na fronteira determinística.** Micro-arbitragem **exclusivamente documental** que **ESTENDE FORMALMENTE N-b**: `PerguntaComercial` passa conceitualmente de **dois** para **três** campos, com **`assunto`** obrigatório do enum fechado **`AssuntoComercial`** (**54** valores). **Não cria componente, estado, evento, transição, condição, critério, pendência nem subetapa**, e **não implementa código nem altera testes** — `src/`, `tests/`, `knowledge/` e `prompts/` permanecem **fora** dela. **Não cria marco funcional.** **À época da arbitragem o delta NÃO estava materializado** e o **PR #55 era o último funcional**; o delta foi **materializado depois**, pelo **PR #61**, na **fronteira determinística** (`docs/07` §6.3, **M-AJ2-1**–**M-AJ2-9**). Escopo abaixo | **INTEGRADA À `main` pelo PR #58** — commit documental `2dea157abee04407791ade56017b6fe159e91c74`, merge `111e5c31826ba839ff4e0599b45bc98d34620128`, branch de origem `docs/aj2-assunto-pergunta-comercial`. Entrega **exclusivamente documental**, em `docs/07-arquitetura-motor-respostas.md` (§6.3, §8.2 e §12, item 20) e `docs/00-estado-atual.md` — **402 adições, 18 remoções**. Base: `89458bb7efea23d8f7889a0b5ab076a1d0c7f130`. **Aquela integração era documental e não materializava o delta.** **MATERIALIZAÇÃO FUNCIONAL POSTERIOR pelo PR #61** — commit funcional `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`, merge `5a722a5cc648149330362434694e7e76a40c1b57`, branch `feat/materializar-aj2-assunto`, **762 adições / 28 remoções**, baseline **`1215 passed`** / Python 3.14.5 |
+| C-A1 | **Fechamento do contrato de materialização de C** (`docs/07-arquitetura-motor-respostas.md` §2.3 e §12, item 19) | **ARBITRADA DOCUMENTALMENTE.** Micro-arbitragem **exclusivamente documental** e **posterior** a **C**, que **refina a leitura futura** do contrato de materialização: equivalência de *template* **`C-15a`–`C-15e`**, refinamentos de **C-6** (`inteiro_agrupado`, `simbolo_moeda`, `hora`), **convenção final do formato `lista`**, preservação de **C-5** com **sete rejeições explícitas**, **proibição de seleção posicional** em coleção, **unidade de bijeção no fragmento emitível**, **canonicalização e migração de status**, **prioridade de modelagem**, regra de **prosa não duplicada**, **auditoria obrigatória de consumidores**, alvos de modelo **`MD-1`–`MD-18`** — com **`MD-3`** e **`MD-16`** **REMOVIDOS** — e a matriz **`G1`–`G14`**. **`C-1`–`C-14` permanecem registro histórico e não são reescritas.** **Não cria componente, responsabilidade, condição, estado, evento, transição, ação, critério, enum, erro, cenário nem subetapa**, e **não implementa código nem altera testes** — `src/`, `tests/`, `knowledge/` e `prompts/` permanecem **fora** dela. **Não cria marco funcional.** **Não cria o índice, não altera o YAML, não converte respostas em *templates* e não muda status real.** **C permanece ARBITRADA / NÃO MATERIALIZADA**; **C-A2** fica **ABERTA**. Escopo abaixo | Entrega **exclusivamente documental**, em `docs/07-arquitetura-motor-respostas.md` (§2.3 e §12, item 19) e `docs/00-estado-atual.md`. Branch de origem: `docs/arbitragem-c-a1`. Base: `4ba1cdfe4397e90692efdec06357cb079e44ca8a` |
+| C-A2 | **Fatos e conteúdo humanos residuais da materialização de C** (`docs/07-arquitetura-motor-respostas.md` §2.3, bloco `C-A1-A2`) | **ABERTA.** Rótulo da **futura arbitragem** dos **fatos humanos** `A1`–`A4` e do **conteúdo humano residual** `B1`–`B6`, enumerados por **C-A1** e **não resolvidos** por ela. **Nenhuma redação nova é escrita** e **nenhuma decisão comercial é tomada** enquanto ela estiver aberta. **Não é subetapa do roadmap** e **não cria a 3B.8** | Sem entrega associada. Registrada por **C-A1** (§2.3, `C-A1-A2`) |
 | C | **Contrato do índice estruturado de respostas aprovadas** (`docs/07-arquitetura-motor-respostas.md` §2.3 e §12, item 19) | **ARBITRADA / NÃO MATERIALIZADA.** Fecha **documentalmente** o contrato do futuro índice `knowledge/indice-respostas-aprovadas.yaml`, **sem criá-lo** e **sem criar componente, estado, evento, transição, condição, critério, pendência ou subetapa**. **Não implementa código, não converte `knowledge/respostas-aprovadas.md`, não remove status do Markdown e não altera `knowledge/`, `src/` ou `tests/`** — esses diretórios permanecem **fora** desta arbitragem. **Não cria marco funcional.** A **materialização do índice permanece futura** e **não é autorizada** por ela. Escopo abaixo | Entrega **exclusivamente documental**, em `docs/07-arquitetura-motor-respostas.md` (§2.3 e §12, item 19) e `docs/00-estado-atual.md`. Branch de origem: `docs/arbitragem-c-indice-respostas` |
 | AJ1 | **Representação e canonicalização determinística de N-b** (`docs/07-arquitetura-motor-respostas.md` §6.3, §8.2 e §12) | **APROVADA — INTEGRADA À MAIN.** Micro-arbitragem **exclusivamente documental** que fecha a **representação/canonicalização** da `Interpretacao` **antes** de qualquer materialização em código, **sem criar componente, estado, evento, transição, critério, campo, erro, cenário ou subetapa**. Aprovada pelo GPT e **integrada à `main`** pelo **PR #53** (**MERGED**). **AJ1 não reabriu N-b, não a implementou, não tornou a etapa 4 funcional e não criou produtor LLM** — seu contrato foi **materializado depois**, na parte determinística, pelo **PR #55**. **N-b permanece ARBITRADA e PARCIALMENTE MATERIALIZADA.** Escopo resumido abaixo | PR #53 — commit documental `d1137cf67c42eae37ec8e837a56350da6c7fbabe`, merge `2e9df1f4dfcd11903d410ba7a42ba12d86eb2b15`, branch de origem `docs/nb-aj1-canonicalizacao`. Alterou **exclusivamente** `docs/07-arquitetura-motor-respostas.md` — **156 adições, 1 remoção** |
 | N-b | **Contrato global da interpretação da etapa 4** — a `Interpretacao` (`docs/07-arquitetura-motor-respostas.md` §6.3) | **APROVADA — INTEGRADA À MAIN.** Fecha **documentalmente** o contrato da **saída da etapa 4**, **sem criar componente, estado, evento, transição, critério ou campo**. Arbitragem documental **aprovada pelo GPT** e **integrada à `main`** pelo **PR #51** (**MERGED**). **Não implementa código** e **não cria marco funcional.** **ARBITRADA e PARCIALMENTE MATERIALIZADA**: a **fronteira determinística** foi integrada pelo **PR #55** (`src/casa77_sdr/interpretation.py`); o **produtor não determinístico / LLM**, **N-b-RES2** e a **integração operacional da etapa 4** continuam pendentes, e o `OrquestradorMotor` continua não implementado. Escopo resumido abaixo | PR #51 — commit documental `6f1cb6fe5ef12096117f1292225a761af5889025`, merge `85dbc709799f30c59a458c3ea8725fc072a15364`, branch de origem `docs/arbitragem-nb-interpretacao`. Alterou **exclusivamente** `docs/07-arquitetura-motor-respostas.md` — **365 adições, 8 remoções** |
@@ -1024,11 +1087,71 @@ separadamente: **"exige edição" não se confunde com "afetado indiretamente"**
 quantidade de funções NOVAS de pytest não é estimada**: a parametrização é decisão futura
 de materialização.
 
+### Micro-arbitragem C-A1 — contrato de materialização de C fechado
+
+Micro-arbitragem **exclusivamente documental** e **posterior** a **C**, sobre **como** a
+futura materialização do índice deve proceder. Entrega materializada em
+`docs/07-arquitetura-motor-respostas.md` §2.3 — bloco **"Micro-arbitragem C-A1"** — com
+registro em §12, item 19.
+
+**C-A1 refina a leitura futura de C. Ela não reabre C, não a implementa e não reescreve
+`C-1`–`C-14`**, que permanecem **registro histórico** da arbitragem original.
+
+Contrato aprovado:
+
+| # | Item |
+|---|---|
+| 1 | **`C-15` — equivalência de *template***: *placeholder* sem nova aprovação exige **vínculo explícito ao fato afirmado** e **equivalência textual do fragmento inteiro**; normalização **NFC** e quebras suaves do mesmo parágrafo viram **um espaço**; **proibido** `casefold`, *trim* semântico, remoção de pontuação, paráfrase e tolerância aproximada; **sem equivalência → FAIL-CLOSED**; o índice **não** guarda valor, *snapshot*, *hash* nem versão congelada, e **não** recebe metadado de "origem da aprovação" |
+| 2 | **Refinamentos de C-6, sem formato novo**: `inteiro_agrupado` com convenção **única e determinística**, sem arredondamento nem cálculo; `simbolo_moeda` com **tabela fechada** e **falha** para código não suportado, **sem inferir moeda** e **sem leitura implícita**; `hora` com **`HH:MM`** geral e **`Hh` apenas quando os minutos são `00`** |
+| 3 | **Convenção final do formato `lista`** (refinamento de C-6f): zero itens **falha**; um item; dois itens unidos por conjunção; três ou mais com vírgulas e conjunção final. **Sem prefixo ou sufixo por item**, sem filtragem, reordenação, flexão ou paráfrase |
+| 4 | **C-5 permanece fechado** em `EH_VERDADEIRO`/`EH_FALSO`, com **sete rejeições explícitas**: predicado para `null`; comparação com literal; igualdade entre caminhos **dentro de C**; conversão de caixa; pluralização; numeral por extenso; prefixo linguístico por item. A **igualdade entre caminhos** pertence ao futuro `ValidadorConsistenciaBase` |
+| 5 | **Seleção posicional é PROIBIDA**, dentro e fora de iteração. Fora de `itera_sobre`, selecionar um item exige **identificador estrutural estável e não comercial**, que **não depende da posição** |
+| 6 | **Unidade de bijeção é o fragmento emitível**, não o `Rxx` agregado. Notas e instruções internas ficam **fora da bijeção**: sem status, sem *binding*, sem `ASSERTIVA` |
+| 7 | **Canonicalização de status** sem quarto valor, com o **sufixo de handoff fora de C** e **`PARCIAL` sem tradução automática**; **`BLOQUEADO` em nota interna não cria fragmento nem status**; a **autoridade do status** só migra sob **cinco condições** cumulativas |
+| 8 | **Prioridade de modelagem**: atomizar o dado → `ASSERTIVA` sobre fato atômico → `RENDERIZADO` → só então decisão humana de conteúdo. **Não alterar redação apenas para facilitar implementação** |
+| 9 | **Prosa não duplicada**: campo narrativo **não** pode virar segunda fonte factual paralela ao campo atômico |
+| 10 | **Auditoria read-only de consumidores em todo o repositório** é **obrigatória** antes de qualquer alteração física de estrutura em `knowledge/casa77.yaml` |
+| 11 | **Alvos de modelo `MD-1`–`MD-18`**, com finalidade, `G` correspondente, `Rxx` atingidos, se substituem ou adicionam representação, condição humana quando houver e obrigação de auditoria. **`MD-3` REMOVIDO / NÃO ARBITRADO**; **`MD-16` REMOVIDO / NÃO NECESSÁRIO PARA C**. **São alvos, não alterações autorizadas** |
+| 12 | **Matriz `G1`–`G14`** com destino, mecanismo, `Rxx` atingidos e resultado projetado. **`G9`, `G11`, `G12` e `G13` ficam RESOLVIDOS por C-A1**; **`G14`** é **dívida estrutural NÃO BLOQUEADORA**, com o campo **não realocado** aqui |
+
+**Contagens PROJETADAS de fragmentos — não estado físico atual.** Total: **35** fragmentos
+emitíveis. Representáveis no contrato **original**: **7**. Após os refinamentos normativos de
+C-A1, **sem** alterar o YAML e **sem** decisão humana: **11**. Após C-A1 mais os alvos de
+modelo e as confirmações factuais: **29**. Residuais dependentes de **C-A2**: **6** —
+**29 + 6 = 35**. No nível `Rxx`, no cenário futuro projetado: **24** integralmente
+materializáveis, **4** parcialmente e **2** integralmente bloqueados — **24 + 4 + 2 = 30**.
+
+O que esta micro-arbitragem **NÃO** faz: criar `knowledge/indice-respostas-aprovadas.yaml`;
+alterar `knowledge/casa77.yaml`, `knowledge/respostas-aprovadas.md` ou
+`knowledge/informacoes-pendentes.md`; converter respostas em *templates*; mudar status real;
+implementar renderizador, carregador ou validador; executar qualquer alvo **`MD-x`**;
+materializar **C**, **R2** ou **S2-D8**; resolver **`N-b-RES2`**; implementar produtor LLM ou
+`OrquestradorMotor`; alterar `src/`, `tests/`, `docs/06`, `docs/05`, `docs/08`, `prompts/` ou
+`CLAUDE.md`; executar testes; escolher a próxima implementação funcional; ou criar a
+**3B.8**, que **continua não existindo**. **Nenhuma pergunta foi enviada ao responsável comercial** e
+**nenhuma decisão comercial foi tomada.**
+
+**Evidência.** A base factual é uma **auditoria read-only** de
+`knowledge/respostas-aprovadas.md` contra `knowledge/casa77.yaml`, cujo relatório
+**sanitizado** é identificado pelo SHA-256
+`c0cf81d6e1a93c8ba19ed5a1863c93be4f1c37954702a8e94720a8a6b4ec79b0`. Ele **não é versionado**,
+**vive fora do repositório** e **não contém fonte comercial nova**.
+
 ### Arbitragem C — escopo arbitrado, NÃO materializado
 
 Arbitragem sobre o **contrato do índice estruturado que liga cada `Rxx` aos campos de
 `knowledge/casa77.yaml`**. Entrega **exclusivamente documental**, materializada em
 `docs/07-arquitetura-motor-respostas.md` §2.3 e registrada em §12, item 19.
+
+**Nota temporal — micro-arbitragem C-A1, posterior.** O contrato aprovado abaixo descreve a
+**arbitragem C à época do PR #57** e permanece **correto como registro histórico**:
+`C-1`–`C-14` **não são reescritas**. Depois dela, **C-A1** (§2.3, item 27 da Próxima ação)
+**refina a leitura futura** do contrato de **materialização** — equivalência de *template*,
+refinamentos de C-6, convenção do formato `lista`, proibição de seleção posicional, unidade
+de bijeção, canonicalização e migração de status, prioridade de modelagem, alvos **`MD-x`** e
+matriz **`G1`–`G14`** — **sem criar o índice**, **sem alterar o YAML** e **sem materializar
+C**. **C continua ARBITRADA / NÃO MATERIALIZADA**, e **C-A2** fica **ABERTA** para os fatos
+(`A1`–`A4`) e o conteúdo (`B1`–`B6`) humanos residuais.
 
 Contrato aprovado:
 
@@ -1331,7 +1454,7 @@ Registradas aqui como estado, não resolvidas nesta entrega.
 | # | Pendência | Antes de quê precisa ser arbitrada |
 |---|---|---|
 | B | Colisão conceitual de nome: `RegistroAtendimento` já existe em `src/casa77_sdr/persistence.py` como dataclass de transporte, enquanto `docs/07` usa o mesmo nome para uma responsabilidade futura | implementar o componente `RegistroAtendimento` descrito em `docs/07` |
-| C | Contrato estruturado, legível por máquina, ligando as respostas aprovadas (`Rxx`) aos campos do YAML. **ARBITRADA / NÃO MATERIALIZADA.** **CONTRATO: ARBITRADO** — o contrato documental estruturado do futuro índice está **fechado e aprovado** em `docs/07` §2.3, registrado em `docs/07` §12, item 19. **MATERIALIZAÇÃO: NÃO EXISTE** — o arquivo `knowledge/indice-respostas-aprovadas.yaml` **não existe**, `knowledge/respostas-aprovadas.md` **não foi convertido nem alterado**, **nenhum status foi removido do Markdown** e não há *parser*, *renderer* nem validador. **C continua aberta SOMENTE quanto à materialização.** **S2-D8 é pendência separada**, também **ARBITRADA / NÃO MATERIALIZADA** desde a arbitragem S2-D8 (`docs/07` §4.4.1), e também aberta **somente quanto à materialização** | **materializar** o índice `knowledge/indice-respostas-aprovadas.yaml` pelo contrato de `docs/07` §2.3 e, só então, implementar `ValidadorConsistenciaBase` e, em cascata, `SeletorFatos` e `ValidadorResposta` |
+| C | Contrato estruturado, legível por máquina, ligando as respostas aprovadas (`Rxx`) aos campos do YAML. **ARBITRADA / NÃO MATERIALIZADA.** **CONTRATO: ARBITRADO** — o contrato documental estruturado do futuro índice está **fechado e aprovado** em `docs/07` §2.3, registrado em `docs/07` §12, item 19. **MATERIALIZAÇÃO: NÃO EXISTE** — o arquivo `knowledge/indice-respostas-aprovadas.yaml` **não existe**, `knowledge/respostas-aprovadas.md` **não foi convertido nem alterado**, **nenhum status foi removido do Markdown** e não há *parser*, *renderer* nem validador. **C continua aberta SOMENTE quanto à materialização.** **S2-D8 é pendência separada**, também **ARBITRADA / NÃO MATERIALIZADA** desde a arbitragem S2-D8 (`docs/07` §4.4.1), e também aberta **somente quanto à materialização** | **materializar** o índice `knowledge/indice-respostas-aprovadas.yaml` pelo contrato de `docs/07` §2.3 — **agora refinado por C-A1**, que fecha equivalência de *template*, formatos, convenção de `lista`, seleção em coleção, unidade de bijeção, migração de status e os alvos `MD-x` — e, só então, implementar `ValidadorConsistenciaBase` e, em cascata, `SeletorFatos` e `ValidadorResposta`. **`C-A2` permanece ABERTA** para os fatos `A1`–`A4` e o conteúdo `B1`–`B6` |
 
 As pendências **B e C permanecem inalteradas** pelas arbitragens S2, S3, R, R-H e R-I e
 pela implementação funcional da **3B.7** (PR #29). **B continua integralmente aberta.**
