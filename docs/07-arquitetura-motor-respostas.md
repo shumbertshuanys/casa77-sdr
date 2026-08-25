@@ -102,8 +102,37 @@ desatualizado com aparência de texto aprovado. Com F3–F4, essa resposta é bl
 divergência aparece como erro da base, não como conversa.
 
 Consequência operacional: a divergência é **defeito de base de conhecimento**, não caso de
-negócio. Não vira "não sei responder" silencioso — vira alerta para quem mantém os arquivos,
-enquanto o interessado recebe R03 + handoff.
+negócio. Não vira "não sei responder" silencioso — vira alerta para quem mantém os arquivos.
+O **desfecho conversacional** ao interessado depende de existir, ou não, cobertura aprovada e
+íntegra alternativa para a mesma consulta — ver a reconciliação **F4-B**, imediatamente
+abaixo.
+
+#### RECONCILIAÇÃO NORMATIVA LIMITADA de docs/07 §2.2 pela arbitragem S2-D8
+
+**Estado: ARBITRADA / NÃO MATERIALIZADA.** Reconciliação **exclusivamente documental** e
+**limitada**. **F1**–**F6** são **preservadas**, e **F4(a)**–**F4(d)** permanecem
+**literais e inalteradas**. S2-D8 refina **somente a consequência conversacional** de F4 —
+o que o interessado recebe —, **nunca** o tratamento da divergência em si.
+
+| # | Invariante de F4-B — vale **sempre**, sem exceção |
+|---|---|
+| F4-B1 | fragmento divergente é **SEMPRE bloqueado** — F4(a), F4(c) |
+| F4-B2 | o **erro de consistência da base** é **SEMPRE registrado** — F4(b) |
+| F4-B3 | o **alerta** para correção humana é **SEMPRE emitido** — F4(d) |
+| F4-B4 | **nenhum fato divergente é emitido**, em nenhuma hipótese |
+
+Os **dois** desfechos possíveis ao interessado, e **somente** eles:
+
+| # | Desfecho |
+|---|---|
+| F4-B5 | **(A)** a divergência deixa a consulta **sem cobertura segura** → **R03 + handoff** |
+| F4-B6 | **(B)** uma **alternativa aprovada e íntegra do mesmo grupo de cobertura** (**R2**, §4.4) cobre **integralmente** a consulta → a **resposta segura aprovada prossegue**, com **zero `E09` fabricado** e **zero handoff causado por essa divergência** |
+
+**F4-B6 não atenua F4-B1–F4-B4.** O fragmento divergente continua bloqueado, o erro
+continua registrado e o alerta continua emitido; o que muda é apenas que o interessado
+**não** recebe R03 quando a consulta permanece **integralmente coberta** por texto aprovado
+e íntegro. Quem avalia cobertura é **S2-D8** (§4.4), **não C**: **C-12 permanece literal e
+inalterada** (§2.3), e a `ASSERTIVA` continua **consistency-only** (**C-5**, **C-5.1**).
 
 ### 2.3 Arbitragem C — contrato do índice estruturado de respostas aprovadas
 
@@ -627,16 +656,18 @@ campo carrega dado pessoal (PII), texto de mensagem ou valor comercial.
 | # | Condição | Forma | Produtor |
 |---|---|---|---|
 | 1 | `insumo_qualificacao_atualizado` | `bool \| None` (doc 06 §4.1) | etapa 6 do pipeline (§5) |
-| 2 | `pendencia_impeditiva` | `bool \| None` | **não atribuído — S2-D8** (doc 06 §11) |
+| 2 | `pendencia_impeditiva` | `bool \| None` | **produtor conceitual: S2-D8, eixo A** (arbitragem S2-D8, abaixo; doc 06 §11). **Nenhum componente concreto é escolhido** e **nada está materializado** |
 | 3 | `motivos_handoff` | conjunto/tupla de **identificadores textuais opacos** | `DetectorHandoff` (gatilhos 3–10, doc 06 §9) |
-| 4 | `resposta_aprovada_disponivel` | `bool \| None` | **não atribuído — S2-D8** (doc 06 §11) |
+| 4 | `resposta_aprovada_disponivel` | `bool \| None` | **produtor conceitual: S2-D8, eixo B** (arbitragem S2-D8, abaixo; doc 06 §11). **Nenhum componente concreto é escolhido** e **nada está materializado** |
 | 5 | `interesse_confirmar_disponibilidade` | `bool \| None` | **fronteira da etapa 4** (arbitragem N-b, §6.3): derivada da `Interpretacao` pela **função total** N-b-CD1–N-b-CD4, abaixo. Único produtor de `CondicoesCiclo` que N-b atribui |
 | 6 | `calendario_integrado` | `bool \| None` | configuração/integração avaliada a montante |
 | 7 | `identidade` | resultado estruturado do `ResolvedorIdentidade` (§7.1) | `ResolvedorIdentidade` (etapa 5) |
 | 8 | `motivo_encerramento` | motivo estruturado entre as **quatro** modalidades aprovadas de T35 (doc 06 §3) | **não atribuído — S3-D1** |
 
 Onde o produtor está pendente, ele **permanece pendente**: esta seção descreve a fronteira,
-não escolhe componente concreto.
+não escolhe componente concreto. **Produtor conceitual não é componente concreto**: atribuir
+o **eixo A** e o **eixo B** de S2-D8 às condições **2** e **4** diz **quem responde a
+pergunta**, não **qual classe a implementa** — nenhuma implementação é autorizada por isso.
 
 **Condição 5 — função total** (arbitragem N-b, §6.3). Esta é a **única** linha da tabela acima
 alterada por N-b. As demais **sete** condições permanecem exatamente como estão, e as condições
@@ -651,6 +682,294 @@ alterada por N-b. As demais **sete** condições permanecem exatamente como est�
 
 `True`/`False` significam **avaliado neste ciclo**; `None` significa **não avaliado neste
 ciclo**. `None` **não** é "falso implícito".
+
+**Nota temporal — arbitragem S2-D8, posterior.** As duas frases acima registram
+corretamente o estado **no momento de N-b** e continuam corretas como registro histórico.
+Depois delas, a arbitragem **S2-D8** (abaixo) atribui **produtor conceitual** às condições
+**2** e **4** — respectivamente o **eixo A** e o **eixo B** —, **sem escolher componente
+concreto** e **sem materializar nada**. A condição **8** (`motivo_encerramento`) continua
+**NÃO ATRIBUÍDA**: **S3-D1** permanece aberta. A tabela continua com **oito** condições —
+**nenhuma condição nova é criada**, e **nenhuma é removida**.
+
+### 4.4.1 Arbitragem S2-D8 — detecção e classificação de pendências, e cobertura de resposta aprovada
+
+**Estado: ARBITRADA / NÃO MATERIALIZADA.** Entrega **exclusivamente documental**. Esta
+seção fecha o **contrato** de S2-D8 — detectar e classificar pendências e determinar a
+cobertura de resposta aprovada, **antes da etapa 7** (§5) — e **não o materializa**.
+
+| # | Continua verdadeiro |
+|---|---|
+| D8-E1a | **nenhum código é criado ou alterado**: `src/`, `tests/`, `knowledge/` e `prompts/` permanecem intactos |
+| D8-E1b | **§4.1 permanece com 14 componentes** e **§2 com nove responsabilidades** |
+| D8-E1c | esta **§4.4 permanece com oito condições**; **nenhuma condição nova** é criada |
+| D8-E1d | **nenhum estado, evento, transição, critério, ação, efeito paralelo, inércia ou pendência nova** é criado |
+| D8-E1e | **nenhuma subetapa é criada — a 3B.8 não existe** |
+| D8-E1f | **AJ2 continua NÃO MATERIALIZADA** (§6.3) e **C continua NÃO MATERIALIZADA** (§2.3) |
+| D8-E1g | **`N-b-RES2` continua ABERTO** (§5, §6.3) |
+| D8-E1h | o **`OrquestradorMotor` continua não implementado** |
+| D8-E1i | o **mapa de cobertura R2 não existe**; o índice `knowledge/indice-respostas-aprovadas.yaml` **não existe** |
+
+#### D8-0 — o que S2-D8 decide
+
+| # | Regra |
+|---|---|
+| D8-0a | S2-D8 responde **duas** perguntas distintas, em **dois eixos** semanticamente independentes: o eixo **A**, de **qualificação**, e o eixo **B**, de **resposta**. |
+| D8-0b | Ela é integralmente **a montante** da etapa 7. A `MaquinaEstados` **não detecta**, **não reclassifica** e **não recalcula** pendência (doc 06 §2.2). |
+| D8-0c | **Nenhum componente concreto é escolhido**: não é o `CarregadorYaml`, não é o `ValidadorYaml`, não é o `SeletorFatos`, não é o `ValidadorConsistenciaBase` e não é o `Qualificador`. |
+| D8-0d | S2-D8 **não replica a precedência de qualificação**: o `Qualificador` continua **função pura** e continua sendo quem classifica (§4.1). |
+
+#### D8-A — eixo A (qualificação)
+
+Pergunta do eixo A:
+
+> **"existe indisponibilidade válida na base que impede a classificação do evento NESTE
+> ciclo?"**
+
+| # | Regra |
+|---|---|
+| D8-A1 | O eixo A **não depende** de `PerguntaComercial` nem de `AssuntoComercial`. Ele é **semanticamente independente** da existência de consulta comercial no ciclo. |
+| D8-A2 | Produz `pendencia_impeditiva` — a **condição 2** desta §4.4. |
+| D8-A3 | Produz `pendencias_impeditivas`, a tupla de **identificadores técnicos** entregue ao `Qualificador` (§4.1). **Nunca** a pergunta bruta, **nunca** PII, **nunca** valor comercial. |
+| D8-A4 | Produz **causa** que pode confirmar `E09` (doc 06 §2.2). |
+| D8-A5 | O eixo A **não cria pergunta** em `pendencias_resposta` (doc 06 §1.3, §4.3 **P5**). |
+
+**Regra impeditiva — `IMP-1` a `IMP-4`.** Uma indisponibilidade da base é **impeditiva**
+**somente quando as quatro** condições valem no mesmo ciclo:
+
+| # | Condição |
+|---|---|
+| IMP-1 | pertence ao **universo de dados determinantes da qualificação** |
+| IMP-2 | é **efetivamente necessária** para classificar **ESTE** ciclo |
+| IMP-3 | **nenhuma violação objetiva** já determinou `INCOMPATIVEL` |
+| IMP-4 | **nenhum dado obrigatório do interessado** ainda está ausente |
+
+| # | Invariante |
+|---|---|
+| D8-A6 | `pendencia_impeditiva == True` **IMPLICA** `Qualificacao.resultado == INDEFINIDO` (doc 06 §1.2, I10). |
+| D8-A7 | **Nunca documentar como caminho normal** a combinação `E09` **impeditivo** + `Qualificacao == DADOS_INCOMPLETOS`: **IMP-4** a exclui por construção, e **IMP-3** exclui simetricamente a combinação com `INCOMPATIVEL`. |
+
+**`Q1` — decisão normativa do MVP.**
+
+| # | Decisão |
+|---|---|
+| Q1-a | Os campos hoje exigidos **estruturalmente** pelo carregador da base continuam **PRÉ-REQUISITOS da base** e **não** viram pendência de S2-D8. |
+| Q1-b | **Não transformar em pendência S2-D8** um `null`, uma ausência ou um tipo inválido em requisito que o **carregador já rejeita**: ali o **motor não inicia** (§7), o que **não é caso de ciclo**. |
+| Q1-c | Consequência direta: **nenhum arquivo de `src/` muda por S2-D8**. Em particular, `knowledge.py` **não muda**, `rules.py` **não muda**, `qualification.py` **não muda** e `state_machine.py` **não muda**. |
+| Q1-d | No **schema e no corpus atuais**, `pendencia_impeditiva = True` **pode ser legitimamente inalcançável**. Isso **NÃO elimina a condição 2**: ela permanece na tabela, com produtor conceitual, e o contrato fica **preparado para evolução futura**. |
+| Q1-e | A evolução **`Q2`** — **permitir que algum campo determinante da qualificação seja validamente `null`/`pendente`**, em vez de esse estado ser tratado como **falha estrutural da base** — **NÃO é autorizada agora** e **não é recomendada para o MVP**. Ela permanece **futura** e exigiria **evolução explícita dos contratos afetados** de `knowledge.py`, `rules.py` e/ou `qualification.py` **antes** de qualquer materialização. |
+
+#### D8-B — eixo B (resposta)
+
+Pergunta do eixo B:
+
+> **"existe cobertura aprovada e emitível para os `AssuntoComercial` efetivamente
+> consultados?"**
+
+| # | Regra |
+|---|---|
+| D8-B1 | O eixo B consome **somente `PerguntaComercial` com confiança `ALTA`** (N-b-Q2, N-b-Q3, §6.3). Pergunta `BAIXA` **não entra** — nem como consulta, nem como pendência. |
+| D8-B2 | O eixo B **não usa texto como chave semântica**. A chave é o **`AssuntoComercial`** (AJ2, §6.3); o `texto` é **conteúdo persistido**, jamais critério de decisão. |
+| D8-B3 | Produz `resposta_aprovada_disponivel` — a **condição 4** desta §4.4. |
+| D8-B4 | Produz **uma avaliação por assunto** efetivamente consultado. |
+| D8-B5 | Produz **causas acessórias** que podem confirmar `E09`. |
+| D8-B6 | Produz a **associação posterior** das perguntas **efetivamente não respondidas** aos itens de `pendencias_resposta` (doc 06 §1.3, §4.3 **P5**). |
+
+#### D8-E — composição das causas e `E09`
+
+| # | Regra |
+|---|---|
+| D8-E2 | `E09` é a **união das causas** do eixo **A** e do eixo **B**: **A ∪ B**. |
+| D8-E3 | **No máximo um `E09` por ciclo.** Não existe `E09` múltiplo (doc 06 §4.2, consumo único). |
+| D8-E4 | Avaliar **todas** as causas estruturais da lacuna; o conjunto de motivos do `E09` é a **união, deduplicada e canonicalizada**. |
+| D8-E5 | Um caso **misto** pode carregar **ambos** os motivos. |
+| D8-E6 | A **classificação impeditiva × acessória** que acompanha `E09` (doc 06 §2.2) continua sendo o que separa **T11/T18** de **T12/T19**. Causa do **eixo A** que satisfaça `IMP-1`–`IMP-4` é **impeditiva**; causa do **eixo B** é **acessória**. |
+
+**Vocabulário fechado de motivos de `E09` — exatamente DOIS.** **Nenhum terceiro motivo
+pode ser criado.**
+
+| # | Motivo | Quando ocorre |
+|---|---|---|
+| 1 | `CAMPO_INDISPONIVEL` | um *binding* necessário resolve para `null` ou para estrutura cujo `status` é `pendente`. É a forma da **causa futura do eixo A**. Carrega o **caminho YAML**; **no eixo B carrega também o assunto** |
+| 2 | `SEM_RESPOSTA_APROVADA_EMITIVEL` | alternativa ou status **não emitível** deixa um **grupo descoberto**; `ASSERTIVA` **divergente** deixa um **grupo descoberto**; **zero grupos**; **`ASSUNTO_NAO_CLASSIFICADO`** |
+
+| # | Regra de conteúdo |
+|---|---|
+| D8-E7 | Nenhum motivo carrega **texto livre**, **PII** ou **valor comercial**. O **caminho YAML estrutural** é permitido; o **valor** do campo, nunca. |
+| D8-E8 | Os motivos de `E09` permanecem **metadados estruturados de auditoria A MONTANTE**. Eles **NÃO integram `CondicoesCiclo`** (§4.4) e **NÃO são entrada da `MaquinaEstados`**; **nenhum campo novo é criado na máquina**. Para a máquina chegam apenas **`Evento.E09`** e a classificação já estruturada **`pendencia_impeditiva`** — além das demais condições já existentes quando aplicáveis. A máquina **não interpreta os motivos** e **não referencia nenhum `Rxx`** (doc 06 §11). |
+
+#### R2 — mapa de grupos de cobertura (registro FORA de C)
+
+Formalização do **mapa futuro**. Ele **não é criado aqui**, **não existe em `knowledge/`**,
+**não é autorizado** por esta arbitragem e **não pertence a C**: **C-12a–C-12h permanecem
+inalteradas** (§2.3).
+
+| # | Regra |
+|---|---|
+| R2-1 | Cada `AssuntoComercial` mapeia para **0..N grupos de cobertura**. |
+| R2-2 | Cada grupo contém **1..N alternativas**. |
+| R2-3 | Uma **alternativa** é **referência estrutural** — `Rxx` + identificador de fragmento. **Sem texto**, **sem valor comercial**, **sem status duplicado**, **sem *binding* duplicado**, **sem caminho YAML duplicado** e **sem predicado duplicado**. O mapa **referencia**; ele **não copia** o que já vive no índice de C ou no YAML. |
+| R2-4 | Semântica: **CONJUNÇÃO entre grupos**, **DISJUNÇÃO dentro de cada grupo**. |
+| R2-5 | Um assunto é **respondível** quando **possui ao menos um grupo** e **TODOS** os seus grupos possuem **ao menos uma alternativa emitível agora**. |
+| R2-6 | **`ASSUNTO_NAO_CLASSIFICADO` tem zero grupos por definição** — logo **não é respondível**, e a causa correspondente é `SEM_RESPOSTA_APROVADA_EMITIVEL`. |
+| R2-7 | Referência do mapa a **fragmento inexistente** é **Classe I** (abaixo). |
+
+#### D8-F — fragmento emitível agora
+
+Um fragmento é **emitível agora** **somente se as três** condições valem:
+
+| # | Condição |
+|---|---|
+| D8-F1 | `status = APROVADO` (**C-3**, §2.3) |
+| D8-F2 | todos os *bindings* `RENDERIZADO` necessários resolvem para **valor disponível** (**C-4**, **C-7**) |
+| D8-F3 | toda `ASSERTIVA` aplicável é **verdadeira** (**C-5**, **C-5.1**) |
+
+| # | Regra |
+|---|---|
+| D8-F4 | `AGUARDA_APROVACAO` **não habilita**. `BLOQUEADO` **não habilita** (doc 06 §11). |
+| D8-F5 | Status **ausente ou inválido** é **Classe I**. |
+| D8-F6 | **Nenhuma emissão parcial de fragmento.** Ou o fragmento é emitível **inteiro**, ou **não é emitível**. |
+
+#### D8-L — regra de lacuna real
+
+| # | Regra |
+|---|---|
+| D8-L1 | Fragmento não emitível **só produz causa conversacional** se a sua indisponibilidade deixar um **GRUPO INTEIRO descoberto**. |
+| D8-L2 | Alternativa bloqueada **dentro de grupo já coberto** por outra alternativa segura **não cria lacuna**, **não cria `E09`** e **não força handoff**. |
+| D8-L3 | Com **dois grupos complementares**, basta **um** deles estar descoberto para a consulta **não** estar totalmente coberta. |
+
+#### D8-CI — Classe I: base NÃO AVALIÁVEL
+
+Situação em que a base **não permite sequer avaliar** cobertura. Exemplos, sem esgotar:
+
+| # | Exemplo |
+|---|---|
+| D8-CI1 | índice de **C ausente** |
+| D8-CI2 | índice **estruturalmente inválido** |
+| D8-CI3 | **mapa R2 inválido** |
+| D8-CI4 | **referência pendurada** — o mapa aponta para fragmento inexistente (R2-7) |
+| D8-CI5 | **caminho declarado inexistente** no YAML |
+| D8-CI6 | **predicado não avaliável** |
+
+Tratamento **obrigatório**:
+
+| # | Regra |
+|---|---|
+| D8-CI7 | **bloquear antes da etapa 7** |
+| D8-CI8 | a `MaquinaEstados` **não executa** |
+| D8-CI9 | as condições **2** e **4** de §4.4 **não são avaliadas** — `None` |
+| D8-CI10 | **zero `E09`** |
+| D8-CI11 | **preservar o processamento** |
+| D8-CI12 | **alerta operacional pelo caminho já existente** (§7, §7.2) — **nenhum gatilho de alerta novo é criado** |
+| D8-CI13 | **não criar quinto caso de negócio**: os **quatro** casos de "sem transição" de doc 06 §4.5 e de §5 **continuam quatro**. Classe I é **falha de base**, tratada pelo caminho de falha já vigente de §7 |
+| D8-CI14 | **não inventar pendência comercial**: Classe I **não** vira `E09`, **não** vira `pendencia_impeditiva` e **não** vira item de `pendencias_resposta` |
+
+#### D8-CII — Classe II: base AVALIÁVEL e DIVERGENTE
+
+Situação em que a base **é avaliável** e a avaliação **acusa divergência** — o exemplo
+canônico é uma **`ASSERTIVA` avaliável cujo resultado é falso**.
+
+| # | Regra |
+|---|---|
+| D8-CII1 | o **fragmento divergente nunca é emitido** (F4-B1) |
+| D8-CII2 | o **erro de consistência** é **sempre registrado** (F4-B2) |
+| D8-CII3 | o **dado divergente** é **sempre bloqueado** (F4-B1) |
+| D8-CII4 | o **alerta** para correção humana é **sempre emitido** (F4-B3) |
+| D8-CII5 | o **ciclo pode continuar** se houver **cobertura segura alternativa** no mesmo grupo (F4-B6, D8-L2) |
+
+**A `ASSERTIVA` continua consistency-only.** Ela **não** é produtora de `E09`, de condição
+de ciclo nem de handoff (**C-5i**–**C-5q**, **C-5.1**). Quem avalia **cobertura** é S2-D8,
+**depois** de receber o **resultado estrutural** da conferência.
+
+#### D8-P — `pendencias_resposta` e a clarificação de T11/T18
+
+| # | Regra |
+|---|---|
+| D8-P1 | `pendencias_resposta` contém **PERGUNTAS DO INTERESSADO**, **nunca motivos técnicos** (doc 06 §1.3). |
+| D8-P2 | A **decisão semântica é por assunto**; o **texto** é **somente conteúdo persistido**, nunca chave de decisão (D8-B2). |
+| D8-P3 | Para **cada `PerguntaComercial` `ALTA`** cujo assunto ficou **não respondível** pelo eixo B, **registrar aquela pergunta** em `pendencias_resposta`. |
+| D8-P4 | **Duplicatas são preservadas como conteúdo** quando existirem (N-b-Q11). |
+| D8-P5 | Pergunta **`BAIXA` não entra** em `pendencias_resposta`. |
+| D8-P6 | **Causa exclusiva do eixo A NÃO cria pergunta.** A evidência permanece em `Qualificacao.pendencias_impeditivas` e na estrutura de auditoria/resumo, que a leva ao resumo **pela sua representação própria**. |
+
+Consequência documental, refletida em **doc 06 §3 (T11/T18)** e em **doc 06 §4.3 (P5)**:
+registrar em `pendencias_resposta` as **perguntas não respondidas do ciclo** **quando
+houver causa de resposta associada**. **Nenhuma `Txx` muda**, **nenhum estado muda**,
+**nenhuma guarda muda** e **nenhum `AcaoMaquina` muda**.
+
+#### D8-N — pré-condição de integração de `N-b-RES2`
+
+**S2-D8 NÃO confirma `E06`.** Ela registra **apenas** a pré-condição de integração:
+
+| # | Regra |
+|---|---|
+| D8-N1 | Um **futuro produtor de `E06`** não pode entregar à `MaquinaEstados` combinação **incoerente**, como `E06` confirmado **+** zero `PerguntaComercial` efetiva **+** `resposta_aprovada_disponivel = False` **+** ausência de `E09`, nos estados cuja resposta é **condicionada** (doc 06 §11: T10, T17, T28). |
+| D8-N2 | Essa responsabilidade continua **integralmente em `N-b-RES2`**, que permanece **ABERTO**. **Nenhum identificador de pendência novo é criado.** |
+
+#### D8-S — modo sem `Interpretacao`
+
+**Não existe caminho operacional "sem `Interpretacao` → eixo A avaliado → condição 2
+`False`".** A arquitetura vigente já determina o contrário:
+
+| # | Regra |
+|---|---|
+| D8-S1 | **Sem `Interpretacao`** não há projeção, e a **etapa 5 não executa** (N-b-M1, N-b-M2, §6.3). Logo as etapas **6** e **7** também não são alcançadas no pipeline operacional, e **S2-D8 não é invocada nesse caminho**. |
+| D8-S2 | A ausência de `Interpretacao` **encerra/bloqueia o caminho antes de S2-D8**, conforme **N-b** — que **não é reaberta** por esta arbitragem. |
+| D8-S3 | Nesse caminho, as condições **2** e **4** permanecem **NÃO AVALIADAS / `None`** na fronteira operacional. |
+| D8-S4 | Isso **não altera** a **independência semântica do eixo A** em relação a `PerguntaComercial` (D8-A1) **quando S2-D8 é legitimamente alcançada**. |
+
+#### D8-T2 — condição 2, regra total operacional
+
+Vale **quando S2-D8 é legitimamente alcançada**.
+
+| # | Situação | `pendencia_impeditiva` |
+|---|---|---|
+| D8-T2a | **Classe I** | `None` — e **bloqueio antes da máquina** |
+| D8-T2b | eixo A avaliado, **sem impeditiva** | `False` |
+| D8-T2c | campo determinante **indisponível mas não relevante ao ciclo** (falha `IMP-2`) | `False` |
+| D8-T2d | violação objetiva **já determinou `INCOMPATIVEL`** (falha `IMP-3`) | `False` |
+| D8-T2e | **dados do interessado incompletos** (falha `IMP-4`) | `False` |
+| D8-T2f | **`IMP-1`–`IMP-4` satisfeitas** | `True` — e `Qualificacao.resultado == INDEFINIDO` (D8-A6) |
+| D8-T2g | **zero `PerguntaComercial`** | **não interfere** na condição 2 (D8-A1) |
+
+#### D8-T4 — condição 4, regra total operacional
+
+Vale **quando S2-D8 é legitimamente alcançada**.
+
+| # | Situação | `resposta_aprovada_disponivel` |
+|---|---|---|
+| D8-T4a | **Classe I** | `None` — e **bloqueio** |
+| D8-T4b | `Interpretacao` **válida sem pergunta efetiva** | `False` |
+| D8-T4c | **ao menos um assunto integralmente coberto** | `True` |
+| D8-T4d | **perguntas efetivas e nenhum assunto coberto** | `False` |
+| D8-T4e | **um assunto coberto + outro descoberto** | `True` **+ `E09`** |
+| D8-T4f | **`ASSUNTO_NAO_CLASSIFICADO` isolado** | `False` **+ `E09`** |
+
+**Esta tabela não vale para o modo sem `Interpretacao`**, porque **S2-D8 não é alcançada**
+nesse caminho (D8-S1).
+
+#### D8-C — prova de preservação de C e de N-b
+
+Continuam **verdadeiras e inalteradas**, sem atenuação:
+
+| # | Preservado |
+|---|---|
+| D8-C1 | **F1**–**F6** (§2.2), inclusive **F4(a)**–**F4(d)** — refinada apenas a **consequência conversacional**, por **F4-B** |
+| D8-C2 | **C-5**, **C-5.1**, **C-8**, **C-12a**–**C-12h** e **C-13** (§2.3) |
+| D8-C3 | **C-12 permanece literal**: S2-D8 **não** a altera, **não** a amplia e **não** a reinterpreta |
+| D8-C4 | a `ASSERTIVA` continua **consistency-only**: **não** é produtora de `E09`, de condição nem de handoff |
+| D8-C5 | **`AssuntoComercial` continua com 54 valores** e **`K-Nb-1`–`K-Nb-51`** continuam a fronteira de cenários de N-b (§6.3) |
+| D8-C6 | **`IntencaoConversacional` continua com 11 valores**, **`E-Nb-1`–`E-Nb-19`** continuam a lista de erros e a `ProjecaoInterpretacao` continua com **sete** campos |
+| D8-C7 | os **20** códigos de `AcaoMaquina` (§4.5), os **12** `CriterioIdentidade` e os **oito** campos de `DecisaoIdentidade` (§7.1) permanecem |
+
+#### D8-X — fora do escopo de S2-D8
+
+Permanecem **abertas e inalteradas**: **`N-b-RES2`**; **S3-D1**; **E4**; **E1**; **E3**;
+**B**; **C** (§2.3); **S2-D5**; **S2-D7**; **R10**, **R13**, **R17** e **R20** (**C-9**);
+**`Q53`**/**`Q54`** (**AJ2-E4**); o **valor do limiar** e seu **mecanismo de carga**; o
+**destino do alerta operacional**; **S4**/**S5**; e o **`OrquestradorMotor`**. S2-D8 **não
+cria** o índice de C, **não cria** o mapa R2, **não cria** módulo, **não cria**
+`AssuntoComercial` em Python, **não escolhe** produtor LLM e **não cria** a **3B.8**, que
+**continua não existindo**.
 
 ### 4.5 Contrato das ações da `MaquinaEstados`
 
@@ -755,6 +1074,34 @@ Regras do pipeline:
   é ali que ocorre a primeira chamada da `MaquinaEstados`. As etapas 8 e 9 **consultam,
   conferem e selecionam** fatos e textos, mas **não produzem condição necessária a uma
   chamada que já aconteceu**;
+- **ordem conceitual determinística anterior à etapa 7** (arbitragem S2-D8, §4.4.1). Ela é
+  **conceitual**, **não é implementação** e **não cria etapa nova**: o pipeline continua com
+  **catorze** etapas. Dentro da fronteira que antecede a primeira chamada da
+  `MaquinaEstados`, a sequência é
+
+  1. `RegrasComerciais`;
+  2. `Qualificador` com `pendencias_impeditivas = ()` → **qualificação provisória**;
+  3. **eixo A** de S2-D8;
+  4. **eixo B** de S2-D8;
+  5. **composição das causas** e `E09` (D8-E2–D8-E5);
+  6. `Qualificador` com as `pendencias_impeditivas` **classificadas pelo eixo A** →
+     **qualificação final**;
+  7. **primeira chamada da `MaquinaEstados`** — a etapa 7.
+
+  O `Qualificador` continua **função pura** e **S2-D8 não replica a precedência de
+  qualificação** (D8-0d): `IMP-3` e `IMP-4` apenas **leem** o que a precedência já
+  determinou;
+- **Classe I bloqueia antes da etapa 7** (D8-CI7–D8-CI14): base não avaliável para
+  cobertura — índice de C ausente ou inválido, mapa R2 inválido, referência pendurada,
+  caminho declarado inexistente ou predicado não avaliável. A `MaquinaEstados` **não
+  executa**, as condições **2** e **4** permanecem **`None`**, **zero `E09`** é produzido, o
+  processamento é preservado e o alerta operacional segue **pelo caminho já existente**
+  (§7). **Classe I não é um quinto caso** da lista de "sem transição" abaixo, que
+  **continua com quatro**: é **falha de base**, não desfecho de ciclo;
+- **sem `Interpretacao`, S2-D8 não é alcançada** (D8-S1–D8-S4). A etapa 5 não executa
+  (N-b-M1, N-b-M2) e, por consequência, as etapas 6 e 7 também não; as condições **2** e
+  **4** permanecem **não avaliadas / `None`** na fronteira operacional. **N-b não é
+  reaberta**;
 - as etapas 7 a 9 são a única origem de conteúdo comercial;
 - a etapa 10 é a única que pode falhar por indisponibilidade externa sem parar o
   atendimento — todas as outras têm caminho determinístico;
@@ -2039,6 +2386,20 @@ Distinção obrigatória, para que **M-NB** não seja lido como se o código já
 (C-9), e `Q53`/`Q54` continuam **não classificados** (AJ2-E4). **Nenhuma subetapa foi criada
 — a 3B.8 não existe.**
 
+##### Nota de escopo posterior — arbitragem S2-D8
+
+Registro **exclusivamente documental**, **fora de AJ2** e **fora de N-b**: nenhuma regra
+desta §6.3 é alterada, **AJ2 continua NÃO MATERIALIZADA** e **N-b não é reaberta**.
+
+| # | Nota |
+|---|---|
+| D8-Nb1 | **`N-b-Q12` permanece literal.** O `assunto` **não atravessa** para a `ProjecaoInterpretacao`, **não referencia `Rxx`** e **não produz condição** de §4.4. S2-D8 consome o `assunto` **fora da fronteira da etapa 4**, já na fronteira anterior à etapa 7 (§4.4.1, D8-B2) — consumir **depois** não é produzir **dentro**. |
+| D8-Nb2 | **`N-b-Q2`/`N-b-Q3` continuam o filtro único de efetividade.** O eixo B de S2-D8 consome **somente** `PerguntaComercial` `ALTA`; a `BAIXA` permanece **preservada para diagnóstico** e **não entra** em consumo estruturado. |
+| D8-Nb3 | **`ASSUNTO_NAO_CLASSIFICADO` continua valor legítimo** (AJ2-N1–AJ2-N5) e **não é erro**. O que S2-D8 arbitra é apenas o seu **tratamento a jusante**: **zero grupos de cobertura** (R2-6) e, por consequência, causa `SEM_RESPOSTA_APROVADA_EMITIVEL`. **AJ2-C4 é cumprida aqui**, e nada em AJ2 é reescrito. |
+| D8-Nb4 | **Modo degradado — `N-b-M1`–`N-b-M8` permanecem integralmente.** Sem `Interpretacao` não existe projeção, a **etapa 5 não executa** e, por consequência, **S2-D8 não é invocada**: as condições **2** e **4** permanecem **não avaliadas / `None`** na fronteira operacional (§4.4.1, D8-S1–D8-S3). **Nenhum gatilho de alerta novo** é criado (N-b-M3). |
+| D8-Nb5 | **`N-b-RES2` continua ABERTO.** S2-D8 **não confirma `E06`** e **não cria produtor de evento**: apenas registra a pré-condição de coerência de integração (§4.4.1, D8-N1, D8-N2). **Nenhum identificador de pendência novo é criado.** |
+| D8-Nb6 | **Fronteira preservada**: `IntencaoConversacional` continua com **11** valores, `AssuntoComercial` com **54**, a lista de erros com **`E-Nb-1`–`E-Nb-19`**, os cenários com **`K-Nb-1`–`K-Nb-51`**, a `ProjecaoInterpretacao` com **sete** campos, §4.1 com **14** componentes e §2 com **nove** responsabilidades. |
+
 #### Projeção estruturada para a identidade (arbitragem R3)
 
 O `ResolvedorIdentidade` **não recebe esta tabela nem texto conversacional**. Ele recebe uma
@@ -2241,7 +2602,8 @@ Princípio obrigatório:
 | YAML ausente | **Motor não inicia.** Nenhuma resposta é emitida. Erro de operação, não de conversa. |
 | YAML inválido (sintaxe) | Motor não inicia. Reportar arquivo, linha e erro. |
 | Campo obrigatório do YAML ausente | Motor não inicia se o campo for usado por regra estrutural (capacidade, pacotes, eventos, datas). Se for campo acessório, tratar como pendente → R03 + handoff. |
-| **Divergência entre `Rxx` e YAML** | O YAML prevalece (F5). A resposta não é selecionada, o dado divergente é bloqueado, registra-se erro de consistência da base e alerta operacional. Ao interessado: R03 + handoff. **Sem conciliação, e nunca arbitragem pelo LLM.** |
+| **Divergência entre `Rxx` e YAML** | O YAML prevalece (F5). A resposta não é selecionada, o dado divergente é bloqueado, registra-se erro de consistência da base e emite-se alerta operacional — **sempre**, sem exceção (**F4-B1**–**F4-B4**, §2.2). **Ao interessado, o desfecho depende da cobertura** (**F4-B5**/**F4-B6**, §2.2; **D8-CII**, §4.4.1): **R03 + handoff** quando a divergência deixa a consulta **sem cobertura segura**; **resposta segura aprovada** quando uma alternativa **aprovada e íntegra do mesmo grupo de cobertura** cobre **integralmente** a consulta — nesse caso **zero `E09` fabricado** e **zero handoff causado por essa divergência**. **Sem conciliação, e nunca arbitragem pelo LLM.** |
+| **Base não avaliável para cobertura — Classe I** (arbitragem S2-D8, §4.4.1) | Índice de C ausente ou estruturalmente inválido, mapa de cobertura **R2** inválido, **referência pendurada**, **caminho declarado inexistente** ou **predicado não avaliável**: **bloquear antes da etapa 7**; a `MaquinaEstados` **não executa**; as condições **2** e **4** de §4.4 permanecem **não avaliadas / `None`**; **zero `E09`**; **preservar o processamento**; **alerta operacional pelo caminho já existente** — **nenhum gatilho de alerta novo é criado**. **Não é um quinto caso de negócio**: os quatro casos de "sem transição" de §5 e do doc 06 §4.5 **continuam quatro**, e **nenhuma pendência comercial é inventada** (D8-CI7–D8-CI14) |
 | **Adaptador envia estado, qualificação ou pendências** | Campos **ignorados ou rejeitados** (E3). O contexto vem exclusivamente da persistência (E1). O envio indevido é registrado como defeito do adaptador. |
 | **Identificador de atendimento inexistente, incompatível ou corrompido** | Erro operacional (N5): bloquear, preservar a mensagem, alertar. **Nunca criar atendimento novo** por não encontrar o indicado (N6). |
 | **Contexto ausente ou corrompido quando era esperado** | Erro de infraestrutura na etapa 3: bloquear a transição, preservar a mensagem, alerta operacional. A etapa 5 não roda; a falha não vira "primeiro contato" nem "nova solicitação" (S7). |
@@ -3018,6 +3380,56 @@ Consequência de método: **não** se deve afirmar cobertura das propriedades **
 `K-Nb-39` a partir de um teste isolado da fronteira da etapa 4. Elas pertencem à
 **orquestração**, que **não existe** (§12, itens 10, 11, 15 e 18).
 
+**Cenários conceituais de S2-D8 — família própria `D8-K*`** (arbitragem S2-D8, §4.4.1).
+**Namespace próprio**: os cenários de N-b **continuam `K-Nb-1`–`K-Nb-51`** e **nenhum deles
+é alterado, renumerado ou substituído**. **Nenhum teste Python é criado** por esta
+arbitragem — a parametrização é decisão futura de materialização.
+
+Convenções desta família: "coberto" significa **respondível** por **R2-5**; "descoberto"
+significa **grupo sem alternativa emitível agora** (**D8-F1**–**D8-F6**); e toda leitura de
+famílias e transições respeita o runtime real do doc 06 §4.2 — **C5 antes de C6, C6 antes
+de C9, C9 antes de C10** —, com a regra de que **uma transição só se aplica quando o seu
+estado de origem coincide com o estado INTERMEDIÁRIO vigente** no instante da avaliação.
+
+| # | Cenário | Resultado esperado |
+|---|---|---|
+| D8-K1 | **Zero `PerguntaComercial`** no ciclo, base íntegra e nenhum campo determinante indisponível | condição **4** = `False` (D8-T4b); condição **2** = `False` (D8-T2b); **zero `E09`**; **nada** em `pendencias_resposta` |
+| D8-K2 | Uma `PerguntaComercial` **`ALTA`** cujo assunto tem **todos os grupos cobertos** | condição **4** = `True` (D8-T4c); **zero `E09`**; **nada** em `pendencias_resposta` |
+| D8-K3 | **Única pergunta `BAIXA`** | **não entra** no eixo B (D8-B1); **nenhuma pergunta efetiva** → condição **4** = `False` (D8-T4b); **zero `E09`** por causa dela; **nada** em `pendencias_resposta` (D8-P5) |
+| D8-K4 | Assunto consultado com **zero grupos** no mapa | **não respondível** (R2-5); `E09` com motivo `SEM_RESPOSTA_APROVADA_EMITIVEL`; a **pergunta** entra em `pendencias_resposta` (D8-P3) |
+| D8-K5 | **`ASSUNTO_NAO_CLASSIFICADO` isolado**, confiança `ALTA` | **zero grupos por definição** (R2-6) → condição **4** = `False` **+ `E09`** (D8-T4f), motivo `SEM_RESPOSTA_APROVADA_EMITIVEL`; a pergunta entra em `pendencias_resposta`. **Não é `E-Nb-5`** e **não é erro** (AJ2-N1–AJ2-N5) |
+| D8-K6 | ***Binding* `RENDERIZADO` necessário resolve para `null`**, deixando o **único grupo** do assunto descoberto | fragmento **não emitível** (D8-F2); causa `CAMPO_INDISPONIVEL`, carregando **caminho YAML** **e** assunto; `E09`; condição **4** = `False` se esse for o único assunto consultado |
+| D8-K7 | ***Binding* necessário** aponta para estrutura cujo **`status` é `pendente`** | **mesmo tratamento** de D8-K6: `CAMPO_INDISPONIVEL` (D8-F2, C-7) |
+| D8-K8 | Campo da base **indisponível**, **não relacionado** a nenhum assunto consultado e **não determinante** da qualificação neste ciclo | **nenhuma causa**; condição **2** = `False` por falha de **IMP-2** (D8-T2c); condição **4** **inalterada**; **zero `E09`** |
+| D8-K9 | **Múltiplas perguntas `ALTA`**, todos os assuntos cobertos | condição **4** = `True`; **zero `E09`**; **nada** em `pendencias_resposta` |
+| D8-K10 | Assunto com **dois grupos complementares**, **ambos cobertos** | **respondível** (R2-4, R2-5): a **conjunção entre grupos** está satisfeita |
+| D8-K11 | Assunto com **dois grupos complementares**, **um descoberto** | **não respondível** (D8-L3): a consulta **não está totalmente coberta**; `E09` com `SEM_RESPOSTA_APROVADA_EMITIVEL` |
+| D8-K12 | Grupo com **duas alternativas**: uma **bloqueada**, outra **segura** | **grupo coberto** pela disjunção (R2-4): **zero lacuna**, **zero `E09`**, **zero handoff** (D8-L2) |
+| D8-K13 | **Classe I** — índice de C **ausente** | **bloqueio antes da etapa 7**; a `MaquinaEstados` **não executa**; condições **2** e **4** = `None`; **zero `E09`**; processamento preservado; **alerta pelo caminho já existente** (D8-CI7–D8-CI14) |
+| D8-K14 | **Classe I** — **referência pendurada**: o mapa **R2** aponta para fragmento inexistente | **idêntico a D8-K13** (R2-7) |
+| D8-K15 | **Classe I** — fragmento com **status ausente ou inválido** | **idêntico a D8-K13** (D8-F5) |
+| D8-K16 | **Classe II com alternativa segura** — `ASSERTIVA` avaliável **falsa** em uma alternativa; **outra alternativa aprovada e íntegra do mesmo grupo** cobre integralmente a consulta | fragmento divergente **bloqueado**, erro de consistência **registrado**, alerta **emitido** (F4-B1–F4-B3); a **resposta segura aprovada prossegue**; **zero `E09` fabricado** e **zero handoff** causado por essa divergência (F4-B6, D8-CII5) |
+| D8-K17 | **Classe II sem alternativa segura** — a `ASSERTIVA` falsa deixa o **grupo descoberto** | bloqueio, registro e alerta **iguais** a D8-K16; ao interessado, **R03 + handoff** (F4-B5); `E09` com `SEM_RESPOSTA_APROVADA_EMITIVEL` |
+| D8-K18 | **`E09` único com múltiplas causas** — um assunto com *binding* `null` e outro com **zero grupos** | **um único `E09`** no ciclo (D8-E3), com o conjunto de motivos **`CAMPO_INDISPONIVEL` + `SEM_RESPOSTA_APROVADA_EMITIVEL`**, **deduplicado e canonicalizado** (D8-E4, D8-E5) |
+| D8-K19 | **Causa exclusiva do eixo A** — campo determinante indisponível com **IMP-1–IMP-4 satisfeitas**, **zero `PerguntaComercial`** no ciclo | condição **2** = `True` (D8-T2f); `Qualificacao.resultado == INDEFINIDO` (D8-A6); `E09` **impeditivo** com `CAMPO_INDISPONIVEL`; **nenhuma pergunta é inventada** em `pendencias_resposta` (D8-P6) — a evidência fica em `Qualificacao.pendencias_impeditivas` e segue ao resumo pela representação própria |
+| D8-K20 | **Causa A + pergunta respondível** no mesmo ciclo | condição **2** = `True` e condição **4** = `True`; **um único `E09`**, **impeditivo**; a pergunta **respondida** **não** entra em `pendencias_resposta` |
+| D8-K21 | **Causa B + dados do interessado incompletos** | **IMP-4 falha** → condição **2** = `False` (D8-T2e) e `Qualificacao.resultado == DADOS_INCOMPLETOS`; `E09` **acessório**; a pergunta **não respondida** entra em `pendencias_resposta` |
+| D8-K22 | Tentativa de compor **`E09` impeditivo** com `DADOS_INCOMPLETOS` ou com `INCOMPATIVEL` | **caminho inexistente por construção**: **IMP-4** e **IMP-3** o excluem (D8-A7). Se aparecer, é **erro de integração**, nunca caso de negócio |
+| D8-K23 | **A8-a** — `E08` de classe **handoff documentado** + `E09` **acessório** em `coletando_dados` | **C5** aplica **T05** → `pronto_para_handoff`; **C10 não consome `E09`**, porque a origem de **T12** (`coletando_dados`) já não coincide com o estado intermediário; **`E09` sobrevive por P5** |
+| D8-K24 | **A8-b** — `E08` de classe **informa e aguarda** + `E09` **acessório** em `coletando_dados` | **C5** aplica **T06**, que **preserva o estado**; **C10** aplica **T12** → `pronto_para_handoff` e **consome `E09`**; **P5 não se aplica** |
+| D8-K25 | **A3** — `E09` **impeditivo** + `E06` **respondível** em `coletando_dados` | **C6** aplica **T11** (com T11/T18 conforme a redação de doc 06 §3) → `pronto_para_handoff`; **C9 não consome `E06`**, porque a origem de **T10** já não coincide com o estado intermediário; **`E06` sobrevive por P3** |
+| D8-K26 | **A3** em `respondendo_duvidas` | **C6** aplica **T18** → `pronto_para_handoff`; **C9 não consome `E06`** (origem de **T17** não coincide); **`E06` sobrevive por P3** |
+| D8-K27 | `E08` de classe **handoff documentado** + `E09` **acessório** em `respondendo_duvidas` | **C5** aplica **T22** → `pronto_para_handoff`; **C10 não consome `E09`** (origem de **T19** não coincide); **`E09` sobrevive por P5** |
+| D8-K28 | **`E06` incoerente** — `E06` confirmado **+** zero `PerguntaComercial` efetiva **+** `resposta_aprovada_disponivel = False` **+** ausência de `E09`, em estado de **resposta condicionada** | **combinação incoerente**: **bloqueio de integração**. **S2-D8 não confirma `E06`** e **não corrige** a incoerência; a responsabilidade é integralmente de **`N-b-RES2`**, que **continua ABERTO** (D8-N1, D8-N2) |
+| D8-K29 | **Modo sem `Interpretacao`** | **S2-D8 NÃO é alcançada** (D8-S1): a etapa 5 não executa, as etapas 6 e 7 também não, as condições **2** e **4** permanecem **não avaliadas / `None`**, **nada é gravado** (N-b-M5) e **nenhum alerta novo** é criado (N-b-M3). **Este cenário não usa as tabelas D8-T2 e D8-T4** |
+| D8-K30 | **Q1** — requisito **estrutural** do carregador ausente, `null` ou de tipo inválido | **o motor não inicia** (§7). **Não é pendência de S2-D8**, **não é `E09`**, **não é `pendencia_impeditiva`** e **não é caso de ciclo** (Q1-a, Q1-b). **`Q2` não é autorizada** (Q1-e) |
+
+**Alcance da prova.** Estes cenários são **conceituais**. Enquanto o mapa **R2**, o índice de
+C e o produtor de S2-D8 **não existirem**, nenhum deles é verificável em código, e **nenhuma
+cobertura de teste pode ser alegada** a partir desta seção. Os cenários que envolvem famílias
+e efeitos paralelos do doc 06 — **D8-K23**–**D8-K27** — descrevem o **runtime já existente**
+da `MaquinaEstados` e **não pedem alteração alguma** nela.
+
 ### 8.3 Testáveis somente com LLM real (poucos, manuais)
 
 - qualidade da extração em português coloquial de WhatsApp;
@@ -3177,7 +3589,7 @@ commit e nenhum push. A Etapa 3B não foi iniciada.
 | 7 | Precisão do validador de resposta | validador fraco deixa passar valor inventado; forte demais bloqueia texto correto | Etapa 3B, com os casos de `tests/perguntas-criticas.md` |
 | 8 | Custo por conversa não medido | sem parâmetro de custo do LLM | etapa 9 |
 | 9 | Política de retenção de log não definida (L7) | dado pessoal guardado sem prazo | antes da produção, etapa 10 |
-| 10 | **S2-D8** — contrato de detecção e classificação de pendências: detectar campo `null`/`pendente` relevante e ausência de resposta aprovada, classificar impeditiva × acessória, fornecer os identificadores técnicos ao `Qualificador` e confirmar `E09` | **não bloqueia** a `MaquinaEstados`, que recebe `E09` pronto; **bloqueia** o `OrquestradorMotor` e a integração completa. Nenhum componente concreto foi escolhido — não é o `CarregadorYaml` nem o `ValidadorYaml` | arbitragem específica, antes da integração do pipeline (doc 06 §11) |
+| 10 | **S2-D8** — contrato de detecção e classificação de pendências: detectar campo `null`/`pendente` relevante e ausência de resposta aprovada, classificar impeditiva × acessória, fornecer os identificadores técnicos ao `Qualificador`, confirmar `E09` e fornecer a condição estruturada `resposta_aprovada_disponivel` | **ARBITRADA / NÃO MATERIALIZADA** (§4.4.1; doc 06 §11). **CONTRATO: ARBITRADO** — **dois eixos** (**A**, de qualificação, e **B**, de resposta); **Q1** como decisão do MVP; regra impeditiva **IMP-1**–**IMP-4** com o invariante `pendencia_impeditiva == True` ⇒ `INDEFINIDO`; **ordem conceitual determinística** anterior à etapa 7 (§5); mapa **R2** de **grupos de cobertura** (conjunção entre grupos, disjunção dentro do grupo); **fragmento emitível** e **regra de lacuna real**; **Classe I** × **Classe II**; **exatamente dois** motivos de `E09` — `CAMPO_INDISPONIVEL` e `SEM_RESPOSTA_APROVADA_EMITIVEL`; semântica de `pendencias_resposta`; e a **reconciliação normativa limitada F4-B** de §2.2. **MATERIALIZAÇÃO: NÃO EXISTE** — **nenhum módulo, nenhum mapa R2, nenhum arquivo de `src/`, `tests/`, `knowledge/` ou `prompts/`**, e **nenhum componente concreto escolhido**: não é o `CarregadorYaml`, não é o `ValidadorYaml`, não é o `SeletorFatos` e não é o `Qualificador`. **As condições 2 e 4 de §4.4 passam a ter PRODUTOR CONCEITUAL** — os eixos **A** e **B** —; a **condição 8** continua **NÃO ATRIBUÍDA** (**S3-D1**). **Continua não bloqueando** a `MaquinaEstados`, que recebe `E09` pronto; **continua bloqueando** o `OrquestradorMotor` e a integração completa. Onde este documento diz que "S2-D8 permanece ABERTA" — em particular `C-E8` e `C-12` de §2.3, que **permanecem literais e inalteradas** — a leitura correta passa a ser **aberta quanto à MATERIALIZAÇÃO** | **materializar** o contrato de §4.4.1, depois de **AJ2** e de **C**, e **só então** integrar ao pipeline (doc 06 §11) |
 
 | 11 | **N-a** — política de **elegibilidade e recência** que produz o conjunto elegível da etapa 3 | **ARBITRADA DOCUMENTALMENTE** (arbitragem N-a, §6.2): classificação **fechada dos oito estados**; recência aplicável **exclusivamente** a `encerrado`; `instante_ultima_transicao` como **único** marco temporal do MVP — **quando inicializado ou atualizado, recebe o `instante_de_referencia_do_ciclo` daquele ciclo**, **nunca** o relógio vivo; atualização decidida pelo **caminho de transições**; limiar como **configuração operacional validada explicitamente**; projeção do registro em `CandidatoAtendimento`; composição de E; duplicatas; **ordem canônica** só para auditabilidade; e a precedência conceitual da etapa 3 — materializados em §5, §6.2 e §7.1, com **N-a-F1**, **N-I**, **P-I**, **R5-P0**, **H1–H6** e **D0–D6** preservados. **Não é implementação**: a **arbitragem N-a** não alterou `persistence.py` e o `OrquestradorMotor` **continua não autorizado**. **Materializações posteriores**, em entregas funcionais próprias: (a) o **transporte e a validação da representação** de `instante_ultima_transicao` na persistência operacional (§6.2, M-T1–M-T6); e (b) a **produção determinística de E** — projeção, classificação dos oito estados, recência de `encerrado`, N-a-F1, duplicatas e ordem canônica — como função pura em `src/casa77_sdr/eligibility.py` (§6.2, M-E1–M-E6); e (c) a **montagem determinística das projeções de identidade da etapa 3** — leitura da persistência, validação do identificador, projeção do contexto, conjunto **H**, `havia_estado_esperado` e projeção **N-I** — em `src/casa77_sdr/context.py` (§6.2, M-C1–M-C8), que cobre a **fronteira etapa 3 → identidade/etapa 5** e **não** a etapa 3 inteira. **A integração N-a continua PARCIAL**: a **decisão determinística** exigida por **N-a-T3–N-a-T7** foi materializada em `src/casa77_sdr/transition_marker.py` (§6.2, M-DT1–M-DT7), e a **aplicação** dessa decisão com a **escrita** pelo contrato da persistência existe como **fronteira chamável** em `src/casa77_sdr/transition_marker_write.py` (§6.2, M-AE1–M-AE7). Ainda assim, **N-a-T3–N-a-T7 NÃO estão operacionalmente concluídas** — a **integração da etapa 13 no pipeline** permanece pendente, assim como o **tratamento operacional dos bloqueios** (S4, S5), o **destino do alerta** e o **`OrquestradorMotor`**. A **projeção `transicoes_que_mudaram_estado`** (§6.2) foi **ARBITRADA** e depois **materializada em runtime** na `MaquinaEstados`. Isso **não** encerra o item: a **decisão pura** e a **composição decisória entre as 0–3 chamadas** do ciclo estão materializadas em **M-DT1–M-DT7**, mas continuam **NÃO implementadas/integradas** a **montagem completa** do `RegistroAtendimento`, a **decisão de se a etapa 13 executa**, a **escolha entre criar e gravar** no pipeline, a **geração de `id_atendimento`**, a **criação operacional** do atendimento, a **marcação de idempotência**, a **preservação de pendente**, o **tratamento operacional de falha** e a **integração da etapa 13**; o **valor numérico do limiar** e o **mecanismo de carga** continuam pendentes no **item 18**, a **E4** continua **distinta e aberta** no **item 15**, e o **`OrquestradorMotor` continua fora** | **especificação resolvida** — §6.2. **Aquela arbitragem não autorizou implementação alguma** — o PR #31 foi entrega documental e, à época, N-a não existia em código. O **valor numérico do limiar** e o **mecanismo concreto de carga** da configuração são o **item 18**. **E4** é pendência **distinta e ainda aberta**, no **item 15**, e **não é resolvida aqui** |
 | 12 | **N-b** — contrato global da **interpretação** da etapa 4: quem produz a projeção estruturada de §6.3 (`intencao_identidade`, referências, confianças binárias) e com que garantias | **ARBITRADA DOCUMENTALMENTE / NÃO IMPLEMENTADA** (arbitragem N-b, §6.3): o contrato da **`Interpretacao`** está **fechado** — as **oito** categorias de §6.3 preservadas; **`IntencaoConversacional`** com **exatamente 11** códigos na partição **A1 (6 derivados) / A2 (2 autônomos) / B (3 autônomos)**; consistência cruzada **N-b-X1–N-b-X6** sobre os **seis pares de representação dupla**; regras de confiança **N-b-G6/G6b/G6c**; lista fechada de erros **E-Nb-1–E-Nb-19**; modo degradado **N-b-M1–N-b-M8**; fronteira do produtor **N-b-F1–N-b-F5**; e cenários **K-Nb-1–K-Nb-40** (§8.2). **Produtor atribuído**: o "produtor de interpretação da etapa 4" é **fronteira funcional** do limite único de LLM (§4.2, §9), **não componente novo** — §4.1 permanece com **14** componentes. Passam a ter produtor a **derivação para a projeção da etapa 5** (**N-b-K1–N-b-K7**) e a **condição 5** de §4.4 (**N-b-CD1–N-b-CD4**); as condições **2**, **4** e **8** continuam **não atribuídas**. **Residual explícito**: a etapa 4 **não emite `Exx`**, e a transformação posterior dos sinais interpretados em eventos confirmados **continua sem produtor concreto** (**N-b-RES1–N-b-RES3**) — **sem identificador de pendência novo**. **Nenhum código, tipo Python, JSON Schema, biblioteca, fornecedor, modelo, SDK, API ou formato de transporte foi criado ou escolhido**. **Micro-arbitragem AJ1** (§6.3, §8.2): fecha a **representação/canonicalização determinística** de N-b — **`A1` não é entrada semântica** do produtor não determinístico, presença **derivada** e confiança **calculada** por **N-b-X3**, **precedência `E-Nb-3` × `E-Nb-5`** no slot autônomo, **classificação AJ1** dos 19 erros em recebíveis × invariantes internos × invariante estrutural, **alcance de prova** de `K-Nb-18`, `K-Nb-34` e `K-Nb-39`, estratégia estrutural de `E-Nb-19`, preservação da **condição 5** e reutilização por **import** de `FormatoEvento`. **AJ1 não reabre N-b, não a implementa, não cria componente e não cria subetapa**. **Materialização posterior, em entrega funcional própria**: a **parte determinística** do contrato — canonicalização da `Interpretacao`, derivação dos seis códigos **A1** com confiança calculada por **N-b-X3**, projeção total para a `ProjecaoInterpretacao` de **sete** campos e a **condição 5** como função total — existe em código em `src/casa77_sdr/interpretation.py` (§6.3, **M-NB1–M-NB9**). **A implementação de N-b permanece PARCIAL**: o **produtor não determinístico / LLM da etapa 4 NÃO foi implementado**, **`N-b-RES2` continua aberto**, a **etapa 4 não está operacionalmente integrada** ao pipeline e o **`OrquestradorMotor` continua fora**. **Extensão posterior por AJ2** (item 20, §6.3): o contrato de `PerguntaComercial` foi **estendido documentalmente** para incluir o **`assunto`** (`AssuntoComercial`, 54 valores), com `E-Nb-5` ampliado e cenários até `K-Nb-51`. **Esse delta NÃO está materializado** — `M-NB1`–`M-NB9` continuam descrevendo a implementação do PR #55, **anterior a AJ2**. | **especificação resolvida**; a **fronteira determinística** está **materializada** (M-NB1–M-NB9) **para o contrato anterior a AJ2**; o **delta AJ2**, o **produtor não determinístico** e a **integração** permanecem futuros, junto do `OrquestradorMotor` |
@@ -3197,6 +3609,16 @@ alguma da tabela acima e **não** altera nenhuma linha dela além da nota regist
 **E4** (item 15), **S3-D1**, **E1** (item 13), **E3** (item 14), **B**, **C** — esta **arbitrada documentalmente depois**, em §2.3, e **NÃO MATERIALIZADA** (item 19) —, o **valor do
 limiar** e seu **mecanismo de carga** (item 18), o **destino do alerta operacional**
 (item 3a) e o **`OrquestradorMotor`**.
+
+**Nota da arbitragem S2-D8 sobre `N-b-RES2`** (§4.4.1, D8-N1–D8-N2). **`N-b-RES2` continua
+ABERTO** e **não é resolvido** por S2-D8. A arbitragem **não confirma `E06`**, **não cria
+produtor de evento** e **não cria identificador de pendência novo**: ela apenas registra a
+**pré-condição de coerência de integração** — um futuro produtor de `E06` não pode entregar
+à `MaquinaEstados` a combinação `E06` confirmado **+** zero `PerguntaComercial` efetiva
+**+** `resposta_aprovada_disponivel = False` **+** ausência de `E09` nos estados cuja
+resposta é **condicionada** (T10, T17, T28). **A responsabilidade permanece integralmente em
+`N-b-RES2`.** **S2-D8 também não materializa AJ2 e não materializa C**: ambas continuam
+**ARBITRADAS / NÃO MATERIALIZADAS** (§6.3, §2.3), e **a 3B.8 continua não existindo**.
 
 **N-b permanece NÃO IMPLEMENTADA.** AJ1 fecha a **representação e a canonicalização** que
 antecedem a materialização — não a materialização. Continua verdadeiro, sem atenuação:

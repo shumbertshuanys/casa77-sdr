@@ -52,6 +52,20 @@ Regra de separação: estado da conversa responde "**onde a conversa está**";
 do outro. Exemplo: uma conversa em `respondendo_duvidas` pode ter lead
 `dados_incompletos`, `qualificado` ou `incompativel` — são eixos independentes.
 
+**Invariante do eixo A de S2-D8** (arbitragem S2-D8; `docs/07` §4.4.1). Quando a condição
+estruturada `pendencia_impeditiva` chega **verdadeira** ao ciclo, o `resultado_qualificacao`
+recebido é **obrigatoriamente `indefinido`**. A regra impeditiva **IMP-1**–**IMP-4** garante
+isso a montante: a pendência só é impeditiva quando pertence ao universo de dados
+determinantes da qualificação (**IMP-1**), é necessária para classificar **este** ciclo
+(**IMP-2**), **nenhuma violação objetiva** já determinou `incompativel` (**IMP-3**) e
+**nenhum dado obrigatório do interessado** ainda está ausente (**IMP-4**).
+
+Consequência direta: a combinação **`E09` impeditivo + `dados_incompletos`** **não é caminho
+normal** e **não deve ser documentada como tal** — **IMP-4** a exclui por construção, assim
+como **IMP-3** exclui a combinação com `incompativel`. Se ela aparecer, é **erro de
+integração a montante**, nunca caso de negócio. A máquina continua **não classificando** e
+**não recalculando** nada disso (I23).
+
 ### 1.3 Pendências de resposta (`pendencias_resposta`)
 
 Atributo paralelo do lead: lista de perguntas do interessado que não puderam ser
@@ -68,6 +82,21 @@ Regras:
   (pergunta sem resposta aprovada e campo pendente são os gatilhos 1 e 2);
 - `resultado_qualificacao = indefinido` fica reservado ao caso em que a pendência
   impede a classificação do evento.
+
+**Conteúdo de `pendencias_resposta`** (arbitragem S2-D8; `docs/07` §4.4.1, **D8-P1**–**D8-P6**):
+
+- a lista contém **PERGUNTAS DO INTERESSADO**, **nunca motivos técnicos**. O identificador
+  técnico da pendência vive em `Qualificacao.pendencias_impeditivas`, não aqui;
+- a **decisão** de registrar é **por assunto** — o `AssuntoComercial` da consulta
+  (`docs/07` §6.3). O **texto** da pergunta é **somente conteúdo persistido**, jamais chave
+  de decisão;
+- entra em `pendencias_resposta` **cada pergunta comercial efetiva** — confiança `ALTA` —
+  cujo assunto ficou **não respondível**. Pergunta de confiança `BAIXA` **não entra**;
+- **duplicatas são preservadas como conteúdo** quando existirem;
+- **causa exclusiva de qualificação/base, sem consulta correspondente, NÃO cria pergunta
+  aqui.** A evidência permanece em `Qualificacao.pendencias_impeditivas` e na estrutura de
+  auditoria, e segue ao resumo **pela sua representação própria**. Inventar uma pergunta
+  que o interessado não fez é fabricar conteúdo.
 
 ## 2. Eventos de transição
 
@@ -157,9 +186,44 @@ A classificação **impeditiva × acessória** (§1.3) acompanha o evento e é o
 T11/T18 de T12/T19. A máquina **não detecta**, **não reclassifica** e **não recalcula**
 pendência.
 
-O **produtor concreto** de `E09` **não é atribuído** nesta arbitragem — em particular,
-**não** é o `CarregadorYaml` e **não** é o `ValidadorYaml`. O contrato do produtor é a
-pendência aberta **S2-D8** (§11).
+O **produtor concreto** de `E09` **não é atribuído** — em particular, **não** é o
+`CarregadorYaml`, **não** é o `ValidadorYaml`, **não** é o `SeletorFatos` e **não** é o
+`Qualificador`. O **contrato** do produtor está **ARBITRADO e NÃO MATERIALIZADO** em
+**S2-D8** (§11; `docs/07` §4.4.1).
+
+**Os dois eixos que compõem `E09`** (arbitragem S2-D8). Os dois casos (a) e (b) acima
+correspondem a **dois eixos semanticamente independentes**, avaliados **a montante**:
+
+| Eixo | Pergunta que responde | Produz |
+|---|---|---|
+| **A — qualificação** | "existe indisponibilidade válida na base que impede a classificação do evento **neste ciclo**?" | `pendencia_impeditiva`; as `pendencias_impeditivas` entregues ao `Qualificador`; e **causa** que pode confirmar `E09` |
+| **B — resposta** | "existe cobertura aprovada e emitível para os assuntos **efetivamente consultados**?" | `resposta_aprovada_disponivel`; a avaliação **por assunto**; **causas acessórias** que podem confirmar `E09`; e a associação das perguntas não respondidas a `pendencias_resposta` |
+
+O **eixo A não depende** de pergunta comercial alguma; o **eixo B consome somente** consultas
+de confiança **`ALTA`** e **nunca usa o texto como chave semântica**.
+
+| # | Regra de composição |
+|---|---|
+| 1 | `E09` é a **união** das causas dos eixos **A** e **B** — **A ∪ B** |
+| 2 | **no máximo um `E09` por ciclo**; o consumo único da §4.2 continua valendo |
+| 3 | um caso **misto** pode carregar causas dos dois eixos |
+| 4 | o conjunto de motivos é a **união, deduplicada e canonicalizada** |
+
+**Vocabulário fechado de motivos de `E09` — exatamente DOIS. Nenhum terceiro.**
+
+| # | Motivo | Origem |
+|---|---|---|
+| 1 | `CAMPO_INDISPONIVEL` | *binding* necessário resolve para `null` ou para estrutura com `status: pendente`. Carrega o **caminho** do campo; no eixo B carrega **também o assunto** |
+| 2 | `SEM_RESPOSTA_APROVADA_EMITIVEL` | alternativa ou status não emitível deixa um **grupo de cobertura descoberto**; conferência de consistência divergente deixa um grupo descoberto; **zero grupos**; **assunto não classificado** |
+
+Nenhum motivo carrega **texto livre**, **dado pessoal** ou **valor comercial**.
+
+Os motivos de `E09` permanecem **metadados estruturados de auditoria a montante**. Eles
+**NÃO integram `CondicoesCiclo`** e **NÃO são entrada da `MaquinaEstados`** — **nenhum campo
+novo é criado nesta máquina** por causa deles. Para a máquina chegam apenas **`Evento.E09`**
+e a classificação já estruturada **`pendencia_impeditiva`**, além das demais condições já
+existentes quando aplicáveis (§4.1, `docs/07` §4.4). A máquina **não interpreta os motivos**
+e **não referencia nenhum `Rxx`** (§11).
 
 #### `E15` — resposta comercial concluída
 
@@ -201,14 +265,14 @@ linha.
 | T08 | `coletando_dados` | `E07` | `resultado_qualificacao` = `qualificado_com_ressalva` | `pronto_para_handoff` | `INFORMAR_RESSALVA_DE_CAPACIDADE`; encaminhar para decisão humana — a máquina emite a ação, e a redação do fato de capacidade cabe ao `SeletorFatos` | afirmar que algum pacote de `precos.pacotes` libera formato sentado acima do limite | `qualificado_com_ressalva` (recebido, não recalculado) |
 | T09 | `coletando_dados` | `E04` | convidados acima de `capacidade.convidados_sentados` e até `capacidade.formato_coquetel`, formato não informado | `coletando_dados` | perguntar o formato antes de indicar pacote | assumir formato; indicar pacote | `dados_incompletos` |
 | T10 | `coletando_dados` | `E06` | resposta existe no YAML/respostas aprovadas | `respondendo_duvidas` | responder; ao concluir, emitir `E15` | reiniciar a coleta | mantém |
-| T11 | `coletando_dados` | `E09` | a pendência impede a classificação do evento | `pronto_para_handoff` | aplicar R03; registrar a pergunta em `pendencias_resposta` | inventar; usar conhecimento genérico | `indefinido` |
+| T11 | `coletando_dados` | `E09` | a pendência impede a classificação do evento | `pronto_para_handoff` | aplicar R03; registrar em `pendencias_resposta` as **perguntas não respondidas do ciclo**, **quando houver causa de resposta associada** (§1.3) | inventar; usar conhecimento genérico; **fabricar pergunta** quando a causa é exclusivamente de qualificação/base | `indefinido` |
 | T12 | `coletando_dados` | `E09` | pendência acessória (não impede a classificação) | `pronto_para_handoff` | aplicar R03; registrar a pergunta em `pendencias_resposta` | rebaixar a qualificação para `indefinido`; inventar | mantém |
 | T13 | `coletando_dados` | `E07` | todos os campos obrigatórios presentes e compatíveis, após as validações do §4 | `pronto_para_handoff` | classificar conforme `docs/02-fluxo-comercial.md` §6.1; preparar resumo | concluir contratação; confirmar data; sobrescrever incompatibilidade detectada | `qualificado` ou `qualificado_com_ressalva` conforme regras |
 | T14 | `coletando_dados` | `E03` | interessado quer confirmar disponibilidade **e** calendário integrado | `aguardando_confirmacao_disponibilidade` | registrar a data; consultar o calendário | afirmar livre/ocupado sem consulta | mantém |
 | T15 | `coletando_dados` | `E03` | interessado quer confirmar disponibilidade **e** calendário `pendente` | `pronto_para_handoff` | aplicar R05; registrar a data | presumir disponibilidade | mantém |
 | T16 | `coletando_dados` | `E10` | — | `coletando_dados` | registrar interesse; informar a duração estimada (`processo_comercial.visitas.duracao_estimada_minutos`) e o responsável (`processo_comercial.visitas.responsavel_visita`) | marcar, sugerir horário ou confirmar visita | mantém |
 | T17 | `respondendo_duvidas` | `E06` | resposta aprovada existe | `respondendo_duvidas` | responder com o YAML | estimar, comparar, opinar | mantém |
-| T18 | `respondendo_duvidas` | `E09` | a pendência impede a classificação do evento | `pronto_para_handoff` | aplicar R03; registrar em `pendencias_resposta` | inventar resposta | `indefinido` |
+| T18 | `respondendo_duvidas` | `E09` | a pendência impede a classificação do evento | `pronto_para_handoff` | aplicar R03; registrar em `pendencias_resposta` as **perguntas não respondidas do ciclo**, **quando houver causa de resposta associada** (§1.3) | inventar resposta; **fabricar pergunta** quando a causa é exclusivamente de qualificação/base | `indefinido` |
 | T19 | `respondendo_duvidas` | `E09` | pendência acessória (não impede a classificação) | `pronto_para_handoff` | aplicar R03; registrar em `pendencias_resposta` | rebaixar a qualificação para `indefinido`; inventar | mantém |
 | T20 | `respondendo_duvidas` | `E15` | ainda faltam campos obrigatórios | `coletando_dados` | retomar a coleta sem repetir perguntas | reiniciar do zero | mantém |
 | T21 | `respondendo_duvidas` | `E15` | dados completos e compatíveis | `pronto_para_handoff` | classificar e preparar o resumo | reiniciar a coleta | `qualificado` ou `qualificado_com_ressalva` conforme regras |
@@ -259,6 +323,15 @@ Notas:
   contrato** (§4.5), nunca fallback. Classificação dos motivos existentes hoje: data não
   aceita → classe **T05/T22**; tipo não aceito e convidados acima da capacidade → classe
   **T06/T23**.
+- **Clarificação da ação obrigatória de T11/T18** (arbitragem S2-D8). Foi atualizada
+  **somente a redação documental** da ação: registrar em `pendencias_resposta` as
+  **perguntas não respondidas do ciclo** **quando houver causa de resposta associada**
+  (§1.3, §4.3 **P5**). **Nenhuma `Txx` muda**, **nenhum estado muda**, **nenhuma guarda
+  muda** e **nenhum código de ação muda** (`docs/07` §4.5). Pendência **exclusivamente de
+  qualificação/base**, sem consulta correspondente, **não cria item** em
+  `pendencias_resposta`: ela é evidenciada por `Qualificacao.pendencias_impeditivas` e
+  permanece na estrutura de auditoria/resumo. **T12 e T19 não foram tocadas** por esta
+  arbitragem, e a mesma semântica de §1.3 governa a leitura da ação delas.
 - A ordem em que estas linhas são avaliadas dentro de um ciclo está fixada em §4.2; os
   efeitos que sobrevivem a outra decisão de estado estão em §4.3; os casos em que um
   evento legítimo não transiciona estão em §4.4.
@@ -527,11 +600,15 @@ estado. A lista é **fechada** em P1–P6.
 | P2 | registro do interesse de visita (`E10`) é preservado |
 | P3 | a obrigação de responder `E06` **pode sobreviver** a outra transição do estado. `E15` **não** é intenção de responder: só existe depois da resposta real concluída (§2.2) |
 | P4 | incompatibilidade já detectada é **preservada** quando outro evento decide o estado |
-| P5 | pendência de resposta é registrada em `pendencias_resposta` e levada ao resumo quando outro evento decide o estado |
+| P5 | pendência de resposta **sobrevive** quando outro evento decide o estado. **Duas leituras distintas** (arbitragem S2-D8, §1.3): **(a)** havendo **causa de resposta** — consulta comercial efetiva cujo assunto ficou não respondível —, as **perguntas efetivamente não respondidas** são registradas em `pendencias_resposta` e levadas ao resumo; **(b)** sendo o `E09` **exclusivamente de qualificação/base**, **nenhuma pergunta é inventada**: a evidência permanece em `Qualificacao.pendencias_impeditivas` e na auditoria, e segue ao resumo pela **representação própria**. **P5 não significa que todo `E09` cria pergunta** |
 | P6 | quando `E07` é confirmado com `qualificado_com_ressalva` e **T08 não é a transição que decide o estado**, a ação `INFORMAR_RESSALVA_DE_CAPACIDADE` é preservada **exatamente** nestas famílias: (a) T14/T15 já determinaram o estado pela precedência de disponibilidade (C7); (b) o estado é `respondendo_duvidas` e T40 determina o estado |
 
 **P6 não se generaliza.** Fora das duas famílias listadas, a ressalva não é reemitida como
 efeito paralelo.
+
+**A lista continua fechada em P1–P6. Não existe P7.** A clarificação de **P5** acima é
+**exclusivamente redacional**: nenhum efeito paralelo é criado, removido ou ampliado, e
+nenhuma hipótese de aplicação de P1–P6 muda.
 
 ### 4.4 Inércias — lista fechada
 
@@ -719,7 +796,7 @@ caminhos **distintos e não concorrentes**:
 
 | Gatilhos do doc 04 | Caminho | Produtor |
 |---|---|---|
-| 1–2 — pergunta sem resposta aprovada; campo `null`/`pendente` | `E09`, já classificado em impeditivo × acessório | **pendente — S2-D8** (§11) |
+| 1–2 — pergunta sem resposta aprovada; campo `null`/`pendente` | `E09`, já classificado em impeditivo × acessório | **S2-D8 — ARBITRADA / NÃO MATERIALIZADA** (§11): o **contrato** existe, com os **eixos A e B**; **nenhum componente concreto foi escolhido** e **nada está implementado** |
 | 3–10 — desconto/condição especial, confirmação de data/visita/reserva, contratação, cancelamento, alteração de data, assunto jurídico ou contratual, pedido explícito de humano, reclamação ou tom hostil | `E18` com motivo (§2.1) | `DetectorHandoff` |
 | 11–12 — `qualificado_com_ressalva` ou `indefinido`; coleta concluída e lead qualificado | **transições da §3**: T08, T13, T21, T40 e os caminhos de `E09` aplicáveis | `MaquinaEstados` |
 
@@ -759,13 +836,26 @@ O `ProcessamentoPendente` atual **não ganha campos** por causa desta regra.
 A **confirmação física de entrega permanece futura, da etapa 5** (canal de entrega do
 resumo — `docs/04-handoff-humano.md`, "Pendências desta etapa").
 
-## 11. Pendência aberta — S2-D8
+## 11. S2-D8 — ARBITRADA / NÃO MATERIALIZADA
 
 **`S2-D8` — contrato de detecção e classificação de pendências.** O prefixo `S2-` é
 obrigatório: esta pendência **não** tem relação com a arbitragem comercial `D1`–`D8` já
 registrada no histórico do projeto.
 
-Escopo do contrato pendente:
+**Estado: ARBITRADA / NÃO MATERIALIZADA.** O **contrato documental está fechado**; a
+**materialização não existe**. O detalhe normativo vive em `docs/07` §4.4.1 e **não é
+duplicado aqui**.
+
+| # | Continua verdadeiro |
+|---|---|
+| 1 | **nenhum código foi criado ou alterado** — `src/`, `tests/`, `knowledge/` e `prompts/` permanecem intactos |
+| 2 | **nenhum componente concreto foi escolhido** — não é o `CarregadorYaml`, não é o `ValidadorYaml`, não é o `SeletorFatos` e não é o `Qualificador` |
+| 3 | **nenhum estado, evento, transição, efeito paralelo, inércia, ação ou invariante novo** é criado nesta máquina |
+| 4 | **S2-D8 não bloqueia** a implementação isolada da `MaquinaEstados`, que recebe `E09` e as condições estruturadas já prontos |
+| 5 | **S2-D8 continua bloqueando** o `OrquestradorMotor` e a integração completa do pipeline |
+| 6 | **nenhuma subetapa foi criada — a 3B.8 não existe** |
+
+Escopo do contrato, agora **arbitrado**:
 
 | Item |
 |---|
@@ -776,29 +866,64 @@ Escopo do contrato pendente:
 | confirmar `E09` |
 | fornecer à `MaquinaEstados` a condição estruturada `resposta_aprovada_disponivel` (ampliação S3) |
 
-Ampliação da arbitragem S3 — segunda saída estruturada:
+### Os dois eixos
 
-O mesmo produtor futuro, ainda **não atribuído**, também fornece à `MaquinaEstados` uma
-condição estruturada equivalente a **`resposta_aprovada_disponivel`**, consumida pelas
+O contrato distingue **dois eixos semanticamente independentes** (§2.2):
+
+| Eixo | Pergunta | Saídas |
+|---|---|---|
+| **A — qualificação** | "existe indisponibilidade válida na base que impede a classificação do evento **neste ciclo**?" | `pendencia_impeditiva`; `pendencias_impeditivas` ao `Qualificador`; causa que pode confirmar `E09` |
+| **B — resposta** | "existe cobertura aprovada e emitível para os assuntos **efetivamente consultados**?" | `resposta_aprovada_disponivel`; avaliação **por assunto**; causas acessórias que podem confirmar `E09`; associação das perguntas não respondidas a `pendencias_resposta` |
+
+O eixo **A** **não depende** de pergunta comercial. O eixo **B** consome **somente** consulta
+de confiança `ALTA` e **nunca** usa o texto como chave semântica. `E09` é a **união** das
+causas, com **no máximo um evento por ciclo** e **exatamente dois** motivos possíveis —
+`CAMPO_INDISPONIVEL` e `SEM_RESPOSTA_APROVADA_EMITIVEL` (§2.2).
+
+### Segunda saída estruturada — `resposta_aprovada_disponivel` (ampliação S3)
+
+O mesmo produtor futuro, ainda **não atribuído a componente concreto**, fornece à
+`MaquinaEstados` a condição estruturada **`resposta_aprovada_disponivel`**, consumida pelas
 linhas **T10**, **T17** e **T28**. Regras:
 
 - ela precisa estar **determinada antes da primeira chamada da `MaquinaEstados`** — isto é,
-  antes da etapa 7 do doc 07 (§5 daquele documento);
+  antes da etapa 7 do doc 07 (§5 daquele documento). A **ordem conceitual determinística**
+  que antecede essa chamada está fixada em `docs/07` §5;
 - **`resposta_aprovada_disponivel` e `E09` são saídas distintas** e **não são a negação uma
   da outra**: no mesmo ciclo pode haver uma pergunta com resposta aprovada disponível e
   outra pergunta que confirma `E09`;
 - somente o status **APROVADO** habilita o uso. **AGUARDA APROVAÇÃO não habilita** e
-  **BLOQUEADO não habilita**;
+  **BLOQUEADO não habilita**. Além do status, o fragmento só é **emitível agora** quando os
+  *bindings* necessários resolvem para valor disponível e a conferência de consistência
+  aplicável é verdadeira (`docs/07` §4.4.1, **D8-F1**–**D8-F6**);
 - a `MaquinaEstados` **não consulta** `knowledge/respostas-aprovadas.md` e **não referencia
   nenhum `Rxx`**: recebe apenas a condição booleana já determinada;
 - **nenhum produtor concreto é escolhido** — em particular, o `SeletorFatos` **não** é
   declarado produtor desta condição.
 
-Regras gerais da pendência:
+### Ordem das famílias — leitura conforme o runtime real
 
-- **nenhum componente concreto é escolhido aqui** — em particular, o produtor **não** é
-  atribuído ao `CarregadorYaml` nem ao `ValidadorYaml`;
-- **S2-D8 continua ABERTA** — a ampliação acima descreve o contrato pendente, não o resolve;
-- **S2-D8 não bloqueia** a implementação isolada da `MaquinaEstados`, que recebe `E09` e as
-  condições estruturadas já prontos;
-- **S2-D8 bloqueia** o `OrquestradorMotor` e a integração completa do pipeline.
+Os cenários de S2-D8 respeitam a ordem já vigente da §4.2 — **C5 antes de C6, C6 antes de
+C9, C9 antes de C10** —, e a regra de que **uma transição só se aplica quando o seu estado
+de origem coincide com o estado INTERMEDIÁRIO vigente** no instante da avaliação. **Nada
+nesta máquina muda por causa disso**; os três casos abaixo são **ilustrações do
+comportamento já existente**, e a família documental completa vive em `docs/07` §8.2
+(`D8-K*`):
+
+| Caso | Situação | Percurso |
+|---|---|---|
+| A3 | `E09` **impeditivo** + `E06` **respondível**, em `coletando_dados` ou `respondendo_duvidas` | **C6** aplica **T11/T18** → `pronto_para_handoff`; **C9 não consome `E06`**, porque a origem de T10/T17 já não coincide com o estado intermediário; **`E06` sobrevive por P3** |
+| A8-a | `E08` de classe **handoff documentado** + `E09` **acessório** | **C5** aplica **T05/T22** → `pronto_para_handoff`; **C10 não consome `E09`**; **`E09` sobrevive por P5** |
+| A8-b | `E08` de classe **informa e aguarda** + `E09` **acessório** | **T06/T23 preserva o estado**; **C10** aplica **T12/T19** e **consome `E09`** |
+
+Os demais cenários respeitam **a mesma regra**. **Nenhuma transição, ordem de família,
+precedência, efeito paralelo ou inércia é criada, removida ou alterada.**
+
+### O que S2-D8 NÃO faz
+
+Ela **não materializa AJ2** e **não materializa C** — ambas continuam **ARBITRADAS / NÃO
+MATERIALIZADAS** (`docs/07` §6.3 e §2.3) —, **não fecha `N-b-RES2`**, que **continua
+ABERTO**, **não implementa o `OrquestradorMotor`**, **não cria o índice
+`knowledge/indice-respostas-aprovadas.yaml`**, **não cria o mapa de grupos de cobertura**,
+**não resolve** `S3-D1`, `E4`, `E1`, `E3`, `B`, `S2-D5` nem `S2-D7`, e **não cria a 3B.8**,
+que **continua não existindo**.
