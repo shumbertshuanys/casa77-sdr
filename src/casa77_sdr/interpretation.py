@@ -1,8 +1,8 @@
-"""Fronteira determinística da interpretação da etapa 4 (contrato N-b / AJ1).
+"""Fronteira determinística da interpretação da etapa 4 (contrato N-b / AJ1 / AJ2).
 
 Materializa a **parte determinística** do contrato de
-`docs/07-arquitetura-motor-respostas.md` §6.3 — a arbitragem **N-b** e a
-micro-arbitragem **AJ1**. O módulo faz exatamente três coisas:
+`docs/07-arquitetura-motor-respostas.md` §6.3 — a arbitragem **N-b**, a
+micro-arbitragem **AJ1** e o **delta AJ2**. O módulo faz exatamente três coisas:
 
 1. **canonicaliza** a entrada estruturada recebida do futuro produtor não
    determinístico, produzindo uma `Interpretacao` canônica válida **ou** um erro
@@ -29,8 +29,11 @@ cache, zero fila. Ele **não** interpreta texto livre, **não** lê contexto,
 própria — `Exx`, `Txx`, `Rxx`, `Qualificacao`, `Violacao`, `Estado`, pendência,
 `motivo_encerramento`, `CondicoesCiclo`, `DecisaoMaquina` ou
 `RegistroAtendimento` (**E-Nb-19**). A **condição 5** é a **única** condição de
-§4.4 produzida aqui; as condições **2**, **4** e **8** continuam **NÃO
-ATRIBUÍDAS**.
+§4.4 **produzida aqui** — e a única **materializada** em código. As condições
+**2** e **4** possuem **produtor conceitual** atribuído por **S2-D8** (§4.4.1,
+eixos **A** e **B**), mas continuam **NÃO MATERIALIZADAS**: S2-D8 permanece
+**ARBITRADA / NÃO MATERIALIZADA** e **nada neste módulo as produz**. A condição
+**8** continua **NÃO ATRIBUÍDA** (**S3-D1**).
 
 Erros de contrato **bloqueiam na fronteira**: nenhuma `Interpretacao` canônica é
 produzida e nenhuma projeção existe. As duas famílias são **distintas**: **tipo
@@ -40,6 +43,19 @@ mensagem. Daí a separação entre **ausência** e **tipo**: confiança ausente 
 ela é exigida é `E-Nb-1` — e `confianca_global` ausente é `E-Nb-4` —, enquanto
 uma confiança de **tipo errado** é `TypeError`. **Nenhuma exceção pública nova é
 criada** (AJ1).
+
+**Delta AJ2 materializado.** `PerguntaComercial` tem **três** campos — `texto`,
+`confianca` e `assunto` —, com `assunto` **obrigatório** do vocabulário fechado
+`AssuntoComercial` de **54** valores e **sem confiança própria** (N-b-Q7). A
+ampliação de **`E-Nb-5`** cobre assunto **ausente** (AJ2-X1) e **fora do
+vocabulário** (AJ2-X2); tipo runtime incompatível continua `TypeError` **sem
+código** (M-NB4). **A lista de erros permanece `E-Nb-1`–`E-Nb-19`** e **nenhuma
+exceção pública nova é criada**. O `assunto` **não atravessa** para a
+`ProjecaoInterpretacao`, **não referencia `Rxx`**, **não participa de N-b-X3** e
+**não produz condição** de §4.4 (N-b-Q12): seu consumo pertence a **S2-D8**, que
+**continua ARBITRADA / NÃO MATERIALIZADA**. As validações de assunto correm
+**depois** das validações N-b/AJ1 preexistentes, preservando a precedência
+histórica dos erros.
 
 A **ordem canônica** de `intencoes_detectadas` é **produzida** deterministicamente
 por `canonicalizar_interpretacao(...)`, mas **não é exigida** de quem consome:
@@ -62,6 +78,7 @@ from casa77_sdr.qualification import FormatoEvento
 
 __all__ = [
     "IntencaoConversacional",
+    "AssuntoComercial",
     "DadosExtraidos",
     "CorrecaoInterpretada",
     "PerguntaComercial",
@@ -128,6 +145,87 @@ _CODIGOS_AUTONOMOS: frozenset[IntencaoConversacional] = frozenset(
         IntencaoConversacional.EVENTO_NOVO_DECLARADO,
     }
 )
+
+
+class AssuntoComercial(StrEnum):
+    """Vocabulário conceitual **fechado em 54 valores** (AJ2, N-b-Q7).
+
+    **53 assuntos específicos + `ASSUNTO_NAO_CLASSIFICADO`**, o membro de
+    **totalidade**. **Nenhum 55º valor** pode ser acrescentado, e nenhum alias
+    existe. A ordem de declaração é a **ordem documental** de `docs/07` §6.3.
+
+    São **categorias semânticas**, não valores comerciais: nenhum membro carrega
+    preço, capacidade, horário, prazo, condição, endereço ou texto de resposta —
+    é o que torna `E-Nb-19` estruturalmente inviolável por este enum.
+
+    **`ASSUNTO_NAO_CLASSIFICADO` é valor legítimo de totalidade** (AJ2-N1): não é
+    erro, não é confiança `BAIXA`, não é ausência e não é `TrechoAmbiguo`
+    (AJ2-N2–AJ2-N5). **Nunca escolher "o mais próximo"** — aproximar é fabricar
+    classificação (N-b-Q10). O que se faz com ele a jusante pertence a **S2-D8**,
+    que **continua ARBITRADA / NÃO MATERIALIZADA** (AJ2-C4).
+    """
+
+    # Preço e condição comercial (12)
+    PRECO_LOCACAO = "preco_locacao"
+    PRECO_HORA_ADICIONAL = "preco_hora_adicional"
+    PRECO_VARIACAO_POR_DIA_DA_SEMANA = "preco_variacao_por_dia_da_semana"
+    PRECO_VARIACAO_POR_TEMPORADA = "preco_variacao_por_temporada"
+    PRECO_SUITE_DA_NOIVA = "preco_suite_da_noiva"
+    DESCONTO = "desconto"
+    PAGAMENTO_E_PARCELAMENTO = "pagamento_e_parcelamento"
+    CAUCAO = "caucao"
+    VALIDADE_DA_PROPOSTA = "validade_da_proposta"
+    REAJUSTE_DE_PRECO = "reajuste_de_preco"
+    PARCERIA_OU_PERMUTA = "parceria_ou_permuta"
+    MULTAS_E_PENALIDADES = "multas_e_penalidades"
+    # Evento, data e contratação (10)
+    TIPO_DE_EVENTO = "tipo_de_evento"
+    DATA_BLOQUEADA = "data_bloqueada"
+    DISPONIBILIDADE_DE_DATA = "disponibilidade_de_data"
+    CAPACIDADE_MAXIMA_E_FORMATO = "capacidade_maxima_e_formato"
+    CAPACIDADE_MINIMA = "capacidade_minima"
+    HORARIO_LIMITE_E_DURACAO = "horario_limite_e_duracao"
+    MONTAGEM_E_DESMONTAGEM = "montagem_e_desmontagem"
+    CONTRATACAO = "contratacao"
+    CANCELAMENTO = "cancelamento"
+    ALTERACAO_DE_DATA = "alteracao_de_data"
+    # Espaço e estrutura (12)
+    LOCALIZACAO = "localizacao"
+    ESTACIONAMENTO = "estacionamento"
+    ACESSIBILIDADE = "acessibilidade"
+    BANHEIROS = "banheiros"
+    COZINHA = "cozinha"
+    SUITE_DA_NOIVA = "suite_da_noiva"
+    MOBILIARIO = "mobiliario"
+    CLIMATIZACAO = "climatizacao"
+    ESPACO_INFANTIL = "espaco_infantil"
+    COBERTURA_E_PLANO_DE_CHUVA = "cobertura_e_plano_de_chuva"
+    SOM_E_ILUMINACAO = "som_e_iluminacao"
+    GERADOR_E_ENERGIA = "gerador_e_energia"
+    # Inclusão, fornecedor e restrição (10)
+    ITENS_INCLUSOS = "itens_inclusos"
+    EQUIPE_E_LIMPEZA = "equipe_e_limpeza"
+    FORNECEDOR_PROPRIO = "fornecedor_proprio"
+    FORNECEDOR_RECOMENDADO = "fornecedor_recomendado"
+    RESTRICAO_USO_DE_AREA = "restricao_uso_de_area"
+    RESTRICAO_FOGOS = "restricao_fogos"
+    RESTRICAO_ANIMAIS = "restricao_animais"
+    RESTRICAO_VELAS = "restricao_velas"
+    RESTRICAO_DRONES = "restricao_drones"
+    RESTRICAO_DECORACAO = "restricao_decoracao"
+    # Processo, prazo e material (9)
+    VISITA = "visita"
+    PRAZO_DE_RETORNO = "prazo_de_retorno"
+    HORARIO_DE_ATENDIMENTO = "horario_de_atendimento"
+    MATERIAL_FOTOS = "material_fotos"
+    MATERIAL_VIDEOS = "material_videos"
+    MATERIAL_PLANTA = "material_planta"
+    MATERIAL_PORTFOLIO = "material_portfolio"
+    MATERIAL_APRESENTACAO_COMERCIAL = "material_apresentacao_comercial"
+    LINK_DE_MAPA = "link_de_mapa"
+    # Totalidade (1)
+    ASSUNTO_NAO_CLASSIFICADO = "assunto_nao_classificado"
+
 
 #: Os **seis** campos de `dados_extraidos` (N-b-D1), na ordem do contrato.
 _CAMPOS_DADOS: tuple[str, ...] = (
@@ -199,10 +297,32 @@ class CorrecaoInterpretada:
 
 @dataclass(frozen=True)
 class PerguntaComercial:
-    """Pergunta comercial identificada — `texto` e `confianca` (N-b-Q1, N-b-Q2)."""
+    """Consulta comercial identificada — **três** campos (N-b-Q1, N-b-Q7).
+
+    `texto` e `confianca` vêm de N-b; `assunto` é a extensão **AJ2**. O assunto é
+    **obrigatório** numa interpretação válida, pertence ao enum fechado
+    `AssuntoComercial` e **não possui confiança própria** — `N-b-Q2`/`N-b-Q3`
+    permanecem o **filtro único** de efetividade (N-b-Q7).
+
+    `assunto = None` representa **ausência recebida**, para que `AJ2-X1` seja
+    verificável na fronteira; ela é rejeitada como `E-Nb-5`. **Exatamente um
+    assunto por item** (N-b-Q8): a consulta **composta** deve chegar **já
+    segmentada pelo futuro produtor semântico** em múltiplas `PerguntaComercial`,
+    uma por assunto. **Este módulo não segmenta texto livre**: ele apenas
+    **recebe** a representação já segmentada, **exige** um assunto por item,
+    **valida** os assuntos e **preserva** cada item como recebido. O `texto` é
+    **preservado literalmente** — sem `strip`, normalização, resumo ou paráfrase
+    (N-b-Q9) — e **duplicatas exatas são permitidas**, sem `id`, posição,
+    *offset* ou contador (N-b-Q11).
+
+    O `assunto` **não atravessa** para a `ProjecaoInterpretacao`, **não referencia
+    `Rxx`**, **não seleciona fragmento** e **não produz condição** de §4.4
+    (N-b-Q12).
+    """
 
     texto: str | None
     confianca: Confianca | None
+    assunto: AssuntoComercial | None
 
 
 @dataclass(frozen=True)
@@ -476,6 +596,48 @@ def _validar_itens_com_texto(
             raise _erro("E-Nb-1", f"item de {nome} presente sem confiança declarada")
         if not isinstance(item.confianca, Confianca):
             raise TypeError(f"a confiança de {nome} precisa ser Confianca")
+
+
+def _validar_assuntos(perguntas: tuple[PerguntaComercial, ...]) -> None:
+    """`AJ2-X1` e `AJ2-X2` — ampliação **já arbitrada** de `E-Nb-5`.
+
+    **A lista de erros continua `E-Nb-1`–`E-Nb-19`**: nenhum vigésimo código é
+    criado (AJ2). As duas famílias vigentes são preservadas conforme **M-NB4**:
+
+    * `assunto` **ausente** (`None`) → `E-Nb-5` (AJ2-X1, K-Nb-43);
+    * `assunto` **fora do vocabulário** `AssuntoComercial` → `E-Nb-5`
+      (AJ2-X2, K-Nb-42);
+    * `assunto` com **tipo runtime incompatível** → `TypeError`, **sem código**
+      (K-Nb-44);
+    * `ASSUNTO_NAO_CLASSIFICADO` → **válido** (AJ2-N1, K-Nb-45).
+
+    **Precedência preservada (D-AJ2-2).** Esta validação é chamada **depois** de
+    todas as validações e pós-condições N-b/AJ1 preexistentes — por isso ela
+    **não** vive em `_validar_tipos` nem em `_validar_itens_com_texto`. Quando uma
+    entrada viola simultaneamente uma regra antiga e a regra AJ2, **a regra antiga
+    prevalece**: texto ausente/vazio continua `E-Nb-10`, confiança sem valor
+    continua `E-Nb-2`, valor sem confiança continua `E-Nb-1` e tipo incompatível de
+    texto ou confiança continua `TypeError`.
+
+    O assunto **não participa de N-b-X3**: a agregação de `PERGUNTA_COMERCIAL`
+    continua dependendo **somente** das confianças (N-b-Q6, N-b-Q7).
+    """
+    for pergunta in perguntas:
+        assunto = pergunta.assunto
+        if assunto is None:
+            raise _erro(
+                "E-Nb-5", "PerguntaComercial sem assunto — o assunto é obrigatório"
+            )
+        if isinstance(assunto, AssuntoComercial):
+            continue
+        if isinstance(assunto, str):
+            raise _erro(
+                "E-Nb-5",
+                f"assunto {assunto!r} fora do vocabulário fechado AssuntoComercial",
+            )
+        raise TypeError(
+            "o assunto da pergunta comercial precisa ser AssuntoComercial ou None"
+        )
 
 
 def _validar_trechos_ambiguos(
@@ -805,6 +967,10 @@ def _validar_interpretacao_canonica(interpretacao: object) -> Interpretacao:
     _validar_correcoes(interpretacao.correcoes, interpretacao.dados_extraidos)
     _validar_codigos_detectados(interpretacao.intencoes_detectadas)
     _verificar_pos_condicoes(interpretacao)
+    # AJ2 por último, pelo mesmo motivo de D-AJ2-2: uma `Interpretacao` construída
+    # diretamente também é rejeitada quando o assunto viola o contrato, e sem
+    # alterar a ordem histórica das validações anteriores.
+    _validar_assuntos(interpretacao.perguntas_comerciais)
     return interpretacao
 
 
@@ -911,6 +1077,10 @@ def canonicalizar_interpretacao(entrada: EntradaInterpretacao) -> Interpretacao:
         trechos_ambiguos=trechos,
     )
     _verificar_pos_condicoes(interpretacao)
+    # AJ2 por último (D-AJ2-2): a precedência histórica dos erros N-b/AJ1 é
+    # preservada, e o erro de assunto bloqueia antes de qualquer devolução —
+    # nenhuma `Interpretacao` inválida escapa da fronteira.
+    _validar_assuntos(interpretacao.perguntas_comerciais)
     return interpretacao
 
 
