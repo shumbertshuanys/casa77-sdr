@@ -15,42 +15,62 @@ de Douglas Bianchi | **BLOQUEADO** = campo pendente no YAML, usar R03.
 
 ## R02 — Identificação como bot — APROVADO
 
-> Sou o atendimento automático da Casa 77. Passo as informações iniciais, e o Douglas
-> Bianchi assume a partir da parte comercial.
+> Sou o atendimento automático da Casa 77. Passo as informações iniciais, e o responsável
+> comercial assume na sequência.
 
 ## R03 — Lacuna de informação — APROVADO
 
 > Essa parte eu prefiro não responder por mim para não passar informação errada. Vou
-> encaminhar para o Douglas confirmar com você, tudo bem?
+> encaminhar para o responsável comercial confirmar com você, tudo bem?
 
 ## R04 — Pedido de desconto — APROVADO
 
 Origem: `precos.desconto_autorizado_bot: false`, `precos.desconto_a_vista: false`.
 
 > Não trabalhamos com desconto, inclusive à vista, e não consigo alterar valores por aqui.
-> Qualquer condição comercial é o Douglas quem define. Vou passar seu contato para ele.
+> Condição comercial quem define é o responsável comercial — já vou encaminhar seu contato.
 
-## R05 — Confirmação de data — APROVADO
+## R05 — Disponibilidade de data — APROVADO
 
-> Ainda não consigo confirmar disponibilidade por aqui. Vou anotar a data que você quer e o
-> Douglas verifica na agenda antes de te responder.
+Três fragmentos emitíveis. A escolha entre eles é **decisão determinística do motor**, a
+partir do resultado de uma consulta autoritativa de calendário — **o LLM não decide qual
+fragmento usar e nunca decide disponibilidade**. Contrato em `docs/07` §2.3, bloco
+"Micro-arbitragem C-A2".
+
+**F1 — sem confirmação segura**: ausência de fonte, falha de consulta ou resultado ambíguo.
+Sempre acompanhado de handoff.
+
+> Não tenho uma confirmação segura dessa data agora. Vou registrar a data e encaminhar para
+> o responsável comercial verificar com você.
+
+**F2 — consulta autoritativa válida e data disponível.** Comunicar disponibilidade não é
+reservar, segurar nem bloquear a data.
+
+> A consulta à agenda indica que essa data está disponível. Isso não é uma reserva nem
+> bloqueia a data. Se quiser, encaminho para o responsável comercial dar sequência.
+
+**F3 — consulta autoritativa válida e data indisponível.**
+
+> A consulta à agenda indica que essa data não está disponível. Se quiser, me diga outra
+> data para consultar.
 
 ## R06 — Pedido de visita — APROVADO
 
 Origem: `processo_comercial.visitas.bot_pode_confirmar: false`.
 
-> A visita é feita com o próprio Douglas e leva de 30 a 40 minutos. Quem confirma o horário
-> é ele. Vou registrar seu interesse e ele fala com você para combinar.
+> A visita é feita com o responsável comercial e leva de 30 a 40 minutos. A confirmação do
+> horário também é feita pelo responsável comercial. Vou registrar seu interesse e
+> encaminhar para confirmação dos detalhes.
 
 ## R07 — Fechamento de contrato — APROVADO
 
-> Contrato e assinatura são feitos direto com o Douglas. Já estou encaminhando sua conversa
-> para ele.
+> Contrato e assinatura são feitos direto com o responsável comercial. Já estou encaminhando
+> sua conversa.
 
 ## R08 — Transferência para humano — APROVADO
 
-> Vou passar sua conversa para o Douglas Bianchi, que cuida das locações da Casa 77. Ele
-> fala com você para confirmar os detalhes.
+> Vou passar sua conversa para o responsável comercial da Casa 77, que fala com você para
+> confirmar os detalhes.
 
 ## R09 — Preço — APROVADO
 
@@ -88,8 +108,8 @@ Montagem e desmontagem:
 
 ## R12 — O que está incluso — APROVADO
 
-> Estão inclusos: uso das áreas contratadas, o mobiliário da casa, três seguranças na parte
-> externa, uma governanta que também atua na recepção e a limpeza de entrega da casa.
+> Estão inclusos: o uso das áreas contratadas, o mobiliário da casa, 3 seguranças na parte
+> externa, 1 governanta, que também auxilia na recepção, e a limpeza de entrega da casa.
 
 Não incluso:
 
@@ -128,19 +148,21 @@ Origem: `eventos.nao_aceitos` e `eventos.observacao_nao_aceitos`.
 Aplica-se a: despedida de solteiro, festa de adolescente, festa infantil, aniversário
 adulto (decisão de 2026-08-15, arbitragem D1), treinamento, palestra e workshop.
 
-Para treinamento, palestra e workshop o motivo registrado no YAML
-(`eventos.observacao_nao_aceitos`) é estrutural — não há projetor nem assentos em
-quantidade para esse uso. O texto acima cobre a recusa; se o interessado perguntar o
-motivo, citar a razão registrada no YAML.
+**Instrução interna — não emitível (FE-11a).** O campo `eventos.observacao_nao_aceitos`
+**não pode ser emitido literalmente**: a narrativa registrada nele contém identificação
+nominal e proveniência interna de decisão, que não devem chegar ao interessado. O texto
+emitível acima cobre a recusa. Enquanto não existir representação estrutural segura do
+motivo, **pedido específico do motivo → R03 + handoff** — o bot não parafraseia, não resume
+e não cita esse campo.
 
 ## R18 — Datas bloqueadas — APROVADO
 
-> Não fazemos eventos no Carnaval, no Natal e no Ano Novo.
+> Não fazemos eventos nestas datas: Carnaval, Natal e Ano Novo.
 
 ## R19 — Pagamento — APROVADO
 
-> O pagamento pode ser integral ou em duas parcelas de 50%: a primeira na assinatura do
-> contrato e a segunda 30 dias antes do evento. Não há caução.
+> O pagamento pode ser integral ou em 2 parcelas: 50% na assinatura do contrato e 50% com
+> vencimento 30 dias antes do evento. Não há caução.
 
 Pedido de parcelamento diferente → R04.
 
@@ -148,15 +170,15 @@ Pedido de parcelamento diferente → R04.
 
 Origem: `cancelamento.atendimento_humano_obrigatorio: true`.
 
-> Em caso de cancelamento, o valor da entrada, que corresponde a 50% do contrato, fica
-> retido. Esse assunto o Douglas trata diretamente com você.
+> Em caso de cancelamento, o valor pago como entrada fica retido integralmente. Esse assunto
+> o responsável comercial trata diretamente com você.
 
 Sempre acompanhado de handoff.
 
 ## R21 — Alteração de data — APROVADO com handoff obrigatório
 
 > A alteração de data precisa de no mínimo 90 dias de antecedência e depende de
-> disponibilidade. Quem confirma é o Douglas.
+> disponibilidade. Quem confirma é o responsável comercial.
 
 ## R22 — Chuva / área coberta — APROVADO
 
@@ -166,9 +188,10 @@ Sempre acompanhado de handoff.
 
 ## R23 — Restrições da casa — APROVADO
 
-> Não é permitido: uso da piscina, uso da parte inferior da casa, fogos de artifício,
-> animais, drogas ilícitas, número de pessoas acima do contratado e qualquer intervenção que
-> danifique a estrutura. Os fogos são proibidos por lei porque a região é área ambiental.
+> Não é permitido: drogas ilícitas, uso da piscina, uso da parte inferior da casa,
+> quantidade de pessoas superior ao contratado, fogos de artifício, animais e danos ou
+> intervenções na estrutura da casa. Fogos de artifício são proibidos por lei por se tratar
+> de área ambiental.
 
 Decoração:
 
@@ -183,9 +206,10 @@ Pedir a lista de buffets recomendados → R03 + handoff (lista nominal não est�
 
 ## R25 — Cozinha e estrutura técnica — APROVADO
 
-> A cozinha é equipada, com freezer, duas geladeiras, cervejeira, fogão industrial, dois
-> fogões convencionais, dois fornos elétricos, micro-ondas, churrasqueira, bancadas de apoio
-> e área de cozinha externa. A rede elétrica tem 110V e 220V.
+> A cozinha é equipada com os seguintes itens, com a quantidade entre parênteses: freezer
+> horizontal (1), geladeira duplex (2), cervejeira (1), fogão industrial (1), fogão
+> convencional (2), forno elétrico (2), micro-ondas (1), churrasqueira (1), bancada de apoio
+> (2) e área de cozinha externa (1). A rede elétrica tem 110 V e 220 V.
 
 > Som e iluminação cênica não estão inclusos e ficam por conta do contratante. Gerador
 > também não está incluso, mas pode ser instalado.

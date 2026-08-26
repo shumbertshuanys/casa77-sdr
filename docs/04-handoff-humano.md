@@ -15,7 +15,15 @@ Horário de atendimento (`processo_comercial.horario_atendimento`):
 1. Pergunta sem resposta aprovada em `knowledge/`.
 2. Campo consultado está `null` ou `pendente` no YAML.
 3. Pedido de desconto, condição especial ou parcelamento diferente.
-4. Confirmação de data, visita ou reserva.
+4. Confirmação de data, visita ou reserva — os três casos são **distintos** e não
+   compartilham a mesma regra:
+   - **Visita** — confirmação **humana**. O bot nunca confirma visita. Handoff obrigatório.
+   - **Reserva** — ato **humano**, proibido ao bot em qualquer cenário. Handoff obrigatório.
+   - **Disponibilidade de data** — handoff obrigatório **somente quando não houver
+     confirmação segura**: sem consulta autoritativa válida e decisão determinística, o
+     desfecho é **R05 `F1` + handoff**. Havendo decisão determinística válida, o bot **pode
+     comunicar** a disponibilidade (**R05 `F2`/`F3`**) — isso **não** é reserva, *hold* nem
+     bloqueio de data, e **não** dispara handoff por esse motivo.
 5. Fechamento de contrato (`contratacao.bot_pode_fechar: false`).
 6. Cancelamento (`cancelamento.atendimento_humano_obrigatorio: true`).
 7. Alteração de data (`alteracao_data.atendimento_humano_obrigatorio: true`).
@@ -48,21 +56,25 @@ Histórico: <transcrição>
 
 ## Mensagem ao interessado
 
-> Vou passar sua conversa para o Douglas Bianchi, que cuida das locações da Casa 77. Ele
-> fala com você para confirmar os detalhes.
+A mensagem emitida é a resposta aprovada **R08** de `knowledge/respostas-aprovadas.md`. Este
+documento não mantém redação emitível própria e **não emite nome próprio ao interessado**: a
+referência emitida é **"responsável comercial"**.
 
 Não prometer prazo de retorno — SLA pendente.
 
 ## Visitas
 
-`visitas.bot_pode_confirmar: false`. O bot pode dizer que a visita dura de 30 a 40 minutos e
-que é feita pelo próprio Douglas. Não marca, não sugere horário, não confirma.
+`visitas.bot_pode_confirmar: false`. A visita é realizada **com o responsável comercial**, e
+a **confirmação de horário é humana**. O bot pode informar a duração estimada pela resposta
+aprovada **R06**, usando a referência emitida "responsável comercial". **O bot não marca,
+não sugere horário e não confirma visita.**
 
 ## Regras após o handoff
 
 - O bot não continua negociando.
-- Pode responder dúvida com resposta aprovada e reforçar que o Douglas dará sequência.
-- Nunca contradiz ou reinterpreta algo dito por Douglas.
+- Pode responder dúvida com resposta aprovada e indicar que o **responsável comercial** dará
+  sequência — **sem reforço nominal na mensagem ao interessado**.
+- Nunca contradiz ou reinterpreta algo dito pelo responsável comercial.
 
 ## Pendências desta etapa
 
