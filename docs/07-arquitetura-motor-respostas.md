@@ -792,6 +792,317 @@ critério, enum, erro, cenário nem subetapa. **A 3B.8 não existe.** **S2-D8 co
 / NÃO MATERIALIZADA**, **`N-b-RES2` continua ABERTO** e o **`OrquestradorMotor` continua não
 implementado**.
 
+#### Micro-arbitragem C-A2 — fatos e conteúdo humanos residuais
+
+**Estado: ARBITRADA DOCUMENTALMENTE.** Entrega **exclusivamente documental**, **posterior**
+a **C** e a **C-A1**. Ela **fecha** os fatos humanos `A1`–`A4` enumerados por C-A1, **registra
+estruturalmente** o conteúdo humano aprovado como **APROVADO HUMANAMENTE / AINDA NÃO
+APLICADO**, **refina a leitura futura** do contrato de materialização para admitir **fato
+operacional de runtime autoritativo** e **enumera** os efeitos futuros `FE-1`–`FE-14`. Ela
+**não** cria o índice, **não** altera o YAML, **não** aplica texto algum, **não** converte
+respostas em *templates*, **não** muda status real, **não** implementa carregador,
+renderizador ou consulta de calendário e **não** materializa **C**, **R2** ou **S2-D8**.
+
+| # | Continua verdadeiro |
+|---|---|
+| C-A2-E1 | o **índice não existe** — nenhum arquivo foi criado |
+| C-A2-E2 | `knowledge/respostas-aprovadas.md` **não foi convertido** e **não foi alterado** |
+| C-A2-E3 | `knowledge/casa77.yaml` **não foi alterado**; **nenhum alvo `MD-x` foi executado** |
+| C-A2-E4 | **nenhum texto aprovado foi aplicado** a arquivo algum |
+| C-A2-E5 | **nenhum renderizador, analisador ou validador** existe |
+| C-A2-E6 | **nenhum provedor de calendário** foi escolhido, e **nenhuma integração** foi criada |
+| C-A2-E7 | **C continua ARBITRADA / NÃO MATERIALIZADA**; **S2-D8 continua ARBITRADA / NÃO MATERIALIZADA** |
+| C-A2-E8 | **`N-b-RES2` continua ABERTO** e o **`OrquestradorMotor` continua não implementado** |
+| C-A2-E9 | **nenhuma condição de ciclo, evento, estado, motivo de `E09` ou subetapa nova** foi criada — **a 3B.8 não existe** |
+
+##### C-A2-H — Preservação histórica
+
+| # | Regra |
+|---|---|
+| C-A2-H1 | **C-1**–**C-14** e **todo o bloco C-A1** continuam **registro histórico** e **não são reescritos**. |
+| C-A2-H2 | **Regra temporal**: o texto histórico continua **correto para o momento em que foi escrito**; **C-A2 é refinamento posterior da leitura futura**, e **nenhuma regra histórica é falsificada**. |
+| C-A2-H3 | Em particular, **`C-A1-A2`** enumera `A1`–`A4` e `B1`–`B6` **corretamente à época de C-A1**. C-A2 **fecha `A1`–`A4`** e **estende** a enumeração de conteúdo para **`B1`–`B16`** — **sem reescrever** aquele bloco. `B7`–`B15` e `B16` são **decisões posteriores a C-A1**. |
+| C-A2-H4 | Após esta entrega: **C-A2 = ARBITRADA DOCUMENTALMENTE**; **`A1`–`A4` = FECHADAS**; **conteúdo B = APROVADO HUMANAMENTE / AINDA NÃO APLICADO**; **C = ARBITRADA / NÃO MATERIALIZADA**; **S2-D8 = ARBITRADA / NÃO MATERIALIZADA**; **`N-b-RES2` = ABERTO**; **`OrquestradorMotor` = NÃO IMPLEMENTADO**. |
+| C-A2-H5 | **Nenhum marco funcional novo.** O **último commit funcional** permanece `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`. |
+
+##### C-A2-A — Fatos humanos `A1`–`A4`: FECHADOS
+
+| # | Fato confirmado |
+|---|---|
+| A1 | **Tratamento emitido NÃO NOMINAL.** Literal aprovado: **"responsável comercial"**. **Nenhum nome próprio é emitido ao interessado.** Referência **puramente interna**, que **não seja fonte de emissão**, pode permanecer nominal. |
+| A2 | **Não existe quantidade mínima de convidados.** |
+| A3 | **Entrada = primeira parcela**; **retenção integral da entrada** — equivalente à **totalidade da primeira parcela** —; **sem devolução parcial**. O bot **pode informar a regra** e, **depois**, **deve fazer handoff** ao responsável comercial. |
+| A4 | O bot **pode confirmar DISPONIBILIDADE** **somente** mediante **decisão determinística** baseada em **consulta autoritativa válida de calendário**. |
+
+**`A4` NÃO autoriza**, em nenhuma hipótese:
+
+| # | Não autorizado |
+|---|---|
+| C-A2-A4a | reserva |
+| C-A2-A4b | *hold* |
+| C-A2-A4c | visita |
+| C-A2-A4d | contrato |
+| C-A2-A4e | alteração definitiva de data |
+| C-A2-A4f | pagamento |
+| C-A2-A4g | exceção |
+
+##### C-A2-B — Conteúdo humano aprovado: registro ESTRUTURAL
+
+**`docs/07` NÃO é fonte paralela de redação comercial.** A tabela abaixo registra **somente
+metadados documentais** — alvo, mecanismo previsto, alvos `MD` necessários, `FE` relacionada
+e observação estrutural. Ela **não reproduz** o corpo literal dos textos aprovados e **não
+contém** preço, percentual, prazo, quantidade ou condição comercial.
+
+**A fonte do texto continua sendo `knowledge/respostas-aprovadas.md`**, e a **aplicação**
+pertence à **futura Entrega 2** (**C-A2-E2**, abaixo).
+
+| B | Alvo | Conteúdo | Aplicação | Mecanismo previsto | `MD` | `FE` | Observação estrutural |
+|---|---|---|---|---|---|---|---|
+| B1 | `R11` `F2` | **texto já aprovado anteriormente — NÃO há nova redação** | **NÃO APLICADO** | **COMBINAÇÃO**: `RENDERIZADO` do fato numérico atomizado de antecedência de montagem; `ASSERTIVA` sobre o fato atômico do prazo de desmontagem; demais literais **estáticos** | **MD-5** | — | resíduo **exclusivamente de modelagem**. **B1 não integra o lote de novas unidades textuais aprovadas** |
+| B2 | `R12` `F1` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `ASSERTIVA` de inclusão do uso das áreas contratadas; `ASSERTIVA` sobre mobiliário incluído; `RENDERIZADO` da quantidade de seguranças; `RENDERIZADO` da quantidade de governantas; `ASSERTIVA` para a função auxiliar de recepção; `ASSERTIVA` para limpeza/entrega inicial incluída; conectivos e redação não variável **estáticos** | **MD-19** | — | **MD-19** atomiza os três fatos ainda narrativos. As representações narrativas antigas **só perdem autoridade depois** dessa cobertura estrutural (**C-A1-M3**) |
+| B3 | `R18` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **`RENDERIZADO`**: formato `lista` sobre `eventos.datas_nao_aceitas`; **um prefixo geral estático**; **preservar todos os itens e a ordem** | — | — | **sem seleção posicional**, **sem prefixo por item**, **sem paráfrase** (**C-A1-L**, **C-A1-S1**) |
+| B4 | `R19` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `ASSERTIVA` de modalidade integral disponível; `RENDERIZADO` da cardinalidade da opção parcelada; `RENDERIZADO` do percentual da primeira parcela; `RENDERIZADO` do percentual da segunda parcela; `ASSERTIVA` de vencimento da primeira parcela na assinatura; `RENDERIZADO` do inteiro de dias antes do evento para o segundo vencimento; `ASSERTIVA` `EH_FALSO` sobre caução | **MD-4**, **MD-18**, **MD-20** | — | os **dois percentuais possuem *bindings* separados**; **nenhuma igualdade caminho-a-caminho** (**C-A1-R3**); **MD-18** seleciona as opções por **identificador estrutural estável**; **MD-20 é MÍNIMO** e prova **somente** a disponibilidade explícita da modalidade integral necessária ao fragmento. **Não criar booleanos redundantes para todas as modalidades apenas por simetria** |
+| B5 | `R23` `F1` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `RENDERIZADO` formato `lista` sobre `restricoes.proibido`; `ASSERTIVA` sobre o fato atômico do motivo da proibição de fogos; redação explicativa aprovada **estática** | **MD-13** | — | a nova redação **não deve depender de renderização direta** da narrativa `restricoes.fogos_motivo`. **MD-13 permanece relevante** para `R23` |
+| B6 | `R25` `F1` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `ASSERTIVA` sobre `estrutura.cozinha.disponivel`; para **cada item** da coleção de equipamentos — selecionar por **identificador estrutural estável, nunca por posição**, `RENDERIZADO` do campo `item` e `RENDERIZADO` do campo `quantidade`; `RENDERIZADO` formato `lista` sobre `estrutura.som.rede_eletrica`; conectivos, pontuação e convenção visual de quantidade **estáticos** | **MD-18** | — | **MD-18 é GENERALIZADO**. **Preservar a coleção de equipamentos como mapeamentos** com `quantidade`/`item`/`especificacao` — **não achatar para *strings***. **Nenhuma especificação adicional é emitida** |
+| B7 | `R02` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **ESTÁTICO** | nenhum — **MD-1** é **SUPERADO / NÃO NECESSÁRIO PARA C** | **FE-8**, **FE-12** | tratamento emitido aprovado: **"responsável comercial"**. **Nenhum nome próprio é emitido ao lead** (**A1**) |
+| B8 | `R03` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **ESTÁTICO** | — | **FE-1**, **FE-9** | é a **resposta padrão de lacuna**. As **duplicatas especializadas** devem ser **sincronizadas na Entrega 2** |
+| B9 | `R04` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `ASSERTIVA` `EH_FALSO` sobre autorização de desconto pelo bot; `ASSERTIVA` `EH_FALSO` sobre desconto à vista; tratamento e encaminhamento **estáticos** | — | **FE-2** | **FE-2** elimina a resposta textual paralela de "insistência" em `docs/03` como **fonte emitível própria**. Na Entrega 2, `docs/03` deve **remeter** ao comportamento aprovado de `R04`/handoff, e **não** manter um segundo texto emitível não catalogado |
+| B10 | `R05` `F1` | **APROVADO HUMANAMENTE** — papel: **FALLBACK de disponibilidade** | **NÃO APLICADO** | **ESTÁTICO** | nenhum **no fragmento** — **MD-15′** é **política externa de autorização** e **NÃO é *binding* nem `ASSERTIVA` de `F1`** | **FE-3**, **FE-7**, **FE-10**, **FE-13**, **FE-14** | `F1` é usado quando **não existe confirmação segura**: ausência de fonte, falha de consulta ou resultado ambíguo. **A seleção do fallback pertence ao motor determinístico, fora de C** (**C-12**) |
+| B11 | `R06` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `RENDERIZADO` da duração mínima; `RENDERIZADO` da duração máxima; `ASSERTIVA` sobre os fatos estruturais de papel — **quem realiza** e **quem confirma** a visita; `ASSERTIVA` `EH_FALSO` sobre `bot_pode_confirmar`; tratamento **"responsável comercial"** estático | **MD-14** | **FE-5** | **MD-14 permanece OBRIGATÓRIO.** **`A1` resolve apenas COMO o papel é chamado**; ela **não substitui** a prova estrutural de quem realiza e de quem confirma a visita |
+| B12 | `R07` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `ASSERTIVA` `EH_FALSO` sobre `bot_pode_fechar`; `ASSERTIVA` `EH_VERDADEIRO` sobre atendimento humano obrigatório; tratamento do responsável **estático** | — | **FE-8** | **não altera poder do bot**: o **contrato continua humano** |
+| B13 | `R08` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **ESTÁTICO** | — | **FE-4**, **FE-6**, **FE-9** | **mensagem padrão de handoff**. **Sincronização especializada obrigatória na Entrega 2** |
+| B14 | `R20` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `ASSERTIVA` `EH_VERDADEIRO` sobre o fato atômico de **retenção integral da entrada**; handoff/tratamento **estáticos** | **MD-17** | — | **não mencionar percentual do contrato**. **MD-18 NÃO é necessário para `R20`** na redação aprovada. **`A3` está satisfeita** |
+| B15 | `R21` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `RENDERIZADO` da antecedência mínima; `ASSERTIVA` `EH_VERDADEIRO` sobre dependência de disponibilidade; `ASSERTIVA` `EH_VERDADEIRO` sobre atendimento humano obrigatório; tratamento do responsável **estático** | — | — | **`A4` autoriza confirmar DISPONIBILIDADE**; ela **não autoriza ALTERAÇÃO definitiva de data**. O **handoff de alteração permanece obrigatório** |
+| B16-A | `R05` `F2` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | `ASSERTIVA` de **origem `RUNTIME_AUTORITATIVO`** (**C-A2-RT**, **C-A2-V**) | — | **FE-3**, **FE-7**, **FE-10**, **FE-13**, **FE-14** | **consulta válida + disponível** |
+| B16-B | `R05` `F3` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | `ASSERTIVA` de **origem `RUNTIME_AUTORITATIVO`** (**C-A2-RT**, **C-A2-V**) | — | **FE-3**, **FE-7**, **FE-10**, **FE-13**, **FE-14** | **consulta válida + indisponível** |
+
+##### C-A2-B16 — Decisão `B16`: `R05` permanece um único `Rxx`
+
+| # | Fragmento | Papel |
+|---|---|---|
+| C-A2-B16a | `R05` `F1` | **fallback** |
+| C-A2-B16b | `R05` `F2` | **consulta válida + disponível** |
+| C-A2-B16c | `R05` `F3` | **consulta válida + indisponível** |
+
+**`R05` permanece um único `Rxx`.** Justificativa:
+
+| # | Razão |
+|---|---|
+| C-A2-B16d | **mesma intenção / mesmo tema** |
+| C-A2-B16e | **menor mudança no corpus** |
+| C-A2-B16f | a **bijeção é por fragmento**, **não** por `Rxx` (**C-A1-B1**) |
+| C-A2-B16g | **múltiplos fragmentos por `Rxx` já são suportados** (**C-2c**) |
+| C-A2-B16h | **preserva os 30 `Rxx`** |
+| C-A2-B16i | **minimalismo do MVP** |
+
+**Não se afirma** — e **não pode ser derivado** desta decisão — que "um `Rxx` diferente
+obrigatoriamente produziria grupo **R2** diferente ou `E09` espúrio". **R2 continua
+arbitragem própria** (§4.4.1) e **seus grupos não devem ser derivados automaticamente da
+identidade do `Rxx`**.
+
+##### C-A2-RT — Origem explícita do referente
+
+**Refinamento posterior da leitura de C.** O modelo conceitual de **C-2** é **preservado**; o
+que segue fixa **como o referente de um *binding* é declarado** quando o fato deixa de ser
+estático e passa a ser **fato operacional de runtime autoritativo**.
+
+| # | Regra |
+|---|---|
+| C-A2-RT1 | Todo *binding* declara o campo **`origem`**. |
+| C-A2-RT2 | Vocabulário **fechado**: **`YAML`** e **`RUNTIME_AUTORITATIVO`**. **Nenhum terceiro valor.** |
+| C-A2-RT3 | **`origem` é OBRIGATÓRIO.** **NÃO existe valor padrão.** |
+| C-A2-RT4 | **Ausência de `origem` NÃO é interpretada como `YAML`.** Ausência = **índice estruturalmente inválido** → **FAIL-CLOSED** (**P5**). |
+| C-A2-RT5 | Para `origem = YAML`: **`caminho_yaml` OBRIGATÓRIO**; **`fato_runtime` PROIBIDO**. |
+| C-A2-RT6 | Para `origem = RUNTIME_AUTORITATIVO`: **`fato_runtime` OBRIGATÓRIO**; **`caminho_yaml` PROIBIDO**. |
+| C-A2-RT7 | **Exatamente um referente** por *binding* — nem zero, nem dois. |
+
+##### C-A2-V — Vocabulário runtime
+
+Vocabulário **fechado inicial** de `fato_runtime`:
+
+| # | Fato | Tipo |
+|---|---|---|
+| C-A2-V1 | `consulta_calendario_valida` | booleano |
+| C-A2-V2 | `data_disponivel` | booleano |
+
+Restrições da origem `RUNTIME_AUTORITATIVO`:
+
+| # | Regra |
+|---|---|
+| C-A2-V3 | **somente `ASSERTIVA`** |
+| C-A2-V4 | **`RENDERIZADO` PROIBIDO** sobre fato runtime |
+| C-A2-V5 | **somente `EH_VERDADEIRO` / `EH_FALSO`** — **nenhum predicado novo** (**C-5g**, **C-5h**, **C-A1-R**) |
+| C-A2-V6 | **nenhum valor, *snapshot*, *hash* ou versionamento de disponibilidade** é armazenado no índice (**C-1k**–**C-1m**, **C-15e**) |
+| C-A2-V7 | **nenhum provedor de calendário é escolhido** |
+
+*Bindings* previstos:
+
+| Fragmento | Condição |
+|---|---|
+| `R05` `F2` | `consulta_calendario_valida` **verdadeiro** **E** `data_disponivel` **verdadeiro** |
+| `R05` `F3` | `consulta_calendario_valida` **verdadeiro** **E** `data_disponivel` **falso** |
+| `R05` `F1` | **sem *binding* runtime** |
+
+##### C-A2-ESC — Escopo do fato runtime
+
+| # | Regra |
+|---|---|
+| C-A2-ESC1 | O fato runtime pertence ao **ciclo corrente**. |
+| C-A2-ESC2 | Pertence à **consulta corrente**. |
+| C-A2-ESC3 | Pertence à **data efetivamente consultada**. |
+| C-A2-ESC4 | **Não reutilizar** o resultado para **outra data**. |
+| C-A2-ESC5 | **Não reutilizar** em **ciclo posterior**. |
+| C-A2-ESC6 | **Ausência = FALHA** (**C-A2-RT4**). |
+| C-A2-ESC7 | Durante **validação e emissão**, os fatos observados são **imutáveis no mesmo instantâneo lógico**. |
+
+| # | Fronteira |
+|---|---|
+| C-A2-ESC8 | **MD-15′ é POLÍTICA.** O motor **verifica MD-15′ antes da candidatura** de `R05` `F2`/`F3`. |
+| C-A2-ESC9 | **MD-15′ NÃO é `ASSERTIVA`-gatilho** — coerente com **C-5i**–**C-5q** e **C-5.1**. |
+| C-A2-ESC10 | **C valida consistência.** **C não decide candidatura** e **não decide disponibilidade** — **C-12 permanece literal e inalterada**. |
+| C-A2-ESC11 | **Sem consulta válida**: `R05` `F1` **+ handoff**. |
+| C-A2-ESC12 | **Nenhum terceiro motivo de `E09`** é criado — permanecem **exatamente dois** (§4.4.1, **D8-E**). |
+
+##### C-A2-NR — Refinamentos normativos
+
+**Refinamentos posteriores da LEITURA** de **P2**, **P8**, **F1**, **F3**, **C-5b** e da
+**definição geral de `ASSERTIVA`**. **Nenhum desses textos é reescrito**; todos continuam
+corretos como registro histórico (**C-A2-H2**).
+
+| # | Regra |
+|---|---|
+| C-A2-NR1 | Fato comercial/operacional **ESTÁTICO** cuja fonte é a base **continua em YAML**, sem exceção. |
+| C-A2-NR2 | Fato operacional de **RUNTIME**, produzido por **integração autoritativa**, **pode** ter `origem = RUNTIME_AUTORITATIVO`. |
+| C-A2-NR3 | **P2** — a decisão comercial continua **determinística e rastreável**. O refinamento apenas admite que a rastreabilidade de um **fato operacional de runtime** aponte para o `fato_runtime` declarado; **nunca** para inferência do LLM. |
+| C-A2-NR4 | **P8 / F1** — **o YAML continua a fonte autoritativa de todo fato comercial**. O **runtime não concorre com o YAML** e **não sobrescreve nenhum campo dele**. |
+| C-A2-NR5 | **F3** — a validação contra o **YAML carregado** permanece integral para todo fato comercial; o fato runtime é avaliado **contra a consulta autoritativa do ciclo corrente**, nos limites de **C-A2-ESC**. |
+| C-A2-NR6 | **C-5b** — "caminho YAML explícito" passa a ser lido como **"referente explícito"**, resolvido por **C-A2-RT5** ou **C-A2-RT6**. **Explicitude e obrigatoriedade não são atenuadas.** |
+| C-A2-NR7 | **`ASSERTIVA`** continua **consistency-only**: **não cria regra comercial, não altera dado, não produz ação, evento, handoff, `E18` nem condição de ciclo, e não decide `resposta_aprovada_disponivel` ou `pendencia_impeditiva`** (**C-5i**–**C-5q**). |
+
+**Preservado explicitamente:**
+
+| # | Preservação |
+|---|---|
+| C-A2-NR8 | `eventos.datas_nao_aceitas` **continua tendo precedência** |
+| C-A2-NR9 | **F4** e **F4-B** permanecem **literais e inalteradas** (§2.2) |
+| C-A2-NR10 | **C-12** permanece **literal e inalterada** (§2.3) |
+| C-A2-NR11 | **O LLM nunca decide** (**P3**, **F5**) |
+
+##### C-A2-MD — Tabela `MD` final
+
+| Alvo | Estado após C-A2 |
+|---|---|
+| **MD-1** | **SUPERADO / NÃO NECESSÁRIO PARA C** |
+| **MD-2** | **mantido** |
+| **MD-3** | **REMOVIDO** |
+| **MD-4** | **mantido** |
+| **MD-5** | **mantido** |
+| **MD-6** | **mantido**; **`A2` satisfeita** |
+| **MD-7′**–**MD-13** | **mantidos** |
+| **MD-14** | **mantido e NECESSÁRIO para `R06`** |
+| **MD-15′** | **mantido**; **`A4` satisfeita** |
+| **MD-16** | **REMOVIDO** |
+| **MD-17** | **mantido**; **`A3` satisfeita** |
+| **MD-18** | **mantido e GENERALIZADO** para **identificador estrutural estável de item de coleção selecionado fora de iteração**. **Impacto atual**: **`R19`** / opções de pagamento e **`R25`** / equipamentos da cozinha |
+| **MD-19** | **NOVO.** Finalidade: **atomizar, para `R12` `F1`** — **(1)** uso das áreas contratadas incluído; **(2)** governanta auxilia na recepção; **(3)** limpeza para entrega inicial incluída. **Não duplicar fontes narrativas autoritativas** (**C-A1-M3**) |
+| **MD-20** | **NOVO, porém MÍNIMO.** Finalidade **EXATA**: **fato atômico booleano** que permita **provar que a modalidade de PAGAMENTO INTEGRAL está disponível**. **NÃO adicionar automaticamente booleanos de "disponibilidade" para todas as modalidades apenas por simetria** — a **opção parcelada continua provada pelos seus próprios *bindings* estruturados** |
+
+**Todos os alvos `MD` continuam sujeitos a `C-A1-M4`** — auditoria read-only de consumidores
+em todo o repositório — **antes de qualquer alteração física** de `knowledge/casa77.yaml`.
+**Nenhum alvo é executado por esta entrega** (**C-A1-M5**).
+
+##### C-A2-FE — Efeitos futuros `FE-1`–`FE-14`
+
+**Status geral: PLANEJADAS / NÃO APLICADAS.** **Nenhuma `FE` é aplicada por esta entrega.**
+Elas são **efeitos de reconciliação comportamental**, e a aplicação pertence à **Entrega 2**
+— exceto **`FE-11b`**, **RETIDA** atrás de **C-A1-M4**.
+
+| `FE` | Arquivo futuro | Enunciado | Entrega | Status |
+|---|---|---|---|---|
+| **FE-1** | `docs/03-regras-de-conversa.md` | **sincronizar** o bloco literal de comportamento diante de lacuna com **`R03`/`B8`** aprovado, **removendo emissão nominal** | 2 | **PLANEJADA / NÃO APLICADA** |
+| **FE-2** | `docs/03-regras-de-conversa.md` | **eliminar** o bloco textual emitível paralelo de "comportamento diante de insistência" como **resposta autônoma não catalogada**. O documento deve **instruir o fluxo** a usar **`R04`/`B9` + handoff**, **sem** manter segunda redação emitível fora de `knowledge/respostas-aprovadas.md` | 2 | **PLANEJADA / NÃO APLICADA** |
+| **FE-3** | `docs/03-regras-de-conversa.md` | **substituir** a proibição **incondicional** de confirmar disponibilidade/data por **regra condicional**: com **consulta autoritativa válida** e **decisão determinística**, a disponibilidade **pode ser comunicada**; **sem confirmação segura**, **fallback + handoff**. **Preservar** a proibição de **reserva, *hold*, visita, contrato** e demais atos humanos | 2 | **PLANEJADA / NÃO APLICADA** |
+| **FE-4** | `docs/04-handoff-humano.md` | **sincronizar** "Mensagem ao interessado" com **`R08`/`B13`**, usando o tratamento **não nominal "responsável comercial"** | 2 | **PLANEJADA / NÃO APLICADA** |
+| **FE-5** | `docs/04-handoff-humano.md` | **reconciliar** a seção **Visitas** para **não autorizar emissão nominal**. **Preservar**: visita realizada pelo **papel estrutural definido**; **confirmação de horário humana**; **o bot não confirma visita**. Usar **"responsável comercial"** | 2 | **PLANEJADA / NÃO APLICADA** |
+| **FE-6** | `docs/04-handoff-humano.md` | **reconciliar** "Regras após o handoff" para **remover instrução de reforço nominal** e usar **"responsável comercial"** quando a referência for **emitida ao lead**. Referências **puramente internas** podem permanecer nominais **se não forem fonte de emissão** | 2 | **PLANEJADA / NÃO APLICADA** |
+| **FE-7** | `docs/04-handoff-humano.md` | **reconciliar** o gatilho obrigatório que hoje **agrega** "confirmação de data, visita ou reserva". **Separar**: **DISPONIBILIDADE DE DATA** — pode ser confirmada com **decisão determinística** sobre **consulta autoritativa válida**; sem confirmação segura → **handoff**. **VISITA** — continua **confirmação humana obrigatória**. **RESERVA** — continua **humana / proibida ao bot** | 2 | **PLANEJADA / NÃO APLICADA** |
+| **FE-8** | `prompts/prompt-sistema-bot.md` | **reconciliar** **FUNÇÃO** e **REGRAS DE HANDOFF** para que referências **destinadas ao lead** usem **"responsável comercial"**, **sem emissão de nome próprio**. **Preservar** referências internas de identidade negativa quando **não** forem texto destinado ao lead | 2 | **PLANEJADA / NÃO APLICADA** |
+| **FE-9** | `prompts/prompt-sistema-bot.md` | **sincronizar** os blocos literais **duplicados** de `R03` e `R08` com **`B8`** e **`B13`** aprovados. **Não manter variante nominal concorrente** | 2 | **PLANEJADA / NÃO APLICADA** |
+| **FE-10** | `prompts/prompt-sistema-bot.md` | **reconciliar** **LIMITES DE ATUAÇÃO**, **REGRAS CONTRA INVENÇÃO** e **REGRAS DE HANDOFF** quanto à disponibilidade. Nova fronteira: o **LLM NÃO decide** disponibilidade; o resultado vem de **decisão determinística** sobre **consulta autoritativa**; com resultado válido, o bot **pode comunicar** disponibilidade; sem resultado válido, **fallback + handoff**; **reserva, *hold*, visita, contrato e alteração definitiva continuam proibidos ao bot** | 2 | **PLANEJADA / NÃO APLICADA** |
+| **FE-11a** | `knowledge/respostas-aprovadas.md` | **instrução interna de `R17`**. Regra futura: **NÃO emitir literalmente `eventos.observacao_nao_aceitos`** enquanto a narrativa puder **expor identificação nominal / proveniência interna**. Enquanto **não houver representação estrutural segura do motivo**, usar **`R03` + handoff** para pedido específico desse motivo. **`FE-11a` NÃO altera o YAML** | 2 | **PLANEJADA / NÃO APLICADA** |
+| **FE-11b** | `knowledge/casa77.yaml` | **base estruturada**: **reconciliar/atomizar** a narrativa para **eliminar o vetor nominal sem criar fonte factual paralela** (**C-A1-M3**) | **FORA da Entrega 2** | **RETIDA atrás de `C-A1-M4`** |
+| **FE-12** | `docs/02-fluxo-comercial.md` | **reconciliar §1 Abertura**: **preservar** que a **negociação final é humana**, **substituindo** identificação nominal emitida por **"responsável comercial"** | 2 | **PLANEJADA / NÃO APLICADA** |
+| **FE-13** | `docs/02-fluxo-comercial.md` | **reconciliar §5 Verificação de disponibilidade**: passar de ramo **exclusivamente negativo** para **dois caminhos** — **(A)** consulta autoritativa válida + decisão determinística → comunicar **`R05` `F2`** ou **`R05` `F3`**; **(B)** ausência/falha/ambiguidade → **`R05` `F1` + handoff**. **Não escolher provedor de calendário** | 2 | **PLANEJADA / NÃO APLICADA** |
+| **FE-14** | `docs/02-fluxo-comercial.md` | **reconciliar o diagrama textual**: substituir o caminho universal `disponibilidade (bloqueado) → R05` pela **bifurcação conceitual** — consulta válida → **`R05` `F2` / `R05` `F3`**; sem confirmação segura → **`R05` `F1` + handoff** | 2 | **PLANEJADA / NÃO APLICADA** |
+
+##### C-A2-N — Contagens
+
+**Estado físico, conteúdo aprovado e conteúdo aplicado são eixos distintos e não devem ser
+confundidos.**
+
+| # | Eixo | Valor |
+|---|---|---|
+| C-A2-N1 | **ESTADO FÍSICO ATUAL** — fragmentos emitíveis | **35** |
+| C-A2-N2 | **ESTADO FÍSICO ATUAL** — `Rxx` | **30** |
+| C-A2-N3 | **CONTEÚDO APROVADO** — novas unidades textuais aprovadas no lote: `B2`–`B15` **+** `R05` `F2` **+** `R05` `F3` | **16** |
+| C-A2-N4 | `B1` | **não é texto novo** — **não integra as 16** |
+| C-A2-N5 | **CONTEÚDO APLICADO nesta Entrega 1** | **0** |
+| C-A2-N6 | **APÓS a futura ENTREGA 2** — fragmentos | **37** |
+| C-A2-N7 | **APÓS a futura ENTREGA 2** — `Rxx` | **30** |
+| C-A2-N8 | **MATERIALIZAÇÃO DE C — ATUAL**: fragmentos estruturalmente materializados | **0** |
+
+A hipótese futura de **37/37** é **estritamente condicional** a **todas** as condições
+abaixo e **não é declarada como resultado alcançado**:
+
+| # | Condição |
+|---|---|
+| C-A2-N9 | **aplicação do conteúdo** aprovado |
+| C-A2-N10 | **`C-A1-M4`** — auditoria read-only de consumidores |
+| C-A2-N11 | os **alvos `MD` necessários** |
+| C-A2-N12 | **validação `C-8` / `C-15` / `C-A1`** |
+
+**As contagens projetadas de `C-A1-N` continuam registro histórico** e **não são reescritas**
+(**C-A2-H1**, **C-A2-H2**).
+
+##### C-A2-E2 — Futura Entrega 2
+
+**Registro de próxima entrega futura. Nada disso é executado agora.** Arquivos
+**comportamentais** previstos:
+
+| # | Arquivo |
+|---|---|
+| C-A2-E2a | `knowledge/respostas-aprovadas.md` |
+| C-A2-E2b | `docs/02-fluxo-comercial.md` |
+| C-A2-E2c | `docs/03-regras-de-conversa.md` |
+| C-A2-E2d | `docs/04-handoff-humano.md` |
+| C-A2-E2e | `prompts/prompt-sistema-bot.md` |
+
+| # | Regra |
+|---|---|
+| C-A2-E2f | **`FE-11a` está INCLUÍDA** na Entrega 2. |
+| C-A2-E2g | **`FE-11b` fica FORA** da Entrega 2 — **RETIDA atrás de `C-A1-M4`**. |
+| C-A2-E2h | **ATENÇÃO**: a conclusão da futura Entrega 2 **deverá também atualizar `docs/00-estado-atual.md` na mesma entrega**, **ou** possuir **reconciliação documental imediatamente vinculada**. |
+
+##### C-A2-X — O que C-A2 não altera
+
+| # | Preservado sem alteração |
+|---|---|
+| C-A2-X1 | §4.1 com **14 componentes** |
+| C-A2-X2 | §2 com **nove responsabilidades** |
+| C-A2-X3 | §4.4 com **oito condições** |
+| C-A2-X4 | `AssuntoComercial` com **54** valores |
+| C-A2-X5 | `IntencaoConversacional` com **11** valores |
+| C-A2-X6 | `ProjecaoInterpretacao` com **sete** campos |
+| C-A2-X7 | `CriterioIdentidade` com **12** códigos |
+| C-A2-X8 | erros **`E-Nb-1`–`E-Nb-19`** |
+| C-A2-X9 | cenários **`K-Nb-1`–`K-Nb-51`** |
+
+C-A2 **não cria** componente, responsabilidade, estado, evento, transição, ação, critério,
+enum, erro, cenário, condição de ciclo, motivo de `E09` nem subetapa. **A 3B.8 não existe.**
+**C continua ARBITRADA / NÃO MATERIALIZADA**, **S2-D8 continua ARBITRADA / NÃO
+MATERIALIZADA**, **`N-b-RES2` continua ABERTO** e o **`OrquestradorMotor` continua não
+implementado**.
+
 ---
 
 ## 3. Comparação técnica — Opção A × Opção B
@@ -3939,6 +4250,27 @@ produtor de evento** e **não cria identificador de pendência novo**: ela apena
 resposta é **condicionada** (T10, T17, T28). **A responsabilidade permanece integralmente em
 `N-b-RES2`.** **S2-D8 também não materializa AJ2 e não materializa C**: ambas continuam
 **ARBITRADAS / NÃO MATERIALIZADAS** (§6.3, §2.3), e **a 3B.8 continua não existindo**.
+
+**Nota temporal do item 19 — micro-arbitragem C-A2, posterior** (§2.3, bloco
+"Micro-arbitragem C-A2"). A célula do **item 19** acima registra corretamente o estado **à
+época de C-A1**, quando **C-A2** estava **ABERTA** e enumerava os fatos `A1`–`A4` e o
+conteúdo `B1`–`B6`. Ela **permanece correta como registro histórico** e **não é reescrita**.
+Depois dela, **C-A2** passa a **ARBITRADA DOCUMENTALMENTE**: os fatos **`A1`–`A4` ficam
+FECHADOS**; o **conteúdo humano** é registrado como **APROVADO HUMANAMENTE / AINDA NÃO
+APLICADO** e **estendido de `B1`–`B6` para `B1`–`B16`** — com **`B16` dividido** em `R05`
+`F2` e `R05` `F3`, e **`R05` permanecendo um único `Rxx`**; o *binding* passa a declarar
+**`origem` OBRIGATÓRIA e sem valor padrão**, do vocabulário fechado **`YAML`** /
+**`RUNTIME_AUTORITATIVO`**, com **ausência = FAIL-CLOSED**; o vocabulário runtime fica
+fechado em `consulta_calendario_valida` e `data_disponivel`, **somente por `ASSERTIVA`**; a
+tabela de alvos passa a **`MD-1`–`MD-20`**, com **`MD-1` SUPERADO**, **`MD-3`** e **`MD-16`
+REMOVIDOS**, **`MD-18` GENERALIZADO** e **`MD-19`/`MD-20` NOVOS** — **`MD-20` mínimo** —; e
+ficam enumerados os efeitos futuros **`FE-1`–`FE-14`**, com **`FE-11` dividida** em
+**`FE-11a`** e **`FE-11b`**. **Nada disso é aplicado**: **C continua ARBITRADA / NÃO
+MATERIALIZADA**, **S2-D8 continua ARBITRADA / NÃO MATERIALIZADA**, **`N-b-RES2` continua
+ABERTO**, o **`OrquestradorMotor` continua não implementado**, o corpus físico continua com
+**35 fragmentos emitíveis** e **30 `Rxx`**, **nenhum marco funcional novo** é criado e **a
+3B.8 continua não existindo**. **C-A2 não cria condição de ciclo, motivo de `E09`, evento,
+estado nem subetapa**, e **não altera `C-12`**, que **permanece literal**.
 
 **N-b permanece NÃO IMPLEMENTADA.** AJ1 fecha a **representação e a canonicalização** que
 antecedem a materialização — não a materialização. Continua verdadeiro, sem atenuação:
