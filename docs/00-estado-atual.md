@@ -4,7 +4,8 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-26 (registro documental da auditoria **C-A1-M4**).
+Atualizado em: 2026-08-26 (**M1** — materialização de `MD-18` e `MD-20` na base
+autoritativa).
 
 ## Referências
 
@@ -52,7 +53,9 @@ Atualizado em: 2026-08-26 (registro documental da auditoria **C-A1-M4**).
 | Integração da **C-A2 — Entrega 2** | **PR #65** — commit `c2883d2fad32638d1e15a616a2b37f577abf3e42`, merge na `main` `fbe768a14457241245c73f4cbe8ef93e869e7fb3`, branch de origem `docs/aplicar-conteudo-c-a2`. Arquivos: **exclusivamente** `docs/00-estado-atual.md`, `docs/02-fluxo-comercial.md`, `docs/03-regras-de-conversa.md`, `docs/04-handoff-humano.md`, `knowledge/respostas-aprovadas.md` e `prompts/prompt-sistema-bot.md` — **seis arquivos**, **219 adições, 74 remoções**. **Documental/comportamental**: **não altera `src/` nem `tests/`**, **não cria marco funcional** e **não substitui o último marco funcional** |
 | Base da reconciliação **pós-PR #65** | `fbe768a14457241245c73f4cbe8ef93e869e7fb3` — HEAD da `main` verificado **antes** daquela reconciliação |
 | Integração da **reconciliação pós-PR #65** | **PR #66** — commit documental `8b82a638709110235eb6acf936b2ba68e9242143`, merge na `main` `118054575e7f7560a1c37ca430bdedd15eddc817`, branch de origem `docs/reconciliar-c-a2-pos-pr65`. Arquivo: **exclusivamente** `docs/00-estado-atual.md` — **48 adições, 4 remoções**. **Documental**: **não altera o marco funcional** |
-| Base da presente entrega (**registro de C-A1-M4**) | `118054575e7f7560a1c37ca430bdedd15eddc817` — HEAD da `main` verificado **antes** desta entrega |
+| Base da entrega **registro de C-A1-M4** | `118054575e7f7560a1c37ca430bdedd15eddc817` — HEAD da `main` verificado **antes** daquela entrega |
+| Integração do **registro de C-A1-M4** | **PR #67** — commit documental `56d8c9d21c3167b5078ce5e45b19d48a1c0bfd6b`, merge na `main` `de13a513990fe17f83010bc9b2213748241bcad4`, branch de origem `docs/registrar-c-a1-m4-auditoria`. Arquivo: **exclusivamente** `docs/00-estado-atual.md` — **44 adições, 3 remoções**. **Documental**: **não altera o marco funcional** |
+| Base da presente entrega (**M1 — `MD-18` + `MD-20`**) | `de13a513990fe17f83010bc9b2213748241bcad4` — HEAD da `main` verificado **antes** desta entrega |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -1136,6 +1139,43 @@ a **pendência residual continua aberta**.
     a **3B.7** continua a **última subetapa funcional numerada** e a **3B.8 continua
     inexistente**. **Nenhum pytest foi executado** — nenhum artefato funcional foi tocado — e
     a **próxima implementação funcional continua NÃO ESCOLHIDA**.
+38. **A entrega `M1` é a presente entrega e executa EXCLUSIVAMENTE os alvos `MD-18` e
+    `MD-20`.** Base: `de13a513990fe17f83010bc9b2213748241bcad4`. **Classificação da
+    entrega**: **MODELAGEM DA BASE AUTORITATIVA, SEM ALTERAÇÃO DE CÓDIGO E SEM NOVO MARCO
+    FUNCIONAL DE CÓDIGO**. Arquivos alterados: **dois** — `knowledge/casa77.yaml` e este
+    documento. **Nenhum arquivo de `src/` e nenhum arquivo de `tests/` foi tocado**, e
+    **nenhum teste foi alterado**. **`MD-18`** adiciona **identificadores estruturais
+    estáveis** — a chave `id`, como **última chave** de cada item — às **duas coleções
+    arbitradas**: as **opções de pagamento** (`integral`, `parcelado`) e os **equipamentos
+    da cozinha** (`freezer_horizontal`, `geladeira_duplex`, `cervejeira`,
+    `fogao_industrial`, `fogao_convencional`, `forno_eletrico`, `micro_ondas`,
+    `churrasqueira`, `bancada_de_apoio`, `area_de_cozinha_externa`). Os identificadores são
+    **técnicos, não comerciais, não emitíveis, não posicionais, únicos na coleção,
+    imutáveis após integrados e não reutilizáveis após remoção** (**C-A1-S3**–**S5**).
+    **Nenhuma lista foi convertida em mapa** e **nenhum item foi reordenado**. **`MD-20`**
+    adiciona **um único fato atômico booleano** — `pagamento.integral_disponivel` — no nível
+    de `pagamento`, **sem** booleano equivalente para a modalidade parcelada e **sem**
+    qualquer outro campo. **Nenhum fato comercial preexistente foi alterado**: o diff do
+    YAML é de **13 inserções e ZERO remoções**, provado mecanicamente — removidos apenas os
+    campos que `M1` adiciona, o restante da base é **idêntico ao HEAD**. **A versão da base
+    permanece `1.1`** e `ultima_atualizacao` **não mudou**; **nenhuma política nova de
+    versionamento foi criada**. **`knowledge/respostas-aprovadas.md` e
+    `knowledge/informacoes-pendentes.md` não foram alterados.**
+39. **Estado das condições de materialização de C após `M1`.** **`C-A2-N9`** — **CUMPRIDA**.
+    **`C-A2-N10`** — **CUMPRIDA**. **`C-A2-N11`** — alvos `MD` necessários — **continua
+    PENDENTE**: `M1` cumpre apenas **2 dos 16** alvos `MD` necessários, e **14 alvos `MD`
+    permanecem** após esta entrega. **`C-A2-N12`** — validações `C-8` / `C-15` / `C-A1` —
+    **continua PENDENTE**. **Preservado expressamente**: **nenhum outro alvo `MD` foi
+    executado**; **`FE-11b` NÃO foi aplicada**; **`knowledge/indice-respostas-aprovadas.yaml`
+    continua inexistente**; **nenhum *template*, *binding* ou `ASSERTIVA` foi
+    materializado**; e **`C` continua ARBITRADA / NÃO MATERIALIZADA**. **`R2` e `S2-D8`
+    continuam NÃO MATERIALIZADAS**, **`N-b-RES2` continua ABERTO** e o **`OrquestradorMotor`
+    continua não implementado**. **Esta entrega não cria marco funcional de código**: o
+    **último commit funcional aprovado continua `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`**
+    (**PR #61**), a **baseline permanece `1215 passed`** — medida **antes** e **depois** da
+    edição, com **contagem idêntica** e **100% verde** —, a **3B.7** continua a **última
+    subetapa funcional numerada** e a **3B.8 continua inexistente**. **Nenhuma próxima
+    entrega foi escolhida.**
 
 ## Arbitragens
 

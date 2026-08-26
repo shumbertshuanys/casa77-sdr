@@ -108,26 +108,36 @@ estrutura:
       - quantidade: 1
         item: "freezer horizontal"
         especificacao: "aproximadamente 280 litros"
+        id: "freezer_horizontal"
       - quantidade: 2
         item: "geladeira duplex"
+        id: "geladeira_duplex"
       - quantidade: 1
         item: "cervejeira"
+        id: "cervejeira"
       - quantidade: 1
         item: "fogão industrial"
         especificacao: "uma boca"
+        id: "fogao_industrial"
       - quantidade: 2
         item: "fogão convencional"
         especificacao: "quatro bocas"
+        id: "fogao_convencional"
       - quantidade: 2
         item: "forno elétrico"
+        id: "forno_eletrico"
       - quantidade: 1
         item: "micro-ondas"
+        id: "micro_ondas"
       - quantidade: 1
         item: "churrasqueira"
+        id: "churrasqueira"
       - quantidade: 2
         item: "bancada de apoio"
+        id: "bancada_de_apoio"
       - quantidade: 1
         item: "área de cozinha externa"
+        id: "area_de_cozinha_externa"
 
   gerador:
     incluido: false
@@ -289,6 +299,7 @@ pagamento:
   opcoes:
     - descricao: "Pagamento integral"
       parcelas: 1
+      id: "integral"
     - descricao: "Pagamento em duas etapas"
       parcelas: 2
       primeira_parcela:
@@ -297,6 +308,8 @@ pagamento:
       segunda_parcela:
         percentual: 50
         vencimento: "Trinta dias antes do evento"
+      id: "parcelado"
+  integral_disponivel: true
   caucao: false
   parcelamento_adicional: false
   desconto_a_vista: false
