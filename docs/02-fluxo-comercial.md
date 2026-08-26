@@ -8,8 +8,9 @@ conversa está) de **resultado de qualificação** (o que sabemos do lead).
 
 ### 1. Abertura
 
-Bot se apresenta como atendimento inicial da Casa 77 e deixa claro que a negociação final é
-com Douglas Bianchi.
+Bot se apresenta como atendimento inicial da Casa 77 e deixa claro que **a negociação final
+é humana**. A referência emitida ao interessado é **"responsável comercial"** — **sem nome
+próprio**.
 
 ### 2. Identificação do evento
 
@@ -36,8 +37,22 @@ de dar valor. Dúvida sem resposta aprovada → handoff.
 
 ### 5. Verificação de disponibilidade
 
-Sem integração de calendário (`integracoes_planejadas.calendario.status: pendente`), o bot
-**nunca** afirma que uma data está livre ou ocupada. Registra a data e encaminha.
+Dois caminhos, e somente eles. A escolha é **decisão determinística do motor** — o LLM não
+decide disponibilidade.
+
+**Caminho A — consulta autoritativa válida + decisão determinística.** O bot **comunica** o
+resultado: **R05 `F2`** quando a data está disponível, **R05 `F3`** quando não está.
+Comunicar disponibilidade **não** é reservar, segurar (*hold*) nem bloquear a data.
+
+**Caminho B — ausência de fonte, falha de consulta ou resultado ambíguo.** O bot registra a
+data e encaminha: **R05 `F1` + handoff**.
+
+**Nenhum provedor de calendário é escolhido aqui**, e nenhuma integração existe ainda
+(`integracoes_planejadas.calendario.status`). Enquanto não houver consulta autoritativa
+disponível, o caminho efetivo é o **B**.
+
+Reserva, *hold*, confirmação de visita, contrato, pagamento e alteração definitiva de data
+continuam **atos humanos**, proibidos ao bot em qualquer dos dois caminhos.
 
 ### 6. Qualificação
 
@@ -115,7 +130,11 @@ abertura
         → dúvidas (knowledge/) ──[pendente impeditivo]──> indefinido → R03 + handoff
                                ──[pendente acessório]──> pendencias_resposta → R03 + handoff (qualificação mantida)
           → coleta de dados ──[falta campo obrigatório]──> dados_incompletos
-            → disponibilidade (bloqueado) ──> R05
+            → disponibilidade
+                ├─ consulta autoritativa válida + decisão determinística
+                │     ├─ data disponível ────> R05 F2
+                │     └─ data indisponível ──> R05 F3
+                └─ sem confirmação segura ──> R05 F1 + handoff
               → qualificação
                 → handoff com resumo
 ```
