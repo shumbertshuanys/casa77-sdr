@@ -4,7 +4,8 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-27 (materialização de **`MD-2`** e **`MD-5`** na base autoritativa).
+Atualizado em: 2026-08-27 (arbitragem documental **`C-A3`** — papel de `empresa.descricao` no
+contrato **C**).
 
 ## Referências
 
@@ -64,7 +65,9 @@ Atualizado em: 2026-08-27 (materialização de **`MD-2`** e **`MD-5`** na base a
 | Integração de **M3 — `MD-8`** + **`MD-9`** + **`MD-10`** + **`MD-11`** | **PR #71** — commit `930b3c3c07d82f470bef0fc91e685f4257551b63`, merge na `main` `c46076659f79f5a9f5c63edc109e153bcd9724fa`, branch de origem `feat/c-a2-n11-m3-md8-md11`. Método: **merge commit**, com **dois parents**. Arquivos: **exclusivamente** `knowledge/casa77.yaml` e `docs/00-estado-atual.md` — **113 adições, 29 remoções**. **Modelagem da base autoritativa**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código** |
 | Base da entrega **M4 — `MD-12`** + **`MD-13`** + **`MD-19`** | `c46076659f79f5a9f5c63edc109e153bcd9724fa` — HEAD da `main` verificado **antes** daquela entrega |
 | Integração de **M4 — `MD-12`** + **`MD-13`** + **`MD-19`** | **PR #72** — commit `b7f8e11c732d1c8cba6d6f34f5be2ea434351bec`, merge na `main` `3758b107aa9c96af1f25825e209588a3bb7841ea`, branch de origem `feat/c-a2-n11-m4-md12-md13-md19`. Método: **merge commit**, com **dois parents**. Arquivos: **exclusivamente** `knowledge/casa77.yaml` e `docs/00-estado-atual.md` — **111 adições, 33 remoções**. **Modelagem da base autoritativa**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código** |
-| Base da presente entrega (**M5 — `MD-2`** + **`MD-5`**) | `3758b107aa9c96af1f25825e209588a3bb7841ea` — HEAD da `main` verificado **antes** desta entrega |
+| Base da entrega **M5 — `MD-2`** + **`MD-5`** | `3758b107aa9c96af1f25825e209588a3bb7841ea` — HEAD da `main` verificado **antes** daquela entrega |
+| Integração de **M5 — `MD-2`** + **`MD-5`** | **PR #73** — commit `b564a3e4d6515f4028c078f16ce52163e99893bc`, merge na `main` `6e79cbac502a81fa167d37ff41b33df9ec95c9d7`, branch de origem `feat/c-a2-n11-m5-md2-md5`. Método: **merge commit**, com **dois parents**. Arquivos: **exclusivamente** `knowledge/casa77.yaml` e `docs/00-estado-atual.md` — **95 adições, 21 remoções**. **Modelagem da base autoritativa**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código** |
+| Base da presente entrega (**`C-A3`** — documental) | `6e79cbac502a81fa167d37ff41b33df9ec95c9d7` — HEAD da `main` verificado **antes** desta entrega |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -1434,10 +1437,10 @@ a **pendência residual continua aberta**.
     altera `src/` nem `tests/`** e **não cria marco funcional de código**. O merge foi feito
     por **merge commit**, com **dois parents** — `c46076659f79f5a9f5c63edc109e153bcd9724fa`
     e o commit de conteúdo —, **sem squash, sem rebase e sem exclusão de branch**.
-55. **A presente entrega (M5) executa EXCLUSIVAMENTE os alvos `MD-2` e `MD-5`.** Base:
+55. **A entrega anterior (M5) executou EXCLUSIVAMENTE os alvos `MD-2` e `MD-5`.** Base:
     `3758b107aa9c96af1f25825e209588a3bb7841ea`. **Classificação da entrega**: **MODELAGEM DA
     BASE AUTORITATIVA, SEM ALTERAÇÃO DE CÓDIGO E SEM NOVO MARCO FUNCIONAL DE CÓDIGO**.
-    **Esta entrega NÃO é uma nova subetapa oficial do roadmap — a 3B.8 continua
+    **Aquela entrega NÃO foi uma nova subetapa oficial do roadmap — a 3B.8 continua
     inexistente.** Arquivos alterados: **dois** — `knowledge/casa77.yaml` e este documento.
     **Nenhum arquivo de `src/` e nenhum arquivo de `tests/` foi tocado**, e **nenhum teste
     foi alterado**. Ambos os alvos aplicam **C-A1-M3 (A)** — **substituição** da
@@ -1471,9 +1474,10 @@ a **pendência residual continua aberta**.
     intocado** e teve sua redação **recomposta e comparada sob NFC**, com **equivalência
     provada**. **Esta entrega altera a MODELAGEM da fonte, não o conteúdo emitível
     aprovado**: `knowledge/respostas-aprovadas.md` **não foi tocado**.
-57. **Estado das condições de materialização de C após `MD-2` e `MD-5`.** **`C-A2-N9`** —
+57. **Estado das condições de materialização de C após `MD-2` e `MD-5`** — **registro
+    histórico daquela entrega**, superado pelo item 60. **`C-A2-N9`** —
     **CUMPRIDA**. **`C-A2-N10`** — **CUMPRIDA**. **`C-A2-N11`** — alvos `MD` necessários —
-    **continua PENDENTE**: com esta entrega passam a ser **13 dos 16** alvos `MD` necessários
+    **continua PENDENTE**: com aquela entrega passaram a ser **13 dos 16** alvos `MD` necessários
     cumpridos — **`MD-18`**, **`MD-20`**, **`MD-4`**, **`MD-17`**, **`MD-8`**, **`MD-9`**,
     **`MD-10`**, **`MD-11`**, **`MD-12`**, **`MD-13`**, **`MD-19`**, **`MD-2`** e
     **`MD-5`** —, e **3 alvos `MD` permanecem**: **`MD-6`**, **`MD-7′`** e **`MD-14`**. O
@@ -1490,7 +1494,70 @@ a **pendência residual continua aberta**.
     `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`** (**PR #61**), a **baseline permanece
     `1215 passed`** — medida **antes** e **depois** da edição, com **contagem idêntica** e
     **100% verde** —, a **3B.7** continua a **última subetapa funcional numerada** e a
-    **3B.8 continua inexistente**. **Nenhuma próxima entrega foi escolhida.**
+    **3B.8 continua inexistente**.
+58. **A entrega M5 está INTEGRADA à `main` pelo PR #73** — commit
+    `b564a3e4d6515f4028c078f16ce52163e99893bc`, merge
+    `6e79cbac502a81fa167d37ff41b33df9ec95c9d7`, branch de origem
+    `feat/c-a2-n11-m5-md2-md5`. **Dois** arquivos — `knowledge/casa77.yaml` e este
+    documento —, **95 adições / 21 remoções**. **Modelagem da base autoritativa**: **não
+    altera `src/` nem `tests/`** e **não cria marco funcional de código**. O merge foi feito
+    por **merge commit**, com **dois parents** — `3758b107aa9c96af1f25825e209588a3bb7841ea`
+    e o commit de conteúdo —, **sem squash, sem rebase e sem exclusão de branch**.
+59. **A presente entrega materializa EXCLUSIVAMENTE a micro-arbitragem `C-A3`.** Base:
+    `6e79cbac502a81fa167d37ff41b33df9ec95c9d7`. **Classificação da entrega**: **DOCUMENTAL /
+    GOVERNANÇA — SEM ALTERAÇÃO DE CÓDIGO, SEM ALTERAÇÃO DA BASE AUTORITATIVA E SEM NOVO
+    MARCO FUNCIONAL DE CÓDIGO**. **Esta entrega NÃO é uma nova subetapa oficial do roadmap —
+    a 3B.8 continua inexistente.** Arquivos alterados: **dois** —
+    `docs/07-arquitetura-motor-respostas.md` e este documento. **`knowledge/casa77.yaml` NÃO
+    foi tocado**, e **nenhum arquivo de `src/`, `tests/` ou `prompts/` foi alterado**.
+    **Nenhum alvo `MD` foi executado.** **O que `C-A3` faz**: classifica normativamente **um
+    único caminho** — **`empresa.descricao`** — como **texto institucional** que, **para os
+    fins do contrato `C`**, **não é fonte factual comercial ou operacional**, **não pode ser
+    referente de *binding***, **não pode ser referente de `RENDERIZADO`** e **não pode ser
+    referente de `ASSERTIVA`**; seu conteúdo textual **não pode ser interpretado,
+    decomposto, resumido nem inferido como fato** para `C`. O campo **permanece fisicamente
+    no YAML sem qualquer alteração**, e essa permanência **satisfaz `C-A1-M3(B)`**:
+    **explicitamente NÃO AUTORITATIVA e NÃO CONSUMÍVEL**. O tratamento é **análogo** ao que
+    **`C-2m`**–**`C-2p`** e **`C-A1-B2`** já fixam para notas e instruções internas.
+    **`P8` e `F1` permanecem íntegros**: `knowledge/casa77.yaml` **continua a fonte
+    autoritativa de todo fato comercial e operacional** — `C-A3` **não abre exceção genérica
+    ao YAML** e **não cria contradição normativa**. **Não generaliza**: **`empresa.nome`**,
+    **`empresa.posicionamento`** e **`empresa.diferenciais` NÃO são classificados**, **não há
+    regra por prefixo `empresa.*`**, **nenhuma inferência automática por tipo de campo** e
+    **nenhuma classe expansível**. **`empresa.diferenciais` permanece INTACTO** e `C-A3`
+    **não decide sua autoridade futura** — a expressão `"experiência intimista"` **não é
+    objeto de `C-A3`**. Quanto à **emissão**, `C-A3` **não declara** que o campo "nunca pode
+    ser emitido": decide **somente** a **não consumibilidade por `C`**, e **não decide**
+    eventual uso textual institucional **fora** do contrato `C`.
+60. **Estado das condições de materialização de C após `C-A3`.** **`C-A2-N9`** —
+    **CUMPRIDA**. **`C-A2-N10`** — **CUMPRIDA**. **`C-A2-N11`** — alvos `MD` necessários —
+    **continua PENDENTE**: permanecem **13 dos 16** alvos `MD` necessários cumpridos —
+    **`MD-18`**, **`MD-20`**, **`MD-4`**, **`MD-17`**, **`MD-8`**, **`MD-9`**, **`MD-10`**,
+    **`MD-11`**, **`MD-12`**, **`MD-13`**, **`MD-19`**, **`MD-2`** e **`MD-5`** —, e **3
+    alvos `MD` permanecem**: **`MD-6`**, **`MD-7′`** e **`MD-14`**. O **denominador continua
+    16**, e **esta entrega não altera o contador**. **`MD-6` está planejado e pronto, mas NÃO
+    foi executado.** **`MD-7′` continua NÃO EXECUTADO**: `C-A3` **remove exclusivamente o
+    bloqueio normativo** que a autoridade narrativa potencialmente paralela de
+    `empresa.descricao` representava para ele — e esse efeito só vale **após a integração
+    desta arbitragem à `main`**. **`MD-14` continua NÃO EXECUTADO.** **`C-A2-N12`** —
+    validações `C-8` / `C-15` / `C-A1` — **continua PENDENTE**. **Preservado expressamente**:
+    **`FE-11a` continua intacta** e **`FE-11b` continua NÃO APLICADA / RETIDA** atrás de
+    **`C-A1-M4`** — `C-A3` **não absorve, não substitui, não antecipa e não altera** nenhuma
+    das duas, e **`eventos.observacao_nao_aceitos` não é objeto de `C-A3`**;
+    **`knowledge/indice-respostas-aprovadas.yaml` continua inexistente**; **nenhum
+    *template*, *binding* físico ou `ASSERTIVA` física foi materializado**; e **`C` continua
+    ARBITRADA / NÃO MATERIALIZADA**. **`R2` e `S2-D8` continuam NÃO MATERIALIZADAS**,
+    **`N-b-RES2` continua ABERTO** e o **`OrquestradorMotor` continua não implementado**.
+    **`C-A3` não cria** status, enum, predicado, formato, *binding* físico, metadado ou
+    *flag* YAML, componente, responsabilidade, estado, evento, transição, condição, erro,
+    cenário, pendência operacional nem subetapa. **Esta entrega não cria marco funcional de
+    código**: o **último commit funcional aprovado continua
+    `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`** (**PR #61**), e a **baseline registrada
+    permanece `1215 passed`** — **não reexecutada nesta entrega**, por ser **exclusivamente
+    documental**, **sem tocar `src/`, `tests/`, `knowledge/` ou `prompts/`**. A **3B.7**
+    continua a **última subetapa funcional numerada** e a **3B.8 continua inexistente**.
+    **`M6` NÃO é executada nesta entrega.** Sua execução permanece **condicionada à
+    integração de `C-A3` à `main`** e a **novo mandato**.
 
 ## Arbitragens
 

@@ -1103,6 +1103,96 @@ enum, erro, cenário, condição de ciclo, motivo de `E09` nem subetapa. **A 3B.
 MATERIALIZADA**, **`N-b-RES2` continua ABERTO** e o **`OrquestradorMotor` continua não
 implementado**.
 
+#### Micro-arbitragem C-A3 — papel de `empresa.descricao` no contrato C
+
+Micro-arbitragem **exclusivamente documental**, **posterior** a **C**, a **C-A1** e a
+**C-A2**. Ela **classifica normativamente um único caminho** do YAML — **`empresa.descricao`**
+— para os fins do **contrato C**, e **não faz mais nada**. **Nenhum byte de
+`knowledge/casa77.yaml` é alterado por ela.**
+
+##### C-A3-H — Preservação histórica
+
+| # | Regra |
+|---|---|
+| C-A3-H1 | **C-1**–**C-14**, **todo o bloco C-A1** e **todo o bloco C-A2** continuam **registro histórico** e **não são reescritos**. |
+| C-A3-H2 | **Regra temporal**: o texto histórico continua **correto para o momento em que foi escrito**; **C-A3 é refinamento posterior da leitura futura**, e **nenhuma regra histórica é falsificada**. |
+| C-A3-H3 | **Nenhum marco funcional novo.** O **último commit funcional** permanece `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`. |
+
+##### C-A3-E — Escopo fechado
+
+| # | Regra |
+|---|---|
+| C-A3-E1 | O **único** caminho classificado por C-A3 é **`empresa.descricao`**. |
+| C-A3-E2 | **`empresa.nome` NÃO é classificado** por C-A3. |
+| C-A3-E3 | **`empresa.posicionamento` NÃO é classificado** por C-A3. |
+| C-A3-E4 | **`empresa.diferenciais` NÃO é classificado** por C-A3. Ele permanece **INTACTO**, e **C-A3 não decide sua autoridade futura**. Em particular, a expressão **`"experiência intimista"` não é objeto de C-A3**. |
+| C-A3-E5 | **Não há regra por prefixo `empresa.*`**, **nenhuma inferência automática por tipo de campo** e **nenhuma classe expansível automaticamente**. Qualquer outro caminho exige arbitragem própria. |
+| C-A3-E6 | **O papel normativo de qualquer outro caminho do YAML permanece inalterado.** |
+
+##### C-A3-D — Decisão central
+
+**`empresa.descricao` é texto institucional.** Para os fins do **contrato C**:
+
+| # | Regra |
+|---|---|
+| C-A3-D1 | **NÃO é fonte factual comercial ou operacional.** |
+| C-A3-D2 | **NÃO pode ser referente de *binding*** do índice de C. |
+| C-A3-D3 | **NÃO pode ser referente de `RENDERIZADO`.** |
+| C-A3-D4 | **NÃO pode ser referente de `ASSERTIVA`.** |
+| C-A3-D5 | Seu **conteúdo textual NÃO pode ser interpretado, decomposto, resumido nem inferido como fato** para C. **Nunca inferir vínculo por coincidência textual** (**C-15a**). |
+| C-A3-D6 | Ela **permanece fisicamente em `knowledge/casa77.yaml` SEM QUALQUER alteração**. |
+| C-A3-D7 | Essa permanência **satisfaz `C-A1-M3(B)`**: a representação narrativa fica **explicitamente NÃO AUTORITATIVA e NÃO CONSUMÍVEL** por *bindings* ou `ASSERTIVA`, **sem** se tornar segunda fonte factual paralela. |
+
+O tratamento é **análogo** ao que **C-2m**–**C-2p** e **C-A1-B2** já fixam para notas e
+instruções internas: **fora da bijeção**, **sem status**, **sem *binding***, **sem
+`ASSERTIVA`**.
+
+##### C-A3-P — Relação com P8 e F1
+
+| # | Regra |
+|---|---|
+| C-A3-P1 | **P8 e F1 permanecem íntegros**: `knowledge/casa77.yaml` **continua a fonte autoritativa de todo fato comercial e operacional**. |
+| C-A3-P2 | **C-A3 não abre exceção genérica ao YAML** e **não cria contradição normativa**. Ela apenas **classifica `empresa.descricao` como campo textual institucional**, e **não como campo factual para os fins de C**. |
+
+##### C-A3-EM — Emissão
+
+| # | Regra |
+|---|---|
+| C-A3-EM1 | C-A3 **NÃO declara** que `empresa.descricao` "nunca pode ser emitida pelo bot". Essa proposição seria **mais ampla que a necessidade atual**. |
+| C-A3-EM2 | A decisão é **somente**: **não consumível por C** como fonte factual, *binding* ou `ASSERTIVA`. |
+| C-A3-EM3 | C-A3 **não decide** eventual uso textual institucional **fora do contrato C**. |
+
+##### C-A3-MD — Efeito sobre `MD-7′`
+
+| # | Regra |
+|---|---|
+| C-A3-MD1 | **Antes de C-A3**, `empresa.descricao` representava **autoridade narrativa potencialmente paralela** ao fato de **`MD-7′`** — o fato atômico geral sobre o **perfil intimista do espaço**. |
+| C-A3-MD2 | **Depois de C-A3**, o requisito **`C-A1-M3(B)`** fica **documentalmente satisfeito** para `empresa.descricao`. |
+| C-A3-MD3 | Isso **remove exclusivamente o bloqueio normativo** identificado para a **futura** execução de `MD-7′`. **Nenhum outro bloqueio é removido.** |
+| C-A3-MD4 | **C-A3 NÃO executa `MD-7′`**, **NÃO cria `eventos.perfil_intimista`**, **NÃO remove `eventos.perfil_ideal`**, **NÃO executa `MD-6`** e **NÃO executa `MD-14`**. |
+| C-A3-MD5 | O contador de **`C-A2-N11`** permanece **13 de 16**, com **`MD-6`**, **`MD-7′`** e **`MD-14`** ainda pendentes. **`MD-6` está planejado e pronto, mas NÃO executado.** |
+
+##### C-A3-FE — Relação com `FE-11a` e `FE-11b`
+
+| # | Regra |
+|---|---|
+| C-A3-FE1 | **`FE-11a` permanece intacta.** |
+| C-A3-FE2 | **`FE-11b` permanece NÃO APLICADA / RETIDA** atrás de **`C-A1-M4`**. |
+| C-A3-FE3 | C-A3 **não absorve, não substitui, não antecipa e não altera** `FE-11a` ou `FE-11b`. |
+| C-A3-FE4 | **`eventos.observacao_nao_aceitos` não é objeto de C-A3.** |
+
+##### C-A3-X — O que C-A3 não cria
+
+C-A3 **não cria**: status, enum, predicado, formato, *binding* físico, metadado YAML, *flag*
+YAML, componente, responsabilidade, estado, evento, transição, condição, erro, cenário,
+pendência operacional nem subetapa. **A 3B.8 não existe.**
+
+**Após esta arbitragem**: **C-A3 = ARBITRADA DOCUMENTALMENTE**; **`empresa.descricao` = NÃO
+AUTORITATIVA / NÃO CONSUMÍVEL para C**; **C continua ARBITRADA / NÃO MATERIALIZADA**;
+**`C-A2-N11` continua PENDENTE em 13/16**; **`C-A2-N12` continua PENDENTE**; **`FE-11b`
+continua RETIDA**; **`S2-D8` continua ARBITRADA / NÃO MATERIALIZADA**; **`N-b-RES2` continua
+ABERTO**; e o **`OrquestradorMotor` continua não implementado**.
+
 ---
 
 ## 3. Comparação técnica — Opção A × Opção B
