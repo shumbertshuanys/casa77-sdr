@@ -325,10 +325,7 @@ alteracao_data:
 
 cancelamento:
   permitido: true
-  retencao_entrada_percentual: 100
-  explicacao: >
-    Em caso de cancelamento, o valor pago como entrada, correspondente
-    a 50% do contrato, fica retido pela contratada.
+  retencao_entrada_integral: true
   atendimento_humano_obrigatorio: true
 
 multas_possiveis:
