@@ -4,7 +4,7 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-26 (materialização de **`MD-4`** na base autoritativa).
+Atualizado em: 2026-08-27 (materialização de **`MD-17`** na base autoritativa).
 
 ## Referências
 
@@ -56,7 +56,9 @@ Atualizado em: 2026-08-26 (materialização de **`MD-4`** na base autoritativa).
 | Integração do **registro de C-A1-M4** | **PR #67** — commit documental `56d8c9d21c3167b5078ce5e45b19d48a1c0bfd6b`, merge na `main` `de13a513990fe17f83010bc9b2213748241bcad4`, branch de origem `docs/registrar-c-a1-m4-auditoria`. Arquivo: **exclusivamente** `docs/00-estado-atual.md` — **44 adições, 3 remoções**. **Documental**: **não altera o marco funcional** |
 | Base da entrega **M1 — `MD-18` + `MD-20`** | `de13a513990fe17f83010bc9b2213748241bcad4` — HEAD da `main` verificado **antes** daquela entrega |
 | Integração de **M1 — `MD-18` + `MD-20`** | **PR #68** — commit `953039b3318df38f451d57175dc3fb85eed77278`, merge na `main` `3ad807fec57a3e21061dbee5fa3b3c14573eb2ac`, branch de origem `feat/c-a2-n11-m1-md18-md20`. Arquivos: **exclusivamente** `knowledge/casa77.yaml` e `docs/00-estado-atual.md` — **55 adições, 2 remoções**. **Modelagem da base autoritativa**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código** |
-| Base da presente entrega (**`MD-4`**) | `3ad807fec57a3e21061dbee5fa3b3c14573eb2ac` — HEAD da `main` verificado **antes** desta entrega |
+| Base da entrega **`MD-4`** | `3ad807fec57a3e21061dbee5fa3b3c14573eb2ac` — HEAD da `main` verificado **antes** daquela entrega |
+| Integração de **`MD-4`** | **PR #69** — commit `b827306d28b552e54b14c06e75fa8c412fa9b4e9`, merge na `main` `6868042f813f940191fc4cd45266680e39f49b7c`, branch de origem `feat/c-a2-n11-md4`. Arquivos: **exclusivamente** `knowledge/casa77.yaml` e `docs/00-estado-atual.md` — **47 adições, 5 remoções**. **Modelagem da base autoritativa**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código** |
+| Base da presente entrega (**`MD-17`**) | `6868042f813f940191fc4cd45266680e39f49b7c` — HEAD da `main` verificado **antes** desta entrega |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -1177,10 +1179,10 @@ a **pendência residual continua aberta**.
     edição, com **contagem idêntica** e **100% verde** —, a **3B.7** continua a **última
     subetapa funcional numerada** e a **3B.8 continua inexistente**. **Nenhuma próxima
     entrega foi escolhida.**
-40. **A presente entrega executa EXCLUSIVAMENTE o alvo `MD-4`.** Base:
+40. **A entrega anterior executou EXCLUSIVAMENTE o alvo `MD-4`.** Base:
     `3ad807fec57a3e21061dbee5fa3b3c14573eb2ac`. **Classificação da entrega**: **MODELAGEM DA
     BASE AUTORITATIVA, SEM ALTERAÇÃO DE CÓDIGO E SEM NOVO MARCO FUNCIONAL DE CÓDIGO**.
-    **Esta entrega NÃO é uma nova subetapa oficial do roadmap — a 3B.8 continua
+    **Aquela entrega NÃO foi uma nova subetapa oficial do roadmap — a 3B.8 continua
     inexistente.** Arquivos alterados: **dois** — `knowledge/casa77.yaml` e este documento.
     **Nenhum arquivo de `src/` e nenhum arquivo de `tests/` foi tocado**, e **nenhum teste
     foi alterado**. **O que `MD-4` faz**: **duas representações narrativas de vencimento**
@@ -1198,26 +1200,67 @@ a **pendência residual continua aberta**.
     os identificadores de `M1`, `integral_disponivel`, os percentuais, a cardinalidade de
     parcelas, a caução e o desconto permanecem inalterados**, assim como `versao` — que
     continua **`1.1`** — e `ultima_atualizacao`.
-41. **`MD-17` NÃO foi executado e continua RETIDO.** A retenção decorre de **decisão humana
-    pendente sobre o destino de `cancelamento.explicacao`**, e **não** de impedimento
-    técnico. **O bloco `cancelamento` está INTACTO**: nenhuma de suas linhas foi alterada,
-    **nenhum campo novo foi criado nele** e a comparação direta contra a base prova
-    **identidade byte a byte**. `MD-17` permanece na lista de alvos pendentes.
-42. **Estado das condições de materialização de C após `MD-4`.** **`C-A2-N9`** —
+41. **A entrega `MD-4` está INTEGRADA à `main` pelo PR #69** — commit
+    `b827306d28b552e54b14c06e75fa8c412fa9b4e9`, merge
+    `6868042f813f940191fc4cd45266680e39f49b7c`, branch de origem `feat/c-a2-n11-md4`.
+    **Dois** arquivos — `knowledge/casa77.yaml` e este documento —, **47 adições / 5
+    remoções**. **Modelagem da base autoritativa**: **não altera `src/` nem `tests/`** e
+    **não cria marco funcional de código**. O merge foi feito por **merge commit**, com
+    **dois parents** — `3ad807fec57a3e21061dbee5fa3b3c14573eb2ac` e o commit de conteúdo —,
+    **sem squash, sem rebase e sem exclusão de branch**.
+42. **A presente entrega executa EXCLUSIVAMENTE o alvo `MD-17`.** Base:
+    `6868042f813f940191fc4cd45266680e39f49b7c`. **Classificação da entrega**: **MODELAGEM DA
+    BASE AUTORITATIVA, SEM ALTERAÇÃO DE CÓDIGO E SEM NOVO MARCO FUNCIONAL DE CÓDIGO**.
+    **Esta entrega NÃO é uma nova subetapa oficial do roadmap — a 3B.8 continua
+    inexistente.** Arquivos alterados: **dois** — `knowledge/casa77.yaml` e este documento.
+    **Nenhum arquivo de `src/` e nenhum arquivo de `tests/` foi tocado**, e **nenhum teste
+    foi alterado**. **O que `MD-17` faz**: a **representação numérica** que exprimia
+    totalidade no bloco `cancelamento` foi **SUBSTITUÍDA por um fato atômico booleano
+    equivalente**, conforme **C-A1-M3 (A)** — a chave `retencao_entrada_percentual` **deixa
+    de existir**. **Caminho final**: `cancelamento.retencao_entrada_integral`, do tipo
+    **booleano**, provado **booleano verdadeiro e não numérico**, posicionado **exatamente**
+    onde estava a chave substituída. **Nenhuma fonte factual paralela subsiste**: percentual
+    e booleano **não coexistem** como fontes autoritativas concorrentes do mesmo conceito
+    (**C-A1-R2**, **C-A1-M3**). **A única supressão de representação factual é a narrativa
+    expressamente autorizada por `D1-A`; nenhum outro fato comercial foi alterado**: o diff
+    do YAML é de **1 inserção e 4 remoções**, e as remoções são **exatamente** a chave
+    numérica substituída e a chave narrativa suprimida. **`cancelamento.permitido` e
+    `cancelamento.atendimento_humano_obrigatorio` permanecem inalterados**, assim como
+    `versao` — que continua **`1.1`** — e `ultima_atualizacao`.
+43. **Decisão humana `D1`, opção `A`, aplicada.** A retenção de `MD-17` registrada na
+    entrega anterior decorria de **decisão humana pendente sobre o destino de
+    `cancelamento.explicacao`**, e **não** de impedimento técnico. Essa decisão foi
+    **recebida e aprovada** como **opção `A` — SUPRESSÃO**. Consequência **expressamente
+    autorizada**: a chave `cancelamento.explicacao` foi **removida**, **sem** cópia textual
+    preservada, **sem** marcador de não autoritatividade, **sem** campo legado e **sem**
+    comentário equivalente. A representação narrativa **deixa de ter existência independente
+    na base autoritativa** e **deixa de ser fonte de *binding***. **Nenhum campo de resgate
+    foi criado** — o bloco `cancelamento` passa a ter **exatamente três chaves**. `R20`
+    **não é pendência de redação** (**C-A1-P4**) e **não foi alterado**:
+    `knowledge/respostas-aprovadas.md` permanece **intocado** nesta entrega.
+44. **`C-A1-P4` observada.** O **percentual da entrada** permanece ligado **exclusivamente**
+    ao campo correto do bloco `pagamento` e **não** foi associado ao campo de retenção —
+    vínculo que produziria **afirmação falsa**. O bloco `pagamento` está **INTACTO** e
+    **`MD-4` permanece íntegro**: os dois caminhos materializados por ele — o **booleano** da
+    primeira parcela e o **inteiro** da segunda — foram **verificados após a edição** e
+    continuam presentes, com os **identificadores estruturais** de `M1`/`MD-18`
+    preservados. **`MD-18` e `MD-20` permanecem inalterados.**
+45. **Estado das condições de materialização de C após `MD-17`.** **`C-A2-N9`** —
     **CUMPRIDA**. **`C-A2-N10`** — **CUMPRIDA**. **`C-A2-N11`** — alvos `MD` necessários —
-    **continua PENDENTE**: com esta entrega passam a ser **3 dos 16** alvos `MD` necessários
-    cumpridos — **`MD-18`**, **`MD-20`** e **`MD-4`** —, e **13 alvos `MD` permanecem**.
-    **`C-A2-N12`** — validações `C-8` / `C-15` / `C-A1` — **continua PENDENTE**.
-    **Preservado expressamente**: **nenhum outro alvo `MD` foi executado**; **`FE-11b` NÃO
-    foi aplicada**; **`knowledge/indice-respostas-aprovadas.yaml` continua inexistente**;
-    **nenhum *template*, *binding* ou `ASSERTIVA` foi materializado**; e **`C` continua
-    ARBITRADA / NÃO MATERIALIZADA**. **`R2` e `S2-D8` continuam NÃO MATERIALIZADAS**,
-    **`N-b-RES2` continua ABERTO** e o **`OrquestradorMotor` continua não implementado**.
-    **Esta entrega não cria marco funcional de código**: o **último commit funcional aprovado
-    continua `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`** (**PR #61**), a **baseline permanece
-    `1215 passed`** — medida **antes** e **depois** da edição, com **contagem idêntica** e
-    **100% verde** —, a **3B.7** continua a **última subetapa funcional numerada** e a
-    **3B.8 continua inexistente**. **Nenhuma próxima entrega foi escolhida.**
+    **continua PENDENTE**: com esta entrega passam a ser **4 dos 16** alvos `MD` necessários
+    cumpridos — **`MD-18`**, **`MD-20`**, **`MD-4`** e **`MD-17`** —, e **12 alvos `MD`
+    permanecem**. **`C-A2-N12`** — validações `C-8` / `C-15` / `C-A1` — **continua
+    PENDENTE**. **Preservado expressamente**: **nenhum outro alvo `MD` foi executado**;
+    **`FE-11b` NÃO foi aplicada**; **`knowledge/indice-respostas-aprovadas.yaml` continua
+    inexistente**; **nenhum *template*, *binding* ou `ASSERTIVA` foi materializado**; e
+    **`C` continua ARBITRADA / NÃO MATERIALIZADA**. **`R2` e `S2-D8` continuam NÃO
+    MATERIALIZADAS**, **`N-b-RES2` continua ABERTO** e o **`OrquestradorMotor` continua não
+    implementado**. **Esta entrega não cria marco funcional de código**: o **último commit
+    funcional aprovado continua `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`** (**PR #61**), a
+    **baseline permanece `1215 passed`** — medida **antes** e **depois** da edição, com
+    **contagem idêntica** e **100% verde** —, a **3B.7** continua a **última subetapa
+    funcional numerada** e a **3B.8 continua inexistente**. **Nenhuma próxima entrega foi
+    escolhida.**
 
 ## Arbitragens
 
