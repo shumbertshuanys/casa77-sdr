@@ -27,9 +27,16 @@ empresa:
     - "experiência intimista"
 
 localizacao:
-  endereco_completo: "Rua Magnólia de Aguiar, 77, Morro do Moreno, Praia da Costa, Vila Velha/ES, 29101-082"
+  logradouro: "Rua Magnólia de Aguiar"
+  numero: "77"
+  localidades:
+    - id: "morro_do_moreno"
+      nome: "Morro do Moreno"
+    - id: "praia_da_costa"
+      nome: "Praia da Costa"
   cidade: "Vila Velha"
   estado: "ES"
+  cep: "29101-082"
   regioes_principais:
     - "Vila Velha"
     - "Vitória"
@@ -224,8 +231,8 @@ horarios:
     obrigatoriamente até as 23:00.
 
 montagem_desmontagem:
-  inicio_montagem: "Até 24 horas antes do evento"
-  fim_desmontagem: "Até um dia útil após o evento"
+  montagem_antecedencia_maxima_evento_horas: 24
+  desmontagem_ate_um_dia_util_apos_evento: true
 
 locacao_padrao:
   uso_das_areas_contratadas_incluido: true
