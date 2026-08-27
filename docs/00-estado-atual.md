@@ -4,8 +4,7 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-26 (**M1** — materialização de `MD-18` e `MD-20` na base
-autoritativa).
+Atualizado em: 2026-08-26 (materialização de **`MD-4`** na base autoritativa).
 
 ## Referências
 
@@ -55,7 +54,9 @@ autoritativa).
 | Integração da **reconciliação pós-PR #65** | **PR #66** — commit documental `8b82a638709110235eb6acf936b2ba68e9242143`, merge na `main` `118054575e7f7560a1c37ca430bdedd15eddc817`, branch de origem `docs/reconciliar-c-a2-pos-pr65`. Arquivo: **exclusivamente** `docs/00-estado-atual.md` — **48 adições, 4 remoções**. **Documental**: **não altera o marco funcional** |
 | Base da entrega **registro de C-A1-M4** | `118054575e7f7560a1c37ca430bdedd15eddc817` — HEAD da `main` verificado **antes** daquela entrega |
 | Integração do **registro de C-A1-M4** | **PR #67** — commit documental `56d8c9d21c3167b5078ce5e45b19d48a1c0bfd6b`, merge na `main` `de13a513990fe17f83010bc9b2213748241bcad4`, branch de origem `docs/registrar-c-a1-m4-auditoria`. Arquivo: **exclusivamente** `docs/00-estado-atual.md` — **44 adições, 3 remoções**. **Documental**: **não altera o marco funcional** |
-| Base da presente entrega (**M1 — `MD-18` + `MD-20`**) | `de13a513990fe17f83010bc9b2213748241bcad4` — HEAD da `main` verificado **antes** desta entrega |
+| Base da entrega **M1 — `MD-18` + `MD-20`** | `de13a513990fe17f83010bc9b2213748241bcad4` — HEAD da `main` verificado **antes** daquela entrega |
+| Integração de **M1 — `MD-18` + `MD-20`** | **PR #68** — commit `953039b3318df38f451d57175dc3fb85eed77278`, merge na `main` `3ad807fec57a3e21061dbee5fa3b3c14573eb2ac`, branch de origem `feat/c-a2-n11-m1-md18-md20`. Arquivos: **exclusivamente** `knowledge/casa77.yaml` e `docs/00-estado-atual.md` — **55 adições, 2 remoções**. **Modelagem da base autoritativa**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código** |
+| Base da presente entrega (**`MD-4`**) | `3ad807fec57a3e21061dbee5fa3b3c14573eb2ac` — HEAD da `main` verificado **antes** desta entrega |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -1176,6 +1177,47 @@ a **pendência residual continua aberta**.
     edição, com **contagem idêntica** e **100% verde** —, a **3B.7** continua a **última
     subetapa funcional numerada** e a **3B.8 continua inexistente**. **Nenhuma próxima
     entrega foi escolhida.**
+40. **A presente entrega executa EXCLUSIVAMENTE o alvo `MD-4`.** Base:
+    `3ad807fec57a3e21061dbee5fa3b3c14573eb2ac`. **Classificação da entrega**: **MODELAGEM DA
+    BASE AUTORITATIVA, SEM ALTERAÇÃO DE CÓDIGO E SEM NOVO MARCO FUNCIONAL DE CÓDIGO**.
+    **Esta entrega NÃO é uma nova subetapa oficial do roadmap — a 3B.8 continua
+    inexistente.** Arquivos alterados: **dois** — `knowledge/casa77.yaml` e este documento.
+    **Nenhum arquivo de `src/` e nenhum arquivo de `tests/` foi tocado**, e **nenhum teste
+    foi alterado**. **O que `MD-4` faz**: **duas representações narrativas de vencimento**
+    da modalidade parcelada foram **SUBSTITUÍDAS por fatos atômicos**, conforme **C-A1-M3** —
+    a chave narrativa `vencimento` **deixa de existir** nas duas parcelas, **sem** cópia
+    legada, campo de texto paralelo ou observação equivalente. A modalidade foi identificada
+    pelo **identificador estrutural estável** materializado em `M1` — **`id: "parcelado"`** —,
+    **nunca por posição** (**C-A1-S1**). **Caminhos finais**:
+    `pagamento.opcoes[id="parcelado"].primeira_parcela.vence_na_assinatura_do_contrato`, do
+    tipo **booleano**, e
+    `pagamento.opcoes[id="parcelado"].segunda_parcela.antecedencia_evento_dias`, do tipo
+    **inteiro** — provado **inteiro e não booleano**. **Nenhum fato comercial preexistente
+    foi alterado**: o diff do YAML é de **2 inserções e 2 remoções**, e as remoções são
+    **exatamente** as duas chaves narrativas substituídas. **A opção de pagamento integral,
+    os identificadores de `M1`, `integral_disponivel`, os percentuais, a cardinalidade de
+    parcelas, a caução e o desconto permanecem inalterados**, assim como `versao` — que
+    continua **`1.1`** — e `ultima_atualizacao`.
+41. **`MD-17` NÃO foi executado e continua RETIDO.** A retenção decorre de **decisão humana
+    pendente sobre o destino de `cancelamento.explicacao`**, e **não** de impedimento
+    técnico. **O bloco `cancelamento` está INTACTO**: nenhuma de suas linhas foi alterada,
+    **nenhum campo novo foi criado nele** e a comparação direta contra a base prova
+    **identidade byte a byte**. `MD-17` permanece na lista de alvos pendentes.
+42. **Estado das condições de materialização de C após `MD-4`.** **`C-A2-N9`** —
+    **CUMPRIDA**. **`C-A2-N10`** — **CUMPRIDA**. **`C-A2-N11`** — alvos `MD` necessários —
+    **continua PENDENTE**: com esta entrega passam a ser **3 dos 16** alvos `MD` necessários
+    cumpridos — **`MD-18`**, **`MD-20`** e **`MD-4`** —, e **13 alvos `MD` permanecem**.
+    **`C-A2-N12`** — validações `C-8` / `C-15` / `C-A1` — **continua PENDENTE**.
+    **Preservado expressamente**: **nenhum outro alvo `MD` foi executado**; **`FE-11b` NÃO
+    foi aplicada**; **`knowledge/indice-respostas-aprovadas.yaml` continua inexistente**;
+    **nenhum *template*, *binding* ou `ASSERTIVA` foi materializado**; e **`C` continua
+    ARBITRADA / NÃO MATERIALIZADA**. **`R2` e `S2-D8` continuam NÃO MATERIALIZADAS**,
+    **`N-b-RES2` continua ABERTO** e o **`OrquestradorMotor` continua não implementado**.
+    **Esta entrega não cria marco funcional de código**: o **último commit funcional aprovado
+    continua `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`** (**PR #61**), a **baseline permanece
+    `1215 passed`** — medida **antes** e **depois** da edição, com **contagem idêntica** e
+    **100% verde** —, a **3B.7** continua a **última subetapa funcional numerada** e a
+    **3B.8 continua inexistente**. **Nenhuma próxima entrega foi escolhida.**
 
 ## Arbitragens
 

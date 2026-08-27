@@ -304,10 +304,10 @@ pagamento:
       parcelas: 2
       primeira_parcela:
         percentual: 50
-        vencimento: "Na assinatura do contrato"
+        vence_na_assinatura_do_contrato: true
       segunda_parcela:
         percentual: 50
-        vencimento: "Trinta dias antes do evento"
+        antecedencia_evento_dias: 30
       id: "parcelado"
   integral_disponivel: true
   caucao: false
