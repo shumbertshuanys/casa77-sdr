@@ -74,9 +74,12 @@ estrutura:
 
   plano_chuva:
     disponivel: true
-    descricao: >
-      O espaço comporta instalação de toldos. A contratação, o custo,
-      a instalação e a responsabilidade pelos toldos são do contratante.
+    toldos:
+      permite_instalacao: true
+      contratacao_por_conta_do_contratante: true
+      custo_por_conta_do_contratante: true
+      instalacao_por_conta_do_contratante: true
+      responsabilidade_do_contratante: true
 
   banheiros:
     total: 4
@@ -85,10 +88,11 @@ estrutura:
 
   estacionamento:
     disponivel: false
-    observacao: >
-      O estacionamento na rua é limitado. Recomenda-se orientar os
-      convidados a utilizar transporte por aplicativo, táxi ou outro
-      transporte alternativo.
+    vagas_na_rua_limitadas: true
+    orientacao_transporte:
+      transporte_por_aplicativo: true
+      taxi: true
+      outro_transporte_alternativo: true
 
   acessibilidade: true
 
@@ -97,10 +101,9 @@ estrutura:
     incluida_no_preco_padrao: false
     contratacao: "Sob consulta"
     valor: null
-    inclui:
-      - "uma suíte"
-      - "uma sala de convivência"
-      - "um banheiro exclusivo"
+    componentes:
+      sala_de_convivencia: true
+      banheiro_exclusivo: true
 
   cozinha:
     disponivel: true
@@ -153,13 +156,14 @@ estrutura:
   iluminacao:
     incluida: "Iluminação padrão da casa"
     iluminacao_cenica_incluida: false
-    observacao: >
-      Iluminação adicional ou cênica deve ser contratada e instalada
-      sob responsabilidade do contratante.
+    adicional_ou_cenica:
+      contratacao_por_conta_do_contratante: true
+      instalacao_por_conta_do_contratante: true
+      responsabilidade_do_contratante: true
 
   som:
     incluido: false
-    responsabilidade: "Contratante"
+    responsabilidade_do_contratante: true
     rede_eletrica:
       - "110 V"
       - "220 V"
