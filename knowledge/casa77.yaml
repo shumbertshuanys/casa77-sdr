@@ -210,12 +210,10 @@ mobiliario:
 equipe_incluida:
   segurancas_externos: 3
   governanta: 1
-  governanta_funcao: "Governanta e auxiliar de recepção"
+  governanta_auxilia_recepcao: true
   limpeza_pre_evento: true
   limpeza_durante_evento: false
-  observacao_limpeza: >
-    A casa é entregue limpa. A limpeza durante o evento é responsabilidade
-    do contratante.
+  limpeza_durante_evento_responsabilidade_do_contratante: true
 
 horarios:
   duracao_padrao_evento_horas: 5
@@ -229,12 +227,9 @@ montagem_desmontagem:
   inicio_montagem: "Até 24 horas antes do evento"
   fim_desmontagem: "Até um dia útil após o evento"
 
-incluido_locacao_padrao:
-  - "uso das áreas contratadas da Casa 77"
-  - "mobiliário disponível da casa"
-  - "três seguranças na parte externa"
-  - "uma governanta e auxiliar de recepção"
-  - "limpeza para entrega inicial da casa"
+locacao_padrao:
+  uso_das_areas_contratadas_incluido: true
+  limpeza_entrega_inicial_incluida: true
 
 nao_incluido:
   - "buffet"
@@ -251,12 +246,12 @@ nao_incluido:
 
 fornecedores:
   obrigatorios: []
-  recomendados:
-    - "buffets que já conhecem a estrutura da Casa 77"
   permite_fornecedor_proprio: true
-  observacao: >
-    O cliente pode contratar seus próprios fornecedores. A Casa 77 recomenda
-    buffets que já trabalharam no espaço e conhecem suas regras.
+  recomenda_buffets: true
+  perfil_buffet_recomendado:
+    experiencia_previa_no_espaco: true
+    conhece_estrutura_da_casa: true
+    conhece_regras_da_casa: true
 
 restricoes:
   proibido:
@@ -267,9 +262,9 @@ restricoes:
     - "fogos de artifício"
     - "animais"
     - "danos ou intervenções na estrutura da casa"
-  fogos_motivo: "Área ambiental com proibição legal."
-  decoracao: >
-    Permitida desde que não provoque danos ou alterações na estrutura.
+  fogos_proibicao_legal_por_area_ambiental: true
+  decoracao_permitida: true
+  decoracao_nao_pode_alterar_estrutura: true
   drones:
     status: "pendente"
   velas:

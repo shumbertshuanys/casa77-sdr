@@ -4,8 +4,8 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-27 (materialização de **`MD-8`**, **`MD-9`**, **`MD-10`** e **`MD-11`**
-na base autoritativa).
+Atualizado em: 2026-08-27 (materialização de **`MD-12`**, **`MD-13`** e **`MD-19`** na base
+autoritativa).
 
 ## Referências
 
@@ -61,7 +61,9 @@ na base autoritativa).
 | Integração de **`MD-4`** | **PR #69** — commit `b827306d28b552e54b14c06e75fa8c412fa9b4e9`, merge na `main` `6868042f813f940191fc4cd45266680e39f49b7c`, branch de origem `feat/c-a2-n11-md4`. Arquivos: **exclusivamente** `knowledge/casa77.yaml` e `docs/00-estado-atual.md` — **47 adições, 5 remoções**. **Modelagem da base autoritativa**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código** |
 | Base da entrega **`MD-17`** | `6868042f813f940191fc4cd45266680e39f49b7c` — HEAD da `main` verificado **antes** daquela entrega |
 | Integração de **`MD-17`** | **PR #70** — commit `8e8efed1ca72651a19a4770c8a6c424af06f851b`, merge na `main` `d48692e7810c5d10b2cd2e43adcca1d157d0bfd5`, branch de origem `feat/c-a2-n11-md17`. Método: **merge commit**, com **dois parents**. Arquivos: **exclusivamente** `knowledge/casa77.yaml` e `docs/00-estado-atual.md` — **67 adições, 27 remoções**. **Modelagem da base autoritativa**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código** |
-| Base da presente entrega (**`MD-8`** + **`MD-9`** + **`MD-10`** + **`MD-11`**) | `d48692e7810c5d10b2cd2e43adcca1d157d0bfd5` — HEAD da `main` verificado **antes** desta entrega |
+| Base da entrega **M3 — `MD-8`** + **`MD-9`** + **`MD-10`** + **`MD-11`** | `d48692e7810c5d10b2cd2e43adcca1d157d0bfd5` — HEAD da `main` verificado **antes** daquela entrega |
+| Integração de **M3 — `MD-8`** + **`MD-9`** + **`MD-10`** + **`MD-11`** | **PR #71** — commit `930b3c3c07d82f470bef0fc91e685f4257551b63`, merge na `main` `c46076659f79f5a9f5c63edc109e153bcd9724fa`, branch de origem `feat/c-a2-n11-m3-md8-md11`. Método: **merge commit**, com **dois parents**. Arquivos: **exclusivamente** `knowledge/casa77.yaml` e `docs/00-estado-atual.md` — **113 adições, 29 remoções**. **Modelagem da base autoritativa**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código** |
+| Base da presente entrega (**M4 — `MD-12`** + **`MD-13`** + **`MD-19`**) | `c46076659f79f5a9f5c63edc109e153bcd9724fa` — HEAD da `main` verificado **antes** desta entrega |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -1272,10 +1274,10 @@ a **pendência residual continua aberta**.
     **não cria marco funcional de código**. O merge foi feito por **merge commit**, com
     **dois parents** — `6868042f813f940191fc4cd45266680e39f49b7c` e o commit de conteúdo —,
     **sem squash, sem rebase e sem exclusão de branch**.
-47. **A presente entrega executa EXCLUSIVAMENTE os alvos `MD-8`, `MD-9`, `MD-10` e
+47. **A entrega anterior (M3) executou EXCLUSIVAMENTE os alvos `MD-8`, `MD-9`, `MD-10` e
     `MD-11`.** Base: `d48692e7810c5d10b2cd2e43adcca1d157d0bfd5`. **Classificação da
     entrega**: **MODELAGEM DA BASE AUTORITATIVA, SEM ALTERAÇÃO DE CÓDIGO E SEM NOVO MARCO
-    FUNCIONAL DE CÓDIGO**. **Esta entrega NÃO é uma nova subetapa oficial do roadmap — a
+    FUNCIONAL DE CÓDIGO**. **Aquela entrega NÃO foi uma nova subetapa oficial do roadmap — a
     3B.8 continua inexistente.** Arquivos alterados: **dois** — `knowledge/casa77.yaml` e
     este documento. **Nenhum arquivo de `src/` e nenhum arquivo de `tests/` foi tocado**, e
     **nenhum teste foi alterado**. Todos os alvos incidem sobre o bloco `estrutura` e
@@ -1323,18 +1325,99 @@ a **pendência residual continua aberta**.
     **não é alvo deste pacote**. **Esta entrega altera a MODELAGEM da fonte, não o conteúdo
     emitível aprovado**: `knowledge/respostas-aprovadas.md` **não foi tocado**, e `R14`,
     `R22`, `R25` e `R28` permanecem com suas redações atuais.
-49. **Estado das condições de materialização de C após `MD-8`, `MD-9`, `MD-10` e `MD-11`.**
-    **`C-A2-N9`** — **CUMPRIDA**. **`C-A2-N10`** — **CUMPRIDA**. **`C-A2-N11`** — alvos `MD`
-    necessários — **continua PENDENTE**: com esta entrega passam a ser **8 dos 16** alvos
-    `MD` necessários cumpridos — **`MD-18`**, **`MD-20`**, **`MD-4`**, **`MD-17`**,
-    **`MD-8`**, **`MD-9`**, **`MD-10`** e **`MD-11`** —, e **8 alvos `MD` permanecem**. O
+49. **Estado das condições de materialização de C após `MD-8`, `MD-9`, `MD-10` e `MD-11`** —
+    **registro histórico daquela entrega**, superado pelo item 53. **`C-A2-N9`** —
+    **CUMPRIDA**. **`C-A2-N10`** — **CUMPRIDA**. **`C-A2-N11`** — alvos `MD` necessários —
+    **continuava PENDENTE**: com aquela entrega passaram a ser **8 dos 16** alvos `MD`
+    necessários cumpridos — **`MD-18`**, **`MD-20`**, **`MD-4`**, **`MD-17`**, **`MD-8`**,
+    **`MD-9`**, **`MD-10`** e **`MD-11`** —, e **8 alvos `MD` permaneciam**. O
     **denominador continua 16**. **`C-A2-N12`** — validações `C-8` / `C-15` / `C-A1` —
-    **continua PENDENTE**. **Preservado expressamente**: **nenhum outro alvo `MD` foi
-    executado**; **`FE-11b` NÃO foi aplicada**; **`knowledge/indice-respostas-aprovadas.yaml`
-    continua inexistente**; **nenhum *template*, *binding* ou `ASSERTIVA` foi
-    materializado**; e **`C` continua ARBITRADA / NÃO MATERIALIZADA**. **`R2` e `S2-D8`
-    continuam NÃO MATERIALIZADAS**, **`N-b-RES2` continua ABERTO** e o **`OrquestradorMotor`
-    continua não implementado**. **`MD-4`, `MD-17`, `MD-18` e `MD-20` permanecem íntegros**,
+    **continuava PENDENTE**. **Preservado expressamente naquela entrega**: **nenhum outro
+    alvo `MD` foi executado**; **`FE-11b` NÃO foi aplicada**;
+    **`knowledge/indice-respostas-aprovadas.yaml` continua inexistente**; **nenhum
+    *template*, *binding* ou `ASSERTIVA` foi materializado**; e **`C` continua ARBITRADA /
+    NÃO MATERIALIZADA**. **`R2` e `S2-D8` continuam NÃO MATERIALIZADAS**, **`N-b-RES2`
+    continua ABERTO** e o **`OrquestradorMotor` continua não implementado**. **`MD-4`,
+    `MD-17`, `MD-18` e `MD-20` permanecem íntegros**, assim como `versao` — que continua
+    **`1.1`** — e `ultima_atualizacao`. **Aquela entrega não criou marco funcional de
+    código**: o **último commit funcional aprovado continua
+    `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`** (**PR #61**), a **baseline permaneceu
+    `1215 passed`** — medida **antes** e **depois** da edição, com **contagem idêntica** e
+    **100% verde** —, a **3B.7** continua a **última subetapa funcional numerada** e a
+    **3B.8 continua inexistente**.
+50. **A entrega M3 está INTEGRADA à `main` pelo PR #71** — commit
+    `930b3c3c07d82f470bef0fc91e685f4257551b63`, merge
+    `c46076659f79f5a9f5c63edc109e153bcd9724fa`, branch de origem
+    `feat/c-a2-n11-m3-md8-md11`. **Dois** arquivos — `knowledge/casa77.yaml` e este
+    documento —, **113 adições / 29 remoções**. **Modelagem da base autoritativa**: **não
+    altera `src/` nem `tests/`** e **não cria marco funcional de código**. O merge foi feito
+    por **merge commit**, com **dois parents** — `d48692e7810c5d10b2cd2e43adcca1d157d0bfd5`
+    e o commit de conteúdo —, **sem squash, sem rebase e sem exclusão de branch**.
+51. **A presente entrega (M4) executa EXCLUSIVAMENTE os alvos `MD-12`, `MD-13` e `MD-19`.**
+    Base: `c46076659f79f5a9f5c63edc109e153bcd9724fa`. **Classificação da entrega**:
+    **MODELAGEM DA BASE AUTORITATIVA, SEM ALTERAÇÃO DE CÓDIGO E SEM NOVO MARCO FUNCIONAL DE
+    CÓDIGO**. **Esta entrega NÃO é uma nova subetapa oficial do roadmap — a 3B.8 continua
+    inexistente.** Arquivos alterados: **dois** — `knowledge/casa77.yaml` e este documento.
+    **Nenhum arquivo de `src/` e nenhum arquivo de `tests/` foi tocado**, e **nenhum teste
+    foi alterado**. Todos os alvos aplicam **C-A1-M3 (A)** — **substituição** da
+    representação narrativa ou pseudoestruturada por fatos atômicos, **sem** fonte factual
+    paralela. **Balanço do YAML**: **13 adições e 18 remoções**, com **11 fatos booleanos
+    novos**, **2 agrupamentos novos** — `fornecedores.perfil_buffet_recomendado` e
+    `locacao_padrao` — e **7 artefatos removidos**: `fornecedores.recomendados`,
+    `fornecedores.observacao`, `restricoes.fogos_motivo`, `restricoes.decoracao`,
+    `equipe_incluida.governanta_funcao`, `equipe_incluida.observacao_limpeza` e
+    `incluido_locacao_padrao`. **Nenhum inteiro, string ou lista nova foi criada**, e
+    **nenhuma cópia textual, campo legado, marcador de não autoritatividade ou comentário
+    equivalente** foi introduzido.
+52. **Contrato materializado por alvo.** **`MD-12`** — os fatos de **fornecedores** são
+    consolidados em fonte atômica: `fornecedores.recomenda_buffets` e o agrupamento
+    `fornecedores.perfil_buffet_recomendado`, com **três** booleanos —
+    `experiencia_previa_no_espaco`, `conhece_estrutura_da_casa` e `conhece_regras_da_casa`.
+    A pseudo-lista `recomendados` e a prosa `observacao` **deixam de existir**;
+    `obrigatorios` — que continua **lista vazia** — e `permite_fornecedor_proprio` são
+    preservados. **Nenhuma lista nominal, nome de fornecedor, contato ou parceiro foi
+    criado**: pedido de lista nominal continua sendo **`R03` + handoff**, e **`R24`
+    permanece intocado**. **`MD-13`** — o **motivo legal/ambiental** da proibição de fogos é
+    atomizado em `restricoes.fogos_proibicao_legal_por_area_ambiental`, e a política de
+    **decoração** em `restricoes.decoracao_permitida` e
+    `restricoes.decoracao_nao_pode_alterar_estrutura`; `fogos_motivo` e `decoracao`
+    **deixam de existir**. A lista **`restricoes.proibido` permanece IDÊNTICA ao parent**,
+    com os mesmos **7** itens e a mesma ordem — **a própria proibição de fogos não é
+    duplicada**, e o **fato de dano continua coberto exclusivamente** por
+    `restricoes.proibido`, sem `decoracao_nao_pode_causar_dano` ou equivalente. **`MD-19`** —
+    `equipe_incluida.governanta_funcao` é substituída pelo booleano
+    `governanta_auxilia_recepcao`, e `observacao_limpeza` pelo booleano
+    `limpeza_durante_evento_responsabilidade_do_contratante`; `segurancas_externos`,
+    `governanta`, `limpeza_pre_evento` e `limpeza_durante_evento` são **preservados
+    exatamente**, e **`limpeza_pre_evento` continua fato distinto**. A pseudo-lista
+    `incluido_locacao_padrao` é **removida** e substituída, no mesmo ponto de topo, pelo
+    agrupamento `locacao_padrao`, com **dois** booleanos —
+    `uso_das_areas_contratadas_incluido` e `limpeza_entrega_inicial_incluida`. **Mobiliário e
+    as quantidades de equipe NÃO foram transferidos** para o novo agrupamento: esses fatos
+    já têm autoridade estruturada própria em `mobiliario.incluido`,
+    `equipe_incluida.segurancas_externos` e `equipe_incluida.governanta`, todos preservados.
+    Com isso, os **seis referentes** exigidos por **`R12` `F1`** passam a existir na base:
+    `locacao_padrao.uso_das_areas_contratadas_incluido`, `mobiliario.incluido`,
+    `equipe_incluida.segurancas_externos` — **inteiro, não booleano** —,
+    `equipe_incluida.governanta` — **inteiro, não booleano** —,
+    `equipe_incluida.governanta_auxilia_recepcao` e
+    `locacao_padrao.limpeza_entrega_inicial_incluida`. **Esta entrega altera a MODELAGEM da
+    fonte, não o conteúdo emitível aprovado**: `knowledge/respostas-aprovadas.md` **não foi
+    tocado**.
+53. **Estado das condições de materialização de C após `MD-12`, `MD-13` e `MD-19`.**
+    **`C-A2-N9`** — **CUMPRIDA**. **`C-A2-N10`** — **CUMPRIDA**. **`C-A2-N11`** — alvos `MD`
+    necessários — **continua PENDENTE**: com esta entrega passam a ser **11 dos 16** alvos
+    `MD` necessários cumpridos — **`MD-18`**, **`MD-20`**, **`MD-4`**, **`MD-17`**,
+    **`MD-8`**, **`MD-9`**, **`MD-10`**, **`MD-11`**, **`MD-12`**, **`MD-13`** e
+    **`MD-19`** —, e **5 alvos `MD` permanecem**: **`MD-2`**, **`MD-5`**, **`MD-6`**,
+    **`MD-7′`** e **`MD-14`**. O **denominador continua 16**. **`C-A2-N12`** — validações
+    `C-8` / `C-15` / `C-A1` — **continua PENDENTE**. **Preservado expressamente**: **nenhum
+    outro alvo `MD` foi executado**; **`FE-11b` NÃO foi aplicada**;
+    **`knowledge/indice-respostas-aprovadas.yaml` continua inexistente**; **nenhum
+    *template*, *binding* ou `ASSERTIVA` foi materializado**; e **`C` continua ARBITRADA /
+    NÃO MATERIALIZADA**. **`R2` e `S2-D8` continuam NÃO MATERIALIZADAS**, **`N-b-RES2`
+    continua ABERTO** e o **`OrquestradorMotor` continua não implementado**. **`MD-4`,
+    `MD-8`, `MD-9`, `MD-10`, `MD-11`, `MD-17`, `MD-18` e `MD-20` permanecem íntegros**,
     assim como `versao` — que continua **`1.1`** — e `ultima_atualizacao`. **Esta entrega não
     cria marco funcional de código**: o **último commit funcional aprovado continua
     `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`** (**PR #61**), a **baseline permanece
