@@ -361,8 +361,8 @@ processo_comercial:
 
   visitas:
     bot_pode_confirmar: false
-    responsavel_confirmacao: "Douglas Bianchi"
-    responsavel_visita: "Douglas Bianchi"
+    realizada_pelo_responsavel_comercial: true
+    confirmacao_horario_pelo_responsavel_comercial: true
     duracao_estimada_minutos:
       minimo: 30
       maximo: 40

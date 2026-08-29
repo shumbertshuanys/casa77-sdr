@@ -4,10 +4,10 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-28 (entrega **`M6`** — alvos **`MD-6`** e **`MD-7′`** de `C-A2-N11`). A
-entrega imediatamente anterior foi a arbitragem documental **`C-A3`** — papel de
-`empresa.descricao` no contrato **C**, atualizada aqui em 2026-08-27 e desde então
-**integrada à `main` pelo PR #74**.
+Atualizado em: 2026-08-29 (entrega **`M7`** — alvo **`MD-14`** de `C-A2-N11`, com a
+reconciliação normativa vinculada da célula **T16** de `docs/06-maquina-de-estados.md`). A
+entrega imediatamente anterior foi **`M6`** — alvos **`MD-6`** e **`MD-7′`** —, atualizada
+aqui em 2026-08-28 e desde então **integrada à `main` pelo PR #75**.
 
 ## Referências
 
@@ -71,7 +71,9 @@ entrega imediatamente anterior foi a arbitragem documental **`C-A3`** — papel 
 | Integração de **M5 — `MD-2`** + **`MD-5`** | **PR #73** — commit `b564a3e4d6515f4028c078f16ce52163e99893bc`, merge na `main` `6e79cbac502a81fa167d37ff41b33df9ec95c9d7`, branch de origem `feat/c-a2-n11-m5-md2-md5`. Método: **merge commit**, com **dois parents**. Arquivos: **exclusivamente** `knowledge/casa77.yaml` e `docs/00-estado-atual.md` — **95 adições, 21 remoções**. **Modelagem da base autoritativa**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código** |
 | Base da entrega **`C-A3`** (documental) | `6e79cbac502a81fa167d37ff41b33df9ec95c9d7` — HEAD da `main` verificado **antes** daquela entrega |
 | Integração da **micro-arbitragem `C-A3`** | **PR #74** — commit documental `b584d5f43bf022062e0c43bd60131f15ce29b716`, merge na `main` `224ae8fd8fe2c9430125df85733b90beb1b44ecb`, branch de origem `docs/c-a3-empresa-descricao-c`. Método: **merge commit**, com **dois parents** — `6e79cbac502a81fa167d37ff41b33df9ec95c9d7` e o commit de conteúdo `b584d5f43bf022062e0c43bd60131f15ce29b716`. Arquivos: **exclusivamente** `docs/00-estado-atual.md` e `docs/07-arquitetura-motor-respostas.md` — **164 adições, 7 remoções**. **Documental / governança**: **não altera o marco funcional** e **não implementa código** |
-| Base da presente entrega (**`M6`** — **`MD-6`** + **`MD-7′`**) | `224ae8fd8fe2c9430125df85733b90beb1b44ecb` — HEAD da `main` verificado **antes** desta entrega |
+| Base da entrega **M6 — `MD-6`** + **`MD-7′`** | `224ae8fd8fe2c9430125df85733b90beb1b44ecb` — HEAD da `main` verificado **antes** daquela entrega |
+| Integração de **M6 — `MD-6`** + **`MD-7′`** | **PR #75** — commit `5520cd77df8131eb4ba1093b6929e693547a5141`, merge na `main` `9b44cc1c01403ce5e9bb4997088d75c9da207c28`, branch de origem `feat/c-a2-n11-m6-md6-md7`. Método: **merge commit**, com **dois parents** — `224ae8fd8fe2c9430125df85733b90beb1b44ecb` e o commit de conteúdo `5520cd77df8131eb4ba1093b6929e693547a5141`. Arquivos: **exclusivamente** `docs/00-estado-atual.md` e `knowledge/casa77.yaml` — **86 adições, 13 remoções**. **Modelagem da base autoritativa**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código** |
+| Base da presente entrega (**`M7`** — **`MD-14`**) | `9b44cc1c01403ce5e9bb4997088d75c9da207c28` — HEAD da `main` verificado **antes** desta entrega |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -1571,7 +1573,8 @@ a **pendência residual continua aberta**.
     integração de `C-A3` à `main`** e a **novo mandato**. **Essa condição foi SATISFEITA pelo
     merge do PR #74** — `224ae8fd8fe2c9430125df85733b90beb1b44ecb` —, e o **novo mandato** foi
     emitido: `M6` é a **presente entrega**, registrada no **item 61**.
-61. **A presente entrega (`M6`) executa EXCLUSIVAMENTE os alvos `MD-6` e `MD-7′`.** Base:
+61. **A entrega ANTERIOR (`M6`) executou EXCLUSIVAMENTE os alvos `MD-6` e `MD-7′`** —
+    **registro histórico daquela entrega**, hoje **INTEGRADA à `main` pelo PR #75**. Base:
     `224ae8fd8fe2c9430125df85733b90beb1b44ecb`. **Classificação da entrega**: **MODELAGEM DA
     BASE AUTORITATIVA, SEM ALTERAÇÃO DE CÓDIGO E SEM NOVO MARCO FUNCIONAL DE CÓDIGO**. **Esta
     entrega NÃO é uma nova subetapa oficial do roadmap — a 3B.8 continua inexistente.**
@@ -1632,6 +1635,103 @@ a **pendência residual continua aberta**.
     **100% verde** —, a **3B.7** continua a **última subetapa funcional numerada** e a **3B.8
     continua inexistente**. **`M7` NÃO é escolhida por esta entrega**, e **`MD-14` não é
     executado**: qualquer passo seguinte depende de **novo mandato**.
+62. **A entrega M6 está INTEGRADA à `main` pelo PR #75** — commit
+    `5520cd77df8131eb4ba1093b6929e693547a5141`, merge
+    `9b44cc1c01403ce5e9bb4997088d75c9da207c28`, branch de origem
+    `feat/c-a2-n11-m6-md6-md7`. **Dois** arquivos — `docs/00-estado-atual.md` e
+    `knowledge/casa77.yaml` —, **86 adições / 13 remoções**. **Modelagem da base
+    autoritativa**: **não altera `src/` nem `tests/`** e **não cria marco funcional de
+    código**. O merge foi feito por **merge commit**, com **dois parents** —
+    `224ae8fd8fe2c9430125df85733b90beb1b44ecb` e o commit de conteúdo
+    `5520cd77df8131eb4ba1093b6929e693547a5141` —, **sem squash, sem rebase e sem exclusão
+    de branch**.
+63. **A presente entrega (`M7`) executa EXCLUSIVAMENTE o alvo `MD-14`**, mais a
+    **reconciliação normativa estritamente necessária** da célula **“Ação obrigatória”** da
+    transição **T16** em `docs/06-maquina-de-estados.md`. Base:
+    `9b44cc1c01403ce5e9bb4997088d75c9da207c28`. **Classificação da entrega**: **MODELAGEM
+    DA BASE AUTORITATIVA + RECONCILIAÇÃO DOCUMENTAL VINCULADA, SEM ALTERAÇÃO DE CÓDIGO E
+    SEM NOVO MARCO FUNCIONAL DE CÓDIGO**. **Esta entrega NÃO é uma nova subetapa oficial do
+    roadmap — a 3B.8 continua inexistente.** Arquivos alterados: **três** —
+    `knowledge/casa77.yaml`, `docs/06-maquina-de-estados.md` e este documento. **Nenhum
+    arquivo de `src/`, `tests/` ou `prompts/` foi tocado**, e **nenhum teste foi alterado**.
+    `knowledge/respostas-aprovadas.md`, `knowledge/informacoes-pendentes.md`,
+    `docs/04-handoff-humano.md` e `docs/07-arquitetura-motor-respostas.md` **não foram
+    tocados**. **Balanço do YAML**: **2 adições e 2 remoções**, em **uma única hunk**;
+    **balanço de `docs/06`**: **1 adição e 1 remoção**, em **uma única hunk**,
+    **exclusivamente na célula “Ação obrigatória” de T16**. **Nenhuma cópia textual, alias,
+    campo legado, comentário equivalente, enum, identificador de papel ou segunda fonte**
+    foi introduzido. **Auditoria `C-A1-M4` reexecutada antes da edição**:
+    `responsavel_confirmacao` tinha **o próprio YAML como única fonte** e **zero
+    consumidor** em todo o repositório; `responsavel_visita` tinha **o YAML como fonte** e
+    **uma única dereferência normativa documental** — a célula de **T16** em `docs/06` —,
+    com **zero consumidor funcional** em `src/` e `tests/`, onde
+    `processo_comercial.visitas.*` **não é lido por código ou teste algum**.
+    **Contrato materializado.** **`MD-14`** — as **duas cópias de nome próprio** em
+    `processo_comercial.visitas` são **removidas** e substituídas por **fatos de papel e
+    relação**: **`processo_comercial.visitas.realizada_pelo_responsavel_comercial`**,
+    **booleano real** de valor **`true`**, com a semântica *“a visita é realizada pelo
+    responsável comercial”*; e
+    **`processo_comercial.visitas.confirmacao_horario_pelo_responsavel_comercial`**,
+    **booleano real** de valor **`true`**, com a semântica *“a confirmação do horário da
+    visita é feita pelo responsável comercial”*. O consumo futuro de ambos é `ASSERTIVA`
+    **`EH_VERDADEIRO`**. **Nenhum nome próprio, enum, identificador de papel, string
+    “responsável comercial”, string “true”, campo legado, alias, comentário ou segunda
+    fonte** foi criado — aplicação estrita de **C-A1-M3 (A)**. **`A1` é preservada**: o
+    tratamento emitido continua **estático** — **“responsável comercial”** —, e `R06` deixa
+    de depender de igualdade entre *strings* de pessoas. `bot_pode_confirmar`,
+    `duracao_estimada_minutos.minimo`, `duracao_estimada_minutos.maximo` e
+    `depende_aprovacao_humana` **permanecem intactos**, assim como
+    `processo_comercial.responsavel.*`, `processo_comercial.horario_atendimento.*` e
+    `processo_comercial.contratacao.*` — **`processo_comercial.responsavel.funcao` NÃO é
+    *binding* de `R06`** e **não é segunda fonte** da relação operacional específica da
+    visita. **Autoridade única (C-A1-M3)**: a **única fonte factual** do papel de
+    realização é `realizada_pelo_responsavel_comercial`; a **única fonte factual** do papel
+    de confirmação de horário é `confirmacao_horario_pelo_responsavel_comercial`;
+    **`responsavel_confirmacao` e `responsavel_visita` deixam de existir**, e **nenhum nome
+    próprio sustenta `R06`**. **`R06` NÃO foi alterado**: sua redação foi **recomposta
+    mecanicamente** a partir dos novos fatos — duas `ASSERTIVA` **`EH_VERDADEIRO`**, dois
+    `RENDERIZADO` de inteiro (**30** e **40**), a `ASSERTIVA` **`EH_FALSO`**
+    **consistency-only** sobre `bot_pode_confirmar` e o tratamento **estático** — e
+    comparada sob **NFC**, com **equivalência integral provada**. **Nenhum formatador e
+    nenhum predicado novo** foi criado.
+    **Reconciliação de `docs/06` T16.** A célula **“Ação obrigatória”** de **T16**
+    dereferenciava `processo_comercial.visitas.responsavel_visita`, caminho que **deixa de
+    existir**. Ela passa a referenciar a **duração estimada** e os **dois papéis
+    estruturais**, e explicita que a emissão usa o **tratamento estático “responsável
+    comercial”** pela resposta aprovada **`R06`**. **Preservados sem alteração**: o **estado
+    atual**, o **evento `E10`**, a **condição**, o **próximo estado**, a **ação proibida** —
+    *marcar, sugerir horário ou confirmar visita* — e a **qualificação**. **Nenhuma outra
+    linha, célula, transição ou seção de `docs/06` foi tocada.** **Esta entrega altera a
+    MODELAGEM da fonte e a REFERÊNCIA normativa dependente, não o conteúdo emitível
+    aprovado.**
+    **Estado das condições de materialização de C após `M7`.** **`C-A2-N9`** — **CUMPRIDA**.
+    **`C-A2-N10`** — **CUMPRIDA**. **`C-A2-N11`** — alvos `MD` necessários — passa a
+    **CUMPRIDA**: com esta entrega são **16 dos 16** alvos `MD` necessários cumpridos —
+    **`MD-18`**, **`MD-20`**, **`MD-4`**, **`MD-17`**, **`MD-8`**, **`MD-9`**, **`MD-10`**,
+    **`MD-11`**, **`MD-12`**, **`MD-13`**, **`MD-19`**, **`MD-2`**, **`MD-5`**, **`MD-6`**,
+    **`MD-7′`** e **`MD-14`** —, e **nenhum alvo `MD` permanece**. O **denominador continua
+    16**. **`C-A2-N11` CUMPRIDA — 16/16 NÃO significa** que **`C-A2-N12`** esteja cumprida,
+    que **`C`** esteja materializada, que o **índice** exista, que exista ***template***,
+    ***binding* físico** ou **`ASSERTIVA` física**, que **`S2-D8`** esteja materializada,
+    que **`N-b-RES2`** esteja fechado ou que o **`OrquestradorMotor`** esteja implementado.
+    **`C-A2-N12`** — validações `C-8` / `C-15` / `C-A1` — **continua PENDENTE**.
+    **Preservado expressamente**: **`FE-11a` continua intacta** e **`FE-11b` continua NÃO
+    APLICADA / RETIDA** atrás de **`C-A1-M4`**, **fora desta entrega**; **`FE-11a′` NÃO foi
+    executada**; **`eventos.observacao_nao_aceitos` não foi tocado**;
+    **`materiais.observacao_envio`, `tests/cenarios-conversa.md` e
+    `tests/perguntas-criticas.md` não foram tocados**;
+    **`knowledge/indice-respostas-aprovadas.yaml` continua inexistente**; **nenhum
+    *template*, *binding* físico ou `ASSERTIVA` física foi materializado**; e **`C` continua
+    ARBITRADA / NÃO MATERIALIZADA**. **`R2` e `S2-D8` continuam NÃO MATERIALIZADAS**,
+    **`N-b-RES2` continua ABERTO** e o **`OrquestradorMotor` continua não implementado**. Os
+    **15 alvos `MD` anteriores permanecem íntegros**, assim como `versao` — que continua
+    **`1.1`** — e `ultima_atualizacao` — que continua **`2026-08-15`**. **Esta entrega não
+    cria marco funcional de código**: o **último commit funcional aprovado continua
+    `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`** (**PR #61**), a **baseline permanece
+    `1215 passed`** — medida **antes** e **depois** da edição, com **contagem idêntica** e
+    **100% verde** —, a **3B.7** continua a **última subetapa funcional numerada** e a
+    **3B.8 continua inexistente**. **`M8` NÃO é iniciada por esta entrega**: qualquer passo
+    seguinte depende de **novo mandato**.
 
 ## Arbitragens
 
