@@ -4,10 +4,10 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-29 (entrega **`M7`** — alvo **`MD-14`** de `C-A2-N11`, com a
-reconciliação normativa vinculada da célula **T16** de `docs/06-maquina-de-estados.md`). A
-entrega imediatamente anterior foi **`M6`** — alvos **`MD-6`** e **`MD-7′`** —, atualizada
-aqui em 2026-08-28 e desde então **integrada à `main` pelo PR #75**.
+Atualizado em: 2026-08-29 (entrega **`M8`** — **`FE-11b`** e a reconciliação da **`FE-11a`**
+já aplicada). A entrega imediatamente anterior foi **`M7`** — alvo **`MD-14`** de
+`C-A2-N11` —, atualizada aqui em 2026-08-29 e desde então **integrada à `main` pelo
+PR #76**.
 
 ## Referências
 
@@ -73,7 +73,9 @@ aqui em 2026-08-28 e desde então **integrada à `main` pelo PR #75**.
 | Integração da **micro-arbitragem `C-A3`** | **PR #74** — commit documental `b584d5f43bf022062e0c43bd60131f15ce29b716`, merge na `main` `224ae8fd8fe2c9430125df85733b90beb1b44ecb`, branch de origem `docs/c-a3-empresa-descricao-c`. Método: **merge commit**, com **dois parents** — `6e79cbac502a81fa167d37ff41b33df9ec95c9d7` e o commit de conteúdo `b584d5f43bf022062e0c43bd60131f15ce29b716`. Arquivos: **exclusivamente** `docs/00-estado-atual.md` e `docs/07-arquitetura-motor-respostas.md` — **164 adições, 7 remoções**. **Documental / governança**: **não altera o marco funcional** e **não implementa código** |
 | Base da entrega **M6 — `MD-6`** + **`MD-7′`** | `224ae8fd8fe2c9430125df85733b90beb1b44ecb` — HEAD da `main` verificado **antes** daquela entrega |
 | Integração de **M6 — `MD-6`** + **`MD-7′`** | **PR #75** — commit `5520cd77df8131eb4ba1093b6929e693547a5141`, merge na `main` `9b44cc1c01403ce5e9bb4997088d75c9da207c28`, branch de origem `feat/c-a2-n11-m6-md6-md7`. Método: **merge commit**, com **dois parents** — `224ae8fd8fe2c9430125df85733b90beb1b44ecb` e o commit de conteúdo `5520cd77df8131eb4ba1093b6929e693547a5141`. Arquivos: **exclusivamente** `docs/00-estado-atual.md` e `knowledge/casa77.yaml` — **86 adições, 13 remoções**. **Modelagem da base autoritativa**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código** |
-| Base da presente entrega (**`M7`** — **`MD-14`**) | `9b44cc1c01403ce5e9bb4997088d75c9da207c28` — HEAD da `main` verificado **antes** desta entrega |
+| Base da entrega **M7 — `MD-14`** | `9b44cc1c01403ce5e9bb4997088d75c9da207c28` — HEAD da `main` verificado **antes** daquela entrega |
+| Integração de **M7 — `MD-14`** | **PR #76** — commit `9a56fa80bbc312b2085480f87e572ff6e0f768b3`, merge na `main` `f446d3fa36a9b3f4b76c3b329a19356b3ddbe394`, branch de origem `feat/c-a2-n11-m7-md14`. Método: **merge commit**, com **dois parents** — `9b44cc1c01403ce5e9bb4997088d75c9da207c28` e o commit de conteúdo `9a56fa80bbc312b2085480f87e572ff6e0f768b3`. Arquivos: **exclusivamente** `docs/00-estado-atual.md`, `docs/06-maquina-de-estados.md` e `knowledge/casa77.yaml` — **109 adições, 9 remoções**. **Modelagem da base autoritativa + reconciliação documental vinculada**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código**. Com este merge, **`C-A2-N11` = CUMPRIDA — 16/16** passou a ser o **estado oficial da `main`** |
+| Base da presente entrega (**`M8`** — **`FE-11b`** + reconciliação da **`FE-11a`**) | `f446d3fa36a9b3f4b76c3b329a19356b3ddbe394` — HEAD da `main` verificado **antes** desta entrega |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -1645,7 +1647,8 @@ a **pendência residual continua aberta**.
     `224ae8fd8fe2c9430125df85733b90beb1b44ecb` e o commit de conteúdo
     `5520cd77df8131eb4ba1093b6929e693547a5141` —, **sem squash, sem rebase e sem exclusão
     de branch**.
-63. **A presente entrega (`M7`) executa EXCLUSIVAMENTE o alvo `MD-14`**, mais a
+63. **A entrega ANTERIOR (`M7`) executou EXCLUSIVAMENTE o alvo `MD-14`** — **registro
+    histórico daquela entrega**, hoje **INTEGRADA à `main` pelo PR #76** —, mais a
     **reconciliação normativa estritamente necessária** da célula **“Ação obrigatória”** da
     transição **T16** em `docs/06-maquina-de-estados.md`. Base:
     `9b44cc1c01403ce5e9bb4997088d75c9da207c28`. **Classificação da entrega**: **MODELAGEM
@@ -1732,6 +1735,89 @@ a **pendência residual continua aberta**.
     **100% verde** —, a **3B.7** continua a **última subetapa funcional numerada** e a
     **3B.8 continua inexistente**. **`M8` NÃO é iniciada por esta entrega**: qualquer passo
     seguinte depende de **novo mandato**.
+64. **A entrega M7 está INTEGRADA à `main` pelo PR #76** — commit
+    `9a56fa80bbc312b2085480f87e572ff6e0f768b3`, merge
+    `f446d3fa36a9b3f4b76c3b329a19356b3ddbe394`, branch de origem
+    `feat/c-a2-n11-m7-md14`. **Três** arquivos — `docs/00-estado-atual.md`,
+    `docs/06-maquina-de-estados.md` e `knowledge/casa77.yaml` —, **109 adições / 9
+    remoções**. **Modelagem da base autoritativa + reconciliação documental vinculada**:
+    **não altera `src/` nem `tests/`** e **não cria marco funcional de código**. O merge
+    foi feito por **merge commit**, com **dois parents** —
+    `9b44cc1c01403ce5e9bb4997088d75c9da207c28` e o commit de conteúdo
+    `9a56fa80bbc312b2085480f87e572ff6e0f768b3` —, **sem squash, sem rebase e sem exclusão
+    de branch**. **Com este merge, `C-A2-N11` = CUMPRIDA — 16/16 passou a ser o ESTADO
+    OFICIAL da `main`**, e **nenhum alvo `MD` necessário permanece**.
+65. **A presente entrega (`M8`) executa EXCLUSIVAMENTE `FE-11b` e a reconciliação da
+    `FE-11a` já aplicada.** Base: `f446d3fa36a9b3f4b76c3b329a19356b3ddbe394`.
+    **Classificação da entrega**: **MODELAGEM / RECONCILIAÇÃO DA BASE AUTORITATIVA +
+    RECONCILIAÇÃO DE INSTRUÇÃO INTERNA, SEM ALTERAÇÃO DE CÓDIGO E SEM NOVO MARCO
+    FUNCIONAL**. **Esta entrega NÃO é uma nova subetapa oficial do roadmap — a 3B.8
+    continua inexistente.** Arquivos alterados: **três** — `knowledge/casa77.yaml`,
+    `knowledge/respostas-aprovadas.md` e este documento. **Nenhum arquivo de `src/`,
+    `tests/` ou `prompts/` foi tocado**, e **nenhum teste foi alterado**.
+    `knowledge/informacoes-pendentes.md`, `docs/02-fluxo-comercial.md`,
+    `docs/03-regras-de-conversa.md`, `docs/04-handoff-humano.md`,
+    `docs/06-maquina-de-estados.md` e `docs/07-arquitetura-motor-respostas.md` **não foram
+    tocados**. **Balanço do YAML**: **0 adições e 5 remoções**, em **uma única hunk**;
+    **balanço de `knowledge/respostas-aprovadas.md`**: **6 adições e 7 remoções**, em
+    **duas alterações distintas e não adjacentes** — a linha de origem de `R17` e o bloco
+    de instrução interna —, separadas por quatro linhas inalteradas, que o `git diff` com
+    contexto padrão exibe **coalescidas em uma hunk** e que `-U1` separa em **duas**.
+    **Auditoria `C-A1-M4` reexecutada antes da edição**: o campo removido tinha **o YAML
+    como fonte física**, **uma origem declarada** e **uma referência normativa viva** —
+    ambas em `knowledge/respostas-aprovadas.md` —, além de **referências históricas** em
+    `docs/07` e neste documento, e **ZERO consumidor funcional** em `src/` e `tests/`.
+    **`FE-11b` — materialização por REMOÇÃO.** O campo narrativo de `eventos` que
+    duplicava a classificação já estruturada e carregava **vetor nominal**, **proveniência
+    interna de decisão** e **motivo operacional sem representação estrutural** é
+    **removido integralmente**. **Nenhum substituto foi criado**: nenhum campo novo,
+    narrativa sanitizada, comentário, alias, enum, booleano, motivo, proveniência, data ou
+    nome próprio. Aplicação estrita de **C-A1-M3 (A)** — a representação narrativa é
+    **substituída pela ausência**, e **não** por uma segunda fonte factual paralela.
+    **`eventos.aceitos`, `eventos.perfil_intimista`, `eventos.nao_aceitos` e
+    `eventos.datas_nao_aceitas` permanecem intactos** — `nao_aceitos` conserva os mesmos
+    **oito** itens, na mesma ordem —, assim como `versao`, que continua **`1.1`**, e
+    `ultima_atualizacao`, que continua **`2026-08-15`**.
+    **`R17` — texto emitível INALTERADO.** O fragmento aprovado **não foi tocado** e é
+    **byte-idêntico** ao blob de `origin/main`. Apenas a **linha de origem** foi
+    reconciliada: a fonte declarada passa a ser `eventos.nao_aceitos` e
+    `eventos.perfil_intimista` (**D-M8-1**), **sem qualquer outra fonte**. A linha
+    **“Aplica-se a”** foi **preservada integral e textualmente** (**D-M8-2**): nenhum item
+    adicionado ou removido, nenhuma data ou arbitragem alterada, nenhuma normalização de
+    redação. **A divergência preexistente entre essa enumeração e `eventos.nao_aceitos`
+    permanece FORA de `M8`** e **não foi corrigida** — ela continua registrada como
+    conflito em **`C-9`**.
+    **`FE-11a` — RECONCILIADA, sem novo identificador.** A instrução interna já aplicada
+    referenciava o campo removido; ela foi **reescrita no lugar**, permanecendo
+    **`FE-11a`**, **não emitível** e ancorada em **`R03` + handoff** para pedido
+    específico do motivo. **`FE-11a′` NÃO foi criada**: as menções anteriores a
+    **`FE-11a′`** em planejamento e em registro de entrega **não criaram identificador
+    normativo novo**, e nenhum foi criado aqui. A nova redação **não menciona o campo
+    removido**, **não reconstrói a narrativa**, **não cria explicação comercial** e **não
+    cria fato novo**.
+    **`docs/07` NÃO foi alterado.** As referências históricas ali — ao campo removido, a
+    **`FE-11a`** como planejada e a **`FE-11b`** como retida — **permanecem registro
+    histórico correto para o momento em que foram escritas** (**C-A2-H2**) e **não são
+    reconciliadas retrospectivamente**. Vale o mesmo para os itens históricos deste
+    documento: as declarações anteriores de **`FE-11b` NÃO APLICADA / RETIDA** continuam
+    corretas à época e **não foram reescritas** — elas apenas **deixam de representar o
+    estado corrente** após a futura integração de `M8`.
+    **Estado após `M8` — NA BRANCH.** **`C-A2-N9`** — **CUMPRIDA**. **`C-A2-N10`** —
+    **CUMPRIDA**. **`C-A2-N11`** — **CUMPRIDA — 16/16**, **nenhum alvo `MD` restante**.
+    **`C-A2-N12`** — validações `C-8` / `C-15` / `C-A1` — **continua PENDENTE**.
+    **`FE-11b`** — **APLICADA / MATERIALIZADA POR REMOÇÃO**. **`FE-11a`** — **APLICADA /
+    RECONCILIADA**. **`FE-11a′`** — **NÃO CRIADA**.
+    **`knowledge/indice-respostas-aprovadas.yaml` continua inexistente**; **nenhum
+    *template*, *binding* físico ou `ASSERTIVA` física foi materializado**; **`C` continua
+    ARBITRADA / NÃO MATERIALIZADA**; **`R2` continua NÃO MATERIALIZADA**; **`S2-D8`
+    continua ARBITRADA / NÃO MATERIALIZADA**; **`N-b-RES2` continua ABERTO** e o
+    **`OrquestradorMotor` continua não implementado**. **Esta entrega não cria marco
+    funcional de código**: o **último commit funcional aprovado continua
+    `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`** (**PR #61**), a **baseline permanece
+    `1215 passed`** — medida **antes** e **depois** da edição, com **contagem idêntica** e
+    **100% verde** —, a **3B.7** continua a **última subetapa funcional numerada** e a
+    **3B.8 continua inexistente**. **Este estado é da BRANCH**: ele só se torna estado
+    oficial da `main` após o merge de `M8`.
 
 ## Arbitragens
 

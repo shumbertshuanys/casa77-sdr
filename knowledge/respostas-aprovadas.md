@@ -143,17 +143,16 @@ Link do Google Maps: **BLOQUEADO** (`google_maps_url: null`) → R03.
 
 > A Casa 77 não recebe esse tipo de evento. O espaço é voltado para eventos intimistas.
 
-Origem: `eventos.nao_aceitos` e `eventos.observacao_nao_aceitos`.
+Origem: `eventos.nao_aceitos` e `eventos.perfil_intimista`.
 
 Aplica-se a: despedida de solteiro, festa de adolescente, festa infantil, aniversário
 adulto (decisão de 2026-08-15, arbitragem D1), treinamento, palestra e workshop.
 
-**Instrução interna — não emitível (FE-11a).** O campo `eventos.observacao_nao_aceitos`
-**não pode ser emitido literalmente**: a narrativa registrada nele contém identificação
-nominal e proveniência interna de decisão, que não devem chegar ao interessado. O texto
-emitível acima cobre a recusa. Enquanto não existir representação estrutural segura do
-motivo, **pedido específico do motivo → R03 + handoff** — o bot não parafraseia, não resume
-e não cita esse campo.
+**Instrução interna — não emitível (FE-11a).** O **motivo específico** pelo qual um tipo de
+evento não é aceito **não possui representação estrutural na base**. Enquanto essa
+representação não existir e não for aprovada, **pedido específico do motivo → R03 +
+handoff** — o bot não explica, não parafraseia, não resume e não infere motivo. O texto
+emitível acima cobre a recusa e não depende de motivo.
 
 ## R18 — Datas bloqueadas — APROVADO
 
