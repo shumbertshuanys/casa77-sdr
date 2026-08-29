@@ -49,7 +49,7 @@ eventos:
     - "noivado"
     - "bodas"
     - "evento corporativo"
-  perfil_ideal: "Evento intimista"
+  perfil_intimista: true
   nao_aceitos:
     - "despedida de solteiro"
     - "festa de adolescente"
@@ -72,8 +72,7 @@ eventos:
 capacidade:
   convidados_sentados: 80
   formato_coquetel: 100
-  minimo_convidados: null
-  observacao_minimo: "Não existe quantidade mínima estabelecida."
+  existe_minimo_convidados: false
 
 estrutura:
   percentual_coberto: 80
