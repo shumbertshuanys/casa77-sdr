@@ -1193,6 +1193,150 @@ AUTORITATIVA / NÃO CONSUMÍVEL para C**; **C continua ARBITRADA / NÃO MATERIAL
 continua RETIDA**; **`S2-D8` continua ARBITRADA / NÃO MATERIALIZADA**; **`N-b-RES2` continua
 ABERTO**; e o **`OrquestradorMotor` continua não implementado**.
 
+#### Micro-arbitragem C-A4 — critério de cumprimento de `C-A2-N12` e convenções de validação
+
+**Estado: ARBITRADA DOCUMENTALMENTE.**
+
+Micro-arbitragem **posterior** a **C**, **C-A1**, **C-A2** e **C-A3**, e **exclusivamente
+documental**. Ela **NÃO executa `C-A2-N12`**, **não cria o índice**, **não cria *template*
+físico**, **não cria *binding* físico**, **não cria `ASSERTIVA` física**, **não altera
+`knowledge/**`**, **não implementa código**, **não altera testes** e **não materializa**
+**C**, **R2** ou **S2-D8**. **Nenhum marco funcional novo é criado.**
+
+**`C-A2-N12` continua PENDENTE.**
+
+Ela fecha, para a **execução futura e read-only** de `C-A2-N12`: o **critério de
+cumprimento** do gate; o **vocabulário** dos resultados de validação; refinamentos
+posteriores de **`inteiro_agrupado`** e da **fronteira de `simbolo_moeda`**; a **derivação
+conceitual de *bindings*** onde `C-A2-B` não prescreve; o tratamento de **`R05` `F2`/`F3`**;
+e a **proposição completa** como unidade de análise de `C-8`.
+
+##### C-A4-H — Preservação histórica
+
+| # | Regra |
+|---|---|
+| C-A4-H1 | **C-1**–**C-14**, **C-A1**, **C-A2** e **C-A3** permanecem **registro histórico** e **não são reescritos**. |
+| C-A4-H2 | **Regra temporal**: o texto histórico permanece **correto para o momento em que foi escrito**. **C-A4 é refinamento posterior da leitura futura**, e **nenhuma regra histórica é falsificada**. |
+| C-A4-H3 | **`C-A3-MD5`**, **inclusive a contagem histórica `13/16`**, permanece **intacta e correta à época**. A evolução até **16/16** é registrada por `docs/00-estado-atual.md` e pelas entregas posteriores. **C-A4 não reescreve `C-A3-MD5`.** |
+| C-A4-H4 | **Nenhum marco funcional novo.** O **último commit funcional** permanece `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`. |
+
+##### C-A4-G — Critério de cumprimento de `C-A2-N12`
+
+| # | Regra |
+|---|---|
+| C-A4-G1 | **“auditoria executada completamente”** e **“`C-A2-N12` cumprida”** são **proposições distintas**. Uma **não implica automaticamente** a outra. |
+| C-A4-G2 | **`C-A2-N12` = CUMPRIDA** somente quando, **CUMULATIVAMENTE**: **(A)** a validação **`C-8`** / **`C-15`** / **`C-A1`** cobriu **integralmente o universo aplicável**; **E (B)** **não resta bloqueio** que impeça que **cada um dos 37 fragmentos** do corpus **C** possua **representação estrutural** conforme o contrato **C**. |
+| C-A4-G3 | auditoria completa **+** qualquer **FAIL-CLOSED impeditivo** = **EXECUTADA COMPLETAMENTE / NÃO CUMPRIDA**. |
+| C-A4-G4 | auditoria completa **+** qualquer **NÃO DETERMINÁVEL residual** = **EXECUTADA COMPLETAMENTE / NÃO CUMPRIDA**. |
+| C-A4-G5 | auditoria completa **+** **divergência de base** que impeça conformidade estrutural = **EXECUTADA COMPLETAMENTE / NÃO CUMPRIDA**. |
+| C-A4-G6 | **`C-15d` permanece válida**: **FAIL-CLOSED continua sendo desfecho correto** da validação. **Porém** ele **não satisfaz** o gate **`C-A4-G2`** enquanto **impedir representação estrutural** do corpus. |
+| C-A4-G7 | **C-A4 não declara `37/37` alcançado** e **não antecipa** resultado algum de `C-A2-N12`. |
+| C-A4-G8 | **COBERTURA ESTRUTURAL ≠ EMISSIBILIDADE.** O status **`AGUARDA_APROVACAO`**, **por si só**, **não impede representação estrutural**. Isso **NÃO** significa aprovação de emissão e **NÃO** dispensa o fragmento de satisfazer **todas** as regras **`C-8`** / **`C-15`** / **`C-A1`** que incidirem sobre ele. **`C-3` e `C-A1-ST` permanecem vigentes.** **Nenhum quarto status é criado.** |
+
+##### C-A4-VOC — Vocabulário da auditoria
+
+Vocabulário **fechado** dos resultados de validação:
+
+| # | Resultado |
+|---|---|
+| C-A4-VOC1 | `PASS` |
+| C-A4-VOC2 | `FAIL-CLOSED` |
+| C-A4-VOC3 | `DIVERGÊNCIA DE BASE` |
+| C-A4-VOC4 | `NÃO DETERMINÁVEL` |
+| C-A4-VOC5 | `N/A` |
+
+| # | Regra |
+|---|---|
+| C-A4-VOC6 | **`PASS CONDICIONADO` NÃO EXISTE.** É **proibido** usá-lo como rótulo **ou como paráfrase**. |
+| C-A4-VOC7 | **`N/A` só pode ser usado quando a regra realmente não incidir** sobre o par avaliado. |
+| C-A4-VOC8 | **`N/A` nunca significa dispensa geral de validação.** |
+| C-A4-VOC9 | **Exatamente um resultado** por par **fragmento × eixo/regra de validação** — nem zero, nem dois. |
+
+##### C-A4-F1 — `inteiro_agrupado`: convenção fechada
+
+**Refinamento posterior de `C-6b` e `C-A1-F1`. Nenhum formato novo é criado.**
+
+| # | Regra |
+|---|---|
+| C-A4-F1a | Representa **o MESMO inteiro**, em **decimal**. |
+| C-A4-F1b | Agrupa **da direita para a esquerda**. |
+| C-A4-F1c | Grupos de **três dígitos**. |
+| C-A4-F1d | Separador visual de milhar: **`.`** |
+| C-A4-F1e | **Sem casas decimais.** |
+| C-A4-F1f | **Sem arredondamento.** |
+| C-A4-F1g | **Sem cálculo.** |
+| C-A4-F1h | **Sem alteração do valor.** |
+| C-A4-F1i | **Nenhum zero é adicionado** para completar grupo. |
+| C-A4-F1j | Eventual **sinal** do inteiro é **preservado**. |
+| C-A4-F1k | O agrupamento aplica-se **somente aos dígitos**. |
+| C-A4-F1l | Operação **puramente de apresentação**. |
+| C-A4-F1m | **Sem *locale*.** |
+| C-A4-F1n | **Sem biblioteca cujo resultado dependa do ambiente.** |
+| C-A4-F1o | **Sem leitura implícita de campo adicional** (C-6). |
+
+##### C-A4-F2 — `simbolo_moeda`: fronteira
+
+| # | Regra |
+|---|---|
+| C-A4-F2a | **Nenhuma regra nova de espaçamento é criada.** **`C-6c` e `C-A1-F2` permanecem vigentes.** |
+| C-A4-F2b | O formatador produz **somente o símbolo** correspondente ao **código monetário explicitamente recebido pelo *binding***. |
+| C-A4-F2c | **Whitespace antes e depois pertence ao fragmento / *template* estático**, nunca ao formatador. |
+| C-A4-F2d | A **tabela de moedas suportadas NÃO é ampliada** por C-A4. |
+| C-A4-F2e | **Código não suportado continua FALHANDO.** |
+| C-A4-F2f | **Moeda nunca é inferida**, e **nenhum campo adicional é lido implicitamente**. |
+
+##### C-A4-DB — Derivação conceitual de *bindings*
+
+| # | Regra |
+|---|---|
+| C-A4-DB1 | Onde **`C-A2-B`** prescreve mecanismo, a **prescrição é VINCULANTE**. |
+| C-A4-DB2 | Onde **não existe** linha **`C-A2-B`** específica, `C-A2-N12` pode propor *binding* **apenas CONCEITUALMENTE** e **somente para validação read-only**. |
+| C-A4-DB3 | A derivação exige **referente ÚNICO demonstrável** por: a **proposição efetivamente afirmada**; o contrato **C** / **C-A1** / **C-A2** / **C-A3**; e a **estrutura atual da base**. |
+| C-A4-DB4 | **Nunca inferir vínculo por coincidência textual** (C-15a). |
+| C-A4-DB5 | Havendo **dois ou mais conjuntos plausíveis** de *bindings* cuja escolha **possa alterar o veredito**: **`NÃO DETERMINÁVEL`**. **`C-A2-N12` NÃO arbitra.** |
+| C-A4-DB6 | **`C-A2-RT7` permanece**: **exatamente um referente** por *binding*. |
+| C-A4-DB7 | Derivação conceitual **NÃO cria**: *binding* físico, `ASSERTIVA` física, *template* físico, índice nem entrada YAML. |
+| C-A4-DB8 | Qualquer **`NÃO DETERMINÁVEL` residual** impede **`C-A2-N12` = CUMPRIDA** (C-A4-G4). |
+
+##### C-A4-NA — `R05` `F2` / `F3`
+
+| # | Regra |
+|---|---|
+| C-A4-NA1 | **`R05` `F2`** e **`R05` `F3`** **não possuem** literal variável, *placeholder*, `RENDERIZADO` nem formatador. |
+| C-A4-NA2 | Portanto **`C-15` = `N/A`** e **`C-8` = `N/A`** para esses fragmentos. |
+| C-A4-NA3 | **`N/A` NÃO significa ausência de validação** (C-A4-VOC8). |
+| C-A4-NA4 | Eles continuam **obrigatoriamente validados** por **`C-A2-RT`**, **`C-A2-V`**, **`ASSERTIVA` conceitual** e pelas regras aplicáveis de **status**, **bijeção** e **`C-A1`**. |
+| C-A4-NA5 | **Nenhuma `ASSERTIVA` física é materializada.** |
+
+##### C-A4-P — Proposição completa
+
+| # | Regra |
+|---|---|
+| C-A4-P1 | Para **`C-15`**, a equivalência continua sendo julgada sobre o **fragmento inteiro**, conforme **`C-15c`**. Para **`C-8`**, havendo **fato variável / `RENDERIZADO`**, a análise deve considerar **também** se a **prosa estática que o circunda altera semanticamente a proposição factual**. |
+| C-A4-P2 | **Prosa estática não pode ser usada para transformar semanticamente um fato variável** sem que **`C-8`** adjudique essa transformação. |
+| C-A4-P3 | Exemplo **METODOLÓGICO**, **sem valor e sem veredito**: um **qualificador de aproximação** diante de **fato estruturado exato** **não pode ser automaticamente excluído** de **`C-8`** apenas porque está **fora do *placeholder***. |
+| C-A4-P4 | **C-A4 não julga nenhum `Rxx`.** **Todo veredito pertence à execução futura de `C-A2-N12`.** |
+
+##### C-A4-X — Não reescrita e não revogação
+
+**C-A4 NÃO REESCREVE NEM REVOGA os blocos anteriores.** **C-6**, **C-8**, **C-15**,
+**C-A1**, **C-A2** e **C-A3** permanecem **vigentes**. Os **ÚNICOS refinamentos
+posteriores** introduzidos por esta entrega são os **expressamente enumerados em C-A4**.
+**Nenhuma regra histórica é apagada, substituída ou retroativamente modificada.**
+
+Preservados explicitamente: **`C-15d`**; **`C-A1-ST`**; **`C-A2-RT7`**; **`C-A2-N`**;
+**`C-A3`**; **`C-12`**; **`F4`** / **`F4-B`**; **`R2`**; **`S2-D8`**.
+
+**C-A4 não cria**: índice; *template* físico; *binding* físico; `ASSERTIVA` física; status;
+quarto status; formato novo; predicado novo; metadado YAML; *flag* YAML; componente;
+responsabilidade; estado; evento; transição; condição de ciclo; `E09`; erro; cenário; nem
+subetapa. **A 3B.8 não existe.**
+
+**Após esta arbitragem**: **C-A4 = ARBITRADA DOCUMENTALMENTE NA ENTREGA**; **`C-A2-N12`
+continua PENDENTE**; **C continua ARBITRADA / NÃO MATERIALIZADA**; **`R2` continua NÃO
+MATERIALIZADA**; **`S2-D8` continua ARBITRADA / NÃO MATERIALIZADA**; **`N-b-RES2` continua
+ABERTO**; e o **`OrquestradorMotor` continua não implementado**.
+
 ---
 
 ## 3. Comparação técnica — Opção A × Opção B

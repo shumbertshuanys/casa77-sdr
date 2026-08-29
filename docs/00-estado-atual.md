@@ -4,15 +4,17 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-29 (reconciliação documental **pós-`M8`**). A entrega **`M8`** —
-**`FE-11b`** e a reconciliação da **`FE-11a`** já aplicada — está **INTEGRADA à `main`
-pelo PR #77**, e este documento passa a registrá-la como **estado oficial**: **`FE-11b` =
-APLICADA / MATERIALIZADA POR REMOÇÃO**, **`FE-11a` = APLICADA / RECONCILIADA** e
-**`FE-11a′` = NÃO CRIADA**. A entrega imediatamente anterior foi **`M7`** — alvo
-**`MD-14`** de `C-A2-N11` —, **integrada à `main` pelo PR #76**. **`C-A2-N11` continua
-CUMPRIDA — 16/16**, e a **próxima pendência real é `C-A2-N12`**, que **NÃO foi planejada
-nem executada**. **`C` continua ARBITRADA / NÃO MATERIALIZADA**, o **índice continua
-inexistente** e o **último marco funcional continua o PR #61**.
+Atualizado em: 2026-08-29 (presente entrega documental — **micro-arbitragem `C-A4`**,
+critério de cumprimento de `C-A2-N12` e convenções de validação). Base:
+`2dd6536398d3c6c0ea62934c4c88b53263cc385f`. A entrega imediatamente anterior foi a
+**reconciliação documental pós-`M8`**, **integrada à `main` pelo PR #78**; e antes dela a
+**`M8`** — **`FE-11b`** e a reconciliação da **`FE-11a`** —, **integrada à `main` pelo
+PR #77** e que **permanece integrada**: **`FE-11b` = APLICADA / MATERIALIZADA POR
+REMOÇÃO**, **`FE-11a` = APLICADA / RECONCILIADA** e **`FE-11a′` = NÃO CRIADA**.
+**`C-A2-N11` permanece CUMPRIDA — 16/16** e **`C-A2-N12` permanece PENDENTE**: **`C-A4`
+NÃO executa `C-A2-N12`**. **`C` continua ARBITRADA / NÃO MATERIALIZADA**, o **índice
+continua inexistente**, o **último marco funcional continua o PR #61** e a **3B.8 continua
+inexistente**.
 
 ## Referências
 
@@ -82,7 +84,9 @@ inexistente** e o **último marco funcional continua o PR #61**.
 | Integração de **M7 — `MD-14`** | **PR #76** — commit `9a56fa80bbc312b2085480f87e572ff6e0f768b3`, merge na `main` `f446d3fa36a9b3f4b76c3b329a19356b3ddbe394`, branch de origem `feat/c-a2-n11-m7-md14`. Método: **merge commit**, com **dois parents** — `9b44cc1c01403ce5e9bb4997088d75c9da207c28` e o commit de conteúdo `9a56fa80bbc312b2085480f87e572ff6e0f768b3`. Arquivos: **exclusivamente** `docs/00-estado-atual.md`, `docs/06-maquina-de-estados.md` e `knowledge/casa77.yaml` — **109 adições, 9 remoções**. **Modelagem da base autoritativa + reconciliação documental vinculada**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código**. Com este merge, **`C-A2-N11` = CUMPRIDA — 16/16** passou a ser o **estado oficial da `main`** |
 | Base da entrega **M8 — `FE-11b`** + reconciliação da **`FE-11a`** | `f446d3fa36a9b3f4b76c3b329a19356b3ddbe394` — HEAD da `main` verificado **antes** daquela entrega |
 | Integração de **M8 — `FE-11b`** + reconciliação da **`FE-11a`** | **PR #77** — commit `e632ae71e043568f19ed26bf0101eb214d87a2f9`, merge na `main` `c36529c7323e2f2030b9c6664292594203226ac4`, branch de origem `feat/c-a2-m8-fe11b`. Método: **merge commit**, com **dois parents** — `f446d3fa36a9b3f4b76c3b329a19356b3ddbe394` e o commit de conteúdo `e632ae71e043568f19ed26bf0101eb214d87a2f9`. Arquivos: **exclusivamente** `docs/00-estado-atual.md`, `knowledge/casa77.yaml` e `knowledge/respostas-aprovadas.md` — **98 adições, 18 remoções**. **Modelagem / reconciliação da base autoritativa + reconciliação de instrução interna**: **sem alteração de código** — **não altera `src/` nem `tests/`** — e **sem novo marco funcional**. Com este merge, **`FE-11b` = APLICADA / MATERIALIZADA POR REMOÇÃO** e **`FE-11a` = APLICADA / RECONCILIADA** passam a ser o **estado oficial da `main`** |
-| Base da presente reconciliação (**pós-`M8`**) | `c36529c7323e2f2030b9c6664292594203226ac4` — HEAD da `main` verificado **antes** desta entrega |
+| Base da reconciliação **pós-`M8`** | `c36529c7323e2f2030b9c6664292594203226ac4` — HEAD da `main` verificado **antes** daquela entrega |
+| Integração da reconciliação **pós-`M8`** | **PR #78** — commit de conteúdo `d3ab33c918d4e2aaef67f042472c5f3a72a6e4a9`, merge na `main` `2dd6536398d3c6c0ea62934c4c88b53263cc385f`, branch de origem `docs/reconciliar-m8-pos-pr77`. Arquivo: **exclusivamente** `docs/00-estado-atual.md` — **59 adições, 7 remoções**. **RECONCILIAÇÃO DOCUMENTAL, SEM ALTERAÇÃO DE FONTE FACTUAL, SEM ALTERAÇÃO DE CÓDIGO E SEM NOVO MARCO FUNCIONAL** |
+| Base da entrega **`C-A4`** (documental) | `2dd6536398d3c6c0ea62934c4c88b53263cc385f` — HEAD da `main` verificado **antes** desta entrega |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -1870,6 +1874,49 @@ a **pendência residual continua aberta**.
     é escolhido**, **nenhum índice, *template*, *binding* físico ou `ASSERTIVA` física é
     criado**, **`C` e `S2-D8` não são materializadas**, **`N-b-RES2` não é fechado**, o
     **`OrquestradorMotor` não é implementado** e a **subetapa 3B.8 não é criada**.
+68. **A presente entrega é EXCLUSIVAMENTE a micro-arbitragem documental `C-A4`.** Base:
+    `2dd6536398d3c6c0ea62934c4c88b53263cc385f`. **Classificação da entrega**:
+    **ARBITRAGEM DOCUMENTAL, SEM ALTERAÇÃO DE FONTE FACTUAL, SEM ALTERAÇÃO DE CÓDIGO E SEM
+    NOVO MARCO FUNCIONAL**. **Objetivo**: fechar, para a execução futura e **read-only** de
+    **`C-A2-N12`**, o **critério de cumprimento** do gate (**`C-A4-G`**); o **vocabulário
+    da auditoria** (**`C-A4-VOC`**); a **convenção fechada de `inteiro_agrupado`**
+    (**`C-A4-F1`**, refinamento posterior de `C-6b` e `C-A1-F1`); a **fronteira de
+    `simbolo_moeda`** (**`C-A4-F2`**, sem ampliar a tabela e sem regra nova de
+    espaçamento); a **derivação conceitual de *bindings*** onde `C-A2-B` não prescreve
+    (**`C-A4-DB`**); o tratamento de **`R05` `F2`/`F3`** (**`C-A4-NA`**); e a **proposição
+    completa** como unidade de análise de `C-8` (**`C-A4-P`**). Também registra a
+    **preservação histórica** (**`C-A4-H`**) e a **não reescrita / não revogação**
+    (**`C-A4-X`**). Arquivos alterados: **dois** — `docs/07-arquitetura-motor-respostas.md`
+    e este documento. Em `docs/07` a entrega é **PURAMENTE ADITIVA**: **um único bloco novo
+    contíguo**, inserido **após o parágrafo final de `C-A3-X`** e **antes do separador que
+    antecede a §3**, com **ZERO remoções** e **ZERO alteração de linha preexistente** —
+    **`C-15d`**, **`C-A1-F1`**, **`C-A1-ST`**, **`C-A2-N`**, **`C-A2-RT7`**, **todo o bloco
+    `C-A3`** e a **§12** permanecem **byte-idênticos**.
+    **Nenhuma fonte factual foi alterada**: `knowledge/**` **não foi tocado**, e
+    `knowledge/casa77.yaml` e `knowledge/respostas-aprovadas.md` permanecem **intactos**.
+    **Nenhum arquivo de `src/`, `tests/` ou `prompts/` foi tocado**, **nenhum teste foi
+    alterado** e **nenhum outro `docs/**` foi alterado** — em particular **`docs/06` não foi
+    tocado**. **Nenhum índice foi criado**: `knowledge/indice-respostas-aprovadas.yaml`
+    **continua inexistente**. **`C-A4` não cria** *template* físico, *binding* físico,
+    `ASSERTIVA` física, status, quarto status, formato novo, predicado novo, metadado ou
+    *flag* YAML, componente, responsabilidade, estado, evento, transição, condição de ciclo,
+    `E09`, erro, cenário nem subetapa. **`C-A4` não julga nenhum `Rxx`** e **não declara
+    `37/37` alcançado**.
+    **Estado após `C-A4` — NA BRANCH.** **`C-A4` = ARBITRADA DOCUMENTALMENTE NA ENTREGA**.
+    **`C-A2-N9`** — **CUMPRIDA**. **`C-A2-N10`** — **CUMPRIDA**. **`C-A2-N11`** —
+    **CUMPRIDA — 16/16**. **`C-A2-N12`** — **continua PENDENTE**: **`C-A4` NÃO a executa e
+    NÃO antecipa seu resultado**. **`C` continua ARBITRADA / NÃO MATERIALIZADA**; **`R2`
+    continua NÃO MATERIALIZADA**; **`S2-D8` continua ARBITRADA / NÃO MATERIALIZADA**;
+    **`N-b-RES2` continua ABERTO**; e o **`OrquestradorMotor` continua não implementado**.
+    **Esta entrega não cria marco funcional de código**: o **último commit funcional
+    aprovado continua `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`** (**PR #61**), a
+    **baseline permanece `1215 passed`** — medida **antes** e **depois** da edição, com
+    **contagem idêntica** e **100% verde** —, a **3B.7** continua a **última subetapa
+    funcional numerada** e a **3B.8 continua inexistente**. **Este estado é da BRANCH**:
+    **`C-A4` ainda NÃO está integrada à `main`**.
+    **PRÓXIMA AÇÃO.** O próximo gate é a **INTEGRAÇÃO DA MICRO-ARBITRAGEM `C-A4`**. Somente
+    **DEPOIS de integrada**, e mediante **NOVO MANDATO DO GPT**, vem a **EXECUÇÃO READ-ONLY
+    de `C-A2-N12`**. **Nada de `C-A2-N12` é planejado, decidido ou executado aqui.**
 
 ## Arbitragens
 
