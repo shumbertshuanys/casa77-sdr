@@ -4,10 +4,15 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-29 (entrega **`M8`** — **`FE-11b`** e a reconciliação da **`FE-11a`**
-já aplicada). A entrega imediatamente anterior foi **`M7`** — alvo **`MD-14`** de
-`C-A2-N11` —, atualizada aqui em 2026-08-29 e desde então **integrada à `main` pelo
-PR #76**.
+Atualizado em: 2026-08-29 (reconciliação documental **pós-`M8`**). A entrega **`M8`** —
+**`FE-11b`** e a reconciliação da **`FE-11a`** já aplicada — está **INTEGRADA à `main`
+pelo PR #77**, e este documento passa a registrá-la como **estado oficial**: **`FE-11b` =
+APLICADA / MATERIALIZADA POR REMOÇÃO**, **`FE-11a` = APLICADA / RECONCILIADA** e
+**`FE-11a′` = NÃO CRIADA**. A entrega imediatamente anterior foi **`M7`** — alvo
+**`MD-14`** de `C-A2-N11` —, **integrada à `main` pelo PR #76**. **`C-A2-N11` continua
+CUMPRIDA — 16/16**, e a **próxima pendência real é `C-A2-N12`**, que **NÃO foi planejada
+nem executada**. **`C` continua ARBITRADA / NÃO MATERIALIZADA**, o **índice continua
+inexistente** e o **último marco funcional continua o PR #61**.
 
 ## Referências
 
@@ -75,7 +80,9 @@ PR #76**.
 | Integração de **M6 — `MD-6`** + **`MD-7′`** | **PR #75** — commit `5520cd77df8131eb4ba1093b6929e693547a5141`, merge na `main` `9b44cc1c01403ce5e9bb4997088d75c9da207c28`, branch de origem `feat/c-a2-n11-m6-md6-md7`. Método: **merge commit**, com **dois parents** — `224ae8fd8fe2c9430125df85733b90beb1b44ecb` e o commit de conteúdo `5520cd77df8131eb4ba1093b6929e693547a5141`. Arquivos: **exclusivamente** `docs/00-estado-atual.md` e `knowledge/casa77.yaml` — **86 adições, 13 remoções**. **Modelagem da base autoritativa**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código** |
 | Base da entrega **M7 — `MD-14`** | `9b44cc1c01403ce5e9bb4997088d75c9da207c28` — HEAD da `main` verificado **antes** daquela entrega |
 | Integração de **M7 — `MD-14`** | **PR #76** — commit `9a56fa80bbc312b2085480f87e572ff6e0f768b3`, merge na `main` `f446d3fa36a9b3f4b76c3b329a19356b3ddbe394`, branch de origem `feat/c-a2-n11-m7-md14`. Método: **merge commit**, com **dois parents** — `9b44cc1c01403ce5e9bb4997088d75c9da207c28` e o commit de conteúdo `9a56fa80bbc312b2085480f87e572ff6e0f768b3`. Arquivos: **exclusivamente** `docs/00-estado-atual.md`, `docs/06-maquina-de-estados.md` e `knowledge/casa77.yaml` — **109 adições, 9 remoções**. **Modelagem da base autoritativa + reconciliação documental vinculada**: **não altera `src/` nem `tests/`** e **não cria marco funcional de código**. Com este merge, **`C-A2-N11` = CUMPRIDA — 16/16** passou a ser o **estado oficial da `main`** |
-| Base da presente entrega (**`M8`** — **`FE-11b`** + reconciliação da **`FE-11a`**) | `f446d3fa36a9b3f4b76c3b329a19356b3ddbe394` — HEAD da `main` verificado **antes** desta entrega |
+| Base da entrega **M8 — `FE-11b`** + reconciliação da **`FE-11a`** | `f446d3fa36a9b3f4b76c3b329a19356b3ddbe394` — HEAD da `main` verificado **antes** daquela entrega |
+| Integração de **M8 — `FE-11b`** + reconciliação da **`FE-11a`** | **PR #77** — commit `e632ae71e043568f19ed26bf0101eb214d87a2f9`, merge na `main` `c36529c7323e2f2030b9c6664292594203226ac4`, branch de origem `feat/c-a2-m8-fe11b`. Método: **merge commit**, com **dois parents** — `f446d3fa36a9b3f4b76c3b329a19356b3ddbe394` e o commit de conteúdo `e632ae71e043568f19ed26bf0101eb214d87a2f9`. Arquivos: **exclusivamente** `docs/00-estado-atual.md`, `knowledge/casa77.yaml` e `knowledge/respostas-aprovadas.md` — **98 adições, 18 remoções**. **Modelagem / reconciliação da base autoritativa + reconciliação de instrução interna**: **sem alteração de código** — **não altera `src/` nem `tests/`** — e **sem novo marco funcional**. Com este merge, **`FE-11b` = APLICADA / MATERIALIZADA POR REMOÇÃO** e **`FE-11a` = APLICADA / RECONCILIADA** passam a ser o **estado oficial da `main`** |
+| Base da presente reconciliação (**pós-`M8`**) | `c36529c7323e2f2030b9c6664292594203226ac4` — HEAD da `main` verificado **antes** desta entrega |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -1747,8 +1754,9 @@ a **pendência residual continua aberta**.
     `9a56fa80bbc312b2085480f87e572ff6e0f768b3` —, **sem squash, sem rebase e sem exclusão
     de branch**. **Com este merge, `C-A2-N11` = CUMPRIDA — 16/16 passou a ser o ESTADO
     OFICIAL da `main`**, e **nenhum alvo `MD` necessário permanece**.
-65. **A presente entrega (`M8`) executa EXCLUSIVAMENTE `FE-11b` e a reconciliação da
-    `FE-11a` já aplicada.** Base: `f446d3fa36a9b3f4b76c3b329a19356b3ddbe394`.
+65. **A entrega ANTERIOR (`M8`) executou EXCLUSIVAMENTE `FE-11b` e a reconciliação da
+    `FE-11a` já aplicada** — **registro histórico daquela entrega**, hoje **INTEGRADA à
+    `main` pelo PR #77**. Base: `f446d3fa36a9b3f4b76c3b329a19356b3ddbe394`.
     **Classificação da entrega**: **MODELAGEM / RECONCILIAÇÃO DA BASE AUTORITATIVA +
     RECONCILIAÇÃO DE INSTRUÇÃO INTERNA, SEM ALTERAÇÃO DE CÓDIGO E SEM NOVO MARCO
     FUNCIONAL**. **Esta entrega NÃO é uma nova subetapa oficial do roadmap — a 3B.8
@@ -1818,6 +1826,50 @@ a **pendência residual continua aberta**.
     **100% verde** —, a **3B.7** continua a **última subetapa funcional numerada** e a
     **3B.8 continua inexistente**. **Este estado é da BRANCH**: ele só se torna estado
     oficial da `main` após o merge de `M8`.
+66. **A entrega M8 está INTEGRADA à `main` pelo PR #77** — commit
+    `e632ae71e043568f19ed26bf0101eb214d87a2f9`, merge
+    `c36529c7323e2f2030b9c6664292594203226ac4`, branch de origem `feat/c-a2-m8-fe11b`.
+    **Três** arquivos — `docs/00-estado-atual.md`, `knowledge/casa77.yaml` e
+    `knowledge/respostas-aprovadas.md` —, **98 adições / 18 remoções**. **Modelagem /
+    reconciliação da base autoritativa + reconciliação de instrução interna**: **sem
+    alteração de código** e **sem novo marco funcional**. O merge foi feito por **merge
+    commit**, com **dois parents** — `f446d3fa36a9b3f4b76c3b329a19356b3ddbe394` e o commit
+    de conteúdo `e632ae71e043568f19ed26bf0101eb214d87a2f9` —, **sem squash, sem rebase e
+    sem exclusão de branch**. **Com este merge passam a ser ESTADO OFICIAL da `main`**:
+    **`FE-11b` = APLICADA / MATERIALIZADA POR REMOÇÃO**; **`FE-11a` = APLICADA /
+    RECONCILIADA**; **`FE-11a′` = NÃO CRIADA**. **`C-A2-N12` permanece PENDENTE**, e
+    **nenhuma outra condição de `C` foi implicitamente satisfeita** além do que já estava
+    registrado: **`C` continua ARBITRADA / NÃO MATERIALIZADA**, o **índice**
+    `knowledge/indice-respostas-aprovadas.yaml` **continua inexistente**, **`R2` continua
+    NÃO MATERIALIZADA**, **`S2-D8` continua ARBITRADA / NÃO MATERIALIZADA**, **`N-b-RES2`
+    continua ABERTO** e o **`OrquestradorMotor` continua não implementado**. **Nenhum
+    marco funcional foi criado**: o **último commit funcional aprovado continua
+    `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`** (**PR #61**, merge
+    `5a722a5cc648149330362434694e7e76a40c1b57`), a **baseline permanece `1215 passed`**, a
+    **3B.7** continua a **última subetapa funcional numerada** e a **3B.8 continua
+    inexistente**.
+67. **A presente entrega é EXCLUSIVAMENTE a reconciliação documental de `docs/00` após o
+    PR #77.** Base: `c36529c7323e2f2030b9c6664292594203226ac4`. **Classificação da
+    entrega**: **RECONCILIAÇÃO DOCUMENTAL, SEM ALTERAÇÃO DE FONTE FACTUAL, SEM ALTERAÇÃO
+    DE CÓDIGO E SEM NOVO MARCO FUNCIONAL**. Arquivo alterado: **um** — este documento.
+    **`knowledge/**`, `src/**`, `tests/**`, `prompts/**`, `docs/06` e `docs/07` NÃO foram
+    tocados**, e **nenhum teste foi alterado**. Ela **não altera comportamento nem fonte
+    factual**: apenas passa a ler `M8` como **integrada**, registra a evidência do **PR
+    #77** e fixa o **estado oficial** resultante. **Estado oficial da `main` após o PR
+    #77**: **`C-A2-N9` CUMPRIDA**; **`C-A2-N10` CUMPRIDA**; **`C-A2-N11` CUMPRIDA —
+    16/16**, sem alvo `MD` restante; **`C-A2-N12` PENDENTE**; **`FE-11b` APLICADA /
+    MATERIALIZADA POR REMOÇÃO**; **`FE-11a` APLICADA / RECONCILIADA**; **`FE-11a′` NÃO
+    CRIADA**; **`knowledge/indice-respostas-aprovadas.yaml` INEXISTENTE**; **`C` ARBITRADA
+    / NÃO MATERIALIZADA**; **`R2` NÃO MATERIALIZADA**; **`S2-D8` ARBITRADA / NÃO
+    MATERIALIZADA**; **`N-b-RES2` ABERTO**; **`OrquestradorMotor` NÃO IMPLEMENTADO**;
+    **último marco funcional `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`** (**PR #61**);
+    **3B.7** como **última subetapa funcional numerada**; **3B.8 INEXISTENTE**.
+    **PRÓXIMA AÇÃO.** O próximo gate técnico é o **PLANEJAMENTO READ-ONLY de `C-A2-N12`**
+    — validações `C-8` / `C-15` / `C-A1` —, e ele **depende de NOVO MANDATO do GPT**.
+    **`C-A2-N12` NÃO é planejada, decidida nem executada aqui**: **nenhum mecanismo técnico
+    é escolhido**, **nenhum índice, *template*, *binding* físico ou `ASSERTIVA` física é
+    criado**, **`C` e `S2-D8` não são materializadas**, **`N-b-RES2` não é fechado**, o
+    **`OrquestradorMotor` não é implementado** e a **subetapa 3B.8 não é criada**.
 
 ## Arbitragens
 
