@@ -4,21 +4,25 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-29 (reconciliação documental do **resultado da execução read-only de
-`C-A2-N12`**). A validação **`C-8`** / **`C-15`** / **`C-A1`** foi **executada**, de forma
-**estritamente read-only**, contra `70abde5550be349a2a8ead1d66c106013ebf78aa`, e o
-resultado é **`C-A2-N12` = EXECUTADA COMPLETAMENTE / NÃO CUMPRIDA**: a auditoria cobriu
-**37 de 37 fragmentos emitíveis** e encontrou **1 bloqueio estrutural residual** — **`R22`**,
-no eixo **`C-8`** —, restando **36 fragmentos sem bloqueio**. A execução **não materializou
-`C`**, **não criou o índice**, **não alterou arquivo algum do repositório**, **não altera o
-último marco funcional** e **não cria a 3B.8**. As entregas anteriores permanecem
-integradas: **`C-A4`** pelo **PR #79**, a **reconciliação pós-`M8`** pelo **PR #78** e a
-**`M8`** pelo **PR #77**, com **`FE-11b` = APLICADA / MATERIALIZADA POR REMOÇÃO**,
-**`FE-11a` = APLICADA / RECONCILIADA** e **`FE-11a′` = NÃO CRIADA**. **`C-A2-N9`**,
-**`C-A2-N10`** e **`C-A2-N11` (16/16)** permanecem **CUMPRIDAS**. **`C` continua ARBITRADA
-/ NÃO MATERIALIZADA**, o **índice continua inexistente**, o **último marco funcional
-continua o PR #61**, a **baseline permanece `1215 passed`** e a **3B.8 continua
-inexistente**.
+Atualizado em: 2026-08-30 (**correção factual estrutural de `R22`**). Por **decisão factual
+humana**, o **percentual coberto é APROXIMADO**, e esse fato passou a existir na base
+autoritativa como **`estrutura.percentual_coberto_aproximado`** — **uma única chave
+booleana acrescentada** a `knowledge/casa77.yaml`, com **`estrutura.percentual_coberto`
+preservado**. **`knowledge/respostas-aprovadas.md` não foi alterado**, a **redação de `R22`
+permanece intocada** e **`docs/07` não foi alterado**. **`C-A2-N12` permanece oficialmente
+`EXECUTADA COMPLETAMENTE / NÃO CUMPRIDA`** — **correção aplicada / revalidação integral
+pendente** —, porque **uma nova execução read-only integral `37/37` ainda é necessária** e
+**não foi realizada por esta entrega**. A execução anterior, contra
+`70abde5550be349a2a8ead1d66c106013ebf78aa`, cobriu **37 de 37 fragmentos emitíveis** e
+registrou **1 bloqueio estrutural residual** — **`R22`**, no eixo **`C-8`** —, restando
+**36 fragmentos sem bloqueio**. As entregas anteriores permanecem integradas: **`C-A4`**
+pelo **PR #79**, a **reconciliação pós-`M8`** pelo **PR #78** e a **`M8`** pelo **PR #77**,
+com **`FE-11b` = APLICADA / MATERIALIZADA POR REMOÇÃO**, **`FE-11a` = APLICADA /
+RECONCILIADA** e **`FE-11a′` = NÃO CRIADA**. **`C-A2-N9`**, **`C-A2-N10`** e
+**`C-A2-N11` (16/16)** permanecem **CUMPRIDAS**. **`C` continua ARBITRADA / NÃO
+MATERIALIZADA**, o **índice continua inexistente**, o **último marco funcional continua o
+PR #61**, a **baseline permanece `1215 passed`** — **medida antes e depois desta
+alteração** — e a **3B.8 continua inexistente**.
 
 ## Referências
 
@@ -95,6 +99,8 @@ inexistente**.
 | Base auditada de **`C-A2-N12`** (execução read-only) | `70abde5550be349a2a8ead1d66c106013ebf78aa` — HEAD da `main` sobre o qual a validação `C-8` / `C-15` / `C-A1` foi executada |
 | Resultado de **`C-A2-N12`** | **EXECUTADA COMPLETAMENTE / NÃO CUMPRIDA** — cobertura **37/37** fragmentos emitíveis; **1** bloqueio estrutural residual (**`R22`**, eixo **`C-8`**); **36** sem bloqueio; **`C-15` sem `FAIL-CLOSED`**; **`NÃO DETERMINÁVEL` residual = 0**; **`DIVERGÊNCIA DE BASE` impeditiva = 0**. Execução **estritamente read-only**: **nenhum arquivo do repositório foi alterado** |
 | Evidência de **`C-A2-N12`** | Relatório de auditoria **NÃO VERSIONADO**, mantido **fora do repositório**, SHA-256 `bd4e3915a49ca9f768ef4a1003e322dd5b6717c85837038ecb5545219c57ebec`. É **evidência auxiliar** e **NÃO é fonte de verdade** |
+| Base da **correção factual de `R22`** | `d56d90846f8c8e1a8cd5ce964d4be16764d7cf47` — HEAD da `main` verificado **antes** desta correção |
+| Fato estruturado da **aproximação** | `estrutura.percentual_coberto_aproximado` — **booleano** em `knowledge/casa77.yaml`, acrescentado **imediatamente após** `estrutura.percentual_coberto`, que permanece **inalterado**. `versao` continua `1.1` e `ultima_atualizacao` continua `2026-08-15` |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -2004,6 +2010,46 @@ a **pendência residual continua aberta**.
     escolhida aqui**: não se decide entre alterar a redação, alterar a modelagem, criar
     adjudicação ou qualquer outro caminho — a escolha pertence integralmente a esse
     planejamento futuro.
+71. **A correção estrutural de `R22` foi APLICADA na base autoritativa, por decisão factual
+    humana: o percentual coberto é APROXIMADO.** O caminho escolhido foi **alterar a
+    modelagem**, não a redação. **Novo fato estruturado**:
+    **`estrutura.percentual_coberto_aproximado`**, **booleano**, acrescentado em
+    `knowledge/casa77.yaml` **imediatamente após `estrutura.percentual_coberto`**, que foi
+    **preservado**. **Exatamente uma chave nova**: **1 inserção, 0 remoções**; nenhum outro
+    valor, nenhuma reordenação; **`versao` continua `1.1`** e **`ultima_atualizacao` continua
+    `2026-08-15`**. **`knowledge/respostas-aprovadas.md` permaneceu intocado**, a **redação de
+    `R22` permaneceu intocada** e **`docs/07` permaneceu intocado**. **Nenhuma nova
+    arbitragem** e **nenhum novo alvo `MD`** foram criados.
+    **Auditoria de consumidores (`C-A1-M4`).** Executada **antes** da edição, **read-only**,
+    em todo o repositório: **zero consumidores funcionais** de `estrutura.percentual_coberto`
+    — a única ocorrência era a **declaração da própria fonte** — e **zero ocorrências** da
+    chave nova. O carregador valida **apenas a estrutura mínima exigida** e **não rejeita
+    chave adicional**; **`estrutura` sequer consta** dessa estrutura mínima.
+    **Baseline.** Medida com o interpretador do ambiente **antes e depois** da alteração:
+    **`1215 passed`** nos dois casos, contagem idêntica. **Nenhum teste foi criado, alterado
+    ou removido**; **`src/`, `tests/` e `prompts/` não foram tocados**.
+    **Diagnóstico localizado.** Verificação **estritamente read-only**, restrita a **`R22`**,
+    contra **`C-8`** / **`C-15`** / **`C-A1`** / **`C-A2-RT`** / **`C-A4-DB`** / **`C-A4-P`**:
+    com a aproximação existindo como **fato estruturado próprio**, o **qualificador de
+    aproximação deixa de ser prosa estática transformando semanticamente um fato exato**
+    (**`C-A4-P2`**, **`C-A4-P3`**) e passa a ter **referente único demonstrável**
+    (**`C-A4-DB3`**, **`C-A2-RT7`**). **O bloqueio específico anteriormente registrado em
+    `R22` está removido.** **Este diagnóstico NÃO é execução oficial de `C-A2-N12`**: ele é
+    **localizado**, não percorre o corpus e **não substitui** a auditoria integral.
+    **Estado oficial.** **`C-A2-N12` permanece EXECUTADA COMPLETAMENTE / NÃO CUMPRIDA** —
+    **correção aplicada / revalidação integral pendente**. **`C-A2-N11` permanece CUMPRIDA —
+    16/16.** **`C` continua ARBITRADA / NÃO MATERIALIZADA**;
+    **`knowledge/indice-respostas-aprovadas.yaml` continua INEXISTENTE**; **`R2` continua NÃO
+    MATERIALIZADA**; **`S2-D8` continua ARBITRADA / NÃO MATERIALIZADA**; **`N-b-RES2` continua
+    ABERTO**; o **`OrquestradorMotor` continua NÃO IMPLEMENTADO**; **nenhum índice, *template*
+    físico, *binding* físico ou `ASSERTIVA` física foi criado**; **nenhum provedor de
+    calendário foi escolhido**. **Esta entrega não cria marco funcional de código**: o
+    **último commit funcional aprovado continua `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`**
+    (**PR #61**), a **3B.7** continua a **última subetapa funcional numerada** e a **3B.8
+    continua INEXISTENTE**.
+    **PRÓXIMO GATE TÉCNICO.** **NOVA EXECUÇÃO READ-ONLY INTEGRAL DE `C-A2-N12` — 37/37 —**,
+    **dependente de NOVO MANDATO DO GPT**. Só essa execução pode alterar o estado oficial de
+    **`C-A2-N12`**.
 
 ## Arbitragens
 
