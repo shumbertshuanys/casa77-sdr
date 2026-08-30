@@ -71,6 +71,7 @@ capacidade:
 
 estrutura:
   percentual_coberto: 80
+  percentual_coberto_aproximado: true
   cerimonia_e_recepcao_mesmo_local: true
 
   plano_chuva:
