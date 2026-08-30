@@ -4,18 +4,21 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-29 (reconciliação documental **pós-`C-A4`**). A micro-arbitragem
-documental **`C-A4`** — critério de cumprimento de `C-A2-N12` e convenções de validação —
-está **INTEGRADA à `main` pelo PR #79**: commit de conteúdo
-`2a4201f64444bc54107aca3946bc698099e34b8d`, merge
-`4836c245d8151a9fe021ec107155ea4afb19f8a6`. As entregas anteriores permanecem integradas:
-a **reconciliação documental pós-`M8`** pelo **PR #78**, e a **`M8`** — **`FE-11b`** e a
-reconciliação da **`FE-11a`** — pelo **PR #77**, com **`FE-11b` = APLICADA /
-MATERIALIZADA POR REMOÇÃO**, **`FE-11a` = APLICADA / RECONCILIADA** e **`FE-11a′` = NÃO
-CRIADA**. **`C-A2-N11` permanece CUMPRIDA — 16/16** e **`C-A2-N12` permanece PENDENTE** —
-**`C-A4` NÃO a executou e NÃO antecipou seu resultado**. **`C` continua ARBITRADA / NÃO
-MATERIALIZADA**, o **índice continua inexistente**, o **último marco funcional continua o
-PR #61**, a **baseline permanece `1215 passed`** e a **3B.8 continua inexistente**.
+Atualizado em: 2026-08-29 (reconciliação documental do **resultado da execução read-only de
+`C-A2-N12`**). A validação **`C-8`** / **`C-15`** / **`C-A1`** foi **executada**, de forma
+**estritamente read-only**, contra `70abde5550be349a2a8ead1d66c106013ebf78aa`, e o
+resultado é **`C-A2-N12` = EXECUTADA COMPLETAMENTE / NÃO CUMPRIDA**: a auditoria cobriu
+**37 de 37 fragmentos emitíveis** e encontrou **1 bloqueio estrutural residual** — **`R22`**,
+no eixo **`C-8`** —, restando **36 fragmentos sem bloqueio**. A execução **não materializou
+`C`**, **não criou o índice**, **não alterou arquivo algum do repositório**, **não altera o
+último marco funcional** e **não cria a 3B.8**. As entregas anteriores permanecem
+integradas: **`C-A4`** pelo **PR #79**, a **reconciliação pós-`M8`** pelo **PR #78** e a
+**`M8`** pelo **PR #77**, com **`FE-11b` = APLICADA / MATERIALIZADA POR REMOÇÃO**,
+**`FE-11a` = APLICADA / RECONCILIADA** e **`FE-11a′` = NÃO CRIADA**. **`C-A2-N9`**,
+**`C-A2-N10`** e **`C-A2-N11` (16/16)** permanecem **CUMPRIDAS**. **`C` continua ARBITRADA
+/ NÃO MATERIALIZADA**, o **índice continua inexistente**, o **último marco funcional
+continua o PR #61**, a **baseline permanece `1215 passed`** e a **3B.8 continua
+inexistente**.
 
 ## Referências
 
@@ -89,6 +92,9 @@ PR #61**, a **baseline permanece `1215 passed`** e a **3B.8 continua inexistente
 | Integração da reconciliação **pós-`M8`** | **PR #78** — commit de conteúdo `d3ab33c918d4e2aaef67f042472c5f3a72a6e4a9`, merge na `main` `2dd6536398d3c6c0ea62934c4c88b53263cc385f`, branch de origem `docs/reconciliar-m8-pos-pr77`. Arquivo: **exclusivamente** `docs/00-estado-atual.md` — **59 adições, 7 remoções**. **RECONCILIAÇÃO DOCUMENTAL, SEM ALTERAÇÃO DE FONTE FACTUAL, SEM ALTERAÇÃO DE CÓDIGO E SEM NOVO MARCO FUNCIONAL** |
 | Base da entrega **`C-A4`** (documental) | `2dd6536398d3c6c0ea62934c4c88b53263cc385f` — HEAD da `main` verificado **antes** daquela entrega |
 | Integração de **`C-A4`** | **PR #79** — commit de conteúdo `2a4201f64444bc54107aca3946bc698099e34b8d`, merge na `main` `4836c245d8151a9fe021ec107155ea4afb19f8a6`, branch de origem `docs/c-a4-criterio-n12`. Método: **merge commit**, com **dois parents** — `2dd6536398d3c6c0ea62934c4c88b53263cc385f` e o commit de conteúdo `2a4201f64444bc54107aca3946bc698099e34b8d`. Arquivos: **exclusivamente** `docs/00-estado-atual.md` e `docs/07-arquitetura-motor-respostas.md` — **201 adições, 10 remoções**, sendo `docs/07` **puramente aditivo** (**144 adições, 0 remoções**). **MICRO-ARBITRAGEM DOCUMENTAL, SEM ALTERAÇÃO DE FONTE FACTUAL, SEM ALTERAÇÃO DE CÓDIGO E SEM NOVO MARCO FUNCIONAL** |
+| Base auditada de **`C-A2-N12`** (execução read-only) | `70abde5550be349a2a8ead1d66c106013ebf78aa` — HEAD da `main` sobre o qual a validação `C-8` / `C-15` / `C-A1` foi executada |
+| Resultado de **`C-A2-N12`** | **EXECUTADA COMPLETAMENTE / NÃO CUMPRIDA** — cobertura **37/37** fragmentos emitíveis; **1** bloqueio estrutural residual (**`R22`**, eixo **`C-8`**); **36** sem bloqueio; **`C-15` sem `FAIL-CLOSED`**; **`NÃO DETERMINÁVEL` residual = 0**; **`DIVERGÊNCIA DE BASE` impeditiva = 0**. Execução **estritamente read-only**: **nenhum arquivo do repositório foi alterado** |
+| Evidência de **`C-A2-N12`** | Relatório de auditoria **NÃO VERSIONADO**, mantido **fora do repositório**, SHA-256 `bd4e3915a49ca9f768ef4a1003e322dd5b6717c85837038ecb5545219c57ebec`. É **evidência auxiliar** e **NÃO é fonte de verdade** |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -1949,6 +1955,55 @@ a **pendência residual continua aberta**.
     físico ou `ASSERTIVA` física é criado**, **`C`, `R2` e `S2-D8` não são materializadas**,
     **`N-b-RES2` não é fechado**, o **`OrquestradorMotor` não é implementado** e a
     **subetapa 3B.8 não é criada**.
+70. **`C-A2-N12` foi EXECUTADA, de forma estritamente read-only, contra
+    `70abde5550be349a2a8ead1d66c106013ebf78aa`.** **Resultado**: **`C-A2-N12` = EXECUTADA
+    COMPLETAMENTE / NÃO CUMPRIDA**. A validação **`C-8`** / **`C-15`** / **`C-A1`** cobriu
+    **integralmente o universo aplicável** — **37 de 37** fragmentos emitíveis, enumerados
+    mecanicamente a partir de `knowledge/respostas-aprovadas.md`, com **exatamente um
+    resultado por par fragmento × eixo** e **vocabulário fechado** (**`C-A4-VOC`**).
+    Portanto a **condição (A)** de **`C-A4-G2`** está **satisfeita**.
+    **Resultado estrutural.** **36** fragmentos **sem bloqueio estrutural residual** e **1**
+    **com** bloqueio: **`R22`**, no eixo **`C-8`**. **`C-15` não registrou nenhum
+    `FAIL-CLOSED`**. **`NÃO DETERMINÁVEL` residual = 0** e **`DIVERGÊNCIA DE BASE`
+    impeditiva = 0** — a enumeração física do corpus coincidiu com o esperado normativo. A
+    **condição (B)** de **`C-A4-G2`** **não** está satisfeita, e por **`C-A4-G3`** — auditoria
+    completa somada a `FAIL-CLOSED` impeditivo — o gate **não é cumprido**. Por **`C-A4-G6`**,
+    `FAIL-CLOSED` é **desfecho válido** da validação, mas **não satisfaz** o gate enquanto
+    impedir a representação estrutural.
+    **Bloqueio de `R22`.** A redação aprovada aplica um **qualificador de aproximação** sobre
+    um **fato estruturado exato**, e **`C-8` não adjudicou** essa transformação (**`C-A4-P1`**,
+    **`C-A4-P2`**; **`C-A4-P3`** registra exatamente essa classe como **não excluível** de
+    `C-8` por estar fora do *placeholder*). Enquanto assim permanecer, o fragmento **não
+    possui representação estrutural conforme `C`**. **Este documento não reproduz o corpo da
+    resposta nem valor comercial algum**, e **`R22` NÃO foi alterado**: nenhuma redação nova
+    foi proposta e **nenhuma solução foi escolhida**.
+    **Natureza da execução.** **Estritamente read-only**: **nenhum arquivo do repositório foi
+    criado, alterado ou removido** pela auditoria — os *hashes* das fontes permaneceram
+    idênticos antes e depois. **Nenhum índice, *template* físico, *binding* físico ou
+    `ASSERTIVA` física foi criado**; **`knowledge/casa77.yaml` e
+    `knowledge/respostas-aprovadas.md` não foram alterados**; **nenhum status foi alterado**;
+    **nenhum alvo `MD` ou `FE` novo foi criado**; e **nenhum provedor de calendário foi
+    escolhido**. O relatório de auditoria é **NÃO VERSIONADO**, vive **fora do repositório**,
+    tem SHA-256 `bd4e3915a49ca9f768ef4a1003e322dd5b6717c85837038ecb5545219c57ebec` e é
+    **evidência auxiliar — não é fonte de verdade**.
+    **Estado preservado.** **`C-A2-N9`** — **CUMPRIDA**. **`C-A2-N10`** — **CUMPRIDA**.
+    **`C-A2-N11`** — **CUMPRIDA — 16/16**. **`C` continua ARBITRADA / NÃO MATERIALIZADA**;
+    **`knowledge/indice-respostas-aprovadas.yaml` continua INEXISTENTE**; **`R2` continua NÃO
+    MATERIALIZADA**; **`S2-D8` continua ARBITRADA / NÃO MATERIALIZADA**; **`N-b-RES2`
+    continua ABERTO**; e o **`OrquestradorMotor` continua não implementado**. **Esta execução
+    não cria marco funcional de código**: o **último commit funcional aprovado continua
+    `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`** (**PR #61**), a **baseline permanece
+    `1215 passed`** — **nenhum teste foi executado por esta entrega documental** —, a
+    **3B.7** continua a **última subetapa funcional numerada** e a **3B.8 continua
+    INEXISTENTE**. **`C-A2-N12` não é nova arbitragem** e **não altera decisão normativa
+    anterior**.
+    **PRÓXIMO GATE TÉCNICO.** **PLANEJAMENTO READ-ONLY DA RESOLUÇÃO DO BLOQUEIO `R22`**, a
+    ser produzido pelo **Claude Desktop** e **dependente de NOVO MANDATO DO GPT**. Esse
+    planejamento deverá decidir **como remover o conflito** entre a **redação aprovada de
+    `R22`**, o **fato estruturado autoritativo** e **`C-8` / `C-A4-P`**. **Nenhuma solução é
+    escolhida aqui**: não se decide entre alterar a redação, alterar a modelagem, criar
+    adjudicação ou qualquer outro caminho — a escolha pertence integralmente a esse
+    planejamento futuro.
 
 ## Arbitragens
 
