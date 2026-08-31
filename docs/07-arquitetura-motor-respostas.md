@@ -534,6 +534,69 @@ comercial e **não** introduz dado novo.
 | C-15d | **Sem equivalência → FAIL-CLOSED**: o fragmento **não** é convertido em *template*. Ele é classificado para **ajuste de modelo** **ou** para **futura decisão de conteúdo**. Se a reprodução exigir **transformação semântica**, **C-8 continua aplicável**. |
 | C-15e | O índice **não armazena** valor renderizado, *snapshot*, *hash* de valor nem versão congelada do YAML (C-1k–C-1m), e **não recebe metadado de "origem da aprovação"**. A rastreabilidade vem do **Markdown versionado**, do **índice versionado**, da **validação reproduzível** e do **histórico Git**. |
 
+##### Representação canônica de entrada para C-15b
+
+Micro-arbitragem **documental** e **posterior**, localizada aqui porque refina **apenas a
+leitura de `C-15b`**. Ela **não renumera** `C-15a`–`C-15e`, **não os reescreve** e **não cria
+identificador normativo novo**: os rótulos **D1**–**D7** abaixo são **locais deste bloco** e
+existem só para referência interna. **Nenhum comparador é implementado aqui**, nenhum módulo,
+função, assinatura, exceção ou mensagem é decidido, e **nenhuma subetapa é criada** — a
+**3B.8 continua não existindo**.
+
+O que ela fecha é **a representação de entrada** sobre a qual a equivalência de `C-15` será
+futuramente julgada. A decisão adotada é **texto canônico já extraído**.
+
+| # | Decisão |
+|---|---|
+| D1 | **Unidade de entrada.** O julgamento de equivalência de `C-15` opera sobre **duas `str` em representação canônica**: **(1)** o **fragmento aprovado já extraído** como conteúdo textual; e **(2)** a **renderização textual do mesmo fragmento**. **Nenhum DTO, dataclass ou estrutura pública nova é criado.** A unidade continua sendo o **fragmento inteiro** (`C-15c`, `C-A4-P1`). |
+| D2 | **Responsabilidade.** A separação entre **estrutura Markdown** e **conteúdo textual** pertence **integralmente a uma futura fronteira de extração**, que **ainda não existe** e **não é materializada aqui**. A representação canônica **chega pronta** ao comparador. O comparador **não** analisa Markdown, **não** identifica *blockquote*, *heading*, lista, *code fence* ou indentação, **não** remove prefixo `>` e **não** extrai fragmento de documento algum. |
+| D3 | **Quebra suave.** Como **convenção da representação** — e **não** como inferência de Markdown —, dentro da representação canônica um **`LF` isolado (`U+000A`), não adjacente a outro `LF`**, representa **quebra suave dentro do mesmo parágrafo**. Na normalização de `C-15b` esse `LF` é convertido em **exatamente um `U+0020`**. **Nenhum outro espaço é colapsado.** |
+| D4 | **Parágrafo real.** **Exatamente dois `LF` consecutivos** (`\n\n`) são a **fronteira canônica de parágrafo real** e são **preservados literalmente** na normalização. **Três ou mais `LF` consecutivos são representação NÃO CANÔNICA**: devem ser **recusados**, **nunca** reinterpretados ou normalizados. |
+| D5 | **Terminadores de linha.** A representação canônica admite **somente `LF` (`U+000A`)** como terminador estrutural. São **NÃO CANÔNICOS**: `CR` (`U+000D`), `CRLF`, `U+2028`, `U+2029`, `U+0085`, `U+000B` e `U+000C`. O futuro comparador **deve RECUSAR** esses casos e **não deve converter `CRLF` para `LF`** — qualquer adaptação de terminação de linha pertence ao **futuro produtor/extrator**. |
+| D6 | **Domínio canônico e três desfechos.** **(A) NÃO DETERMINÁVEL** — houve **violação mecanicamente detectável** da representação canônica; isto **não é `False`**, e o futuro chamador **deve parar ou escalar**. **(B) NÃO EQUIVALENTE** — ambos os textos pertencem ao domínio canônico e suas normalizações **diferem**; resultado conceitual **`False`**, com a consequência de **`C-15d`**: o fragmento **não** é convertido em *template*. **(C) EQUIVALENTE** — ambos pertencem ao domínio canônico e suas normalizações são **exatamente iguais**; resultado conceitual **`True`**, e **`C-15a(2)`** fica satisfeita. |
+| D7 | **Violações mecanicamente detectáveis.** São representação **NÃO CANÔNICA**: terminador proibido de **D5**; `LF` na **borda inicial** do texto; `LF` na **borda final** do texto; **espaço ou tab imediatamente antes** de `LF`; **espaço ou tab imediatamente depois** de `LF`; e **três ou mais `LF` consecutivos**. Futuramente devem resultar em **NÃO DETERMINÁVEL / recusa explícita**. |
+
+**Nomes ainda não decididos.** Esta micro-arbitragem **não define** nome de exceção, código de
+erro, taxonomia nominal nem texto de mensagem — isso pertence ao **mandato técnico posterior**.
+
+**Limite da garantia — domínio canônico.** A equivalência definida por **`C-15b`** somente
+possui **garantia semântica** quando **ambos os insumos satisfazem a representação canônica** e
+quando o **fragmento aprovado foi corretamente separado da estrutura Markdown pelo produtor
+responsável**. A ausência de estrutura Markdown é **parcialmente uma pré-condição do
+chamador** e **não pode ser integralmente verificada pelo comparador** sem transformá-lo em
+*parser* Markdown. Portanto: **fora do domínio canônico, não existe garantia de correção do
+veredito de equivalência.** Futuros produtores e consumidores **devem** satisfazer essa
+pré-condição **antes** de utilizar o resultado para **`C-15d`** ou para qualquer **migração de
+autoridade de status** (`C-A1-ST6`–`C-A1-ST10`). Esta ressalva é **normativa e obrigatória**.
+
+**O que a futura materialização de `C-15b` NÃO fará**: *parsing* Markdown; I/O; abrir
+`knowledge/**`; extrair fragmento; renderizar *template*; resolver *binding*; ler YAML;
+implementar formato; decidir candidatura de fragmento; decidir migração de status; ou
+materializar **C** por si só. **Comparar NÃO é materializar C.**
+
+**Evidência estrutural do corpus atual** — metadados apenas, **sem reproduzir frase alguma** e
+**sem registrar *hash* de conteúdo** (`C-15e`, `C-1k`–`C-1m`): **37** fragmentos emitíveis, dos
+quais **29** multilinha; **0** parágrafos internos; **0** estruturas de lista, *heading* ou
+bloco de código **dentro** dos fragmentos; **0** *hard breaks* explícitos; **0** ocorrências de
+`CR`/`CRLF`; e **37/37 compatíveis** com a representação canônica acima. As contagens de
+fragmento e de parágrafo interno vêm da **auditoria read-only** já registrada; a ausência de
+`CR`/`CRLF`, de terminadores exóticos, de *hard break* e de bloco de código foi **reverificada
+mecanicamente** sobre o blob versionado. Como o corpus **não possui parágrafo interno**, **D4**
+fecha representação **futura** **sem alterar conteúdo corrente**.
+
+**Risco operacional registrado, não resolvido:** *checkouts* e ambientes podem materializar
+terminações de linha **distintas das existentes no blob Git**. Esta entrega **não altera
+`.gitattributes`**, **não decide configuração de Git** e **não afirma** que qualquer
+configuração seja universal ou garantida. O risco fica **registrado** e a adaptação, quando
+necessária, pertence ao **futuro produtor/extrator**, nunca ao comparador.
+
+**Fora desta arbitragem**, e explicitamente **não decididos**: nome de módulo, nome de função,
+assinatura final, ordem de parâmetros, taxonomia de exceção, mensagem de erro, comportamento
+para tipo não-`str`, ordem entre **NFC** e a dobra de quebra suave, `hora`, gramática de
+`caminho_yaml`, identidade física do fragmento, sintaxe de *placeholder*, extrator físico,
+índice, *renderer*, formatos, **R2**, **S2-D8**, **`N-b-RES2`**, **`OrquestradorMotor`**,
+`.gitattributes` e a **3B.8**.
+
 ##### C-A1-F — Refinamentos normativos de C-6
 
 **Nenhum formato novo é criado.** O vocabulário de C-6 permanece fechado; o que segue é
