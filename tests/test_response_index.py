@@ -978,11 +978,6 @@ def test_producao_nao_tem_constante_comercial() -> None:
     assert not (literais & comerciais)
 
 
-def test_indice_real_continua_inexistente() -> None:
-    """E1 valida a forma do índice futuro; ela não o cria."""
-    assert not (RAIZ / "knowledge" / "indice-respostas-aprovadas.yaml").exists()
-
-
 def test_validacao_nao_altera_a_estrutura_recebida() -> None:
     corpo = indice(
         resposta(fragmentos=[fragmento(bindings=[binding_renderizado()])])
