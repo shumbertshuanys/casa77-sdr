@@ -4,7 +4,30 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-31 (**reconciliação documental após o merge do PR #84**). A **PR #84**
+Atualizado em: 2026-08-31 (**reconciliação documental após o merge do PR #86**). A **PR #86**
+foi **auditada, autorizada humanamente e integrada à `main`** — commit funcional
+`b2b11e2465c7f332747a806c80b629e995f0f5a6`, merge `9bf68b8fece9ea66c74509490ddf6e02a0aa6f31`,
+branch de origem `feat/c-response-index-loader`. Ela materializou a **segunda microentrega
+funcional de `C` — o carregador *fail-closed* do futuro índice**, em
+`src/casa77_sdr/response_index_load.py` e `tests/test_response_index_load.py`, e removeu de
+`tests/test_response_index.py` o teste `test_indice_real_continua_inexistente` — **três
+arquivos**, **1086 adições / 5 remoções**. **Esta entrega passa a ser o marco funcional** da
+`main`, **sem numeração de subetapa** e **sem criar a nomenclatura normativa `E2`**: a
+**3B.7** continua a última numerada e a **3B.8 continua INEXISTENTE**. A **baseline funcional
+passa a `1436 passed`** — **`63 passed`** no direcionado do carregador e **`158 passed`** no
+direcionado de `E1` —, em **Python 3.14.5**, medida **após o merge**, com **zero failures e
+zero errors**. O carregador **NÃO cria o índice real**:
+`knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**, e ele **não conhece
+caminho implícito algum** — o caminho chega sempre por argumento explícito. Portanto **a
+primeira e a segunda microentregas de `C` estão MATERIALIZADAS e INTEGRADAS**, mas **`C`, como
+entrega completa do índice estruturado, continua ARBITRADA / NÃO MATERIALIZADA**. Continuam
+inalterados: **`R2` NÃO MATERIALIZADA**, **`S2-D8` ARBITRADA / NÃO MATERIALIZADA**,
+**`N-b-RES2` ABERTO**, o **`OrquestradorMotor` NÃO IMPLEMENTADO**, a **3B.8 INEXISTENTE** e
+**`Q2`–`Q5` NÃO RESOLVIDAS**. Esta reconciliação **não escolhe nem inicia a próxima
+microentrega funcional de `C`**.
+
+**Atualização anterior — 2026-08-31 (reconciliação documental após o merge do PR #84),
+preservada como registro daquele momento.** A **PR #84**
 foi **auditada, autorizada humanamente e integrada à `main`** — commit funcional
 `02f1dd6621c31b90789c646bd8826e685f9ee019`, merge `95ed2ce4e9c54f9bdfb7b3f820e6f9e065cde24e`,
 branch de origem `feat/c-e1-response-index-validator`. Ela materializou **exclusivamente a
@@ -48,17 +71,18 @@ o **último marco funcional continua o PR #61**, a **baseline permanece `1215 pa
 |---|---|
 | Projeto | Casa 77 SDR |
 | Branch de referência | `main` |
-| Último commit **funcional** aprovado | `02f1dd6621c31b90789c646bd8826e685f9ee019` |
-| Merge correspondente na `main` | `95ed2ce4e9c54f9bdfb7b3f820e6f9e065cde24e` |
-| Última **entrega funcional** concluída | **`E1` — validador estrutural do futuro índice de respostas aprovadas**, em `src/casa77_sdr/response_index.py` (**PR #84** — commit funcional `02f1dd6621c31b90789c646bd8826e685f9ee019`, merge `95ed2ce4e9c54f9bdfb7b3f820e6f9e065cde24e`, branch de origem `feat/c-e1-response-index-validator`). **Primeira microentrega funcional de `C`.** **Inclui**: **`IndiceInvalido`**; **`validar_indice(indice: object) -> None`**; **schema estrutural fechado**; **vocabulários fechados** de status, mecanismo, origem, formato, predicado e fato runtime; **exclusividade `YAML` × `RUNTIME_AUTORITATIVO`**; **`RUNTIME_AUTORITATIVO` somente com `ASSERTIVA`**; as **regras estruturais de `RENDERIZADO`** (*placeholder* + formato) e de **`ASSERTIVA`** (predicado); **fail-closed na primeira violação**; **rejeição de seleção numericamente posicional**; e a **proteção contra índices posicionais mesmo após seletores textuais encadeados**. **NÃO inclui**: a **criação do índice real**; **loader**; **leitura de `knowledge/**` pelo módulo**; **conversão do Markdown**; **bindings reais**; a **bijeção 37/37**; **C-15**; **renderização**; **aplicação de formatos**; **avaliação de `ASSERTIVA` contra dados reais**; **R2**; **S2-D8**; **`N-b-RES2`**; o **`OrquestradorMotor`**; **calendário**; **LLM**; e a **3B.8**. **Sem numeração oficial de subetapa**: não é a 3B.8, que **não existe**. **`E1` materializada NÃO é `C` materializada** |
-| Entrega funcional **anterior** | **Materialização funcional do delta AJ2** — o **assunto** de `PerguntaComercial` na **fronteira determinística** da etapa 4, em `src/casa77_sdr/interpretation.py` (**PR #61** — commit funcional `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`, merge `5a722a5cc648149330362434694e7e76a40c1b57`, branch de origem `feat/materializar-aj2-assunto`). **Inclui**: **`AssuntoComercial`** como vocabulário fechado de **54** membros — **53 específicos + `ASSUNTO_NAO_CLASSIFICADO`** —, na **ordem documental** de `docs/07` §6.3; **`PerguntaComercial` com três campos** — `texto`, `confianca` e **`assunto`** —, o assunto **obrigatório** e **sem confiança própria**; a **ampliação de `E-Nb-5`** para assunto **ausente** (AJ2-X1) e **fora do vocabulário** (AJ2-X2), com **tipo runtime incompatível** continuando `TypeError` **sem código**; a validação nos **dois caminhos** — canonicalização e `Interpretacao` construída diretamente —, com a **precedência histórica** dos erros N-b/AJ1 **preservada**; e os cenários **`K-Nb-41`–`K-Nb-51`**. **Preserva**: a `ProjecaoInterpretacao` de **sete** campos — o assunto **não atravessa** —, **`IntencaoConversacional` com 11** valores, **N-b-X3** inalterada, a **condição 5** como única condição de §4.4 materializada, a lista **`E-Nb-1`–`E-Nb-19`** sem vigésimo código e o **não-export** pelo `casa77_sdr/__init__.py`. **NÃO inclui**: o **produtor não determinístico / LLM**; a **interpretação real de texto livre**; a **segmentação semântica** de consulta composta — que precisa chegar **já segmentada** do futuro produtor; **N-b-RES2**; a **integração operacional da etapa 4**; e o **`OrquestradorMotor`**. **Sem numeração oficial de subetapa**: não é a 3B.8, que **não existe** |
-| Entrega funcional **anterior a essa** | **Materialização da parte DETERMINÍSTICA de N-b** — a fronteira determinística da interpretação da etapa 4, em `src/casa77_sdr/interpretation.py` (PR #55). **Inclui**: a **canonicalização determinística** da `Interpretacao`; **`A1` derivado** dos payloads autoritativos; a **confiança `A1` calculada** por **N-b-X3**; a **projeção** para a `ProjecaoInterpretacao` **já existente**, de sete campos; a **condição 5** de `docs/07` §4.4 como função total; e a **validação de canonicidade** exigida também de uma `Interpretacao` construída diretamente. **NÃO inclui**: o **produtor não determinístico / LLM**; a **interpretação de texto livre**; **N-b-RES2**; a **integração operacional da etapa 4**; e o **`OrquestradorMotor`**. **Sem numeração oficial de subetapa**: não é a 3B.8, que **não existe** |
-| Entrega funcional **anterior a essa (2)** | **Aplicação e escrita do marco temporal como fronteira chamável** — `criar_com_marco_de_transicao(...)` e `gravar_com_marco_de_transicao(...)` (`src/casa77_sdr/transition_marker_write.py`, PR #49 — commit `d621a2c7…`, merge `f82da69f…`). Também **sem numeração de subetapa** |
-| Entrega funcional **anterior a essa (3)** | Decisão determinística do marco temporal — `decidir_instante_ultima_transicao(...)` e a **composição decisória das 0–3 `DecisaoMaquina`** do ciclo (PR #47 — commit `b2f9f74d…`, merge `dd5a4cc7…`). Também **sem numeração de subetapa** |
-| Entrega funcional **anterior a essa (4)** | Materialização em runtime da projeção `transicoes_que_mudaram_estado` na `MaquinaEstados` / `DecisaoMaquina` (PR #44 — commit `2da532f1…`, merge `048a5483…`). Também **sem numeração de subetapa** |
-| Entrega funcional **anterior a essa (5)** | Montagem determinística das projeções de identidade da etapa 3 — fronteira **etapa 3 → identidade/etapa 5** (PR #38 — commit `f312eaa5…`, merge `10810506…`). Também **sem numeração de subetapa** |
-| Entrega funcional **anterior a essa (6)** | Implementação funcional da política N-a — produção determinística do conjunto elegível **E** (PR #36 — commit `51fae0d1…`, merge `383c5668…`). Também **sem numeração de subetapa** |
-| Entrega funcional **anterior a essa (7)** | Evolução temporal do contrato de persistência operacional — `instante_ultima_transicao` (PR #33 — commit `0350e4ec…`, merge `1256628e…`). Também **sem numeração de subetapa** |
+| Último commit **funcional** aprovado | `b2b11e2465c7f332747a806c80b629e995f0f5a6` |
+| Merge correspondente na `main` | `9bf68b8fece9ea66c74509490ddf6e02a0aa6f31` |
+| Última **entrega funcional** concluída | **Segunda microentrega funcional de `C` — carregador *fail-closed* do futuro índice de respostas aprovadas**, em `src/casa77_sdr/response_index_load.py` (**PR #86** — commit funcional `b2b11e2465c7f332747a806c80b629e995f0f5a6`, merge `9bf68b8fece9ea66c74509490ddf6e02a0aa6f31`, branch de origem `feat/c-response-index-loader`). **Sem nomenclatura normativa `E2`.** **Inclui**: **`IndiceIlegivel`**; **`carregar_indice(path: str | Path)`** como **fronteira pública única**, com **caminho sempre explícito** — **sem caminho padrão, descoberta automática, glob ou variável de ambiente**; leitura **somente em UTF-8** e **somente leitura**; análise baseada **exclusivamente** em `yaml.SafeLoader`, via subclasse privada que **altera apenas a construção de mapeamento**; **rejeição *fail-closed* de chave YAML duplicada**, por mapeamento e em qualquer nível; a **taxonomia fechada de ilegibilidade** — `arquivo_ausente`, `leitura_falhou`, `codificacao_invalida`, `sintaxe_invalida` e `chave_duplicada` —, com mensagem de **categoria e caminho** que **não ecoa o conteúdo do arquivo** e **causa técnica encadeada em `__cause__`**; a **separação estrita entre artefato ilegível e estrutura inválida**; a **delegação integral** da validação estrutural a `validar_indice(...)`, com **`IndiceInvalido` propagando intacta**, sem captura, reembalagem, tradução de categoria ou duplicação de regra; e **zero normalização, zero valor padrão e zero *fallback*** após a análise. **Também remove** de `tests/test_response_index.py` o teste `test_indice_real_continua_inexistente`. **NÃO inclui**: a **criação do índice real**; a **conversão do Markdown**; *templates* ou *bindings* físicos; a **bijeção 37/37**; **C-15**; **renderização**; **aplicação de formatos**; **avaliação de `ASSERTIVA` contra dados reais**; **R2**; **S2-D8**; **`N-b-RES2`**; o **`OrquestradorMotor`**; **calendário**; **LLM**; e a **3B.8**. **Sem numeração oficial de subetapa**: não é a 3B.8, que **não existe**. **Carregar não é materializar `C`** |
+| Entrega funcional **anterior** | **`E1` — validador estrutural do futuro índice de respostas aprovadas**, em `src/casa77_sdr/response_index.py` (**PR #84** — commit funcional `02f1dd6621c31b90789c646bd8826e685f9ee019`, merge `95ed2ce4e9c54f9bdfb7b3f820e6f9e065cde24e`, branch de origem `feat/c-e1-response-index-validator`). **Primeira microentrega funcional de `C`.** **Inclui**: **`IndiceInvalido`**; **`validar_indice(indice: object) -> None`**; **schema estrutural fechado**; **vocabulários fechados** de status, mecanismo, origem, formato, predicado e fato runtime; **exclusividade `YAML` × `RUNTIME_AUTORITATIVO`**; **`RUNTIME_AUTORITATIVO` somente com `ASSERTIVA`**; as **regras estruturais de `RENDERIZADO`** (*placeholder* + formato) e de **`ASSERTIVA`** (predicado); **fail-closed na primeira violação**; **rejeição de seleção numericamente posicional**; e a **proteção contra índices posicionais mesmo após seletores textuais encadeados**. **NÃO inclui**: a **criação do índice real**; **loader**; **leitura de `knowledge/**` pelo módulo**; **conversão do Markdown**; **bindings reais**; a **bijeção 37/37**; **C-15**; **renderização**; **aplicação de formatos**; **avaliação de `ASSERTIVA` contra dados reais**; **R2**; **S2-D8**; **`N-b-RES2`**; o **`OrquestradorMotor`**; **calendário**; **LLM**; e a **3B.8**. **Sem numeração oficial de subetapa**: não é a 3B.8, que **não existe**. **`E1` materializada NÃO é `C` materializada** |
+| Entrega funcional **anterior a essa** | **Materialização funcional do delta AJ2** — o **assunto** de `PerguntaComercial` na **fronteira determinística** da etapa 4, em `src/casa77_sdr/interpretation.py` (**PR #61** — commit funcional `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`, merge `5a722a5cc648149330362434694e7e76a40c1b57`, branch de origem `feat/materializar-aj2-assunto`). **Inclui**: **`AssuntoComercial`** como vocabulário fechado de **54** membros — **53 específicos + `ASSUNTO_NAO_CLASSIFICADO`** —, na **ordem documental** de `docs/07` §6.3; **`PerguntaComercial` com três campos** — `texto`, `confianca` e **`assunto`** —, o assunto **obrigatório** e **sem confiança própria**; a **ampliação de `E-Nb-5`** para assunto **ausente** (AJ2-X1) e **fora do vocabulário** (AJ2-X2), com **tipo runtime incompatível** continuando `TypeError` **sem código**; a validação nos **dois caminhos** — canonicalização e `Interpretacao` construída diretamente —, com a **precedência histórica** dos erros N-b/AJ1 **preservada**; e os cenários **`K-Nb-41`–`K-Nb-51`**. **Preserva**: a `ProjecaoInterpretacao` de **sete** campos — o assunto **não atravessa** —, **`IntencaoConversacional` com 11** valores, **N-b-X3** inalterada, a **condição 5** como única condição de §4.4 materializada, a lista **`E-Nb-1`–`E-Nb-19`** sem vigésimo código e o **não-export** pelo `casa77_sdr/__init__.py`. **NÃO inclui**: o **produtor não determinístico / LLM**; a **interpretação real de texto livre**; a **segmentação semântica** de consulta composta — que precisa chegar **já segmentada** do futuro produtor; **N-b-RES2**; a **integração operacional da etapa 4**; e o **`OrquestradorMotor`**. **Sem numeração oficial de subetapa**: não é a 3B.8, que **não existe** |
+| Entrega funcional **anterior a essa (2)** | **Materialização da parte DETERMINÍSTICA de N-b** — a fronteira determinística da interpretação da etapa 4, em `src/casa77_sdr/interpretation.py` (PR #55). **Inclui**: a **canonicalização determinística** da `Interpretacao`; **`A1` derivado** dos payloads autoritativos; a **confiança `A1` calculada** por **N-b-X3**; a **projeção** para a `ProjecaoInterpretacao` **já existente**, de sete campos; a **condição 5** de `docs/07` §4.4 como função total; e a **validação de canonicidade** exigida também de uma `Interpretacao` construída diretamente. **NÃO inclui**: o **produtor não determinístico / LLM**; a **interpretação de texto livre**; **N-b-RES2**; a **integração operacional da etapa 4**; e o **`OrquestradorMotor`**. **Sem numeração oficial de subetapa**: não é a 3B.8, que **não existe** |
+| Entrega funcional **anterior a essa (3)** | **Aplicação e escrita do marco temporal como fronteira chamável** — `criar_com_marco_de_transicao(...)` e `gravar_com_marco_de_transicao(...)` (`src/casa77_sdr/transition_marker_write.py`, PR #49 — commit `d621a2c7…`, merge `f82da69f…`). Também **sem numeração de subetapa** |
+| Entrega funcional **anterior a essa (4)** | Decisão determinística do marco temporal — `decidir_instante_ultima_transicao(...)` e a **composição decisória das 0–3 `DecisaoMaquina`** do ciclo (PR #47 — commit `b2f9f74d…`, merge `dd5a4cc7…`). Também **sem numeração de subetapa** |
+| Entrega funcional **anterior a essa (5)** | Materialização em runtime da projeção `transicoes_que_mudaram_estado` na `MaquinaEstados` / `DecisaoMaquina` (PR #44 — commit `2da532f1…`, merge `048a5483…`). Também **sem numeração de subetapa** |
+| Entrega funcional **anterior a essa (6)** | Montagem determinística das projeções de identidade da etapa 3 — fronteira **etapa 3 → identidade/etapa 5** (PR #38 — commit `f312eaa5…`, merge `10810506…`). Também **sem numeração de subetapa** |
+| Entrega funcional **anterior a essa (7)** | Implementação funcional da política N-a — produção determinística do conjunto elegível **E** (PR #36 — commit `51fae0d1…`, merge `383c5668…`). Também **sem numeração de subetapa** |
+| Entrega funcional **anterior a essa (8)** | Evolução temporal do contrato de persistência operacional — `instante_ultima_transicao` (PR #33 — commit `0350e4ec…`, merge `1256628e…`). Também **sem numeração de subetapa** |
 | Última **subetapa funcional numerada** concluída | 3B.7 — ResolvedorIdentidade determinístico (PR #29 — commit `25ab2726…`, merge `568919f5…`) |
 | Subetapa 3B.7 | **CONCLUÍDA** |
 | Arbitragem documental **N-a** | Arbitragem **N-a** — PR #31, commit `43774af5…`, merge `e8425410…`. **Não altera o marco funcional** |
@@ -126,7 +150,11 @@ o **último marco funcional continua o PR #61**, a **baseline permanece `1215 pa
 | Evidência da nova execução de **`C-A2-N12`** | Relatório de auditoria **NÃO VERSIONADO**, mantido **fora do repositório**, SHA-256 `3807a60e1d5c049d0b17396e46f9e22c1b8d190521e7effa6ec07e27e98a335a`. É **evidência auxiliar** e **NÃO é fonte de verdade** |
 | Base da entrega **`E1`** (funcional) | `ffeeba9bdaac5c4c600cc9b0ffd93600fc9eee2b` — HEAD da `main` verificado **antes** daquela entrega |
 | Integração de **`E1`** | **PR #84** — commit **funcional** `02f1dd6621c31b90789c646bd8826e685f9ee019`, merge na `main` `95ed2ce4e9c54f9bdfb7b3f820e6f9e065cde24e`, branch de origem `feat/c-e1-response-index-validator`. Método: **merge commit**, com **dois parents** — `ffeeba9bdaac5c4c600cc9b0ffd93600fc9eee2b` e o commit funcional `02f1dd6621c31b90789c646bd8826e685f9ee019`. Arquivos: **exclusivamente** `src/casa77_sdr/response_index.py` e `tests/test_response_index.py` — **dois arquivos novos**, **1343 adições, 0 remoções** (**350 / 0** e **993 / 0**). **FUNCIONAL**: **passa a ser o marco funcional** da `main`, **sem numeração de subetapa**. **Não altera `knowledge/`, `docs/` nem `prompts/`** e **não cria o índice** |
-| Base da reconciliação **pós-PR #84** | `95ed2ce4e9c54f9bdfb7b3f820e6f9e065cde24e` — HEAD da `main` verificado **antes** desta reconciliação |
+| Base da reconciliação **pós-PR #84** | `95ed2ce4e9c54f9bdfb7b3f820e6f9e065cde24e` — HEAD da `main` verificado **antes** daquela reconciliação |
+| Integração da **reconciliação pós-PR #84** | **PR #85** — commit documental `d97594112c509536437cd28e5de8d86d8021421c`, merge na `main` `bb5a58144ead6323e1b6271511a9d9e98295f440`, branch de origem `docs/reconciliar-estado-pos-pr84`. Arquivo: **exclusivamente** `docs/00-estado-atual.md`. **Documental**: **não altera o marco funcional** |
+| Base da **segunda microentrega de `C`** (funcional) | `bb5a58144ead6323e1b6271511a9d9e98295f440` — HEAD da `main` verificado **antes** daquela entrega |
+| Integração da **segunda microentrega de `C`** | **PR #86** — commit **funcional** `b2b11e2465c7f332747a806c80b629e995f0f5a6`, merge na `main` `9bf68b8fece9ea66c74509490ddf6e02a0aa6f31`, branch de origem `feat/c-response-index-loader`. Método: **merge commit**, com **dois parents** — `bb5a58144ead6323e1b6271511a9d9e98295f440` e o commit funcional `b2b11e2465c7f332747a806c80b629e995f0f5a6`. Arquivos: **exclusivamente** `src/casa77_sdr/response_index_load.py` (**novo**, +133 / −0), `tests/test_response_index_load.py` (**novo**, +953 / −0) e `tests/test_response_index.py` (**modificado**, +0 / −5) — **três arquivos**, **1086 adições, 5 remoções**. **FUNCIONAL**: **passa a ser o marco funcional** da `main`, **sem numeração de subetapa**. **Não altera `knowledge/`, `docs/` nem `prompts/`**, **não altera `src/casa77_sdr/response_index.py`** e **não cria o índice** |
+| Base da reconciliação **pós-PR #86** | `9bf68b8fece9ea66c74509490ddf6e02a0aa6f31` — HEAD da `main` verificado **antes** desta reconciliação |
 | Subetapa 3B.6 | **CONCLUÍDA** (marco funcional anterior — commit `d5108773…`, merge `e3dbe555…`, PR #21) |
 | Subetapa 3B.5 | **CONCLUÍDA** (commit `02dcb477…`, merge `55f6ed77…`, PR #14) |
 
@@ -174,6 +202,7 @@ o **último marco funcional continua o PR #61**, a **baseline permanece `1215 pa
 | **Materialização da parte determinística de N-b** (`src/casa77_sdr/interpretation.py` + testes, com registro factual em `docs/07` §6.3 e §12): materializa a **fronteira determinística** da interpretação da etapa 4. Cria a entrada **pré-canônica** `EntradaInterpretacao` — que **não possui slot de códigos `A1`** —, a **`Interpretacao` canônica** e o vocabulário **`IntencaoConversacional` com exatamente 11 valores**; **deriva** os seis códigos **A1** dos payloads autoritativos e **calcula** sua confiança por **N-b-X3**, apenas **armazenando-a** para auditabilidade; implementa `canonicalizar_interpretacao(...)`, `projetar_para_identidade(...)` — projeção total para a `ProjecaoInterpretacao` **já existente**, de **sete** campos — e `decidir_interesse_confirmar_disponibilidade(...)`, a **condição 5** de `docs/07` §4.4 como **função total**; valida os **erros recebíveis `E-Nb`** com a precedência **`E-Nb-3` × `E-Nb-5`**, verifica os **invariantes internos `E-Nb-11`–`E-Nb-16`** como pós-condições e prova **`E-Nb-19`** estruturalmente; exige **canonicidade** também de uma `Interpretacao` construída diretamente; e **reutiliza `FormatoEvento` por import** de `qualification.py`, que **permanece inalterado**. **Zero LLM, fornecedor, modelo, SDK, API, JSON Schema, formato de transporte, interpretação de texto livre ou produção de `Exx`.** `docs/07` §4.1 permanece com **14** componentes e §2 com **nove** responsabilidades | **funcional** | PR #55 — **INTEGRADO à `main`** em 2026-08-23 (commit funcional `3f24e216f3770ce4ce76270d3d3e6115132c91ad`, merge `ba412502124bac3ce3f38554f81c265ed739672b`, branch de origem `feat/nb-interpretation-canonicalization`, mensagem `feat: materialize deterministic N-b interpretation`). Arquivos: `docs/07-arquitetura-motor-respostas.md` (**+21 / −1**), `src/casa77_sdr/interpretation.py` (**+1010**), `tests/test_interpretation.py` (**+2098**) — **3 files changed, 3129 insertions(+), 1 deletion(-)**. Baseline **`847 passed`** → **`1167 passed`**. **Cria o novo marco funcional.** **Não recebe numeração de subetapa** |
 | **Materialização funcional do delta AJ2** (`src/casa77_sdr/interpretation.py` + testes, com registro factual em `docs/07` §6.3 e §12): materializa o **assunto** de `PerguntaComercial` na **fronteira determinística** da etapa 4. Cria **`AssuntoComercial`** — vocabulário fechado de **54** membros, **53 específicos + `ASSUNTO_NAO_CLASSIFICADO`**, na ordem documental —; evolui **`PerguntaComercial` para três campos** (`texto`, `confianca`, **`assunto`**), com o assunto **obrigatório** e **sem confiança própria**; **amplia `E-Nb-5`** para assunto **ausente** e **fora do vocabulário**, mantendo **`TypeError` sem código** para tipo runtime incompatível; valida o assunto nos **dois caminhos** — canonicalização e `Interpretacao` construída diretamente — **depois** das validações N-b/AJ1 preexistentes, **preservando a precedência histórica**; e cobre os cenários **`K-Nb-41`–`K-Nb-51`**. **Preserva** a projeção de **sete** campos, as **11** `IntencaoConversacional`, **N-b-X3**, a **condição 5** como única condição de §4.4 materializada e a lista **`E-Nb-1`–`E-Nb-19`**. **Não** implementa produtor LLM, **não** interpreta texto livre, **não** segmenta consulta composta, **não** materializa **C** nem **S2-D8**, **não** fecha **`N-b-RES2`** e **não** integra a etapa 4. **Sem numeração de subetapa — a 3B.8 não existe** | **funcional** | **PR #61** — commit funcional `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`, merge `5a722a5cc648149330362434694e7e76a40c1b57`, branch de origem `feat/materializar-aj2-assunto`. **Três** arquivos — `src/casa77_sdr/interpretation.py`, `tests/test_interpretation.py` e `docs/07-arquitetura-motor-respostas.md` —, **762 adições / 28 remoções**. Baseline **`1215 passed`** / Python 3.14.5 |
 | **`E1` — validador estrutural do futuro índice de respostas aprovadas** (`src/casa77_sdr/response_index.py` + `tests/test_response_index.py`): **primeira microentrega funcional de `C`**. Materializa **exclusivamente** a validação estrutural **fail-closed** da forma de uma estrutura já parseada que pretende ser `knowledge/indice-respostas-aprovadas.yaml`. Expõe **`IndiceInvalido`** e **`validar_indice(indice: object) -> None`**; implementa **schema estrutural fechado**, **vocabulários fechados** de status, mecanismo, origem, formato, predicado e fato runtime, **exclusividade `YAML` × `RUNTIME_AUTORITATIVO`**, **`RUNTIME_AUTORITATIVO` somente com `ASSERTIVA`**, as **regras estruturais de `RENDERIZADO`** (*placeholder* + formato) e de **`ASSERTIVA`** (predicado), **fail-closed na primeira violação** — a mensagem carrega **categoria e localizador** e **não ecoa o valor recebido** —, a **rejeição de seleção numericamente posicional** e a **proteção contra índices posicionais mesmo após seletores textuais encadeados**. O módulo **não abre arquivo, não importa carregador e não lê `knowledge/**`**. **Não** cria o índice real, **não** cria loader, **não** converte o Markdown, **não** materializa *bindings* reais, **não** executa a bijeção 37/37, **não** implementa **C-15**, **não** renderiza, **não** aplica formatos, **não** avalia `ASSERTIVA` contra dados reais, **não** materializa **R2** nem **S2-D8**, **não** fecha **`N-b-RES2`**, **não** implementa o **`OrquestradorMotor`**, **não** escolhe calendário e **não** implementa LLM. **`E1` materializada NÃO é `C` materializada.** **Sem numeração de subetapa — a 3B.8 não existe** | **funcional** | **PR #84** — commit funcional `02f1dd6621c31b90789c646bd8826e685f9ee019`, merge `95ed2ce4e9c54f9bdfb7b3f820e6f9e065cde24e`, branch de origem `feat/c-e1-response-index-validator`. **Dois** arquivos novos — `src/casa77_sdr/response_index.py` e `tests/test_response_index.py` —, **1343 adições / 0 remoções**. Baseline **`1374 passed`** / Python 3.14.5, com **`159 passed`** no direcionado |
+| **Segunda microentrega funcional de `C` — carregador *fail-closed* do futuro índice** (`src/casa77_sdr/response_index_load.py` + `tests/test_response_index_load.py`, com correção localizada em `tests/test_response_index.py`): torna o validador estrutural já integrado **alcançável a partir de um artefato YAML explicitamente informado**, **sem criar o índice real**. Expõe **`IndiceIlegivel`** e **`carregar_indice(path: str | Path)`** — fronteira pública única, com **caminho sempre explícito**, **sem caminho padrão, descoberta, glob ou variável de ambiente**. Lê **somente em UTF-8** e **somente para leitura**; analisa com **`yaml.SafeLoader`** por subclasse privada que **altera apenas a construção de mapeamento**, **sem registrar construtor, ampliar tag ou relaxar restrição de segurança**; **recusa chave YAML duplicada** *fail-closed*, **por mapeamento** e em **qualquer nível**. Fecha a **taxonomia de ilegibilidade** em **`arquivo_ausente`**, **`leitura_falhou`**, **`codificacao_invalida`**, **`sintaxe_invalida`** e **`chave_duplicada`**, com mensagem de **categoria e caminho** que **nunca ecoa o conteúdo do arquivo** — o texto bruto do analisador fica **apenas** em **`__cause__`**. **Separa estritamente artefato ilegível de estrutura inválida**: toda a forma é **delegada integralmente** a `validar_indice(...)`, e **`IndiceInvalido` propaga intacta**, sem captura, reembalagem, tradução de categoria ou duplicação de regra — raiz `None`, lista ou escalar chega ao validador e é rejeitada por **E1**. **Zero normalização, zero valor padrão e zero *fallback*** depois da análise. **Também remove** o teste `test_indice_real_continua_inexistente` de `tests/test_response_index.py`, porque a inexistência do índice era **evidência temporária** da E1 e **não invariante permanente** — a remoção **não cria o índice**. **Não** cria o índice real, **não** converte o Markdown, **não** materializa *templates* ou *bindings* físicos, **não** executa a bijeção 37/37, **não** implementa **C-15**, **não** renderiza, **não** aplica formatos, **não** avalia `ASSERTIVA` contra dados reais, **não** materializa **R2** nem **S2-D8**, **não** fecha **`N-b-RES2`**, **não** implementa o **`OrquestradorMotor`**, **não** escolhe calendário e **não** implementa LLM. **Carregar não é materializar `C`.** **Sem nomenclatura normativa `E2` e sem numeração de subetapa — a 3B.8 não existe** | **funcional** | **PR #86** — commit funcional `b2b11e2465c7f332747a806c80b629e995f0f5a6`, merge `9bf68b8fece9ea66c74509490ddf6e02a0aa6f31`, branch de origem `feat/c-response-index-loader`. **Três** arquivos — dois novos e um modificado —, **1086 adições / 5 remoções**. Baseline **`1436 passed`** / Python 3.14.5, com **`63 passed`** no direcionado do carregador e **`158 passed`** no de `E1` |
 
 O PR #4 atualiza base comercial e documentação a partir de decisões de Douglas Bianchi
 (2026-08-15). Ele **não** é implementação funcional do motor e não altera o marco
@@ -410,21 +439,31 @@ criada, escolhida ou autorizada**.
 
 ## Testes
 
-Última execução real em **2026-08-31**, **posterior ao merge do PR #84**, contra
-`origin/main` `95ed2ce4e9c54f9bdfb7b3f820e6f9e065cde24e`, em **Python 3.14.5** — **duas
-execuções, ambas aprovadas**:
+Última execução real em **2026-08-31**, **posterior ao merge do PR #86**, contra
+`origin/main` `9bf68b8fece9ea66c74509490ddf6e02a0aa6f31`, em **Python 3.14.5** — **três
+execuções, todas aprovadas**:
 
 | Momento | Comando | Resultado |
 |---|---|---|
-| **direcionado** — validador estrutural do futuro índice (`E1`) | `./.venv/Scripts/python.exe -m pytest tests/test_response_index.py` | **`159 passed`** |
-| **suíte completa** | `./.venv/Scripts/python.exe -m pytest` | **`1374 passed`** |
+| **direcionado** — validador estrutural do futuro índice (`E1`) | `./.venv/Scripts/python.exe -m pytest tests/test_response_index.py` | **`158 passed`** |
+| **direcionado** — carregador *fail-closed* do futuro índice | `./.venv/Scripts/python.exe -m pytest tests/test_response_index_load.py` | **`63 passed`** |
+| **suíte completa** | `./.venv/Scripts/python.exe -m pytest` | **`1436 passed`** |
 
-**Zero failures e zero errors** nas duas execuções. Estas contagens são as **realmente
-obtidas nesta execução pós-merge**, e **não** cópias das registradas pela PR #84: elas
-**coincidem** com os números que a PR registrava — **`159 passed`** no direcionado e
-**`1374 passed`** na suíte —, e essa coincidência foi **verificada, não presumida**. **Não foi
-executada** nesta reconciliação a variante `-W error`, de modo que **nenhuma afirmação sobre
-warnings é feita** para este marco.
+**Zero failures e zero errors** nas três execuções. Estas contagens são as **realmente
+obtidas nesta execução pós-merge**, e **não** cópias das registradas pela PR #86: elas
+**coincidem** com os números que a PR registrava, e essa coincidência foi **verificada, não
+presumida**. **Não foi executada** nesta reconciliação a variante `-W error`, de modo que
+**nenhuma afirmação sobre warnings é feita** para este marco.
+
+O direcionado de `E1` passou de **`159`** para **`158`** porque a PR #86 **removeu** o teste
+`test_indice_real_continua_inexistente` — a inexistência do índice era **evidência temporária**
+daquela entrega, não invariante permanente. **A remoção não criou o índice**, que **continua
+INEXISTENTE**.
+
+**Execuções pós-merge do PR #84, preservadas como registro daquele momento** (2026-08-31,
+Python 3.14.5): **`159 passed`** no direcionado de `tests/test_response_index.py` e
+**`1374 passed`** na suíte completa — corretas **para aquele marco**, e **superadas como
+baseline corrente** por esta reconciliação. Também ali a variante `-W error` não foi executada.
 
 **Execuções do PR #61, preservadas como registro histórico daquela entrega** (2026-08-25,
 Python 3.14.5) — **três execuções finais aprovadas**: **`368 passed`** no direcionado de
@@ -483,15 +522,24 @@ seleção numericamente posicional, **inclusive após seletores textuais encadea
 testes são **determinísticos e sem rede**: eles **não** exercitam LLM real, **não** exercitam
 interpretação de texto livre, **não** exercitam WhatsApp e **não** constituem teste
 ponta a ponta nem do pipeline operacional completo. Os de `E1` **não leem o índice real** —
-que **não existe** — e operam sobre **estruturas sintéticas em memória**.
+que **não existe** — e operam sobre **estruturas sintéticas em memória**. O **PR #86**
+acrescentou `tests/test_response_index_load.py` — o **carregador *fail-closed* do futuro
+índice**: caminho como `Path` e como `str`, leitura UTF-8, arquivo inexistente, diretório no
+lugar do arquivo, UTF-8 inválido, sintaxe YAML inválida, tag insegura, arquivo vazio, chave
+duplicada nos **quatro** níveis, delegação real a `validar_indice` com categoria e localizador
+preservados, não-eco de conteúdo por sentinela, `__cause__` encadeada, leitura pura provada por
+*hash* do arquivo temporário e provas por **AST** sobre o módulo de produção. Esses testes
+também **não leem o índice real** — que **não existe** — e usam **artefatos sintéticos em
+`tmp_path`**.
 
-**Baseline funcional atual: `1374 passed`.** Baseline anterior integrado: **`1215 passed`**
-— delta **+159**, correspondente exatamente ao arquivo direcionado **novo**
-`tests/test_response_index.py` (**159** casos), acrescentado pela **`E1`** (PR #84). Os
-**1215** casos preexistentes permanecem **intactos**: a `E1` **não alterou arquivo de teste
-algum já existente**. O baseline **`1215 passed`** decorreu, por sua vez, da materialização
-funcional de **AJ2** (PR #61), com delta **+48** sobre os **`1167 passed`** do PR #55, que por
-sua vez teve delta **+320** sobre os **`847 passed`** do PR #49.
+**Baseline funcional atual: `1436 passed`.** Baseline anterior integrado: **`1374 passed`**
+— delta **+62**, decomposto **exatamente** em **+63** casos do arquivo direcionado **novo**
+`tests/test_response_index_load.py` e **−1** pela remoção do teste
+`test_indice_real_continua_inexistente` de `tests/test_response_index.py`, que por isso passou
+de **159** para **158**. Fora essa remoção pontual, **nenhum teste preexistente foi alterado**.
+O baseline **`1374 passed`** decorreu, por sua vez, da **`E1`** (PR #84), com delta **+159**
+sobre os **`1215 passed`** do PR #61 — este com delta **+48** sobre os **`1167 passed`** do
+PR #55, que por sua vez teve delta **+320** sobre os **`847 passed`** do PR #49.
 
 Histórico: até a 3B.5 o baseline era `180 passed`, e assim permaneceu durante as
 arbitragens documentais S2 e S3 — elas não alteram código nem testes. O salto para
@@ -564,7 +612,7 @@ na **3B.7**, integrada pelo **PR #29** (merge `568919f5…`) — `src/casa77_sdr
 A **3B.7 está CONCLUÍDA e integrada à `main`**. Etapas 5 a 10 permanecem futuras e com a
 numeração preservada, conforme `docs/05-roadmap.md` — **não alterado por esta entrega**.
 
-Existem agora **nove entregas funcionais posteriores à 3B.7 e SEM numeração oficial de
+Existem agora **dez entregas funcionais posteriores à 3B.7 e SEM numeração oficial de
 subetapa**: (a) a **evolução temporal do contrato de persistência operacional**
 (`instante_ultima_transicao`), integrada pelo **PR #33**; (b) a **implementação
 funcional da política N-a** — produção determinística do conjunto elegível **E** em
@@ -587,8 +635,11 @@ interpretação da etapa 4 em `src/casa77_sdr/interpretation.py`, com a **canoni
 `PerguntaComercial` na fronteira determinística, em `src/casa77_sdr/interpretation.py` —,
 integrada pelo **PR #61**; e (i) a **`E1` — validador estrutural do futuro índice de
 respostas aprovadas** em `src/casa77_sdr/response_index.py`, **primeira microentrega
-funcional de `C`**, integrada pelo **PR #84**. **`E1` NÃO materializa `C`**: o índice
-`knowledge/indice-respostas-aprovadas.yaml` **continua inexistente**.
+funcional de `C`**, integrada pelo **PR #84**; e (j) a **segunda microentrega funcional de
+`C`** — o **carregador *fail-closed* do futuro índice** em
+`src/casa77_sdr/response_index_load.py` —, integrada pelo **PR #86**. **Nem `E1` nem o
+carregador materializam `C`**: o índice `knowledge/indice-respostas-aprovadas.yaml` **continua
+inexistente**, e o carregador **não conhece caminho implícito** para ele.
 Nenhuma delas é renomeada para **3B.8** — **a 3B.8 não existe** —, nenhuma **altera a
 numeração** do roadmap e nenhuma **significa que a próxima entrega tenha sido
 escolhida**. A **última subetapa funcional numerada** continua sendo a **3B.7**.
@@ -720,24 +771,29 @@ a **pendência residual continua aberta**.
 
 ## Próxima ação
 
-1. A **`E1` — validador estrutural do futuro índice de respostas aprovadas**, em
-   `src/casa77_sdr/response_index.py` — **primeira microentrega funcional de `C`** — está
-   **funcionalmente concluída e integrada à `main`** pelo **PR #84** (**MERGED**). Ela
-   **não recebeu numeração de subetapa**. A **entrega funcional anterior** é a
-   **materialização funcional do delta AJ2** (PR #61), que permanece integrada.
-   **A entrega funcional mais recente é a do PR #84.** **`E1` materializada NÃO é `C`
-   materializada**: o índice `knowledge/indice-respostas-aprovadas.yaml` **continua
-   INEXISTENTE** e **`C` continua ARBITRADA / NÃO MATERIALIZADA**.
-2. Commit funcional atual: `02f1dd6621c31b90789c646bd8826e685f9ee019`. Merge
-   correspondente: `95ed2ce4e9c54f9bdfb7b3f820e6f9e065cde24e`.
-3. Baseline funcional atual: **`1374 passed`**, com **`159 passed`** no teste direcionado
-   de `tests/test_response_index.py`, em **Python 3.14.5** — **zero failures e zero
-   errors**, medidos **após o merge do PR #84**, contra `origin/main`
-   `95ed2ce4e9c54f9bdfb7b3f820e6f9e065cde24e`. Baseline anterior integrado:
-   **`1215 passed`**; delta **+159**, correspondente exatamente ao arquivo direcionado
-   **novo**, sem alteração de teste preexistente. **A variante `-W error` NÃO foi executada
-   nesta reconciliação**, de modo que **nenhuma afirmação sobre warnings** é feita para este
-   marco — ver a seção **Testes**.
+1. A **segunda microentrega funcional de `C`** — o **carregador *fail-closed* do futuro
+   índice de respostas aprovadas**, em `src/casa77_sdr/response_index_load.py` — está
+   **funcionalmente concluída e integrada à `main`** pelo **PR #86** (**MERGED**). Ela
+   **não recebeu numeração de subetapa** e **não criou a nomenclatura normativa `E2`**. A
+   **entrega funcional anterior** é a **`E1` — validador estrutural** (PR #84), que
+   permanece integrada. **A entrega funcional mais recente é a do PR #86.** **Nem `E1` nem o
+   carregador materializam `C`**: o índice `knowledge/indice-respostas-aprovadas.yaml`
+   **continua INEXISTENTE** e **`C` continua ARBITRADA / NÃO MATERIALIZADA como entrega
+   completa**. **Carregar não é materializar**: a fronteira sabe **ler e recusar** um
+   artefato que lhe seja explicitamente apontado, e **não possui caminho implícito ou
+   padrão** — ela **não descobre o arquivo** e **não resolve automaticamente o caminho
+   canônico**; `carregar_indice(...)` **recebe o caminho como argumento**.
+2. Commit funcional atual: `b2b11e2465c7f332747a806c80b629e995f0f5a6`. Merge
+   correspondente: `9bf68b8fece9ea66c74509490ddf6e02a0aa6f31`.
+3. Baseline funcional atual: **`1436 passed`**, com **`63 passed`** no teste direcionado de
+   `tests/test_response_index_load.py` e **`158 passed`** no de
+   `tests/test_response_index.py`, em **Python 3.14.5** — **zero failures e zero errors**,
+   medidos **após o merge do PR #86**, contra `origin/main`
+   `9bf68b8fece9ea66c74509490ddf6e02a0aa6f31`. Baseline anterior integrado:
+   **`1374 passed`**; delta **+62** = **+63** do arquivo direcionado **novo** **−1** pela
+   remoção do teste `test_indice_real_continua_inexistente`. **A variante `-W error` NÃO foi
+   executada nesta reconciliação**, de modo que **nenhuma afirmação sobre warnings** é feita
+   para este marco — ver a seção **Testes**.
 4. A **última subetapa funcional numerada** continua sendo a **3B.7 — `ResolvedorIdentidade` determinístico** (PR #29, commit `25ab2726…`, merge
    `568919f5…`), que permanece **CONCLUÍDA**.
 5. **O conjunto H, o `havia_estado_esperado` e o produtor N-I continuam com produtor em
@@ -2212,6 +2268,87 @@ a **pendência residual continua aberta**.
     **S2-D8**, nem **`N-b-RES2`**, nem o **produtor LLM**, nem a **integração da etapa 4**, nem
     a **integração da etapa 13**, nem o **`OrquestradorMotor`**, nem qualquer outra. **Esta é a
     única reconciliação pós-PR #84**: nenhuma "reconciliação da reconciliação" será criada.
+    **Aquela reconciliação foi integrada depois pelo PR #85** — commit documental
+    `d97594112c509536437cd28e5de8d86d8021421c`, merge
+    `bb5a58144ead6323e1b6271511a9d9e98295f440`, branch de origem
+    `docs/reconciliar-estado-pos-pr84`, **exclusivamente** `docs/00-estado-atual.md`.
+    **Documental**: **não alterou o marco funcional**.
+75. **A SEGUNDA MICROENTREGA FUNCIONAL DE `C` — o carregador *fail-closed* do futuro índice —
+    está MATERIALIZADA e INTEGRADA à `main` pelo PR #86** (**MERGED**) — commit funcional
+    `b2b11e2465c7f332747a806c80b629e995f0f5a6`, merge
+    `9bf68b8fece9ea66c74509490ddf6e02a0aa6f31`, branch de origem
+    `feat/c-response-index-loader`, base `bb5a58144ead6323e1b6271511a9d9e98295f440`. Arquivos:
+    **exclusivamente** `src/casa77_sdr/response_index_load.py` (**novo**, **+133 / −0**),
+    `tests/test_response_index_load.py` (**novo**, **+953 / −0**) e
+    `tests/test_response_index.py` (**modificado**, **+0 / −5**) — **três arquivos**,
+    **1086 adições / 5 remoções**. **Entrega FUNCIONAL**: **passa a ser o marco funcional** da
+    `main`, **sem numeração de subetapa** — a **3B.7** continua a última numerada e a **3B.8
+    NÃO EXISTE**. **Nenhuma nomenclatura normativa `E2` foi criada.**
+    **O que foi materializado**: **`IndiceIlegivel`**; **`carregar_indice(path: str | Path)`**
+    como **fronteira pública única**, com **caminho sempre explícito** e **sem default** —
+    **sem caminho padrão, sem descoberta automática, sem glob e sem variável de ambiente**;
+    leitura **somente em UTF-8** e **estritamente somente leitura**, sem criar, escrever, mover
+    ou remover arquivo; análise baseada **exclusivamente** em **`yaml.SafeLoader`**, por
+    subclasse privada que **altera apenas a construção de mapeamento** e **não registra
+    construtor, não amplia tag e não relaxa restrição de segurança** — tag insegura continua
+    recusada pelo próprio analisador seguro; **rejeição *fail-closed* de chave YAML
+    duplicada**, aplicada **por mapeamento** — chaves iguais em mapeamentos irmãos continuam
+    válidas — e em **qualquer nível**; a **taxonomia fechada de ilegibilidade**
+    **`arquivo_ausente`**, **`leitura_falhou`**, **`codificacao_invalida`**,
+    **`sintaxe_invalida`** e **`chave_duplicada`**, com mensagem de **categoria e caminho** que
+    **nunca ecoa o conteúdo do arquivo, o valor recebido ou o texto bruto do analisador** — a
+    causa técnica fica **encadeada em `__cause__`**; a **separação estrita entre artefato
+    ILEGÍVEL e estrutura INVÁLIDA**; a **delegação integral** de toda a forma a
+    **`validar_indice(...)`**, com **`IndiceInvalido` propagando INTACTA** — sem captura,
+    reembalagem, tradução de categoria ou duplicação de regra —, de modo que raiz `None`,
+    lista ou escalar **chega ao validador** e é rejeitada pela regra já existente de **E1**; e
+    **zero normalização, zero valor padrão e zero *fallback*** depois da análise, devolvendo a
+    estrutura tal como o analisador a produziu. O módulo **não abre fonte comercial paralela**:
+    seus únicos *imports* são `pathlib`, `typing`, `yaml` e `casa77_sdr.response_index`.
+    **Correção de teste legado incluída na mesma entrega**: o teste
+    **`test_indice_real_continua_inexistente`** foi **removido** de
+    `tests/test_response_index.py`. Motivo: a inexistência do índice era **evidência temporária
+    de escopo da `E1`**, não **invariante permanente** — mantê-lo bloquearia a própria
+    materialização futura de `C`. **A remoção NÃO criou o índice**, que **continua
+    INEXISTENTE**, verificado por comando nesta reconciliação. Nenhum outro teste daquele
+    arquivo foi alterado, e **`src/casa77_sdr/response_index.py` permaneceu inalterado**.
+    **Baseline funcional passa a `1436 passed` / Python 3.14.5** — delta **+62** sobre os
+    **`1374 passed`** do PR #84, decomposto em **+63** do arquivo direcionado novo e **−1** da
+    remoção acima.
+    **O que NÃO foi materializado, e continua fora**: a **criação do índice real** —
+    `knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE** —; a **conversão do
+    Markdown**; *templates* e *bindings* físicos; a **bijeção 37/37**; **C-15**; a
+    **renderização**; a **aplicação de formatos**; a **avaliação de `ASSERTIVA` contra dados
+    reais**; **R2**; **S2-D8**; **`N-b-RES2`**; o **`OrquestradorMotor`**; a **escolha ou
+    integração de calendário**; o **LLM**; e a **3B.8**. **CARREGAR NÃO É MATERIALIZAR `C`**:
+    `C`, como **entrega completa do índice estruturado**, **continua ARBITRADA / NÃO
+    MATERIALIZADA**. Continuam inalterados: **`C-A2-N9`**, **`C-A2-N10`**, **`C-A2-N11`
+    (16/16)** e **`C-A2-N12`** = **CUMPRIDAS**; **`R2` NÃO MATERIALIZADA**; **`S2-D8` ARBITRADA
+    / NÃO MATERIALIZADA**; **`N-b-RES2` ABERTO**; **`OrquestradorMotor` NÃO IMPLEMENTADO**;
+    **3B.8 INEXISTENTE**; e **`Q2`–`Q5` NÃO RESOLVIDAS**. **Os itens 73 e 74 acima permanecem
+    corretos como registro do momento em que foram escritos** — quando o marco funcional era o
+    do PR #84 e a baseline era **`1374 passed`** — e são **superados, quanto ao estado
+    corrente, por este item e pelo 76**.
+76. **A presente entrega é EXCLUSIVAMENTE a reconciliação documental de
+    `docs/00-estado-atual.md` após o merge do PR #86.** Base reconciliada:
+    `9bf68b8fece9ea66c74509490ddf6e02a0aa6f31`. Ela altera **exclusivamente este documento** e
+    **não altera código, testes, `docs/02`, `docs/03`, `docs/04`, `docs/05`, `docs/06`,
+    `docs/07`, `docs/08`, `knowledge/**` nem `prompts/**`**. Como a reconciliação anterior,
+    esta **EXECUTOU testes** — em modo de **verificação do estado real pós-merge**, **sem
+    alterar arquivo algum de código ou de teste**:
+    `./.venv/Scripts/python.exe -m pytest tests/test_response_index.py` → **`158 passed`**;
+    `./.venv/Scripts/python.exe -m pytest tests/test_response_index_load.py` →
+    **`63 passed`**; e `./.venv/Scripts/python.exe -m pytest` → **`1436 passed`**, em
+    **Python 3.14.5**, com **zero failures e zero errors**. Essas contagens **coincidem** com
+    as registradas pela PR #86 e a coincidência foi **verificada, não presumida**. **Nada é
+    materializado aqui**, **nenhuma numeração nova é criada** e a **3B.8 continua não
+    existindo**. **A PRÓXIMA MICROENTREGA FUNCIONAL DE `C` NÃO FOI ESCOLHIDA NEM INICIADA**:
+    sua definição **depende de nova orquestração/auditoria do GPT**. Em particular, **não se
+    afirma aqui que o próximo passo seja criar o índice** — nem essa nem qualquer outra
+    pendência é eleita: nem o restante de **`C`**, nem **R2**, nem **S2-D8**, nem
+    **`N-b-RES2`**, nem o **produtor LLM**, nem a **integração da etapa 4**, nem a **integração
+    da etapa 13**, nem o **`OrquestradorMotor`**. **Esta é a única reconciliação pós-PR #86**:
+    nenhuma "reconciliação da reconciliação" será criada.
 
 ## Arbitragens
 
@@ -2225,7 +2362,7 @@ já alcançou a `main`.
 | AJ2 | **Origem semântica do assunto de `PerguntaComercial`** (`docs/07-arquitetura-motor-respostas.md` §6.3, §8.2 e §12, item 20) | **ARBITRADA / MATERIALIZADA na fronteira determinística.** Micro-arbitragem **exclusivamente documental** que **ESTENDE FORMALMENTE N-b**: `PerguntaComercial` passa conceitualmente de **dois** para **três** campos, com **`assunto`** obrigatório do enum fechado **`AssuntoComercial`** (**54** valores). **Não cria componente, estado, evento, transição, condição, critério, pendência nem subetapa**, e **não implementa código nem altera testes** — `src/`, `tests/`, `knowledge/` e `prompts/` permanecem **fora** dela. **Não cria marco funcional.** **À época da arbitragem o delta NÃO estava materializado** e o **PR #55 era o último funcional**; o delta foi **materializado depois**, pelo **PR #61**, na **fronteira determinística** (`docs/07` §6.3, **M-AJ2-1**–**M-AJ2-9**). Escopo abaixo | **INTEGRADA À `main` pelo PR #58** — commit documental `2dea157abee04407791ade56017b6fe159e91c74`, merge `111e5c31826ba839ff4e0599b45bc98d34620128`, branch de origem `docs/aj2-assunto-pergunta-comercial`. Entrega **exclusivamente documental**, em `docs/07-arquitetura-motor-respostas.md` (§6.3, §8.2 e §12, item 20) e `docs/00-estado-atual.md` — **402 adições, 18 remoções**. Base: `89458bb7efea23d8f7889a0b5ab076a1d0c7f130`. **Aquela integração era documental e não materializava o delta.** **MATERIALIZAÇÃO FUNCIONAL POSTERIOR pelo PR #61** — commit funcional `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`, merge `5a722a5cc648149330362434694e7e76a40c1b57`, branch `feat/materializar-aj2-assunto`, **762 adições / 28 remoções**, baseline **`1215 passed`** / Python 3.14.5 |
 | C-A1 | **Fechamento do contrato de materialização de C** (`docs/07-arquitetura-motor-respostas.md` §2.3 e §12, item 19) | **ARBITRADA DOCUMENTALMENTE.** Micro-arbitragem **exclusivamente documental** e **posterior** a **C**, que **refina a leitura futura** do contrato de materialização: equivalência de *template* **`C-15a`–`C-15e`**, refinamentos de **C-6** (`inteiro_agrupado`, `simbolo_moeda`, `hora`), **convenção final do formato `lista`**, preservação de **C-5** com **sete rejeições explícitas**, **proibição de seleção posicional** em coleção, **unidade de bijeção no fragmento emitível**, **canonicalização e migração de status**, **prioridade de modelagem**, regra de **prosa não duplicada**, **auditoria obrigatória de consumidores**, alvos de modelo **`MD-1`–`MD-18`** — com **`MD-3`** e **`MD-16`** **REMOVIDOS** — e a matriz **`G1`–`G14`**. **`C-1`–`C-14` permanecem registro histórico e não são reescritas.** **Não cria componente, responsabilidade, condição, estado, evento, transição, ação, critério, enum, erro, cenário nem subetapa**, e **não implementa código nem altera testes** — `src/`, `tests/`, `knowledge/` e `prompts/` permanecem **fora** dela. **Não cria marco funcional.** **Não cria o índice, não altera o YAML, não converte respostas em *templates* e não muda status real.** **C permanece ARBITRADA / NÃO MATERIALIZADA**; **C-A2** fica **ABERTA**. Escopo abaixo. **`C-A1-M4` — auditoria read-only de consumidores — foi EXECUTADA e APROVADA depois**, contra `origin/main` `118054575e7f7560a1c37ca430bdedd15eddc817`, **sem executar alvo `MD` algum** (Próxima ação, itens 36 e 37) | Entrega **exclusivamente documental**, em `docs/07-arquitetura-motor-respostas.md` (§2.3 e §12, item 19) e `docs/00-estado-atual.md`. Branch de origem: `docs/arbitragem-c-a1`. Base: `4ba1cdfe4397e90692efdec06357cb079e44ca8a`. **Evidência de `C-A1-M4`**: relatório sanitizado **não versionado**, fora do repositório, SHA-256 `cdca7d40ce672c924bf2f13318f51e2a6dd87990abe56c159b1de747bbc51e1e` |
 | C-A2 | **Fatos e conteúdo humanos residuais da materialização de C** (`docs/07-arquitetura-motor-respostas.md` §2.3, bloco **"Micro-arbitragem C-A2"**, e §12, item 19 — nota temporal) | **ARBITRADA DOCUMENTALMENTE.** Micro-arbitragem **exclusivamente documental** e **posterior** a **C** e a **C-A1**. **Fecha** os **fatos humanos `A1`–`A4`**; **registra estruturalmente** o **conteúdo humano `B1`–`B16`** como **APROVADO HUMANAMENTE / AINDA NÃO APLICADO**, **sem o corpo literal de texto algum**; fixa a **decisão `B16`** — `R05` passa a ter os fragmentos `F1`, `F2` e `F3`, **permanecendo um único `Rxx`** —; refina o *binding* com **`origem` OBRIGATÓRIA**, **sem valor padrão**, do vocabulário fechado **`YAML`** / **`RUNTIME_AUTORITATIVO`**, **ausência = FAIL-CLOSED** e **exatamente um referente**; fecha o **vocabulário runtime** (`consulta_calendario_valida`, `data_disponivel`) **somente por `ASSERTIVA`**; registra o **escopo do fato runtime**; fecha a tabela **`MD-1`–`MD-20`** — **`MD-1` SUPERADO**, **`MD-3`/`MD-16` REMOVIDOS**, **`MD-18` GENERALIZADO**, **`MD-19`/`MD-20` NOVOS**, **`MD-20` MÍNIMO** —; e enumera **`FE-1`–`FE-14`**, com **`FE-11` dividida** em **`FE-11a`** e **`FE-11b`**. **`C-1`–`C-14` e todo o bloco `C-A1` permanecem registro histórico e não são reescritos.** **Não cria componente, responsabilidade, estado, evento, transição, condição de ciclo, motivo de `E09`, critério, enum, erro, cenário nem subetapa**, e **não implementa código nem altera testes** — `src/`, `tests/`, `knowledge/` e `prompts/` permanecem **fora** dela. **Não cria marco funcional.** **Não aplica texto algum, não executa alvo `MD`, não aplica `FE` e não escolhe provedor de calendário.** **C permanece ARBITRADA / NÃO MATERIALIZADA.** Escopo abaixo | **ENTREGA 1 — documental**, em `docs/07-arquitetura-motor-respostas.md` (§2.3 e §12, item 19) e `docs/00-estado-atual.md`. Branch de origem: `docs/arbitragem-c-a2`. Base: `a60c57dbf029913a623ad87bb24795fe333cdc3f`. **INTEGRADA À `main` pelo PR #64** — commit `294a11a1c170815063764f1d49ae0d831b72d359`, merge `25b867f1c6cb4d2d00cd49ea60361c82a6e98f6f`. **A ENTREGA 2 — aplicação do conteúdo e das `FE` — foi executada depois**, em entrega própria, na branch `docs/aplicar-conteudo-c-a2`: **conteúdo B APLICADO à fonte de respostas**, **corpus 37 fragmentos / 30 `Rxx`**, **`FE-1`–`FE-10`, `FE-11a` e `FE-12`–`FE-14` APLICADAS** e **`FE-11b` RETIDA atrás de `C-A1-M4`**, **sem alterar `knowledge/casa77.yaml`**, **sem executar alvo `MD`** e **sem materializar C**. **A ENTREGA 2 está INTEGRADA À `main` pelo PR #65** — commit `c2883d2fad32638d1e15a616a2b37f577abf3e42`, merge `fbe768a14457241245c73f4cbe8ef93e869e7fb3`, **seis** arquivos, **219 adições / 74 remoções**. **Documental/comportamental**: **não altera `src/` nem `tests/`** e **não cria marco funcional** |
-| C | **Contrato do índice estruturado de respostas aprovadas** (`docs/07-arquitetura-motor-respostas.md` §2.3 e §12, item 19) | **ARBITRADA / NÃO MATERIALIZADA.** Fecha **documentalmente** o contrato do futuro índice `knowledge/indice-respostas-aprovadas.yaml`, **sem criá-lo** e **sem criar componente, estado, evento, transição, condição, critério, pendência ou subetapa**. **Não implementa código, não converte `knowledge/respostas-aprovadas.md`, não remove status do Markdown e não altera `knowledge/`, `src/` ou `tests/`** — esses diretórios permanecem **fora** desta arbitragem. **Não cria marco funcional.** A **materialização do índice permanece futura** e **não é autorizada** por ela. **PRIMEIRA MICROENTREGA FUNCIONAL POSTERIOR — `E1`**: o **validador estrutural fail-closed** do **futuro** índice foi **materializado e integrado depois**, pelo **PR #84**, em `src/casa77_sdr/response_index.py`. **`E1` NÃO materializa `C`**: ela valida a **forma** de uma estrutura já parseada, **sem criar o índice**, **sem loader**, **sem ler `knowledge/**`**, **sem converter o Markdown**, **sem bindings reais**, **sem bijeção 37/37**, **sem C-15**, **sem renderizar** e **sem avaliar `ASSERTIVA` contra dados reais**. **`C` permanece ARBITRADA / NÃO MATERIALIZADA** e o índice `knowledge/indice-respostas-aprovadas.yaml` **permanece INEXISTENTE**. Escopo abaixo | Entrega **exclusivamente documental**, em `docs/07-arquitetura-motor-respostas.md` (§2.3 e §12, item 19) e `docs/00-estado-atual.md`. Branch de origem: `docs/arbitragem-c-indice-respostas`. **MICROENTREGA FUNCIONAL POSTERIOR `E1` pelo PR #84** — commit funcional `02f1dd6621c31b90789c646bd8826e685f9ee019`, merge `95ed2ce4e9c54f9bdfb7b3f820e6f9e065cde24e`, branch `feat/c-e1-response-index-validator`, **dois arquivos novos**, **1343 adições / 0 remoções**, baseline **`1374 passed`** / Python 3.14.5. **Aquela integração materializa `E1`, NÃO `C`** |
+| C | **Contrato do índice estruturado de respostas aprovadas** (`docs/07-arquitetura-motor-respostas.md` §2.3 e §12, item 19) | **ARBITRADA / NÃO MATERIALIZADA.** Fecha **documentalmente** o contrato do futuro índice `knowledge/indice-respostas-aprovadas.yaml`, **sem criá-lo** e **sem criar componente, estado, evento, transição, condição, critério, pendência ou subetapa**. **Não implementa código, não converte `knowledge/respostas-aprovadas.md`, não remove status do Markdown e não altera `knowledge/`, `src/` ou `tests/`** — esses diretórios permanecem **fora** desta arbitragem. **Não cria marco funcional.** A **materialização do índice permanece futura** e **não é autorizada** por ela. **PRIMEIRA MICROENTREGA FUNCIONAL POSTERIOR — `E1`**: o **validador estrutural fail-closed** do **futuro** índice foi **materializado e integrado depois**, pelo **PR #84**, em `src/casa77_sdr/response_index.py`. **`E1` NÃO materializa `C`**: ela valida a **forma** de uma estrutura já parseada, **sem criar o índice**, **sem loader**, **sem ler `knowledge/**`**, **sem converter o Markdown**, **sem bindings reais**, **sem bijeção 37/37**, **sem C-15**, **sem renderizar** e **sem avaliar `ASSERTIVA` contra dados reais**. **SEGUNDA MICROENTREGA FUNCIONAL POSTERIOR — carregador *fail-closed***: integrado pelo **PR #86**, em `src/casa77_sdr/response_index_load.py`, expondo `IndiceIlegivel` e `carregar_indice(path)`. Ele **lê e recusa** um artefato **explicitamente apontado** — UTF-8, `yaml.SafeLoader`, chave duplicada recusada —, **delega toda a forma** a `validar_indice` e **não conhece caminho implícito** para o índice. **Carregar também NÃO materializa `C`.** **`C` permanece ARBITRADA / NÃO MATERIALIZADA** e o índice `knowledge/indice-respostas-aprovadas.yaml` **permanece INEXISTENTE**. Escopo abaixo | Entrega **exclusivamente documental**, em `docs/07-arquitetura-motor-respostas.md` (§2.3 e §12, item 19) e `docs/00-estado-atual.md`. Branch de origem: `docs/arbitragem-c-indice-respostas`. **MICROENTREGA FUNCIONAL POSTERIOR `E1` pelo PR #84** — commit funcional `02f1dd6621c31b90789c646bd8826e685f9ee019`, merge `95ed2ce4e9c54f9bdfb7b3f820e6f9e065cde24e`, branch `feat/c-e1-response-index-validator`, **dois arquivos novos**, **1343 adições / 0 remoções**, baseline **`1374 passed`** / Python 3.14.5. **Aquela integração materializa `E1`, NÃO `C`**. **SEGUNDA MICROENTREGA FUNCIONAL POSTERIOR pelo PR #86** — commit funcional `b2b11e2465c7f332747a806c80b629e995f0f5a6`, merge `9bf68b8fece9ea66c74509490ddf6e02a0aa6f31`, branch `feat/c-response-index-loader`, **três arquivos**, **1086 adições / 5 remoções**, baseline **`1436 passed`** / Python 3.14.5. **Aquela integração materializa o CARREGADOR, NÃO `C`** |
 | AJ1 | **Representação e canonicalização determinística de N-b** (`docs/07-arquitetura-motor-respostas.md` §6.3, §8.2 e §12) | **APROVADA — INTEGRADA À MAIN.** Micro-arbitragem **exclusivamente documental** que fecha a **representação/canonicalização** da `Interpretacao` **antes** de qualquer materialização em código, **sem criar componente, estado, evento, transição, critério, campo, erro, cenário ou subetapa**. Aprovada pelo GPT e **integrada à `main`** pelo **PR #53** (**MERGED**). **AJ1 não reabriu N-b, não a implementou, não tornou a etapa 4 funcional e não criou produtor LLM** — seu contrato foi **materializado depois**, na parte determinística, pelo **PR #55**. **N-b permanece ARBITRADA e PARCIALMENTE MATERIALIZADA.** Escopo resumido abaixo | PR #53 — commit documental `d1137cf67c42eae37ec8e837a56350da6c7fbabe`, merge `2e9df1f4dfcd11903d410ba7a42ba12d86eb2b15`, branch de origem `docs/nb-aj1-canonicalizacao`. Alterou **exclusivamente** `docs/07-arquitetura-motor-respostas.md` — **156 adições, 1 remoção** |
 | N-b | **Contrato global da interpretação da etapa 4** — a `Interpretacao` (`docs/07-arquitetura-motor-respostas.md` §6.3) | **APROVADA — INTEGRADA À MAIN.** Fecha **documentalmente** o contrato da **saída da etapa 4**, **sem criar componente, estado, evento, transição, critério ou campo**. Arbitragem documental **aprovada pelo GPT** e **integrada à `main`** pelo **PR #51** (**MERGED**). **Não implementa código** e **não cria marco funcional.** **ARBITRADA e PARCIALMENTE MATERIALIZADA**: a **fronteira determinística** foi integrada pelo **PR #55** (`src/casa77_sdr/interpretation.py`); o **produtor não determinístico / LLM**, **N-b-RES2** e a **integração operacional da etapa 4** continuam pendentes, e o `OrquestradorMotor` continua não implementado. Escopo resumido abaixo | PR #51 — commit documental `6f1cb6fe5ef12096117f1292225a761af5889025`, merge `85dbc709799f30c59a458c3ea8725fc072a15364`, branch de origem `docs/arbitragem-nb-interpretacao`. Alterou **exclusivamente** `docs/07-arquitetura-motor-respostas.md` — **365 adições, 8 remoções** |
 | N-a | **Política de produção do conjunto elegível da etapa 3** (`docs/07-arquitetura-motor-respostas.md`) | **APROVADA — INTEGRADA À MAIN.** Fecha **documentalmente** a política de elegibilidade e recência que a etapa 3 aplica sobre os registros recuperados, **sem criar componente, estado, evento, transição ou critério**. Arbitragem documental **aprovada pelo GPT** e **integrada à `main`** pelo **PR #31** (**MERGED**). **Não implementa código**, **não implementa a persistência**, **não implementa o `OrquestradorMotor`** e **não cria marco funcional.** Escopo abaixo. | PR #31 — commit documental `43774af58877e3de3ecfda32cf0384a9fd047693`, merge `e8425410a7ced47c8d186bfceeea1cdd70f73b0c`, branch de origem `docs/arbitragem-na-contexto-elegivel`; alterações **exclusivamente** em `docs/07` (`+247 / -12`: §5 etapas 3 e 13, §6.2 subseção N-a completa, §7.1 S9–S11 e classe I, §12 item 11 e novo item 18) |
@@ -2509,6 +2646,25 @@ está MATERIALIZADA e INTEGRADA**, o índice `knowledge/indice-respostas-aprovad
 ARBITRADA / NÃO MATERIALIZADA**. **`E1` materializada NÃO é `C` materializada.** Não confundir
 esta microentrega com a **pendência homônima `E1`** — conversa × atendimento × lead —, que é
 **anterior, distinta e continua ABERTA**.
+
+**Nota temporal adicional — segunda microentrega funcional, posterior (PR #86).** Depois da
+`E1`, o **carregador *fail-closed*** do futuro índice foi **materializado e integrado à `main`**
+pelo **PR #86** — commit funcional `b2b11e2465c7f332747a806c80b629e995f0f5a6`, merge
+`9bf68b8fece9ea66c74509490ddf6e02a0aa6f31` —, em `src/casa77_sdr/response_index_load.py` e
+`tests/test_response_index_load.py`, com correção localizada em `tests/test_response_index.py`.
+**Sem nomenclatura normativa `E2`.** Ele expõe **`IndiceIlegivel`** e
+**`carregar_indice(path: str | Path)`**, lê **somente em UTF-8** e **somente para leitura**,
+analisa **exclusivamente** com `yaml.SafeLoader`, **recusa chave duplicada** *fail-closed*,
+**delega integralmente** a forma a `validar_indice` — com **`IndiceInvalido` propagando
+intacta** — e **não normaliza, não completa e não inventa valor padrão**. **O caminho é sempre
+explícito**: ele **não conhece caminho padrão, descoberta, glob ou variável de ambiente**, e
+portanto **não descobre o arquivo nem resolve automaticamente o caminho canônico** — quem
+carrega **informa o caminho**. **CARREGAR NÃO É MATERIALIZAR `C`**: o índice
+`knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE** e **`C`, como entrega
+completa do índice estruturado, continua ARBITRADA / NÃO MATERIALIZADA**. A mesma entrega
+**removeu** de `tests/test_response_index.py` o teste `test_indice_real_continua_inexistente`,
+porque a inexistência do índice era **evidência temporária da `E1`**, não invariante
+permanente — **a remoção não criou o índice**.
 
 Contrato aprovado:
 
@@ -2811,7 +2967,7 @@ Registradas aqui como estado, não resolvidas nesta entrega.
 | # | Pendência | Antes de quê precisa ser arbitrada |
 |---|---|---|
 | B | Colisão conceitual de nome: `RegistroAtendimento` já existe em `src/casa77_sdr/persistence.py` como dataclass de transporte, enquanto `docs/07` usa o mesmo nome para uma responsabilidade futura | implementar o componente `RegistroAtendimento` descrito em `docs/07` |
-| C | Contrato estruturado, legível por máquina, ligando as respostas aprovadas (`Rxx`) aos campos do YAML. **ARBITRADA / NÃO MATERIALIZADA.** **CONTRATO: ARBITRADO** — o contrato documental estruturado do futuro índice está **fechado e aprovado** em `docs/07` §2.3, registrado em `docs/07` §12, item 19. **MATERIALIZAÇÃO: NÃO EXISTE** — o arquivo `knowledge/indice-respostas-aprovadas.yaml` **continua inexistente**; `knowledge/respostas-aprovadas.md` **permanece Markdown** e foi **atualizado apenas como fonte de redação aprovada pela Entrega 2**, **sem conversão em *template* ou índice**; **nenhum status foi removido do Markdown**; e não há *parser* nem *renderer*. **A partir do PR #84 existe um VALIDADOR ESTRUTURAL** — a microentrega **`E1`**, `src/casa77_sdr/response_index.py` —, que valida a **forma** de uma estrutura já parseada que pretende ser o índice, **sem criar o índice**, **sem lê-lo**, **sem loader** e **sem ler `knowledge/**`. **A existência do validador NÃO materializa C**: ele valida a forma de algo que **ainda não existe**. **Essa atualização de conteúdo NÃO materializa C.** **C continua aberta SOMENTE quanto à materialização.** **S2-D8 é pendência separada**, também **ARBITRADA / NÃO MATERIALIZADA** desde a arbitragem S2-D8 (`docs/07` §4.4.1), e também aberta **somente quanto à materialização** | **materializar** o índice `knowledge/indice-respostas-aprovadas.yaml` pelo contrato de `docs/07` §2.3 — **agora refinado por C-A1**, que fecha equivalência de *template*, formatos, convenção de `lista`, seleção em coleção, unidade de bijeção, migração de status e os alvos `MD-x` — e, só então, implementar `ValidadorConsistenciaBase` e, em cascata, `SeletorFatos` e `ValidadorResposta`. **`C-A2` está ARBITRADA DOCUMENTALMENTE**: os fatos `A1`–`A4` ficam **FECHADOS** e o conteúdo humano `B1`–`B16` foi **APROVADO HUMANAMENTE** e, pela **Entrega 2**, **APLICADO À FONTE DE RESPOSTAS** — **corpus 37 fragmentos / 30 `Rxx`**, com **`FE-1`–`FE-10`, `FE-11a` e `FE-12`–`FE-14` APLICADAS** e **`FE-11b` RETIDA atrás de `C-A1-M4`**. **A aplicação do conteúdo NÃO materializa C**: o índice continua inexistente, nenhuma resposta virou *template*, nenhum status saiu do Markdown, **`knowledge/casa77.yaml` não foi alterado** e **nenhum alvo `MD` foi executado** |
+| C | Contrato estruturado, legível por máquina, ligando as respostas aprovadas (`Rxx`) aos campos do YAML. **ARBITRADA / NÃO MATERIALIZADA.** **CONTRATO: ARBITRADO** — o contrato documental estruturado do futuro índice está **fechado e aprovado** em `docs/07` §2.3, registrado em `docs/07` §12, item 19. **MATERIALIZAÇÃO: NÃO EXISTE** — o arquivo `knowledge/indice-respostas-aprovadas.yaml` **continua inexistente**; `knowledge/respostas-aprovadas.md` **permanece Markdown** e foi **atualizado apenas como fonte de redação aprovada pela Entrega 2**, **sem conversão em *template* ou índice**; **nenhum status foi removido do Markdown**; e não há *renderer*, *template* físico nem *binding* físico. **A partir do PR #84 existe um VALIDADOR ESTRUTURAL** — a microentrega **`E1`**, `src/casa77_sdr/response_index.py` —, que valida a **forma** de uma estrutura já parseada que pretende ser o índice, **sem criar o índice**, **sem lê-lo**, **sem loader** e **sem ler `knowledge/**`. **A partir do PR #86 existe também um CARREGADOR *fail-closed*** — `src/casa77_sdr/response_index_load.py` —, que lê e recusa um artefato **explicitamente apontado**, delegando toda a forma ao validador. **Nem o validador nem o carregador materializam C**: um valida a forma de algo que **ainda não existe**, e o outro só sabe **ler** esse algo **quando o caminho lhe é dado explicitamente**: `carregar_indice(...)` recebe o caminho como argumento, **sem caminho implícito ou padrão, sem descobrir o arquivo e sem resolver automaticamente o caminho canônico**. **Essa atualização de conteúdo NÃO materializa C.** **C continua aberta SOMENTE quanto à materialização.** **S2-D8 é pendência separada**, também **ARBITRADA / NÃO MATERIALIZADA** desde a arbitragem S2-D8 (`docs/07` §4.4.1), e também aberta **somente quanto à materialização** | **materializar** o índice `knowledge/indice-respostas-aprovadas.yaml` pelo contrato de `docs/07` §2.3 — **agora refinado por C-A1**, que fecha equivalência de *template*, formatos, convenção de `lista`, seleção em coleção, unidade de bijeção, migração de status e os alvos `MD-x` — e, só então, implementar `ValidadorConsistenciaBase` e, em cascata, `SeletorFatos` e `ValidadorResposta`. **`C-A2` está ARBITRADA DOCUMENTALMENTE**: os fatos `A1`–`A4` ficam **FECHADOS** e o conteúdo humano `B1`–`B16` foi **APROVADO HUMANAMENTE** e, pela **Entrega 2**, **APLICADO À FONTE DE RESPOSTAS** — **corpus 37 fragmentos / 30 `Rxx`**, com **`FE-1`–`FE-10`, `FE-11a` e `FE-12`–`FE-14` APLICADAS** e **`FE-11b` RETIDA atrás de `C-A1-M4`**. **A aplicação do conteúdo NÃO materializa C**: o índice continua inexistente, nenhuma resposta virou *template*, nenhum status saiu do Markdown, **`knowledge/casa77.yaml` não foi alterado** e **nenhum alvo `MD` foi executado** |
 
 As pendências **B e C permanecem inalteradas** pelas arbitragens S2, S3, R, R-H e R-I e
 pela implementação funcional da **3B.7** (PR #29). **B continua integralmente aberta.**
