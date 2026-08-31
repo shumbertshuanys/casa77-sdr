@@ -4,7 +4,36 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-08-31 (**reconciliação documental após o merge do PR #86**). A **PR #86**
+Atualizado em: 2026-08-31 (**micro-arbitragem documental da representação canônica de
+`C-15b`**). Entrega **exclusivamente documental**, em `docs/07-arquitetura-motor-respostas.md`
+— bloco **"Representação canônica de entrada para `C-15b`"**, logo após `C-15e` — e neste
+documento. Ela **fecha a REPRESENTAÇÃO DE ENTRADA** sobre a qual a equivalência textual de
+`C-15` será futuramente julgada, adotando **texto canônico já extraído**: duas `str` em
+representação canônica, quebra suave como `LF` isolado convertido em um único espaço,
+`\n\n` como fronteira de parágrafo real, **somente `LF`** como terminador admitido, e três
+desfechos distintos — **NÃO DETERMINÁVEL**, **NÃO EQUIVALENTE** e **EQUIVALENTE**. Registra
+como **ressalva normativa** que, **fora do domínio canônico, não existe garantia de correção
+do veredito de equivalência**. **`C-15a`–`C-15e` NÃO foram renumeradas nem reescritas** e
+**nenhum identificador normativo novo foi criado**. **Ela NÃO cria marco funcional**: **não
+implementa o comparador**, **não cria módulo, teste, extrator, *renderer* ou índice**, **não
+faz *parsing* Markdown** e **não altera `src/`, `tests/`, `knowledge/**` ou `prompts/**`**. O
+**último marco funcional continua o PR #86** — commit funcional
+`b2b11e2465c7f332747a806c80b629e995f0f5a6`, merge
+`9bf68b8fece9ea66c74509490ddf6e02a0aa6f31` —, a **baseline permanece `1436 passed`** /
+Python 3.14.5 — **reexecutada e confirmada nesta entrega, antes e depois da edição** —, a
+**3B.7** continua a última subetapa numerada e a **3B.8 continua INEXISTENTE**. **`C` continua
+ARBITRADA / NÃO MATERIALIZADA como entrega completa**, o índice
+`knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**, **`R2` continua NÃO
+MATERIALIZADA**, **`S2-D8` continua ARBITRADA / NÃO MATERIALIZADA**, **`N-b-RES2` continua
+ABERTO** e o **`OrquestradorMotor` continua NÃO IMPLEMENTADO**. A **candidata seguinte
+continua sendo a futura terceira microentrega funcional de `C` — a equivalência textual —, que
+NÃO é materializada aqui**; com esta arbitragem ela passa a ter **contrato de entrada
+fechado**. **Nenhuma nomenclatura `E2` é criada.** A **próxima etapa**, caso esta arbitragem
+seja integrada, é o **planejamento/mandato técnico da equivalência textual**, **sujeito a nova
+auditoria do GPT**.
+
+**Atualização anterior — 2026-08-31 (reconciliação documental após o merge do PR #86),
+preservada como registro daquele momento.** A **PR #86**
 foi **auditada, autorizada humanamente e integrada à `main`** — commit funcional
 `b2b11e2465c7f332747a806c80b629e995f0f5a6`, merge `9bf68b8fece9ea66c74509490ddf6e02a0aa6f31`,
 branch de origem `feat/c-response-index-loader`. Ela materializou a **segunda microentrega
@@ -2348,7 +2377,83 @@ a **pendência residual continua aberta**.
     pendência é eleita: nem o restante de **`C`**, nem **R2**, nem **S2-D8**, nem
     **`N-b-RES2`**, nem o **produtor LLM**, nem a **integração da etapa 4**, nem a **integração
     da etapa 13**, nem o **`OrquestradorMotor`**. **Esta é a única reconciliação pós-PR #86**:
-    nenhuma "reconciliação da reconciliação" será criada.
+    nenhuma "reconciliação da reconciliação" será criada. **Aquela reconciliação foi integrada
+    depois pelo PR #87** — commit documental `fa1d91e12b58d1ed658c70bbeb8894dd8c6793ca`, merge
+    `9cd6d4b029f6495dfb8b95db917c958da0fd9b2f`, branch de origem
+    `docs/reconciliar-estado-pos-pr86`, **exclusivamente** `docs/00-estado-atual.md`,
+    **213 adições / 57 remoções**. **Documental**: **não alterou o marco funcional**.
+77. **A presente entrega é a MICRO-ARBITRAGEM DOCUMENTAL DA REPRESENTAÇÃO CANÔNICA DE
+    `C-15b`.** Base: `9cd6d4b029f6495dfb8b95db917c958da0fd9b2f`. Ela é **exclusivamente
+    documental**, **posterior** a **C**, **C-A1**, **C-A2**, **C-A3** e **C-A4**, e vive em
+    `docs/07-arquitetura-motor-respostas.md`, no bloco **"Representação canônica de entrada
+    para `C-15b`"**, inserido **logo após `C-15e`**. **O que ela fecha** é **a REPRESENTAÇÃO DE
+    ENTRADA** sobre a qual a equivalência textual de `C-15` será futuramente julgada — a
+    decisão adotada é **texto canônico já extraído**: **(D1)** a unidade de entrada são **duas
+    `str` em representação canônica** — o **fragmento aprovado já extraído** e a **renderização
+    textual do mesmo fragmento** —, **sem DTO ou estrutura pública nova**, mantendo o
+    **fragmento inteiro** como unidade (`C-15c`, `C-A4-P1`); **(D2)** a separação entre
+    estrutura Markdown e conteúdo textual pertence **integralmente a uma futura fronteira de
+    extração**, que **ainda não existe**, de modo que a representação **chega pronta** e o
+    comparador **não** analisa Markdown, **não** identifica *blockquote*, *heading*, lista,
+    *code fence* ou indentação, **não** remove prefixo `>` e **não** extrai fragmento;
+    **(D3)** um **`LF` isolado**, não adjacente a outro `LF`, é **quebra suave** por
+    **convenção da representação** — e **não** por inferência de Markdown — e é convertido em
+    **exatamente um `U+0020`**, **sem colapsar** nenhum outro espaço; **(D4)** **exatamente
+    dois `LF`** são **fronteira canônica de parágrafo real** e são **preservados
+    literalmente**, enquanto **três ou mais `LF` consecutivos** são **NÃO CANÔNICOS** e devem
+    ser **recusados**, nunca reinterpretados; **(D5)** a representação admite **somente `LF`
+    (`U+000A`)** como terminador, sendo **NÃO CANÔNICOS** `CR`, `CRLF`, `U+2028`, `U+2029`,
+    `U+0085`, `U+000B` e `U+000C` — o comparador **recusa** e **não converte `CRLF` para
+    `LF`**; **(D6)** ficam fixados **três desfechos conceitualmente distintos** — **NÃO
+    DETERMINÁVEL** para violação mecanicamente detectável, que **não é `False`** e exige que o
+    chamador **pare ou escale**; **NÃO EQUIVALENTE** (`False`) quando ambos pertencem ao
+    domínio canônico e as normalizações diferem, acionando **`C-15d`**; e **EQUIVALENTE**
+    (`True`) quando as normalizações são exatamente iguais, satisfazendo **`C-15a(2)`**; e
+    **(D7)** a lista de **violações mecanicamente detectáveis** — terminador proibido, `LF` na
+    borda inicial, `LF` na borda final, espaço ou tab imediatamente antes ou depois de `LF`, e
+    três ou mais `LF` consecutivos. **Os rótulos `D1`–`D7` são locais daquele bloco e NÃO são
+    identificadores normativos novos de `C`.**
+    **RESSALVA NORMATIVA OBRIGATÓRIA**: a equivalência definida por **`C-15b`** **somente
+    possui garantia semântica** quando **ambos os insumos satisfazem a representação canônica**
+    e quando o **fragmento aprovado foi corretamente separado da estrutura Markdown pelo
+    produtor responsável**. A ausência de estrutura Markdown é **parcialmente pré-condição do
+    chamador** e **não pode ser integralmente verificada pelo comparador** sem torná-lo
+    *parser* Markdown. Portanto **fora do domínio canônico não existe garantia de correção do
+    veredito**, e produtores e consumidores **devem** satisfazer essa pré-condição antes de
+    usar o resultado para **`C-15d`** ou para a **migração de autoridade de status**
+    (`C-A1-ST6`–`C-A1-ST10`). **Nada é afirmado sobre impossibilidade de falso `True`**: isso
+    não é demonstrável para toda `str` e **não foi registrado**.
+    **Nomes ainda NÃO decididos**: módulo, função, assinatura, ordem de parâmetros, taxonomia
+    de exceção, mensagem de erro, comportamento para tipo não-`str` e ordem entre **NFC** e a
+    dobra de quebra suave — tudo pertence ao **mandato técnico posterior**.
+    **Evidência estrutural do corpus**, somente metadados, **sem reproduzir frase** e **sem
+    registrar *hash* de conteúdo**: **37** fragmentos emitíveis, **29** multilinha, **0**
+    parágrafos internos, **0** estruturas de lista/*heading*/bloco de código dentro dos
+    fragmentos, **0** *hard breaks* explícitos, **0** ocorrências de `CR`/`CRLF` e **37/37
+    compatíveis** com a representação canônica. As contagens de fragmento e parágrafo vêm da
+    auditoria read-only já registrada; a ausência de `CR`/`CRLF`, terminadores exóticos,
+    *hard break* e bloco de código foi **reverificada mecanicamente** sobre o blob versionado.
+    **Risco operacional registrado, não resolvido**: *checkouts* e ambientes podem materializar
+    terminações de linha distintas das do blob Git. **`.gitattributes` NÃO foi alterado**,
+    **nenhuma configuração de Git foi decidida** e **nada foi afirmado como universal ou
+    garantido**.
+    **`C-15a`–`C-15e` permanecem registro normativo intacto**: **não renumerados, não
+    reescritos**. **Esta arbitragem NÃO cria marco funcional**: **não implementa o comparador**,
+    **não cria módulo, teste, extrator, *renderer*, formato ou índice**, **não faz *parsing*
+    Markdown**, **não executa I/O**, **não resolve *binding***, **não decide candidatura de
+    fragmento**, **não decide migração de status**, **não materializa `C`, `R2` nem `S2-D8`**,
+    **não fecha `N-b-RES2`**, **não implementa o `OrquestradorMotor`** e **não escolhe
+    calendário**. **COMPARAR NÃO É MATERIALIZAR `C`.** O **último marco funcional continua o
+    PR #86** — commit `b2b11e2465c7f332747a806c80b629e995f0f5a6`, merge
+    `9bf68b8fece9ea66c74509490ddf6e02a0aa6f31` —, a **baseline permanece `1436 passed`** /
+    Python 3.14.5, **reexecutada e confirmada antes e depois da edição desta entrega**, a
+    **3B.7** continua a **última subetapa funcional numerada** e a **3B.8 NÃO EXISTE**.
+    **Nenhuma nomenclatura `E2` foi criada.** A **candidata seguinte continua sendo a futura
+    terceira microentrega funcional de `C` — a equivalência textual —, que NÃO é materializada
+    aqui**; com esta arbitragem ela passa a ter **contrato de entrada fechado**. A **próxima
+    etapa**, caso esta arbitragem seja integrada, é o **planejamento/mandato técnico da
+    equivalência textual**, **sujeito a nova auditoria do GPT** — e **nenhuma implementação é
+    autorizada por este documento**.
 
 ## Arbitragens
 
