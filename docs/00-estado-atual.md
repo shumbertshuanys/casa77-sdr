@@ -4,8 +4,53 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-09-03 (**micro-arbitragem documental `C-A5` — identidade física do
-fragmento emitível**). Esta entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera **somente**
+Atualizado em: 2026-09-03 (**Fase A2 — registro documental do mapeamento humano aprovado
+`C-A5-M5`, 37/37**). Esta entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera **somente**
+`docs/07-arquitetura-motor-respostas.md` e este documento, e **não altera código, testes,
+`knowledge/**` nem `prompts/**`**. O responsável humano **aprovou explicitamente** o
+mapeamento de identidade das **37 unidades físicas atuais**, **incluindo `R23/F2` como a
+unidade de decoração**, e a **tabela completa** foi registrada em `docs/07`, no bloco
+**"Registro pós-C-A5-M5 — mapeamento humano aprovado das 37 unidades"**, com estado
+**APROVADO HUMANAMENTE / REGISTRADO DOCUMENTALMENTE / NÃO APLICADO AO CORPUS**. O
+**corpus-base** do mapeamento é `knowledge/respostas-aprovadas.md`, **blob
+`d9f275454cb9f091a824292560d983d25f08c14e`**, que **permanece INALTERADO**. **Fechamento**:
+**37** unidades, **30 `Rxx`**, **24** de fragmento único e **6** multi-fragmento (`R05` = 3;
+`R09`, `R11`, `R12`, `R23`, `R25` = 2 cada); por base, **8 PRESERVAÇÃO NORMATIVA**, **1
+CONFIRMAÇÃO HUMANA EXPLÍCITA** e **28 DECISÃO HUMANA EXPLÍCITA** — **8 + 1 + 28 = 37**, com
+**zero unidade sem `id` aprovado**, **zero duplicata de `id` dentro do mesmo `Rxx`**
+(**`C-A5-I4`**, **C-2h**) e **todos os `id` conformes a `C-A5-I3`**. **Os 24 `Rxx` de
+fragmento único receberam `F1` por DECISÃO HUMANA EXPLÍCITA — NÃO por derivação posicional
+nem por serem únicos**; **`R09` recebeu `F1`/`F2` por decisão humana explícita**, sendo
+`bloco 1` e `bloco 2` **apenas localizadores de evidência** (**`C-A5-M6`**); **`R11` e `R12`
+tiveram suas lacunas fechadas por decisão humana explícita** — `R11/F1` na unidade de
+duração/limite e `R12/F2` na unidade de não incluso, **sem qualquer justificativa de
+ordem**; e os **8 compromissos normativos anteriores foram preservados** (`R05/F1`, `R05/F2`,
+`R05/F3`, `R11/F2`, `R12/F1`, `R23/F1`, `R25/F1`, `R25/F2`), conforme **`C-A5-M5`** e
+**`C-A5-E7`**. A pendência de **`R23/F2`** foi **resolvida humanamente**: **`R23/F2` designa
+fisicamente a unidade de decoração**; **`C-A2-B5` e `MD-13` permanecem históricos e não são
+reescritos**, o **escopo de modelagem de `MD-13` pode envolver fatos de mais de um
+fragmento**, e a referência histórica de `MD-13` a `R23 F2` **não desloca o motivo de fogos
+de `R23/F1`** — **`MD-13` NÃO é executada aqui**. **Estado após esta entrega**: **`C-A5-M5` =
+SATISFEITA DOCUMENTALMENTE para esse corpus-base**; **`C-A5-M2` CONTINUA NÃO ATIVA**;
+**ZERO marcador `C-A5` aplicado** e a **ausência de marcador continua NÃO sendo erro do
+corpus atual** (**`C-A5-M3`**); **`C-A5` continua NÃO MATERIALIZADA no corpus**; **C continua
+ARBITRADA / NÃO MATERIALIZADA**; `knowledge/indice-respostas-aprovadas.yaml` **continua
+INEXISTENTE**; a **bijeção física continua NÃO EXECUTADA** e **`C-A1-ST6`–`C-A1-ST10`
+continuam NÃO satisfeitas**; a **autoridade de status NÃO migrou** (**C-11**); e continuam
+**ABERTAS** a propagação de status ao fragmento, o mapeamento de `PARCIAL`, a sintaxe de
+*placeholder*, a gramática de `caminho_yaml`, o formato `hora` e **C-7**. **NENHUM `pytest`
+FOI EXECUTADO NESTA ENTREGA** — **zero código, zero teste, zero `knowledge/**`** — e a
+**baseline funcional permanece `2707 passed`**, com **`261 passed`** no direcionado, em
+**Python 3.14.5**, **preservada como a última baseline funcional confirmada anteriormente**,
+sobre o **commit funcional `4749efa74d5684b52b4f457176710ba6e212c627`**. **Nenhum marco
+funcional novo é criado**; a **3B.7** continua a última subetapa numerada, a **3B.8 continua
+INEXISTENTE** e **A OITAVA MICROENTREGA FUNCIONAL CONTINUA NÃO ESCOLHIDA E NÃO INICIADA**. O
+**item documental 88** abaixo **NÃO é "subetapa 88"**, **NÃO é `E8`** e **NÃO é a oitava
+microentrega funcional**.
+
+**Atualização anterior — 2026-09-03 (micro-arbitragem documental `C-A5` — identidade física
+do fragmento emitível), preservada como registro daquele momento.** Aquela entrega é
+**EXCLUSIVAMENTE DOCUMENTAL**: altera **somente**
 `docs/07-arquitetura-motor-respostas.md` e este documento, e **não altera código, testes,
 `knowledge/**` nem `prompts/**`**. **`C-A5` = ARBITRADA DOCUMENTALMENTE / NÃO
 MATERIALIZADA.** Ela fecha a **única** matéria que `C-A1` registrava como explicitamente
@@ -3592,6 +3637,96 @@ a **pendência residual continua aberta**.
     escrito** — inclusive ao listar a **identidade física de fragmento** entre as lacunas
     então não arbitradas —, e é **complementado, quanto a essa lacuna específica, por este
     item 87**.
+88. **A PRESENTE ENTREGA É EXCLUSIVAMENTE O REGISTRO DOCUMENTAL DO MAPEAMENTO HUMANO
+    APROVADO `C-A5-M5` — 37/37 UNIDADES FÍSICAS ATUAIS.**
+    **ESTE ITEM 88 É DOCUMENTAL. NÃO É "SUBETAPA 88", NÃO É `E8` E NÃO É A OITAVA
+    MICROENTREGA FUNCIONAL DE `C`.** Ele registra **somente** a Fase A2 — a tabela exigida
+    por **`C-A5-M5`** —, e **nenhum item 89 é criado**.
+    **Aprovação humana.** O responsável **aprovou explicitamente** o mapeamento de
+    identidade das **37 unidades físicas atuais**, **incluindo `R23/F2` como a unidade de
+    decoração**. Essa aprovação **não autoriza** aplicação de marcadores, edição do corpus,
+    criação do índice real, extrator, *renderer*, *templates* ou *bindings* físicos,
+    execução da bijeção, migração de autoridade de status nem a oitava microentrega
+    funcional.
+    **Escopo.** Arquivos alterados: **dois** — `docs/07-arquitetura-motor-respostas.md`
+    (**puramente aditivo**, com o bloco **"Registro pós-C-A5-M5 — mapeamento humano aprovado
+    das 37 unidades"** inserido **após o bloco C-A5** e **antes** da seção **§3**) e
+    `docs/00-estado-atual.md`. **Nenhum outro arquivo foi tocado**: **zero `src/**`**, **zero
+    `tests/**`**, **zero `knowledge/**`**, **zero `prompts/**`**, **zero `CLAUDE.md`** e
+    **zero outro `docs/**`**. **Nenhum marco funcional novo é criado.** O bloco novo **não
+    reescreve `C-A5`** e **não renumera seção alguma**.
+    **Corpus-base.** `knowledge/respostas-aprovadas.md`, **blob
+    `d9f275454cb9f091a824292560d983d25f08c14e`** — **INALTERADO** por esta entrega. A tabela
+    vale **para esse corpus-base**; se o corpus mudar antes da aplicação, o mapeamento
+    precisa ser **reconferido**.
+    **Fechamento aritmético.** **37** unidades; **30 `Rxx`**; **24** de fragmento único e
+    **6** multi-fragmento — `R05` = 3, `R09` = 2, `R11` = 2, `R12` = 2, `R23` = 2, `R25` = 2:
+    **24 + 3 + 2 + 2 + 2 + 2 + 2 = 37**. Por base: **8 PRESERVAÇÃO NORMATIVA**, **1
+    CONFIRMAÇÃO HUMANA EXPLÍCITA**, **28 DECISÃO HUMANA EXPLÍCITA** — **8 + 1 + 28 = 37**.
+    **Zero unidade sem `id` aprovado.** Os **37** tokens canônicos derivados `<Rxx>/<id>` são
+    **distintos dois a dois**; **nenhum `id` se repete dentro do mesmo `Rxx`**
+    (**`C-A5-I4`**, **C-2h**); a repetição de **`F1`** entre `Rxx` **distintos** é **válida**,
+    por a unicidade ser **local ao `Rxx`**; e todos respeitam **`C-A5-I3`** — **`F`** seguido
+    de inteiro decimal ASCII **maior que zero** e **sem zero à esquerda**.
+    **Origem de cada identidade — nunca o ordinal.** Conforme **`C-A5-I5`** e **`C-A5-M6`**,
+    os localizadores `bloco 1`/`bloco 2`/`bloco 3` e os descritores de matéria são **APENAS
+    localizador da evidência física atual** e **NÃO originaram nenhum `id`**. **Os 24 `Rxx`
+    de fragmento único receberam `F1` por DECISÃO HUMANA EXPLÍCITA — NÃO por serem únicos ou
+    primeiros.** **`R09` recebeu `F1` e `F2` por decisão humana explícita**, e **`bloco 1` /
+    `bloco 2` não geraram esses `id`**. **`R11`** teve a lacuna fechada por **decisão humana
+    explícita** — **`F1` na unidade de duração/limite**, **não** por ser o primeiro bloco —,
+    preservando **`R11/F2`** na unidade de montagem/desmontagem (**`MD-5`**, **`C-A2-B1`**).
+    **`R12`** teve a lacuna fechada por **decisão humana explícita** — **`F2` na unidade de
+    não incluso**, **não** por ser o segundo bloco —, preservando **`R12/F1`** na unidade de
+    itens inclusos (**`C-A2-B2`**, **`MD-19`**). **Os 8 compromissos normativos anteriores
+    foram preservados**: `R05/F1`, `R05/F2`, `R05/F3` (**`C-A2-B10`**, **`C-A2-B16a`**–
+    **`C-A2-B16c`**, **`B16-A`**, **`B16-B`**), `R11/F2`, `R12/F1`, `R23/F1` (**`C-A2-B5`**),
+    `R25/F1` (**`C-A2-B6`**) e `R25/F2` (**`MD-10`**) — conforme **`C-A5-M5`** e
+    **`C-A5-E7`**.
+    **Resolução de `R23/F2`.** A pendência **identificada no inventário read-only A1** era
+    **qual unidade física porta `R23 F2`**, a partir da **leitura conjunta de `MD-13` e
+    `C-A2-B5`**: **`MD-13`** declara alvo `R23 F2` com escopo que abrange o **motivo de
+    fogos** — residente na unidade já fixada como `R23/F1` por **`C-A2-B5`** — e a **regra de
+    decoração**, residente na outra. **`C-A5-E8` permanece inalterada e refere-se
+    exclusivamente à pendência de mapeamento de `R09`.** Decisão humana registrada: **`R23/F2`
+    designa fisicamente a unidade de decoração**. Reconciliação **sem reescrita**:
+    **`C-A2-B5` permanece histórico e preserva `R23/F1`**; **`MD-13` permanece histórico**;
+    o **escopo de modelagem de `MD-13` pode envolver fatos relevantes a mais de um
+    fragmento** — alvo de modelo **não é** designação de identidade física; a referência
+    histórica de `MD-13` a `R23 F2` **NÃO desloca o motivo de fogos de `R23/F1`**; e, **para
+    identidade física C-A5**, **`R23/F2` = unidade de decoração**. **`MD-13` NÃO é
+    executada** e **nenhum conteúdo é alterado**.
+    **Estado após esta entrega.** **`C-A5-M5` = SATISFEITA DOCUMENTALMENTE** para o
+    corpus-base `d9f275454cb9f091a824292560d983d25f08c14e`. **`C-A5-M2` CONTINUA NÃO ATIVA**
+    — a representação marcada **ainda não é obrigatória**. **ZERO marcador aplicado**, e a
+    **ausência de marcador continua NÃO sendo erro do corpus atual** (**`C-A5-M3`**).
+    **`C-A5` continua NÃO MATERIALIZADA no corpus** e **C continua ARBITRADA / NÃO
+    MATERIALIZADA**. `knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**. A
+    **bijeção física continua NÃO EXECUTADA** e **`C-A1-ST6`–`C-A1-ST10` continuam NÃO
+    satisfeitas**. A **autoridade de status NÃO migrou** — `knowledge/respostas-aprovadas.md`
+    continua a autoridade (**C-11**). Continuam **ABERTAS**: propagação de status ao
+    fragmento; mapeamento concreto de `PARCIAL`; sintaxe de *placeholder*; gramática de
+    `caminho_yaml`; formato `hora`; **C-7**. **Esta entrega satisfaz o gate anterior à edição
+    do corpus; ela NÃO executa essa edição.**
+    **Testes.** **NENHUM `pytest` FOI EXECUTADO NESTA ENTREGA**, por **zero código, zero
+    teste e zero `knowledge/**`**. **Nenhuma execução nova é alegada.** A **baseline funcional
+    permanece `2707 passed`**, com **`261 passed`** no direcionado, em **Python 3.14.5**,
+    **preservada como a última baseline funcional confirmada anteriormente**, sobre o
+    **commit funcional `4749efa74d5684b52b4f457176710ba6e212c627`** e o **merge
+    `8c67e13808da59dbace413fce33c2c22280e69a3`**. As validações desta entrega foram
+    **documentais e de Git**: `git diff --check`, inspeção integral do diff, contagem da
+    tabela, unicidade de `Rxx/id`, gramática dos `id`, escopo de arquivos e segurança.
+    **Estado corrente preservado.** **Sétima microentrega funcional de `C`** = **última
+    entrega funcional**; **3B.7** = **última subetapa numerada**; **3B.8** = **INEXISTENTE**;
+    e **A OITAVA MICROENTREGA FUNCIONAL DE `C` CONTINUA NÃO ESCOLHIDA E NÃO INICIADA** —
+    **nenhuma pendência é eleita** por este item, **nem** a aplicação dos marcadores `C-A5`,
+    **nem** o formato `hora`, **nem** o índice real, **nem** o extrator, **nem** o
+    *renderer*, **nem** os *templates*, **nem** a gramática de `caminho_yaml`, **nem** o
+    mapeamento explícito de `PARCIAL`, **nem** a execução física da bijeção, **nem** a
+    integração de consumidor. **O item 87 acima permanece correto como registro do momento em
+    que foi escrito** — quando a tabela **ainda não existia** e `R09` e `R23/F2` eram
+    pendências de mapeamento humano —, e é **complementado, quanto ao mapeamento, por este
+    item 88**.
 
 ## Arbitragens
 
