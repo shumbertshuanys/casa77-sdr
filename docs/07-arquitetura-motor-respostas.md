@@ -1506,6 +1506,135 @@ continua ARBITRADA / NÃO MATERIALIZADA**; **`R2` continua NÃO MATERIALIZADA**;
 continua ARBITRADA / NÃO MATERIALIZADA**; **`N-b-RES2` continua ABERTO**; e o
 **`OrquestradorMotor` continua não implementado**.
 
+#### Registro pós-C-A5-M5 — mapeamento humano aprovado das 37 unidades
+
+**Estado: APROVADO HUMANAMENTE / REGISTRADO DOCUMENTALMENTE / NÃO APLICADO AO CORPUS.**
+
+Registro **exclusivamente documental** e **posterior** a **C-A5**. Ele **não reescreve
+`C-A5`**, **não renumera seção alguma**, **não altera `knowledge/**`**, **não insere
+marcador**, **não implementa código** e **não cria marco funcional**. Ele **satisfaz o gate
+anterior à edição** — a tabela exigida por **`C-A5-M5`** — e **NÃO executa essa edição**.
+
+**Aprovação humana explícita registrada:** o responsável aprovou o mapeamento de identidade
+das **37 unidades físicas atuais**, **incluindo `R23/F2` como a unidade de decoração**. Essa
+aprovação **não autoriza** aplicação de marcadores, edição do corpus, criação do índice real,
+extrator, *renderer*, *bindings* físicos, execução da bijeção, migração de autoridade de
+status nem a oitava microentrega funcional.
+
+**Corpus-base deste mapeamento:** `knowledge/respostas-aprovadas.md`, **blob
+`d9f275454cb9f091a824292560d983d25f08c14e`**. A tabela vale **para esse corpus-base**; se o
+corpus mudar antes da aplicação, o mapeamento precisa ser **reconferido**.
+
+**Base da atribuição — três categorias fechadas, e nenhuma delas é ordinal:**
+
+| Base | Significado |
+|---|---|
+| **PRESERVAÇÃO NORMATIVA** | o `id` já estava **comprometido por documentação normativa anterior** e é **preservado** por **`C-A5-M5`** / **`C-A5-E7`**. |
+| **DECISÃO HUMANA EXPLÍCITA** | não havia `id` comprometido; o `id` foi **declarado agora pelo responsável humano** no ato de aprovação de **`C-A5-M5`**. |
+| **CONFIRMAÇÃO HUMANA EXPLÍCITA** | o `id` já estava comprometido, mas **qual unidade física o portava não estava declarado**; o responsável humano **declarou o portador**. |
+
+**Regra de leitura obrigatória (`C-A5-I5`, `C-A5-M6`).** As colunas de localizador —
+`bloco 1`, `bloco 2`, `bloco 3` e os descritores de matéria — são **APENAS localizador da
+evidência física atual apresentado ao responsável humano**. Elas **NÃO originaram nenhum
+`id`**. **Nenhum `id` desta tabela foi derivado de posição, ordem, linha, offset, índice ou
+unicidade da unidade**: em particular, **nenhum `Rxx` de fragmento único recebeu `F1` por ser
+único ou primeiro**, e **nenhuma segunda unidade recebeu `F2` por vir depois**. A identidade
+é **declarada** — por documentação normativa anterior ou por decisão humana registrada aqui.
+
+##### Tabela C-A5-M5 — 37 unidades físicas atuais
+
+| # | Rxx | localizador da unidade física atual | id | base | referência |
+|---|---|---|---|---|---|
+| 1 | R01 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 2 | R02 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 3 | R03 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 4 | R04 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 5 | R05 | unidade já declarada no corpus como `F1` — papel *fallback* | `F1` | PRESERVAÇÃO NORMATIVA | `C-A2-B10`, `C-A2-B16a` |
+| 6 | R05 | unidade já declarada no corpus como `F2` — consulta válida + disponível | `F2` | PRESERVAÇÃO NORMATIVA | `C-A2-B16-A`, `C-A2-B16b` |
+| 7 | R05 | unidade já declarada no corpus como `F3` — consulta válida + indisponível | `F3` | PRESERVAÇÃO NORMATIVA | `C-A2-B16-B`, `C-A2-B16c` |
+| 8 | R06 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 9 | R07 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 10 | R08 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 11 | R09 | bloco 1 | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 12 | R09 | bloco 2 | `F2` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 13 | R10 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 14 | R11 | unidade de duração / limite de término | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 15 | R11 | unidade de montagem / desmontagem | `F2` | PRESERVAÇÃO NORMATIVA | `MD-5`, `C-A2-B1` |
+| 16 | R12 | unidade de itens inclusos | `F1` | PRESERVAÇÃO NORMATIVA | `C-A2-B2`, `MD-19` |
+| 17 | R12 | unidade de não incluso | `F2` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 18 | R13 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 19 | R14 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 20 | R15 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 21 | R16 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 22 | R17 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 23 | R18 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 24 | R19 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 25 | R20 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 26 | R21 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 27 | R22 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 28 | R23 | unidade de restrições / motivo de fogos | `F1` | PRESERVAÇÃO NORMATIVA | `C-A2-B5` |
+| 29 | R23 | unidade de decoração | `F2` | CONFIRMAÇÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5`; leitura reconciliada abaixo |
+| 30 | R24 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 31 | R25 | unidade de cozinha / equipamentos e rede elétrica | `F1` | PRESERVAÇÃO NORMATIVA | `C-A2-B6` |
+| 32 | R25 | unidade de som / iluminação cênica / gerador | `F2` | PRESERVAÇÃO NORMATIVA | `MD-10` |
+| 33 | R26 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 34 | R27 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 35 | R28 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 36 | R29 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+| 37 | R30 | bloco único | `F1` | DECISÃO HUMANA EXPLÍCITA | aprovação `C-A5-M5` |
+
+**Fechamento aritmético.** **37** unidades; **30** `Rxx`; **24** `Rxx` de fragmento único e
+**6** multi-fragmento — `R05` = 3, `R09` = 2, `R11` = 2, `R12` = 2, `R23` = 2, `R25` = 2:
+**24 + 3 + 2 + 2 + 2 + 2 + 2 = 37**. Por base: **8** por **PRESERVAÇÃO NORMATIVA**, **1** por
+**CONFIRMAÇÃO HUMANA EXPLÍCITA** e **28** por **DECISÃO HUMANA EXPLÍCITA** — **8 + 1 + 28 =
+37**. **Nenhuma unidade permanece sem `id` aprovado.**
+
+**Unicidade e gramática.** Os **37** tokens canônicos derivados `<Rxx>/<id>` (**`C-A5-T1`**,
+**`C-A5-T5`** — derivados, **nunca armazenados**) são **distintos dois a dois**; **nenhum
+`id` se repete dentro do mesmo `Rxx`** (**`C-A5-I4`**, **C-2h**); e a repetição de **`F1`**
+entre `Rxx` **distintos** é **válida**, porque a unicidade é **local ao `Rxx`**. Todos os
+`id` respeitam **`C-A5-I3`**: **`F`** seguido de inteiro decimal ASCII **maior que zero** e
+**sem zero à esquerda**.
+
+##### Resolução de `R23/F2` — reconciliação de leitura, sem reescrita
+
+A **pendência identificada no inventário read-only A1** era: **qual unidade física porta
+`R23 F2`**, a partir da **leitura conjunta de `MD-13` e `C-A2-B5`** — **`MD-13`** declara
+alvo `R23 F2` com escopo de modelagem que abrange **dois fatos**: o **motivo de fogos**, que
+reside na unidade já fixada como `R23/F1` por **`C-A2-B5`**, e a **regra de decoração**, que
+reside na outra unidade. **`C-A5-E8` permanece inalterada e refere-se exclusivamente à
+pendência de mapeamento de `R09`.**
+
+Decisão humana registrada: **`R23/F2` designa fisicamente a unidade de decoração.**
+
+Reconciliação, **sem reescrever `MD-13` nem `C-A2-B5`**:
+
+| # | Leitura |
+|---|---|
+| 1 | **`C-A2-B5` permanece histórico e vigente**, e **preserva `R23/F1`**. |
+| 2 | **`MD-13` permanece histórico e vigente.** |
+| 3 | O **escopo de modelagem** de `MD-13` **pode envolver fatos relevantes a mais de um fragmento** — alvo de modelo **não é** designação de identidade física. |
+| 4 | A referência histórica de `MD-13` a `R23 F2` **NÃO desloca o motivo de fogos de `R23/F1`**. |
+| 5 | Para **IDENTIDADE FÍSICA C-A5**, **`R23/F2` = unidade de decoração**. |
+
+Isto é **clarificação posterior de mapeamento físico**. **`MD-13` NÃO é executada**, **nenhum
+conteúdo é alterado** e **nenhuma prosa é atomizada** por este registro.
+
+##### Estado após este registro
+
+| # | Estado |
+|---|---|
+| 1 | **`C-A5-M5` = SATISFEITA DOCUMENTALMENTE** para o corpus-base `d9f275454cb9f091a824292560d983d25f08c14e`. |
+| 2 | **`C-A5-M2` CONTINUA NÃO ATIVA.** A representação marcada **ainda não é obrigatória**. |
+| 3 | **ZERO marcador aplicado.** `knowledge/respostas-aprovadas.md` **permanece inalterado**, e a **ausência de marcador continua NÃO sendo erro do corpus atual** (**`C-A5-M3`**). |
+| 4 | **`C-A5` continua NÃO MATERIALIZADA no corpus**; **C continua ARBITRADA / NÃO MATERIALIZADA**. |
+| 5 | `knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**. |
+| 6 | A **bijeção física continua NÃO EXECUTADA**; **`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**. |
+| 7 | A **autoridade de status NÃO migrou** — `knowledge/respostas-aprovadas.md` continua a autoridade (**C-11**). |
+| 8 | **Nenhum marco funcional novo**; **nenhum teste foi executado** nesta entrega. |
+| 9 | Continuam **ABERTAS**: propagação de status ao fragmento; mapeamento concreto de `PARCIAL`; sintaxe de *placeholder*; gramática de `caminho_yaml`; formato `hora`; **C-7**. |
+| 10 | **A oitava microentrega funcional continua NÃO ESCOLHIDA e NÃO INICIADA**; **a 3B.8 continua INEXISTENTE**. |
+
 ---
 
 ## 3. Comparação técnica — Opção A × Opção B
