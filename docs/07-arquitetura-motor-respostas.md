@@ -1400,6 +1400,112 @@ continua PENDENTE**; **C continua ARBITRADA / NÃO MATERIALIZADA**; **`R2` conti
 MATERIALIZADA**; **`S2-D8` continua ARBITRADA / NÃO MATERIALIZADA**; **`N-b-RES2` continua
 ABERTO**; e o **`OrquestradorMotor` continua não implementado**.
 
+#### Micro-arbitragem C-A5 — identidade física do fragmento emitível
+
+**Estado: ARBITRADA DOCUMENTALMENTE.**
+
+**C-A5 ARBITRA A REPRESENTAÇÃO FUTURA; NÃO APLICA ESSA REPRESENTAÇÃO AO CORPUS ATUAL.**
+
+Micro-arbitragem **posterior** a **C**, **C-A1**, **C-A2**, **C-A3** e **C-A4**, e
+**exclusivamente documental**. Ela fecha a matéria que **C-A1** registrou como explicitamente
+**não decidida** — **identidade física do fragmento** — e **nenhuma outra**. Ela **não executa
+nada sobre o corpus**, **não cria o índice**, **não cria *template* físico**, **não cria
+*binding* físico**, **não cria `ASSERTIVA` física**, **não altera `knowledge/**`**, **não
+implementa código**, **não altera testes** e **não materializa** **C**, **R2** ou **S2-D8**.
+**Nenhum marco funcional novo é criado.**
+
+##### C-A5-H — Preservação histórica
+
+| # | Regra |
+|---|---|
+| C-A5-H1 | **C-1**–**C-15**, **C-A1**, **C-A2**, **C-A3** e **C-A4** permanecem **registro histórico** e **não são reescritos**. **C-A5 é refinamento posterior para leitura futura.** |
+| C-A5-H2 | C-A5 fecha **EXCLUSIVAMENTE** a matéria antes explicitamente não decidida: **identidade física do fragmento**. **Nenhuma outra lacuna é fechada.** |
+| C-A5-H3 | Entrega **exclusivamente documental**. **Não cria marco funcional.** **Não altera `src/`, `tests/` nem `knowledge/`.** |
+
+##### C-A5-U — Fronteira física futura
+
+| # | Regra |
+|---|---|
+| C-A5-U1 | A **unidade emitível física futura** é um **bloco de citação contíguo**: a **sequência maximal de linhas iniciadas por `>`**, terminada pela **primeira linha que não se inicia por `>`**. |
+| C-A5-U2 | A unidade **vive dentro de uma seção `## Rxx`**. |
+| C-A5-U3 | **SOMENTE NA REPRESENTAÇÃO MATERIALIZADA**, conforme **C-A5-M2**: a unidade emitível **existe se e somente se** estiver **imediatamente precedida por marcador válido C-A5**. |
+| C-A5-U4 | **SOMENTE NA REPRESENTAÇÃO MATERIALIZADA**: **nota**, **instrução operacional**, **comentário editorial** e **conteúdo não emitível** **não podem** ser representados como **bloco de citação emitível**. Eles permanecem **fora da bijeção**, **sem status**, **sem *binding*** e **sem `ASSERTIVA`** (**C-2m**–**C-2p**, **C-A1-B2**). **A classificação do corpus atual NÃO muda retroativamente.** |
+
+##### C-A5-I — Identidade
+
+| # | Regra |
+|---|---|
+| C-A5-I1 | **Marcador**: `<!-- fragmento: <id> -->` — **linha contendo exatamente essa estrutura**, **sem conteúdo adicional**. |
+| C-A5-I2 | O marcador ocupa a **linha imediatamente anterior** à **primeira linha do bloco**. **Zero linha em branco** entre marcador e bloco. |
+| C-A5-I3 | **Gramática fechada do `id`**: **`F`** seguido de **inteiro decimal ASCII maior que zero e sem zero à esquerda**. Exemplos **sintéticos** válidos: `F1`, `F2`, `F10`. Exemplos **sintéticos** inválidos: `F0`, `F01`, `f1`, `F-1`. |
+| C-A5-I4 | **Unicidade do `id`**: **somente dentro do respectivo `Rxx`** — o que **preserva literalmente C-2h**. |
+| C-A5-I5 | **Identidade declarada, nunca derivada.** Ela **não pode depender** de: **posição**; **ordem**; **linha**; **offset**; **índice**; **redação**; **whitespace**; **conteúdo comercial**; **hash**; **timestamp**; **UUID sem regra de governança**; **LLM**; **banco**; ou **serviço externo**. |
+| C-A5-I6 | Após **C-A5-M2**, um `id` **nunca é reutilizado** dentro do mesmo `Rxx`, **mesmo após a remoção daquele fragmento**. |
+| C-A5-I7 | **Reordenação, inserção, remoção ou reescrita não muda a identidade das unidades restantes.** Mudança de identidade é **ato documental explícito**. |
+| C-A5-I8 | **Identidade de fragmento é distinta** do **identificador estrutural de item de coleção** do YAML de **C-A1-S3**–**C-A1-S5** / **MD-18**. **Uma não substitui nem deriva da outra.** |
+
+##### C-A5-T — Token canônico
+
+| # | Regra |
+|---|---|
+| C-A5-T1 | **Identidade canônica**: `<Rxx>/<id>`. |
+| C-A5-T2 | **Separador normativo**: `/`. **Justificativa permitida e EXAUSTIVA**: **`/` não pertence à gramática de `Rxx`**; e **`/` não pertence à gramática do `id` de C-A5**. **Nenhuma outra justificativa é autorizada.** |
+| C-A5-T3 | A composição é **injetiva** e a decomposição é **unívoca** porque: **`Rxx` tem forma fechada**; **o `id` tem forma fechada**; e **nenhum dos dois admite `/`**. |
+| C-A5-T4 | A identidade canônica **será o token** dos **dois domínios físicos** de **C-A1-B3** / **C-A1-B4**. **Isso NÃO executa a bijeção.** |
+| C-A5-T5 | O token é **derivado, nunca armazenado**. O futuro índice mantém **o `Rxx`** e **`fragmentos[].id`** **separadamente**. **Nenhum campo novo de token canônico é criado.** |
+
+##### C-A5-M — Ativação e materialização
+
+| # | Regra |
+|---|---|
+| C-A5-M1 | A **integração documental de C-A5 NÃO ativa** a nova representação física no corpus existente. A **ativação depende de entrega própria posterior** de materialização dos marcadores, **auditada e integrada**. |
+| C-A5-M2 | **Somente após essa materialização** a representação marcada passa a ser **obrigatória**. |
+| C-A5-M3 | **Enquanto C-A5-M2 não valer**: `knowledge/respostas-aprovadas.md` permanece na **representação física atualmente aprovada**; os **37 fragmentos emitíveis documentados continuam reconhecidos**; a **ausência de marcador C-A5 NÃO é erro do corpus atual**; **nenhum bloco existente fica fail-closed** pela arbitragem C-A5; a **autoridade de status continua em `knowledge/respostas-aprovadas.md`** (**C-11**); e **C continua ARBITRADA / NÃO MATERIALIZADA**. |
+| C-A5-M4 | **C-A5 NÃO aplica identidade ao corpus**: **zero marcador inserido**; **zero `id` atribuído**; **zero tabela dos 37 produzida**; **zero tabela aprovada**; **zero caso individual decidido**. |
+| C-A5-M5 | A **futura aplicação exige**, **ANTES de qualquer edição do corpus**, **tabela completa e aprovada** — `Rxx` + **unidade física atual** → **`id` C-A5** — para **todas as unidades abrangidas**. **IDs de fragmento já comprometidos por documentação normativa anterior deverão ser preservados.** |
+| C-A5-M6 | **Posição e ordem** podem servir **APENAS** como **localizador de evidência apresentado ao responsável humano**. Elas **jamais determinam o `id`**. |
+
+##### C-A5-X — Falhas futuras e limites
+
+| # | Regra |
+|---|---|
+| C-A5-X1 | **SOMENTE após C-A5-M2**, são **fail-closed**: **bloco destinado à emissão sem marcador válido**; **marcador órfão**; **marcador sem bloco imediatamente seguinte**; **marcador fora de `Rxx`**; **`id` fora da gramática**; **`id` repetido no mesmo `Rxx`**; e **`Rxx` sem unidade emitível quando C-2c a exige**. **Nenhum caso é resolvido por inferência.** |
+| C-A5-X2 | **C-A5 NÃO decide**: a **propagação do status do cabeçalho `Rxx` aos fragmentos**; nem o **mapeamento concreto de `PARCIAL`**. **Ambos continuam ABERTOS.** |
+| C-A5-X3 | **C-A5 NÃO decide**: **sintaxe de *placeholder***; **gramática de `caminho_yaml`**; **formato `hora`**; nem **C-7**. |
+| C-A5-X4 | **C-A5 NÃO**: cria índice; cria *template* físico; cria *binding* físico; cria `ASSERTIVA` física; implementa extrator; implementa *renderer*; executa a bijeção física; nem migra autoridade de status. **`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas.** |
+| C-A5-X5 | **C-A5 não cria**: componente; responsabilidade; condição; evento; estado; transição; ação; erro de runtime; cenário de runtime; status; formato; predicado; nem subetapa. **A 3B.8 continua inexistente.** |
+| C-A5-X6 | **Após a arbitragem**: **C continua ARBITRADA / NÃO MATERIALIZADA**; `knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**; **`R2` permanece como está**; **`S2-D8` permanece como está**; **`N-b-RES2` permanece ABERTO**; e o **`OrquestradorMotor` permanece NÃO IMPLEMENTADO**. |
+
+##### C-A5-E — Evidência estrutural read-only
+
+Estado **observado** do corpus na base desta arbitragem, medido de forma **estritamente
+read-only**, **sem alterar `knowledge/**`** e **sem reproduzir conteúdo**:
+
+| # | Evidência |
+|---|---|
+| C-A5-E1 | **30** seções `Rxx`. |
+| C-A5-E2 | **37** blocos de citação contíguos, na definição de **C-A5-U1**. |
+| C-A5-E3 | **24** `Rxx` com **um** fragmento e **6** `Rxx` **multi-fragmento**. |
+| C-A5-E4 | **COMPATIBILIDADE ESTRUTURAL: 37/37** — as **37** unidades são **estruturalmente compatíveis** com a futura convenção C-A5. |
+| C-A5-E5 | **Zero comentários HTML existentes** no corpus e **zero marcador C-A5 aplicado**. |
+| C-A5-E6 | **MAPEAMENTO DE IDENTIDADE PARA APLICAÇÃO: NÃO PRODUZIDO / NÃO APROVADO.** **Compatibilidade estrutural NÃO é mapeamento de identidade.** |
+| C-A5-E7 | **IDs de fragmento já comprometidos** por documentação normativa anterior **deverão ser preservados** na futura aplicação (**C-A5-M5**). |
+| C-A5-E8 | **`R09` possui dois fragmentos físicos sem `id` C-A5 normativamente atribuído** e permanece **PENDÊNCIA DE MAPEAMENTO HUMANO**. **C-A5 não atribui esses IDs.** |
+
+##### C-A5-Z — Não reescrita e não revogação
+
+**C-A5 NÃO REESCREVE NEM REVOGA os blocos anteriores.** **C-2**, **C-11**, **C-15**,
+**C-A1**, **C-A2**, **C-A3** e **C-A4** permanecem **vigentes**. Os **ÚNICOS refinamentos
+posteriores** introduzidos por esta entrega são os **expressamente enumerados em C-A5**.
+**Nenhuma regra histórica é apagada, substituída ou retroativamente modificada** — em
+particular, o parágrafo de **C-A1** que registrava a **identidade física do fragmento** como
+**não decidida** permanece **correto para o momento em que foi escrito**.
+
+**Após esta arbitragem**: **C-A5 = ARBITRADA DOCUMENTALMENTE / NÃO MATERIALIZADA**; **C
+continua ARBITRADA / NÃO MATERIALIZADA**; **`R2` continua NÃO MATERIALIZADA**; **`S2-D8`
+continua ARBITRADA / NÃO MATERIALIZADA**; **`N-b-RES2` continua ABERTO**; e o
+**`OrquestradorMotor` continua não implementado**.
+
 ---
 
 ## 3. Comparação técnica — Opção A × Opção B
