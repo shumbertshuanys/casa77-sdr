@@ -19,13 +19,16 @@ cabeçalho foi alterado** e **nenhuma normalização de EOL permanece no estado 
 removidas **exclusivamente** as 37 linhas de marcador com seus terminadores, o corpus
 reconstruído é **binariamente idêntico** ao estado anterior — **SHA-256
 `7cf1aa058c851a6642f5af0d0600a8a66091b09b70d4a58989b26a2aad6db344`**, **9 712 bytes**, **253
-LF**, **253 CR**. O **corpus anterior** é o blob
-**`d9f275454cb9f091a824292560d983d25f08c14e`**, que **permanece o estado da `main`**; o
-**novo conteúdo do corpus ainda NÃO é estado da `main`** e **não o será enquanto esta entrega
-não for auditada e integrada**. **Esta entrega materializa a representação candidata na
-branch**; por **`C-A5-M1`** / **`C-A5-M2`**, **`C-A5-M2` passará a valer somente após
-auditoria e integração desta entrega à `main`** — **antes disso, `C-A5-M2` continua NÃO
-ATIVA**, a **ausência de marcador não é erro** e **nenhum bloco fica fail-closed**. Estrutura
+LF**, **253 CR**. O **corpus-base imediatamente anterior a esta entrega** é
+`knowledge/respostas-aprovadas.md`, blob **`d9f275454cb9f091a824292560d983d25f08c14e`**.
+**Regra de vigência deste registro**: **enquanto esta entrega não pertencer ao histórico da
+`main`**, o **corpus canônico permanece no estado imediatamente anterior**, **`C-A5-M2`
+continua NÃO ATIVA**, os **37 marcadores constituem somente representação candidata na
+branch/PR**, a **ausência de marcador não é erro** e **nenhum bloco fica fail-closed**
+(**`C-A5-M3`**); **a partir do primeiro estado da `main` que contiver conjuntamente esta
+entrega e os 37 marcadores**, por **`C-A5-M1`** / **`C-A5-M2`**, **`C-A5-M2` = ATIVA** e
+**`C-A5` = MATERIALIZADA no corpus**, passando também a vincular **`C-A5-X1`** e
+**`C-A5-I6`** — efeito **automático**, sem necessidade de nova reconciliação. Estrutura
 reconferida após a edição: **30 `Rxx`**, **37 blocos de citação contíguos**, **24 de
 fragmento único** e **6 multi-fragmento** (`R05` = 3; `R09`, `R11`, `R12`, `R23`, `R25` = 2
 cada); **37 marcadores**, todos na forma exata e com `id` conforme **`C-A5-I3`**;
@@ -3821,18 +3824,23 @@ a **pendência residual continua aberta**.
     **SHA-256 `7cf1aa058c851a6642f5af0d0600a8a66091b09b70d4a58989b26a2aad6db344`**, **9 712
     bytes**, **253 LF**, **253 CR** — comparação binária **IDÊNTICA**. Esta é a prova de que
     a **única** mudança física do corpus são as **37 linhas autorizadas**.
-    **Corpus-base e estado da `main`.** O corpus anterior é o blob
-    **`d9f275454cb9f091a824292560d983d25f08c14e`**, que **permanece o estado da `main`**. **O
-    novo conteúdo do corpus ainda NÃO é estado da `main`** e **não o será enquanto esta
-    entrega não for auditada e integrada**. **Esta entrega materializa a representação
-    candidata na branch.**
-    **Efeito normativo — ainda não vigente.** Por **`C-A5-M1`** e **`C-A5-M2`**, **`C-A5-M2`
-    passará a valer somente após auditoria e integração desta entrega à `main`**. **Enquanto
-    isso, `C-A5-M2` continua NÃO ATIVA**, a **ausência de marcador não é erro do corpus da
-    `main`** e **nenhum bloco fica fail-closed** (**`C-A5-M3`**). Após eventual merge, o
-    efeito normativo é **automático**, e o responsável **aceitou expressamente** que isso
-    ocorrerá **antes** da implementação do validador permanente — **que esta entrega NÃO
-    implementa**.
+    **Corpus-base imediatamente anterior a esta entrega.** `knowledge/respostas-aprovadas.md`,
+    blob **`d9f275454cb9f091a824292560d983d25f08c14e`**.
+    **Regra de vigência deste registro.** **Enquanto esta entrega não pertencer ao histórico
+    da `main`**, o **corpus canônico permanece no estado imediatamente anterior**, **`C-A5-M2`
+    continua NÃO ATIVA**, os **37 marcadores constituem somente representação candidata na
+    branch/PR**, a **ausência de marcador não é erro** e **nenhum bloco fica fail-closed**
+    (**`C-A5-M3`**). **A partir do primeiro estado da `main` que contiver conjuntamente esta
+    entrega e os 37 marcadores**, por **`C-A5-M1`** / **`C-A5-M2`**, **`C-A5-M2` = ATIVA** e
+    **`C-A5` = MATERIALIZADA no corpus**, passando também a vincular **`C-A5-X1`** e
+    **`C-A5-I6`**. Esse efeito é **automático** e **não depende de nova reconciliação
+    documental**; o responsável **aceitou expressamente** que ele ocorrerá **antes** da
+    implementação do validador permanente — **que esta entrega NÃO implementa**. **Mesmo
+    nesse estado pós-integração**: **C continua ARBITRADA / NÃO MATERIALIZADA**; o **índice
+    real continua inexistente**; a **bijeção física continua NÃO EXECUTADA**; a **autoridade
+    de status não migra**; **`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**; a **oitava
+    microentrega funcional continua não escolhida e não iniciada**; e a **3B.8 continua
+    inexistente**.
     **Testes.** **Nenhum teste novo foi criado e nenhum teste existente foi alterado.** A
     suíte existente foi reexecutada: **`2707 passed`** sob `-W error`, em **Python 3.14.5**,
     **zero failures, zero errors e zero warnings** — **mesma baseline anteriormente
