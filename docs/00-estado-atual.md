@@ -4,8 +4,54 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-09-03 (**Fase A2 — registro documental do mapeamento humano aprovado
-`C-A5-M5`, 37/37**). Esta entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera **somente**
+Atualizado em: 2026-09-03 (**materialização física `C-A5` — aplicação dos 37 marcadores
+aprovados**). Esta entrega é **EDITORIAL E DOCUMENTAL**: altera **somente**
+`knowledge/respostas-aprovadas.md` e este documento, e **não altera código, testes,
+`docs/07-arquitetura-motor-respostas.md`, `knowledge/casa77.yaml`,
+`knowledge/informacoes-pendentes.md` nem `prompts/**`**. Sob **autorização humana
+explícita**, os **37 marcadores `<!-- fragmento: <id> -->`** foram aplicados ao corpus
+**exatamente conforme o mapeamento `C-A5-M5` já aprovado** — **zero identidade nova**,
+**zero identidade derivada de posição ou ordem** (**`C-A5-I5`**, **`C-A5-M6`**). O **diff do
+corpus é exatamente `+37 / −0`**: **nenhuma linha preexistente foi alterada, removida ou
+reordenada**, **nenhum texto emitível foi tocado**, **nenhum status foi alterado**, **nenhum
+cabeçalho foi alterado** e **nenhuma normalização de EOL permanece no estado final**.
+**Prova byte-a-byte**:
+removidas **exclusivamente** as 37 linhas de marcador com seus terminadores, o corpus
+reconstruído é **binariamente idêntico** ao estado anterior — **SHA-256
+`7cf1aa058c851a6642f5af0d0600a8a66091b09b70d4a58989b26a2aad6db344`**, **9 712 bytes**, **253
+LF**, **253 CR**. O **corpus-base imediatamente anterior a esta entrega** é
+`knowledge/respostas-aprovadas.md`, blob **`d9f275454cb9f091a824292560d983d25f08c14e`**.
+**Regra de vigência deste registro**: **enquanto esta entrega não pertencer ao histórico da
+`main`**, o **corpus canônico permanece no estado imediatamente anterior**, **`C-A5-M2`
+continua NÃO ATIVA**, os **37 marcadores constituem somente representação candidata na
+branch/PR**, a **ausência de marcador não é erro** e **nenhum bloco fica fail-closed**
+(**`C-A5-M3`**); **a partir do primeiro estado da `main` que contiver conjuntamente esta
+entrega e os 37 marcadores**, por **`C-A5-M1`** / **`C-A5-M2`**, **`C-A5-M2` = ATIVA** e
+**`C-A5` = MATERIALIZADA no corpus**, passando também a vincular **`C-A5-X1`** e
+**`C-A5-I6`** — efeito **automático**, sem necessidade de nova reconciliação. Estrutura
+reconferida após a edição: **30 `Rxx`**, **37 blocos de citação contíguos**, **24 de
+fragmento único** e **6 multi-fragmento** (`R05` = 3; `R09`, `R11`, `R12`, `R23`, `R25` = 2
+cada); **37 marcadores**, todos na forma exata e com `id` conforme **`C-A5-I3`**;
+**pareamento marcador↔bloco = 37/37** sem marcador órfão e sem bloco sem marcador; **zero
+`id` duplicado dentro do
+mesmo `Rxx`** (**`C-A5-I4`**, **C-2h**); e **correspondência integral com a tabela
+`C-A5-M5`** — **37 correspondências, zero ausente, zero extra, zero divergente**. **Nenhum
+dado comercial foi alterado**: **zero preço, capacidade, horário, percentual ou condição**.
+**Nenhum código e nenhum teste novo**: a suíte existente foi **reexecutada sem alteração** e
+permanece em **`2707 passed`** sob `-W error`, em **Python 3.14.5**, sobre o **commit
+funcional `4749efa74d5684b52b4f457176710ba6e212c627`**. Continuam inalterados: o **índice
+`knowledge/indice-respostas-aprovadas.yaml` INEXISTENTE**; a **bijeção física NÃO
+EXECUTADA**; a **autoridade de status NÃO migrada** (**C-11**); **C ARBITRADA / NÃO
+MATERIALIZADA**; **`C-A1-ST6`–`C-A1-ST10` NÃO satisfeitas**; e as lacunas **ABERTAS** de
+propagação de status, `PARCIAL`, *placeholder*, `caminho_yaml`, `hora` e **C-7**. **Nenhum
+validador permanente da representação marcada foi implementado nesta entrega.** **A OITAVA
+MICROENTREGA FUNCIONAL CONTINUA NÃO ESCOLHIDA E NÃO INICIADA** e a **3B.8 continua
+INEXISTENTE**. O **item documental 89** abaixo **NÃO é "subetapa 89"**, **NÃO é `E9`** e
+**NÃO é a oitava nem a nona microentrega funcional de `C`**.
+
+**Atualização anterior — 2026-09-03 (Fase A2 — registro documental do mapeamento humano
+aprovado `C-A5-M5`, 37/37), preservada como registro daquele momento.** Aquela entrega é
+**EXCLUSIVAMENTE DOCUMENTAL**: altera **somente**
 `docs/07-arquitetura-motor-respostas.md` e este documento, e **não altera código, testes,
 `knowledge/**` nem `prompts/**`**. O responsável humano **aprovou explicitamente** o
 mapeamento de identidade das **37 unidades físicas atuais**, **incluindo `R23/F2` como a
@@ -3727,6 +3773,89 @@ a **pendência residual continua aberta**.
     que foi escrito** — quando a tabela **ainda não existia** e `R09` e `R23/F2` eram
     pendências de mapeamento humano —, e é **complementado, quanto ao mapeamento, por este
     item 88**.
+89. **A PRESENTE ENTREGA É EXCLUSIVAMENTE A MATERIALIZAÇÃO FÍSICA `C-A5` — APLICAÇÃO DOS 37
+    MARCADORES APROVADOS AO CORPUS.**
+    **ESTE ITEM 89 É DOCUMENTAL/EDITORIAL. NÃO É "SUBETAPA 89", NÃO É `E9`, NÃO É A OITAVA
+    NEM A NONA MICROENTREGA FUNCIONAL DE `C`.** Ele registra **somente** a aplicação física
+    dos marcadores já mapeados, e **nenhum item 90 é criado**.
+    **Autorização humana.** O responsável autorizou **explicitamente** a aplicação dos 37
+    marcadores conforme o mapeamento **`C-A5-M5`** aprovado, **aceitando** que, **após a
+    integração auditada desta materialização**, **`C-A5-M2` ficará ativa antes da
+    implementação do validador permanente da representação marcada**. A autorização **não**
+    abrange código, testes novos, índice real, extrator, *renderer*, bijeção física, migração
+    de autoridade de status nem a oitava microentrega funcional.
+    **Escopo.** Arquivos alterados: **dois** — `knowledge/respostas-aprovadas.md` e
+    `docs/00-estado-atual.md`. **`docs/07-arquitetura-motor-respostas.md` NÃO foi alterado** e
+    permanece no blob `2181e03246cf1236557b8fd4ce7f3c750dfc02eb`. **Zero `src/**`**, **zero
+    `tests/**`**, **zero `prompts/**`**, **zero `knowledge/casa77.yaml`**, **zero
+    `knowledge/informacoes-pendentes.md`**, **zero `CLAUDE.md`** e **zero outro `docs/**`**.
+    **Nenhum marco funcional novo é criado.**
+    **Edição aplicada.** Para **cada uma das 37 unidades físicas**, o marcador
+    `<!-- fragmento: <id> -->` foi inserido na **linha imediatamente anterior** à **primeira
+    linha `>`** do bloco, **sem linha em branco** entre marcador e bloco e **preservando** a
+    linha em branco já existente antes do ponto de inserção. **O diff do corpus é exatamente
+    `+37 / −0`.** **Nenhuma linha preexistente foi alterada, removida ou reordenada**;
+    **nenhum texto emitível, status ou cabeçalho foi tocado**; **nenhuma normalização de EOL
+    permanece no estado final**.
+    **Origem das identidades — nunca o ordinal.** **Todas as 37 identidades vêm
+    exclusivamente da tabela `C-A5-M5` humanamente aprovada** (**`C-A5-I5`**, **`C-A5-M6`**);
+    **nenhum `id` foi derivado de posição, ordem ou unicidade da unidade**, e **nenhuma
+    identidade nova foi criada**. A base usada para **localizar** cada unidade física dos 6
+    `Rxx` multi-fragmento foi: **`R05`** — o **rótulo declarativo do próprio corpus**
+    (`F1`/`F2`/`F3`); **`R09`** — o **localizador humano aprovado** `bloco 1` / `bloco 2`, que
+    é **localizador de evidência da unidade já identificada e aprovada**, e **não** derivação
+    de ordem; **`R11`**, **`R12`**, **`R23`** e **`R25`** — o **descritor de matéria** fixado
+    na tabela aprovada.
+    **Validação determinística executada.** Estrutura pós-edição: **30 `Rxx`**, **37 blocos
+    de citação contíguos**, **24** de fragmento único e **6** multi-fragmento (`R05` = 3;
+    `R09`, `R11`, `R12`, `R23`, `R25` = 2 cada) — **inalterada**, o que exclui cisão ou
+    inserção intrabloco. **37** linhas contendo `<!--`, **todas** na forma exata
+    `<!-- fragmento: F<n> -->`, com `id` conforme **`C-A5-I3`** (**`F`** + inteiro decimal
+    ASCII maior que zero, sem zero à esquerda) e **zero outro comentário HTML**.
+    **Pareamento marcador↔bloco = 37/37**: cada bloco com marcador válido imediatamente
+    acima, cada marcador
+    seguido imediatamente por linha `>`, **zero marcador órfão** e **zero bloco sem
+    marcador**. **Unicidade**: **zero `id` duplicado dentro do mesmo `Rxx`** (**`C-A5-I4`**,
+    **C-2h**), com repetição de `F1` entre `Rxx` distintos **válida** por a unicidade ser
+    local. **Correspondência com a tabela aprovada**: **37 correspondências, zero ausente,
+    zero extra, zero divergente**.
+    **Prova byte-a-byte.** Removidas **exclusivamente** as 37 linhas de marcador, com seus
+    terminadores, o corpus reconstruído é **binariamente idêntico** ao estado anterior:
+    **SHA-256 `7cf1aa058c851a6642f5af0d0600a8a66091b09b70d4a58989b26a2aad6db344`**, **9 712
+    bytes**, **253 LF**, **253 CR** — comparação binária **IDÊNTICA**. Esta é a prova de que
+    a **única** mudança física do corpus são as **37 linhas autorizadas**.
+    **Corpus-base imediatamente anterior a esta entrega.** `knowledge/respostas-aprovadas.md`,
+    blob **`d9f275454cb9f091a824292560d983d25f08c14e`**.
+    **Regra de vigência deste registro.** **Enquanto esta entrega não pertencer ao histórico
+    da `main`**, o **corpus canônico permanece no estado imediatamente anterior**, **`C-A5-M2`
+    continua NÃO ATIVA**, os **37 marcadores constituem somente representação candidata na
+    branch/PR**, a **ausência de marcador não é erro** e **nenhum bloco fica fail-closed**
+    (**`C-A5-M3`**). **A partir do primeiro estado da `main` que contiver conjuntamente esta
+    entrega e os 37 marcadores**, por **`C-A5-M1`** / **`C-A5-M2`**, **`C-A5-M2` = ATIVA** e
+    **`C-A5` = MATERIALIZADA no corpus**, passando também a vincular **`C-A5-X1`** e
+    **`C-A5-I6`**. Esse efeito é **automático** e **não depende de nova reconciliação
+    documental**; o responsável **aceitou expressamente** que ele ocorrerá **antes** da
+    implementação do validador permanente — **que esta entrega NÃO implementa**. **Mesmo
+    nesse estado pós-integração**: **C continua ARBITRADA / NÃO MATERIALIZADA**; o **índice
+    real continua inexistente**; a **bijeção física continua NÃO EXECUTADA**; a **autoridade
+    de status não migra**; **`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**; a **oitava
+    microentrega funcional continua não escolhida e não iniciada**; e a **3B.8 continua
+    inexistente**.
+    **Testes.** **Nenhum teste novo foi criado e nenhum teste existente foi alterado.** A
+    suíte existente foi reexecutada: **`2707 passed`** sob `-W error`, em **Python 3.14.5**,
+    **zero failures, zero errors e zero warnings** — **mesma baseline anteriormente
+    confirmada**, sobre o **commit funcional `4749efa74d5684b52b4f457176710ba6e212c627`**.
+    **Estado corrente preservado.** `knowledge/indice-respostas-aprovadas.yaml` **continua
+    INEXISTENTE**; a **bijeção física continua NÃO EXECUTADA** e **`C-A1-ST6`–`C-A1-ST10`
+    continuam NÃO satisfeitas**; a **autoridade de status NÃO migrou** — o Markdown continua
+    a autoridade (**C-11**); **C continua ARBITRADA / NÃO MATERIALIZADA**; continuam
+    **ABERTAS** a propagação de status ao fragmento, o mapeamento de `PARCIAL`, a sintaxe de
+    *placeholder*, a gramática de `caminho_yaml`, o formato `hora` e **C-7**; **a 3B.8
+    continua INEXISTENTE**; e **A OITAVA MICROENTREGA FUNCIONAL DE `C` CONTINUA NÃO ESCOLHIDA
+    E NÃO INICIADA** — **nenhuma pendência é eleita** por este item. **O item 88 acima
+    permanece correto como registro do momento em que foi escrito** — quando o mapeamento
+    estava aprovado mas **ainda não aplicado ao corpus** —, e é **complementado, quanto à
+    aplicação física, por este item 89**.
 
 ## Arbitragens
 
