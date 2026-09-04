@@ -4,8 +4,60 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-09-04 (**reconciliação documental pós-merge da DÉCIMA MICROENTREGA
-FUNCIONAL DE `C` — composição determinística em memória da correspondência canônica**). Esta
+Atualizado em: 2026-09-04 (**micro-arbitragem documental — conversão do bloco marcado em
+texto canônico**). Esta entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera **somente**
+`docs/07-arquitetura-motor-respostas.md` e este documento, e **não altera código, testes,
+`knowledge/**`, `prompts/**` nem `CLAUDE.md`. **ELA NÃO É MARCO FUNCIONAL** e **NÃO É a
+décima primeira microentrega funcional de `C`**. Ela fecha **uma única** matéria, antes
+explicitamente em aberto: **como um bloco físico emitível de `C-A5-U1` é convertido
+deterministicamente em uma `str` do domínio canônico `D1`–`D7`, ou recusado *fail-closed***. A
+convenção adotada é **ESTRITA / FAIL-CLOSED**, registrada em `docs/07` no bloco **"Conversão
+do bloco marcado em texto canônico"**, com os rótulos **`MT1`–`MT12`** — **locais daquele
+bloco**, de referência interna, e que **NÃO são etapa, subetapa, `Exx` nem nomenclatura
+normativa de `C`**. Em resumo: a **fronteira física de `C-A5-U1` permanece literal** e o
+**reconhecimento estrutural continua distinto da conversão textual** (`MT1`, `MT2`); a linha
+de conteúdo é **exatamente `>` + um espaço ASCII + conteúdo não vazio**, com o prefixo
+**`> `** — dois caracteres — removido **sem `lstrip`, `strip`, CommonMark ou tolerância
+implícita** (`MT3`), e prefixos divergentes são **recusados** (`MT4`); a linha vazia interna é
+**`>` sozinho** e projeta **exatamente `\n\n`** (`MT5`), enquanto **duas ou mais** linhas `>`
+consecutivas (`MT6`) e linha `>` **em borda** (`MT7`) são **recusadas**; o extrator aceita
+**`LF` e `CRLF`** como terminador **físico**, removendo o `CR` do par e **nunca** deixando
+`CR` na saída, com `CR` isolado, `U+2028`, `U+2029`, `U+0085`, `U+000B` e `U+000C`
+**recusados** e **sem universal newline implícito** (`MT8`); a **quebra suave** projeta
+**exatamente um `LF`**, e a conversão `LF` → `U+0020` **permanece com `C-15b`** (`MT9`);
+whitespace antes do terminador é **recusado**, não corrigido (`MT10`); há **dois desfechos** —
+`str` canônica não vazia ou recusa explícita (`MT11`) —; e a **taxonomia técnica de exceções,
+nomes e assinaturas NÃO é decidida** aqui (`MT12`). **`D3`, `D4` e `D5` foram PRESERVADAS
+LITERALMENTE**: não foram reescritas, renumeradas nem substituídas — aquele bloco define o
+**domínio de chegada**, e esta arbitragem define **somente como se chega nele**; em
+particular, `D5` continua valendo para a representação canônica e a adaptação física de
+`CRLF` fica **do lado do extrator**, exatamente onde `D5` já a colocava. **O leitor da
+representação marcada NÃO foi alterado**: `ler_unidades_marcadas` continua responsável apenas
+por reconhecimento estrutural, identidade e tokens `<Rxx>/<id>`. O corpus foi consultado
+**read-only** como **evidência de compatibilidade, jamais como origem normativa**, e
+**reverificado mecanicamente** sobre o blob `3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`: **37**
+blocos emitíveis, **29** multilinha, **73/73** linhas de conteúdo na forma exata `> `, **0**
+linha vazia interna, **0** linha vazia em borda, **0** par de linhas vazias consecutivas,
+**0** linha com espaço ou tab antes do terminador, **0** linha fora das duas formas admitidas
+e **0** ocorrência de `CR`, `U+2028`, `U+2029`, `U+0085`, `U+000B` ou `U+000C` — **nenhuma
+alteração do corpus é exigida, e nenhuma foi feita**. **Nenhum `pytest` foi executado nesta
+entrega** — **zero código, zero teste e zero `knowledge/**`** —, e a **baseline funcional
+permanece `3186 passed`** em **Python 3.14.5**, sobre o **commit funcional
+`6265b823cb20aab0395840f8125008121de27e43`**, que **continua o último commit funcional
+aprovado**. **A DÉCIMA PRIMEIRA MICROENTREGA FUNCIONAL DE `C` CONTINUA NÃO ESCOLHIDA E NÃO
+INICIADA**: esta arbitragem apenas **destrava** o seu futuro planejamento. Continuam
+inalterados: **`C` ARBITRADA / NÃO MATERIALIZADA**; **`C-A5` MATERIALIZADA no corpus** e
+**`C-A5-M2` ATIVA**; `knowledge/indice-respostas-aprovadas.yaml` **INEXISTENTE**; a **bijeção
+física NÃO EXECUTADA**; a **autoridade de status NÃO MIGRADA** (**C-11**);
+**`C-A1-ST6`–`C-A1-ST10` NÃO satisfeitas**; e **ABERTAS** a propagação de status ao fragmento,
+o mapeamento concreto de `PARCIAL`, a sintaxe de *placeholder*, a gramática de `caminho_yaml`,
+o formato `hora` e **C-7**. A **3B.8 continua INEXISTENTE** e **nenhuma subetapa, `E11` ou
+`E12` foi criada**. O **item documental 93** abaixo **NÃO é "subetapa 93"** e **NÃO cria a
+3B.8**.
+
+**Atualização anterior — 2026-09-04 (reconciliação documental pós-merge da DÉCIMA
+MICROENTREGA FUNCIONAL DE `C` — composição determinística em memória da correspondência
+canônica), preservada como registro daquele momento.** Aquela
 entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera **somente** este documento, e **não altera
 código, testes, `knowledge/**`, `docs/07-arquitetura-motor-respostas.md`, `prompts/**` nem
 `CLAUDE.md`. **A DÉCIMA MICROENTREGA FUNCIONAL DE `C` ESTÁ INTEGRADA À `main`** pelo
@@ -4374,6 +4426,101 @@ a **pendência residual continua aberta**.
     estado **posterior**. Em particular, o **item 91** continua correto ao afirmar que, quando
     foi escrito, a décima microentrega ainda não havia sido escolhida — ela veio a ser
     **esta**, registrada aqui.
+
+93. **A PRESENTE ENTREGA É EXCLUSIVAMENTE A MICRO-ARBITRAGEM DOCUMENTAL DA CONVERSÃO DO
+    BLOCO MARCADO EM TEXTO CANÔNICO.**
+    **ESTE ITEM 93 É DOCUMENTAL. NÃO É "SUBETAPA 93", NÃO É `E11` NEM `E12`, NÃO É
+    IDENTIFICADOR NORMATIVO DE `C`, NÃO É MARCO FUNCIONAL E NÃO CRIA A 3B.8** — a **3B.8
+    continua INEXISTENTE**, e a **3B.7 continua a última subetapa numerada**. Ele **não é** a
+    décima primeira microentrega funcional de `C`.
+    **Escopo.** Arquivos alterados: **dois** — `docs/07-arquitetura-motor-respostas.md` e
+    `docs/00-estado-atual.md`. **Zero `src/**`**, **zero `tests/**`**, **zero
+    `knowledge/**`**, **zero `prompts/**`**, **zero `CLAUDE.md`**, **zero `.gitattributes`** e
+    **zero configuração**. **Nenhum marco funcional novo é criado** e **nenhum `pytest` foi
+    executado**.
+    **Matéria fechada — uma só.** **Como um bloco físico emitível de `C-A5-U1` é convertido
+    deterministicamente em uma `str` do domínio canônico `D1`–`D7`, ou recusado
+    *fail-closed***. **Nenhuma outra lacuna de `C` é arbitrada aqui.** A convenção adotada é
+    **ESTRITA / FAIL-CLOSED**, registrada em `docs/07` no bloco **"Conversão do bloco marcado
+    em texto canônico"**, com os rótulos **`MT1`–`MT12`** — **locais daquele bloco**, de
+    referência interna, e **declaradamente NÃO** etapa, subetapa, `Exx` ou nomenclatura
+    normativa de `C`.
+    **Conteúdo da convenção.** **`MT1`**: a fronteira física de **`C-A5-U1` permanece
+    literal** — a unidade é a sequência maximal de linhas iniciadas por `>` —, e a convenção
+    apenas acrescenta uma validação **semântica posterior**. **`MT2`**: um bloco pode ser
+    **estruturalmente reconhecido** e ainda assim **recusado** pelo futuro extrator; isso
+    **não** torna o leitor da representação marcada incorreto. **`MT3`**: a linha de conteúdo
+    é **exatamente** `>` + **um** espaço ASCII `U+0020` + **conteúdo não vazio**, e o prefixo
+    removido é **exatamente `> `**, **dois caracteres** — **proibidos** `lstrip`, `strip`,
+    *parser* CommonMark, normalização genérica e tolerância implícita. **`MT4`**: recusados
+    *fail-closed* `>` colado ao conteúdo, `>` com dois ou mais espaços, `>` com tab, `> ` com
+    tab, `> ` sem conteúdo e qualquer whitespace adicional entre `>` e o conteúdo. **`MT5`**:
+    a linha vazia interna é **`>` sozinho**, e **uma** delas entre dois grupos de conteúdo
+    projeta **exatamente `\n\n`** (**`D4`**). **`MT6`**: **duas ou mais** linhas `>`
+    consecutivas são **recusadas** — não criam parágrafos nem são colapsadas —, porque
+    produziriam três ou mais `LF` consecutivos (**`D4`**, **`D7`**). **`MT7`**: linha `>` em
+    **borda** — antes da primeira ou depois da última linha de conteúdo — é **recusada**,
+    porque a saída não pode começar nem terminar em `LF` (**`D7`**). **`MT8`**: o extrator
+    aceita **`LF`** e **`CRLF`** como terminador **físico**, removendo o `CR` **do par** e
+    produzindo **somente o `LF` canônico**; **nenhum `CR` permanece na saída**; são recusados
+    `CR` isolado, `U+2028`, `U+2029`, `U+0085`, `U+000B`, `U+000C` e qualquer outro terminador
+    não autorizado; **proibido** *universal newline* implícito e **proibido** mecanismo cuja
+    política varie por ambiente. **`MT9`**: duas linhas de conteúdo consecutivas são o **mesmo
+    parágrafo** e projetam **exatamente um `LF`**; o extrator **não** troca esse `LF` por
+    espaço — a conversão `LF` → `U+0020` **permanece com `C-15b`** (**`D3`**). **`MT10`**:
+    espaço ou tab **imediatamente antes** do terminador é **recusado**, nunca corrigido, e a
+    saída deve satisfazer **`D7`**. **`MT11`**: há **dois desfechos** — `str` canônica **não
+    vazia** ou **recusa explícita *fail-closed*** —, **nunca** texto parcialmente convertido,
+    correção de sintaxe, inferência de intenção, CommonMark como autoridade ou normalização
+    arbitrária. **`MT12`**: **taxonomia de exceções, nome de módulo, nome de função,
+    assinatura, ordem de parâmetros e mensagem NÃO são decididos** aqui.
+    **`D3`, `D4` e `D5` preservadas literalmente.** Elas **não foram reescritas, renumeradas,
+    substituídas nem duplicadas em versão concorrente**. Aquele bloco define o **domínio de
+    chegada**; esta arbitragem define **somente como se chega nele**. **`D3`** continua sendo
+    a convenção de quebra suave, com a conversão para espaço pertencendo à normalização de
+    **`C-15b`**; **`D4`** continua fixando `\n\n` como fronteira de parágrafo real e três ou
+    mais `LF` como não canônicos; e **`D5`** continua admitindo somente `LF` na representação
+    canônica, com `CRLF` não canônico e **o comparador não o convertendo** — a adaptação
+    física é do **produtor/extrator**, exatamente onde **`D5`** já a colocava, e é **essa**
+    adaptação que **`MT8`** fecha.
+    **Leitor da representação marcada inalterado.** `ler_unidades_marcadas`
+    (`src/casa77_sdr/response_markdown_units.py`) continua responsável **apenas** por
+    reconhecimento estrutural, identidade e tokens canônicos `<Rxx>/<id>`. **Nenhuma alteração
+    dele foi autorizada nem feita.** O seu blob permanece
+    `3c99d89aa0028f673548f5cc932ec166d592cd7f`.
+    **Evidência do corpus — evidência, não norma.** Consulta **read-only** ao blob
+    `3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`, reverificada mecanicamente: **37** blocos
+    emitíveis, **29** multilinha, **73/73** linhas de conteúdo na forma **exata `> `**, **0**
+    linha vazia interna `>`, **0** linha vazia em borda, **0** par de linhas vazias
+    consecutivas, **0** linha com espaço ou tab antes do terminador, **0** linha fora das duas
+    formas admitidas e **0** ocorrência de `CR`, `U+2028`, `U+2029`, `U+0085`, `U+000B` ou
+    `U+000C`. Esses fatos **sustentam** que a convenção **não exige alteração do corpus
+    atual**, mas **NÃO são a origem normativa da regra**, **NÃO autorizam alteração de
+    `knowledge/respostas-aprovadas.md`** — que **não foi alterado** — e **NÃO substituem
+    `D1`–`D7`, `C-15` ou `C-A5`**.
+    **O que esta arbitragem destrava — e somente isto.** Uma **futura** entrega funcional de
+    **extração determinística do conteúdo textual emitível**, que poderá receber a
+    representação marcada **já em memória** e produzir texto canônico para `C-15b` **sem
+    inventar** regras de prefixo, parágrafo, quebra suave, terminador físico ou recusa de
+    sintaxe inválida. **Essa entrega NÃO é implementada aqui e NÃO é escolhida aqui.**
+    **Estado corrente preservado.** O **último commit funcional aprovado continua
+    `6265b823cb20aab0395840f8125008121de27e43`** e a **baseline funcional continua `3186
+    passed`** em **Python 3.14.5** — **nenhuma suíte foi executada nesta entrega**. Continuam:
+    **`C` ARBITRADA / NÃO MATERIALIZADA**; **`C-A5` MATERIALIZADA no corpus** e **`C-A5-M2`
+    ATIVA**; `knowledge/indice-respostas-aprovadas.yaml` **INEXISTENTE**; a **bijeção física
+    NÃO EXECUTADA**; a **autoridade de status NÃO MIGRADA** (**C-11**);
+    **`C-A1-ST6`–`C-A1-ST10` NÃO satisfeitas**; e **ABERTAS** a propagação de status ao
+    fragmento, o mapeamento concreto de `PARCIAL`, a sintaxe de *placeholder*, a gramática de
+    `caminho_yaml`, o formato `hora` e **C-7**. **CONVERTER O BLOCO MARCADO EM TEXTO CANÔNICO
+    NÃO É MATERIALIZAR `C`.**
+    **Próxima ação.** **A DÉCIMA PRIMEIRA MICROENTREGA FUNCIONAL DE `C` CONTINUA NÃO ESCOLHIDA
+    E NÃO INICIADA**, e **não é escolhida por este item**. **Nenhuma pendência é eleita**,
+    **nenhum módulo, função, exceção ou mensagem é nomeado** e **nenhuma subetapa é criada**.
+    **Relação com os itens anteriores.** **Os itens 87 a 92 permanecem corretos como registro
+    do momento em que foram escritos.** Este item 93 **não os reescreve**; ele registra o
+    estado **posterior**. Em particular, o **item 92** continua correto ao afirmar que, quando
+    foi escrito, a décima primeira microentrega ainda não havia sido escolhida — e ela
+    **continua não escolhida** após este item, que é **documental** e **não funcional**.
 
 ## Arbitragens
 

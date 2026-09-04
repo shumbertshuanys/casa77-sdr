@@ -597,6 +597,83 @@ para tipo não-`str`, ordem entre **NFC** e a dobra de quebra suave, `hora`, gra
 índice, *renderer*, formatos, **R2**, **S2-D8**, **`N-b-RES2`**, **`OrquestradorMotor`**,
 `.gitattributes` e a **3B.8**.
 
+##### Conversão do bloco marcado em texto canônico
+
+Micro-arbitragem **documental** e **posterior**. Ela fecha **uma única** matéria: **como um
+bloco físico emitível de `C-A5-U1` é convertido deterministicamente em uma `str` do domínio
+canônico `D1`–`D7`, ou recusado *fail-closed***. Ela **não** reescreve, renumera ou substitui
+`D1`–`D7`, **não** cria versão concorrente deles, **não** altera `C-15`, `C-15b`, `C-A1-B`,
+`C-A1-ST` ou qualquer bloco de `C-A5`, e **não** cria identificador normativo novo: os rótulos
+**`MT1`**–**`MT12`** abaixo são **locais deste bloco**, existem só para referência interna e
+**não** são etapa, subetapa, `Exx` nem nomenclatura normativa de `C`. **Nenhum extrator é
+implementado aqui**; nenhum módulo, função, assinatura, exceção ou mensagem é decidido; e
+**nenhuma subetapa é criada** — a **3B.8 continua não existindo**.
+
+**Relação com `D1`–`D7`, preservados literalmente.** Aquele bloco define o **domínio de
+chegada**; este define **como se chega nele**. **`D3`** continua sendo a convenção de
+**quebra suave** — um `LF` isolado representa quebra dentro do mesmo parágrafo, e é a
+**normalização de `C-15b`** que o converte em exatamente um `U+0020`. **`D4`** continua
+definindo **exatamente `\n\n`** como fronteira de parágrafo real, com **três ou mais `LF`
+consecutivos NÃO CANÔNICOS**. **`D5`** continua admitindo **somente `LF`** como terminador da
+representação canônica, com `CR`, `CRLF`, `U+2028`, `U+2029`, `U+0085`, `U+000B` e `U+000C`
+**não canônicos**, e continua determinando que **o comparador não converte `CRLF`** — a
+adaptação física pertence ao **produtor/extrator**. É **exatamente essa** adaptação que
+**`MT8`** fecha, **do lado do extrator**, sem tocar em `D5`.
+
+| # | Decisão |
+|---|---|
+| MT1 | **Fronteira física inalterada.** `C-A5-U1` permanece **literal**: a unidade física é a **sequência maximal de linhas iniciadas por `>`**. Esta convenção **não** altera como `C-A5` ou o leitor da representação marcada reconhecem a **existência estrutural** do bloco; ela acrescenta uma validação **semântica posterior**, aplicada **somente** para obter o texto canônico. |
+| MT2 | **Reconhecimento estrutural ≠ conversão textual.** Um bloco pode ser **estruturalmente reconhecido** e, ainda assim, ser **recusado** pelo futuro extrator quando a sua sintaxe textual não satisfizer esta convenção. Isso **não** torna o leitor da representação marcada incorreto: são **responsabilidades distintas**. |
+| MT3 | **Linha de conteúdo — forma exata.** Uma linha física de conteúdo emitível é **exatamente** `>`, **um** espaço ASCII `U+0020` e **conteúdo não vazio**. O prefixo estrutural removido é **exatamente `> `** — **dois caracteres**. **Proibido** `lstrip`, `strip`, *parser* CommonMark, normalização genérica ou tolerância implícita. |
+| MT4 | **Prefixos recusados.** São **recusados *fail-closed***, entre outras formas mecanicamente equivalentes: `>` colado ao conteúdo; `>` seguido de **dois ou mais** espaços; `>` seguido de tab; `> ` seguido de tab; `> ` **sem conteúdo**, usada como suposta linha vazia; e **qualquer** whitespace adicional entre `>` e o primeiro caractere do conteúdo. **Não reinterpretar, não corrigir, não inferir intenção.** |
+| MT5 | **Linha vazia interna — forma exata.** A representação física **exata** de uma linha vazia interna é **`>` sozinho**, sem espaço, antes do terminador físico. **Uma** linha `>` entre dois grupos de conteúdo representa **uma** fronteira real de parágrafo e projeta, na `str` canônica, **exatamente `\n\n`**, conforme **`D4`**. |
+| MT6 | **Múltiplas linhas vazias — recusadas.** **Duas ou mais** linhas `>` consecutivas **não** criam múltiplos parágrafos e **não** são colapsadas: são **recusadas *fail-closed***, porque a sua projeção produziria **três ou mais `LF` consecutivos**, representação proibida por **`D4`** e **`D7`**. |
+| MT7 | **Linha vazia nas bordas — recusada.** Uma linha `>` **antes da primeira** linha de conteúdo, ou **depois da última**, é **recusada *fail-closed***: a saída **não pode começar nem terminar em `LF`** (**`D7`**). |
+| MT8 | **Terminadores físicos aceitos.** O futuro extrator aceita **`LF`** e **`CRLF`** como terminador **físico**, tratando-os como equivalentes **somente nessa fronteira de extração**. Para `CRLF`, o `CR` **pertencente ao par** é removido e produz-se **somente o `LF` canônico** correspondente. **Isso não altera `D5`**, que continua valendo para a representação canônica: **nenhum `CR` pode permanecer na saída**. São **recusados *fail-closed***: `CR` isolado, `U+2028`, `U+2029`, `U+0085`, `U+000B`, `U+000C` e qualquer outro terminador não autorizado. **Proibido** *universal newline* implícito e **proibido** qualquer mecanismo cuja política varie conforme o ambiente. |
+| MT9 | **Quebra suave.** Duas linhas físicas de conteúdo **consecutivas** pertencem ao **mesmo parágrafo**. Removidos os prefixos `> `, a fronteira física entre elas é projetada para **exatamente um `LF` (`U+000A`)** na representação canônica. O extrator **não** substitui esse `LF` por espaço: a conversão `LF` → `U+0020` pertence à **normalização de `C-15b`**, conforme **`D3`**. **Extrator produz representação canônica; comparador normaliza a quebra suave.** As duas responsabilidades **não se fundem**. |
+| MT10 | **Whitespace adjacente a quebra.** Whitespace que produziria representação não canônica **não é corrigido silenciosamente**. É **recusada *fail-closed*** a linha de conteúdo com **espaço** ou **tab imediatamente antes** do terminador físico. Removido o prefixo, a saída deve satisfazer **`D7`**: **zero** espaço/tab imediatamente **antes** de `LF` e **zero** imediatamente **depois** de `LF`. O espaço obrigatório de `> ` pertence **somente** ao prefixo estrutural e é **removido**. |
+| MT11 | **Dois desfechos conceituais.** **Sucesso**: produz uma `str` **não vazia** já pertencente ao domínio canônico **`D1`–`D7`**. **Falha**: recusa **explícita** e ***fail-closed***. **Nunca**: devolver texto parcialmente convertido; corrigir sintaxe; inferir intenção; aplicar CommonMark como autoridade; ou normalizar conteúdo arbitrariamente. |
+| MT12 | **Taxonomia não decidida.** A taxonomia técnica concreta de exceções, o nome de módulo, o nome de função, a assinatura, a ordem de parâmetros e o texto de mensagem **não** são definidos aqui: pertencem a **mandato técnico posterior**. |
+
+**Relação com o leitor da representação marcada.** `ler_unidades_marcadas`
+(`src/casa77_sdr/response_markdown_units.py`) continua responsável **apenas** por
+**reconhecimento estrutural**, **identidade** e **tokens canônicos `<Rxx>/<id>`**. A futura
+fronteira de **extração textual** poderá impor a convenção estrita acima sobre um bloco **já
+estruturalmente reconhecido** — responsabilidade **diferente**. **Nenhuma alteração daquele
+módulo é autorizada por esta arbitragem**, e nenhuma é feita.
+
+**O que esta arbitragem destrava — e somente isto.** Uma **futura** entrega funcional de
+**extração determinística do conteúdo textual emitível**, que poderá receber a representação
+marcada **já em memória** e produzir texto canônico para `C-15b` **sem inventar** regras de
+prefixo, de parágrafo, de quebra suave, de terminador físico ou de recusa de sintaxe inválida.
+**Essa entrega não é implementada aqui e não é escolhida aqui.**
+
+**Evidência estrutural do corpus atual — evidência, não norma.** Metadados apenas, **sem
+reproduzir frase alguma** e **sem registrar *hash* de conteúdo** (`C-15e`, `C-1k`–`C-1m`),
+reverificados mecanicamente sobre o blob versionado: **37** blocos emitíveis, dos quais **29**
+multilinha; **73/73** linhas de conteúdo na forma **exata `> `**; **0** linhas vazias internas
+`>`; **0** linhas vazias em borda de bloco; **0** pares de linhas vazias consecutivas; **0**
+linhas com espaço ou tab antes do terminador; **0** linhas fora das duas formas admitidas; e
+**0** ocorrências de `CR`, `U+2028`, `U+2029`, `U+0085`, `U+000B` ou `U+000C`. Esses fatos
+**sustentam** que a convenção escolhida **não exige alteração do corpus atual**, mas **NÃO
+são a origem normativa da regra**, **NÃO autorizam alteração de
+`knowledge/respostas-aprovadas.md`** e **NÃO substituem `D1`–`D7`, `C-15` ou `C-A5`**. O
+corpus foi consultado **read-only** e **não foi alterado**.
+
+**Risco operacional já registrado, e não resolvido aqui.** *Checkouts* e ambientes podem
+materializar terminações de linha distintas das do blob Git. **`MT8`** fecha a política **do
+extrator** diante disso; esta entrega **não altera `.gitattributes`**, **não decide
+configuração de Git** e **não afirma** que qualquer configuração seja universal.
+
+**Fora desta arbitragem**, e explicitamente **não decididos**: propagação de status ao
+fragmento; mapeamento de `PARCIAL`; sintaxe de *placeholder*; gramática de `caminho_yaml`;
+formato `hora`; **C-7**; extração do **rótulo de status**; índice físico; *bindings*;
+`ASSERTIVA` física; *renderer*; execução física da bijeção; satisfação de
+`C-A1-ST6`–`C-A1-ST10`; migração da autoridade de status; consumidores;
+**`OrquestradorMotor`**; **R2**; **S2-D8**; **`N-b-RES2`**; `.gitattributes`; e a **3B.8**.
+**CONVERTER O BLOCO MARCADO EM TEXTO CANÔNICO NÃO É MATERIALIZAR `C`**, e **`C` continua
+ARBITRADA / NÃO MATERIALIZADA**.
+
 ##### C-A1-F — Refinamentos normativos de C-6
 
 **Nenhum formato novo é criado.** O vocabulário de C-6 permanece fechado; o que segue é
