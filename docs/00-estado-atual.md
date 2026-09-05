@@ -4,8 +4,76 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-09-05 (**micro-arbitragem documental — propagação do status de `Rxx` aos
-fragmentos**). Esta entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera **somente**
+Atualizado em: 2026-09-05 (**micro-arbitragem documental — gramática física do rótulo de
+status no cabeçalho `Rxx`**). Esta entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera **somente**
+`docs/07-arquitetura-motor-respostas.md` e este documento, e **não altera código, testes,
+`knowledge/**`, `prompts/**` nem `CLAUDE.md`. **ELA NÃO É MARCO FUNCIONAL** e **NÃO É a
+décima segunda microentrega funcional de `C`**. Ela fecha **uma única** matéria: **qual é a
+gramática física determinística do rótulo de status em um cabeçalho `Rxx`**, registrada em
+`docs/07` no bloco **"Gramática física do rótulo de status no cabeçalho `Rxx`"**, com os
+rótulos **`GR1`–`GR7`** — **locais daquele bloco**, de referência interna, e que **NÃO são
+etapa, subetapa, `Exx` nem nomenclatura normativa de `C`**, e que **NÃO criam a 3B.8**. A
+forma física arbitrada, chamada **`G2`** naquele bloco, é **`## Rxx — <titulo> — <rotulo>`**,
+com o **separador literal de três caracteres `U+0020 U+2014 U+0020`** — **SPACE + EM DASH +
+SPACE**. Em resumo: a gramática aplica-se **exclusivamente** a uma linha que **já satisfaça a
+forma estrutural de cabeçalho `## Rxx`** reconhecida pelas regras vigentes, e **NÃO define
+ordem de chamadas entre módulos**, **NÃO decide composição técnica** e **NÃO altera `C8`,
+`C-A5`, `C-A1-ST` ou `SP1`–`SP7`** (`GR1`); o separador ocorre **exatamente duas vezes**,
+título e rótulo são **não vazios**, nenhum deles começa ou termina com **espaço `U+0020`** ou
+**tab `U+0009`**, **terceira ocorrência** e **menos de duas** são **inválidas**, `-`
+(`U+002D`) e `–` (`U+2013`) **não** equivalem ao separador, espaçamento divergente **não é
+corrigido**, `strip`/`lstrip`/`rstrip`/normalização/colapso/inferência/tolerância implícita
+são **proibidos**, e o rótulo obtido é **literal/opaco**, sem decidir pertença a `ST1`–`ST3`
+(`GR2`); o rótulo é **literal e opaco**, com a tradução das três linhas automáticas
+continuando em `canonicalizar_status(...)`, **não alterado** (`GR3`); forma divergente é
+**recusada** *fail-closed*, com as espécies de impedimento nomeadas **apenas conceitualmente**
+— separador ausente, cardinalidade diferente de 2, segmento vazio, branco de borda — e **sem**
+decidir exceção, mensagem, módulo, função ou assinatura (`GR4`); o título é **obrigatório para
+satisfazer a forma**, **não** é o produto da futura extração e **não** recebe semântica
+comercial nova (`GR5`); uma **futura** fronteira poderá produzir a associação entre `Rxx` e
+`rotulo_literal`, **sem** que nome, assinatura, retorno, exceção, mensagem, ordem de chamadas
+ou composição sejam fixados aqui (`GR6`); e a arbitragem **NÃO** fecha `PARCIAL`, a
+representação física do seu mapeamento, o índice, *bindings*, *placeholder*, `caminho_yaml`,
+`hora`, **C-7**, a bijeção física, `ST6`–`ST10` ou a migração de autoridade (`GR7`).
+**`PARCIAL` é fisicamente extraível por `G2` e continua NÃO RESOLVIDO**: **sem** tradução
+automática, **sem** propagação automática, **não** é quarto status, **continua sob
+`C-A1-ST4`** e **sob `SP4`/`SP5`**, pendente de **mapeamento explícito futuro** —
+**EXTRAIR `PARCIAL` NÃO É RESOLVER `PARCIAL`**. **Relação correta com `C-A5-X2`, sem reescrita
+retroativa**: aquela regra registrou **duas** matérias abertas — a **propagação** e o
+**mapeamento concreto de `PARCIAL`** —; após `SP1`–`SP7` a **propagação** ficou **fechada
+semanticamente** e o **mapeamento de `PARCIAL` continua ABERTO**; **a gramática física do
+rótulo é uma lacuna SEPARADA**, de modo que esta entrega **NÃO esgota `C-A5-X2`**, **NÃO fecha
+"a segunda metade" de `C-A5-X2`** e **NÃO resolve `PARCIAL`**. **`C8` permanece inalterado** —
+`src/casa77_sdr/response_markdown_units.py` **não foi tocado** —, e **nenhuma ordem técnica de
+chamadas foi decidida**. **`C-1`–`C-15`, `C-A1-ST`, `C-A5`, `MT1`–`MT12` e `SP1`–`SP7` foram
+PRESERVADOS LITERALMENTE**, sem reescrita, renumeração ou substituição, e **nenhuma seção
+existente foi renumerada**. **Evidência de compatibilidade, jamais fonte normativa**, medida
+**read-only** e **reverificada mecanicamente** sobre o blob
+`3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`, **sem reproduzir conteúdo comercial**: **30**
+cabeçalhos `## Rxx`, **30/30 conformes a `G2`**, **0** divergentes, **0** títulos contendo o
+separador literal, **exatamente 60** ocorrências de `U+2014` nos cabeçalhos `Rxx` — **duas por
+cabeçalho** —, **0** ocorrências de `U+002D` ou `U+2013` nesses cabeçalhos, e **quatro**
+rótulos físicos distintos: `APROVADO`, `AGUARDA APROVAÇÃO`, `APROVADO com handoff
+obrigatório` e `PARCIAL`. **Nenhuma alteração do corpus é exigida, e nenhuma foi feita.**
+**Nenhum `pytest` foi executado nesta entrega** — **zero código, zero teste e zero
+`knowledge/**`** —, e a **baseline funcional permanece `3404 passed`** em **Python 3.14.5**,
+sobre o **commit funcional `4b6ea8ca00c171275d75ea17c4414011a4f1a835`**, que **continua o
+último commit funcional aprovado**, da **C11 — extração determinística do texto emitível
+canônico**, que **continua a última entrega funcional**. **EFEITO EXATO SOBRE A C12: A C12
+FUNCIONAL DE EXTRAÇÃO DO RÓTULO PASSA A SER PLANEJÁVEL, SUJEITA A PLANEJAMENTO TÉCNICO E
+AUDITORIA SEPARADOS** — ela **NÃO** está pronta, **NÃO** foi escolhida e **NÃO** foi iniciada.
+Continuam inalterados: **`C` ARBITRADA / NÃO MATERIALIZADA**; **`C-A5` MATERIALIZADA no
+corpus** e **`C-A5-M2` ATIVA**; `knowledge/indice-respostas-aprovadas.yaml` **INEXISTENTE**; a
+**bijeção física NÃO EXECUTADA**; a **autoridade de status NÃO MIGRADA** (**C-11**);
+**`C-A1-ST6`–`C-A1-ST10` NÃO satisfeitas**; e **ABERTOS** o mapeamento concreto de `PARCIAL`,
+a sintaxe de *placeholder*, a gramática de `caminho_yaml`, o formato `hora` e **C-7**. A
+**3B.8 continua INEXISTENTE** e **nenhuma subetapa, `E11` ou `E12` foi criada**. O **item
+documental 96** abaixo **NÃO é "subetapa 96"**, **NÃO é `E11` nem `E12`**, **NÃO é marco
+funcional** e **NÃO cria a 3B.8**.
+
+**Atualização anterior — 2026-09-05 (micro-arbitragem documental — propagação do status de
+`Rxx` aos fragmentos), preservada como registro daquele momento.** Aquela entrega é
+**EXCLUSIVAMENTE DOCUMENTAL**: altera **somente**
 `docs/07-arquitetura-motor-respostas.md` e este documento, e **não altera código, testes,
 `knowledge/**`, `prompts/**` nem `CLAUDE.md`. **ELA NÃO É MARCO FUNCIONAL** e **NÃO É a
 décima segunda microentrega funcional de `C`**. Ela fecha **uma única** matéria, antes
@@ -4930,6 +4998,113 @@ a **pendência residual continua aberta**.
     estado **posterior**. Em particular, o **item 94** continua correto ao registrar a **C11
     funcional integrada** e ao afirmar que, quando foi escrito, a C12 funcional não havia sido
     escolhida — e ela **continua não escolhida** após este item, que é **documental** e **não
+    funcional**.
+
+96. **A PRESENTE ENTREGA É EXCLUSIVAMENTE A MICRO-ARBITRAGEM DOCUMENTAL DA GRAMÁTICA FÍSICA
+    DO RÓTULO DE STATUS NO CABEÇALHO `Rxx`.**
+    **ESTE ITEM 96 É DOCUMENTAL. NÃO É "SUBETAPA 96", NÃO É `E11` NEM `E12`, NÃO É
+    IDENTIFICADOR NORMATIVO DE `C`, NÃO É MARCO FUNCIONAL E NÃO CRIA A 3B.8** — a **3B.8
+    continua INEXISTENTE**, e a **3B.7 continua a última subetapa numerada**. Ele **não é** a
+    décima segunda microentrega funcional de `C`.
+    **Escopo.** Arquivos alterados: **dois** — `docs/07-arquitetura-motor-respostas.md` e
+    `docs/00-estado-atual.md`. **Zero `src/**`**, **zero `tests/**`**, **zero
+    `knowledge/**`**, **zero `prompts/**`**, **zero `CLAUDE.md`**, **zero `.gitattributes`** e
+    **zero configuração**. **Nenhum marco funcional novo é criado** e **nenhum `pytest` foi
+    executado**.
+    **Matéria fechada — uma só.** **Qual é a gramática física determinística do rótulo de
+    status em um cabeçalho `Rxx`.** **Nenhuma outra lacuna de `C` é arbitrada aqui**: **não**
+    se arbitra propagação — isso é `SP1`–`SP7`, já fechado —, **não** se arbitra `PARCIAL`,
+    **não** se cria índice, **não** se decide ordem de chamadas entre módulos e **não** se
+    escolhe assinatura ou módulo futuro. A convenção está registrada em `docs/07` no bloco
+    **"Gramática física do rótulo de status no cabeçalho `Rxx`"**, inserido **imediatamente
+    após o bloco de propagação** e **sem renumerar nenhuma seção existente**, com os rótulos
+    **`GR1`–`GR7`** — **locais daquele bloco**, de referência interna, e **declaradamente
+    NÃO** etapa, subetapa, `Exx` ou nomenclatura normativa de `C`.
+    **Forma física `G2`.** **`## Rxx — <titulo> — <rotulo>`**, com **separador literal de três
+    caracteres** `U+0020 U+2014 U+0020` — **SPACE + EM DASH + SPACE**. **`GR2.1`** o separador
+    ocorre **exatamente duas vezes**; **`GR2.2`** `<titulo>` é **não vazio**; **`GR2.3`**
+    `<rotulo>` é **não vazio**; **`GR2.4`** nem título nem rótulo começam ou terminam com
+    **espaço `U+0020`** ou **tab `U+0009`**; **`GR2.5`** **terceira** ocorrência do separador é
+    **inválida**; **`GR2.6`** **menos de duas** ocorrências é **inválida**; **`GR2.7`** `-`
+    (`U+002D`), `–` (`U+2013`) e qualquer outro caractere semelhante **não** equivalem ao
+    separador; **`GR2.8`** espaçamento divergente **não é corrigido**; **`GR2.9`** são
+    **proibidos** `strip`, `lstrip`, `rstrip`, normalização, colapso de espaços, inferência e
+    tolerância implícita; **`GR2.10`** o rótulo obtido é **literal/opaco** e a gramática **NÃO
+    decide pertença a `ST1`–`ST3`**.
+    **Demais decisões.** **`GR1`**: a gramática aplica-se **somente** a uma linha que **já
+    satisfaça a forma estrutural de cabeçalho `## Rxx`** reconhecida pelas regras vigentes;
+    ela **não define ordem de chamadas**, **não decide composição técnica** e **não altera**
+    `C8`, `C-A5`, `C-A1-ST` ou `SP1`–`SP7`. **`GR3`**: o rótulo é **literal e opaco** — **zero
+    tradução, zero normalização, zero canonicalização, zero inferência** —, e a tradução das
+    **três** linhas automáticas de `C-A1-ST1`–`C-A1-ST3` continua em
+    `canonicalizar_status(rotulo: str) -> str` (`src/casa77_sdr/response_status.py`, **não
+    alterado**). **`GR4`**: forma divergente é **recusada** *fail-closed*, **nunca corrigida**;
+    as espécies de impedimento são nomeadas **apenas conceitualmente** — **separador
+    ausente**, **cardinalidade de separador diferente de 2**, **segmento vazio** e **branco de
+    borda** —, e **nome de exceção, mensagem, módulo, função e assinatura NÃO são definidos**
+    aqui. **`GR5`**: o `<titulo>` é **obrigatório para satisfazer a forma física**, **não** é
+    produto da futura extração e **não** recebe semântica comercial nova. **`GR6`**: uma
+    **futura** fronteira poderá produzir a **associação** entre `Rxx` e `rotulo_literal`, sem
+    que nome, assinatura, estrutura de retorno, exceção, mensagem, ordem de chamadas ou
+    composição técnica sejam fixados. **`GR7`**: a arbitragem **NÃO** fecha `PARCIAL`, a
+    representação física do seu mapeamento, o índice, *bindings*, *placeholder*,
+    `caminho_yaml`, `hora`, **C-7**, a bijeção física, `C-A1-ST6`–`C-A1-ST10` ou a migração de
+    autoridade.
+    **`PARCIAL`.** É **fisicamente extraível pela mesma gramática `G2`** — como qualquer outro
+    rótulo — e **isso não muda o seu tratamento**: **não** recebe tradução automática, **não**
+    recebe propagação automática, **não** é quarto status, **continua sob `C-A1-ST4`** e **sob
+    `SP4`/`SP5`**, e **permanece pendente de mapeamento explícito futuro** no nível dos
+    fragmentos emitíveis. **EXTRAIR `PARCIAL` NÃO É RESOLVER `PARCIAL`.**
+    **Relação correta com `C-A5-X2`.** Aquela regra registrou **duas** matérias abertas: **1.**
+    a **propagação do status**; e **2.** o **mapeamento concreto de `PARCIAL`**. Após
+    `SP1`–`SP7`, a **propagação** ficou **fechada semanticamente** e o **mapeamento de
+    `PARCIAL` continua ABERTO**. **A gramática física do rótulo é uma lacuna SEPARADA** e não é
+    nenhuma das duas: esta entrega **NÃO esgota `C-A5-X2`**, **NÃO fecha "a segunda metade" de
+    `C-A5-X2`** e **NÃO resolve `PARCIAL`**. **`C-A5-X2` não é reescrita retroativamente**, e
+    **`C-A5-X3`** e **`C-A5-X4`** permanecem **literais e inalteradas**.
+    **Relação com `C8`.** A norma diz **somente** que a gramática se aplica a uma linha **já
+    estruturalmente reconhecida** como cabeçalho `## Rxx`. **Não** se decide aqui se uma futura
+    função chama `ler_unidades_marcadas`, se chama `C8` primeiro, se faz caminhada local, se
+    usa composição, se usa invariante, nem qualquer **ordem concreta entre módulos**. **`C8`
+    permanece inalterado** — `src/casa77_sdr/response_markdown_units.py` **não foi tocado** —,
+    e os seus auxiliares internos de cabeçalho continuam **detalhes técnicos existentes**,
+    **não** norma nova.
+    **Evidência do corpus — evidência, não norma.** Consulta **estritamente read-only** ao
+    blob `3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`, **reverificada mecanicamente** e **sem
+    reproduzir conteúdo comercial**: **30** cabeçalhos `## Rxx`; **30/30 conformes a `G2`**;
+    **0** divergentes; **0** títulos contendo o separador literal; **exatamente 60**
+    ocorrências de `U+2014` nos cabeçalhos `Rxx` — **duas por cabeçalho**; **0** ocorrências de
+    `U+002D` ou `U+2013` nesses cabeçalhos; e **quatro** rótulos físicos distintos:
+    `APROVADO`, `AGUARDA APROVAÇÃO`, `APROVADO com handoff obrigatório` e `PARCIAL`. Esses
+    fatos são **EVIDÊNCIA DE COMPATIBILIDADE, NÃO FONTE NORMATIVA**: **não** são a origem da
+    regra, **não** autorizam alteração de `knowledge/respostas-aprovadas.md` — **não
+    alterado** — e **não** substituem `C-3`, `C-A1-ST`, `C-A5` ou `SP1`–`SP7`. **`G2` não foi
+    adaptada ao corpus**: o corpus foi conferido **contra** `G2`.
+    **Normas preservadas literalmente.** **`C-1`–`C-15`**, **`C-A1-ST`**, **`C-A5`**,
+    **`MT1`–`MT12`** e **`SP1`–`SP7`** **não foram reescritos, renumerados, substituídos nem
+    duplicados em versão concorrente**; **`C-3`** continua com **três** status e **sem
+    quarto**; **`C-2d`** e **`C-2i`** continuam literais; e **`C-11`** continua colocando a
+    autoridade de status em `knowledge/respostas-aprovadas.md`.
+    **Estado corrente preservado.** O **último commit funcional aprovado continua
+    `4b6ea8ca00c171275d75ea17c4414011a4f1a835`** — da **C11**, que **continua a última entrega
+    funcional** — e a **baseline funcional continua `3404 passed`** em **Python 3.14.5**;
+    **nenhuma suíte foi executada nesta entrega**. Continuam: **`C` ARBITRADA / NÃO
+    MATERIALIZADA**; **`C-A5` MATERIALIZADA no corpus** e **`C-A5-M2` ATIVA**;
+    `knowledge/indice-respostas-aprovadas.yaml` **INEXISTENTE**; a **bijeção física NÃO
+    EXECUTADA**; a **autoridade de status NÃO MIGRADA** (**C-11**);
+    **`C-A1-ST6`–`C-A1-ST10` NÃO satisfeitas**. **ARBITRAR A GRAMÁTICA FÍSICA DO RÓTULO NÃO É
+    EXTRAIR O RÓTULO, NÃO É CANONICALIZAR STATUS, NÃO É RESOLVER `PARCIAL`, NÃO É MIGRAR
+    AUTORIDADE E NÃO É MATERIALIZAR `C`.**
+    **Efeito exato sobre a C12.** **A C12 FUNCIONAL DE EXTRAÇÃO DO RÓTULO PASSA A SER
+    PLANEJÁVEL, SUJEITA A PLANEJAMENTO TÉCNICO E AUDITORIA SEPARADOS.** Ela **não** está
+    pronta, **não** foi escolhida e **não** foi iniciada; **nenhum módulo, função, exceção ou
+    mensagem é nomeado**, **nenhuma implementação é planejada** e **nenhuma subetapa é
+    criada**.
+    **Relação com os itens anteriores.** **Os itens 87 a 95 permanecem corretos como registro
+    do momento em que foram escritos.** Este item 96 **não os reescreve**; ele registra o
+    estado **posterior**. Em particular, o **item 95** continua correto ao registrar que a
+    **extração física / gramática do rótulo do cabeçalho** estava **ABERTA** quando foi
+    escrito — ela vem a ser fechada **aqui**, por este item, que é **documental** e **não
     funcional**.
 
 ## Arbitragens
