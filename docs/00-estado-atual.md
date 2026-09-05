@@ -4,8 +4,69 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-09-05 (**reconciliação documental pós-merge da DÉCIMA PRIMEIRA
-MICROENTREGA FUNCIONAL DE `C` — extração determinística do texto emitível canônico**). Esta
+Atualizado em: 2026-09-05 (**micro-arbitragem documental — propagação do status de `Rxx` aos
+fragmentos**). Esta entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera **somente**
+`docs/07-arquitetura-motor-respostas.md` e este documento, e **não altera código, testes,
+`knowledge/**`, `prompts/**` nem `CLAUDE.md`. **ELA NÃO É MARCO FUNCIONAL** e **NÃO É a
+décima segunda microentrega funcional de `C`**. Ela fecha **uma única** matéria, antes
+explicitamente em aberto por **`C-A5-X2`**: **como o status de um `Rxx`, uma vez que o seu
+rótulo já tenha sido corretamente identificado, é propagado aos fragmentos emitíveis daquele
+`Rxx`**. A alternativa adotada é **PROPAGAÇÃO UNIFORME / FAIL-CLOSED**, registrada em
+`docs/07` no bloco **"Propagação do status de `Rxx` aos fragmentos"**, com os rótulos
+**`SP1`–`SP7`** — **locais daquele bloco**, de referência interna, e que **NÃO são etapa,
+subetapa, `Exx` nem nomenclatura normativa de `C`**. Em resumo: a regra opera
+**conceitualmente** sobre um `Rxx`, os seus fragmentos emitíveis declarados e um rótulo **já
+corretamente identificado**, e **não extrai coisa alguma do Markdown** (`SP1`); quando o
+rótulo for **exatamente** uma das **três** traduções automáticas de **`C-A1-ST1`–`C-A1-ST3`**,
+o status canônico correspondente é aplicado **uniformemente a TODOS os fragmentos emitíveis
+daquele `Rxx`**, pela tradução **já materializada** por `canonicalizar_status(...)`, **sem
+quarta tradução** e **sem alterar `C-3`** (`SP2`); dentro desse `Rxx` é **proibido** decidir
+status por posição, ordem, índice, redação, conteúdo, quantidade de fragmentos ou `id`, **sem
+exceção implícita** (`SP3`); **`PARCIAL` permanece integralmente sujeito a `C-A1-ST4`** —
+**sem tradução automática, sem propagação automática e sem conversão em qualquer status** —,
+de modo que, **enquanto não existir mapeamento explícito aprovado no nível dos fragmentos
+emitíveis, o status dos fragmentos daquele `Rxx` permanece NÃO RESOLVIDO**, *fail-closed* e
+**sem inferência** (`SP4`); qualquer rótulo fora de `ST1`–`ST3` **não produz status
+propagado**, e a ausência de tradução **não é corrigida, normalizada nem inferida** (`SP5`);
+o status propagado é **DERIVADO** da autoridade Markdown vigente, **não cria declaração de
+status adicional** no Markdown — **`C-2d`** preservada —, e o futuro índice poderá armazenar
+status por fragmento conforme **`C-2i`** **sem que isso migre a autoridade** (`SP6`); e
+propagar status **NÃO** cria índice, **NÃO** cria fragmento, **NÃO** altera identidade,
+**NÃO** extrai rótulo, **NÃO** resolve `PARCIAL`, **NÃO** executa a bijeção física, **NÃO**
+satisfaz `ST6`, `ST7`, `ST8` integralmente, `ST9` ou `ST10`, **NÃO** migra autoridade e
+**NÃO** materializa `C` (`SP7`). **LIMITE DURO DO ESCOPO — PRÉ-CONDIÇÃO, NÃO RESULTADO**: a
+expressão **"rótulo já corretamente identificado"** é **pré-condição** desta arbitragem, e
+**NENHUMA GRAMÁTICA DE CABEÇALHO FOI ARBITRADA** — **como localizar o rótulo na linha física
+do cabeçalho, separadores, posição física do rótulo, gramática do título, *parsing* de
+`## Rxx` e algoritmo de extração do rótulo continuam ABERTOS**, como decisão normativa/técnica
+**futura e separada**, e **não** foram atribuídos por antecipação a um futuro executor;
+**nem sequer uma "regra mínima" de *parsing* foi arbitrada**. **`C-1`–`C-15`, `C-A1-ST`,
+`C-A5` e `MT1`–`MT12` foram PRESERVADOS LITERALMENTE**: não foram reescritos, renumerados nem
+substituídos, e **nenhuma seção existente foi renumerada**. **`C-A5-X2` fica fechada apenas na
+sua PRIMEIRA metade** — a propagação —, permanecendo **ABERTO** o **mapeamento concreto de
+`PARCIAL`**; **`C-A5-X3` e `C-A5-X4` permanecem literais e inalteradas**. **`response_status.py`
+NÃO foi alterado** e **nenhum propagador foi implementado**: **zero módulo, zero função, zero
+assinatura, zero exceção e zero mensagem** foram decididos. O corpus **não foi consultado como
+fundamento normativo** e **não foi alterado**. **Nenhum `pytest` foi executado nesta entrega**
+— **zero código, zero teste e zero `knowledge/**`** —, e a **baseline funcional permanece
+`3404 passed`** em **Python 3.14.5**, sobre o **commit funcional
+`4b6ea8ca00c171275d75ea17c4414011a4f1a835`**, que **continua o último commit funcional
+aprovado**, da **C11 — extração determinística do texto emitível canônico**, que **continua a
+última entrega funcional**. **A DÉCIMA SEGUNDA MICROENTREGA FUNCIONAL DE `C` (C12 FUNCIONAL)
+CONTINUA NÃO ESCOLHIDA, NÃO PLANEJADA E NÃO INICIADA**: esta arbitragem **não** a torna
+pronta e apenas fecha a semântica acima. Continuam inalterados: **`C` ARBITRADA / NÃO
+MATERIALIZADA**; **`C-A5` MATERIALIZADA no corpus** e **`C-A5-M2` ATIVA**;
+`knowledge/indice-respostas-aprovadas.yaml` **INEXISTENTE**; a **bijeção física NÃO
+EXECUTADA**; a **autoridade de status NÃO MIGRADA** (**C-11**);
+**`C-A1-ST6`–`C-A1-ST10` NÃO satisfeitas**; e **ABERTAS** a **extração física / gramática do
+rótulo do cabeçalho**, o mapeamento concreto de `PARCIAL`, a sintaxe de *placeholder*, a
+gramática de `caminho_yaml`, o formato `hora` e **C-7**. A **3B.8 continua INEXISTENTE** e
+**nenhuma subetapa, `E11` ou `E12` foi criada**. O **item documental 95** abaixo **NÃO é
+"subetapa 95"**, **NÃO é `E11` nem `E12`**, **NÃO é marco funcional** e **NÃO cria a 3B.8**.
+
+**Atualização anterior — 2026-09-05 (reconciliação documental pós-merge da DÉCIMA PRIMEIRA
+MICROENTREGA FUNCIONAL DE `C` — extração determinística do texto emitível canônico),
+preservada como registro daquele momento.** Aquela
 entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera **somente** este documento, e **não altera
 código, testes, `knowledge/**`, `docs/07-arquitetura-motor-respostas.md`, `prompts/**` nem
 `CLAUDE.md`. **A DÉCIMA PRIMEIRA MICROENTREGA FUNCIONAL DE `C` ESTÁ INTEGRADA À `main`** pelo
@@ -4772,6 +4833,104 @@ a **pendência residual continua aberta**.
     foi escrito, a décima primeira microentrega ainda não havia sido escolhida, e o **item
     93** continua correto ao registrar a micro-arbitragem **anterior** à C11 — ela veio a ser
     **esta**, registrada aqui.
+
+95. **A PRESENTE ENTREGA É EXCLUSIVAMENTE A MICRO-ARBITRAGEM DOCUMENTAL DA PROPAGAÇÃO DO
+    STATUS DE `Rxx` AOS FRAGMENTOS.**
+    **ESTE ITEM 95 É DOCUMENTAL. NÃO É "SUBETAPA 95", NÃO É `E11` NEM `E12`, NÃO É
+    IDENTIFICADOR NORMATIVO DE `C`, NÃO É MARCO FUNCIONAL E NÃO CRIA A 3B.8** — a **3B.8
+    continua INEXISTENTE**, e a **3B.7 continua a última subetapa numerada**. Ele **não é** a
+    décima segunda microentrega funcional de `C`.
+    **Escopo.** Arquivos alterados: **dois** — `docs/07-arquitetura-motor-respostas.md` e
+    `docs/00-estado-atual.md`. **Zero `src/**`**, **zero `tests/**`**, **zero
+    `knowledge/**`**, **zero `prompts/**`**, **zero `CLAUDE.md`**, **zero `.gitattributes`** e
+    **zero configuração**. **Nenhum marco funcional novo é criado** e **nenhum `pytest` foi
+    executado**.
+    **Matéria fechada — uma só.** **Como o status de um `Rxx`, uma vez que o seu rótulo já
+    tenha sido corretamente identificado, é propagado aos fragmentos emitíveis daquele
+    `Rxx`.** **Nenhuma outra lacuna de `C` é arbitrada aqui.** A alternativa adotada é
+    **PROPAGAÇÃO UNIFORME / FAIL-CLOSED**, registrada em `docs/07` no bloco **"Propagação do
+    status de `Rxx` aos fragmentos"**, inserido **imediatamente após `C-A1-ST`** e **sem
+    renumerar nenhuma seção existente**, com os rótulos **`SP1`–`SP7`** — **locais daquele
+    bloco**, de referência interna, e **declaradamente NÃO** etapa, subetapa, `Exx` ou
+    nomenclatura normativa de `C`.
+    **Pré-condição explícita, e limite duro do escopo.** A expressão **"rótulo já corretamente
+    identificado"** é **PRÉ-CONDIÇÃO** desta arbitragem, **não** resultado dela. **NENHUMA
+    GRAMÁTICA DE CABEÇALHO FOI ARBITRADA**: **como localizar o rótulo na linha física do
+    cabeçalho**, **separadores do cabeçalho**, **posição física do rótulo**, **gramática do
+    título**, ***parsing* de `## Rxx`** e **algoritmo de extração do rótulo** **NÃO** são
+    decididos aqui e **permanecem ABERTOS** como decisão normativa/técnica **futura e
+    separada** — **não** atribuída por antecipação a um futuro executor, e **sem** que sequer
+    uma "regra mínima" de *parsing* tenha sido arbitrada.
+    **Conteúdo da convenção.** **`SP1`**: a regra opera **conceitualmente** sobre um `Rxx`, os
+    seus fragmentos emitíveis declarados e um rótulo **já corretamente identificado e
+    associado àquele `Rxx`**; ela **não extrai nada do Markdown**, **não analisa Markdown**,
+    **não localiza cabeçalho**, **não localiza rótulo** e **não decide de onde o rótulo veio**.
+    **`SP2`**: quando o rótulo for **EXATAMENTE** uma das **três** traduções automáticas já
+    fechadas por **`C-A1-ST1`**, **`C-A1-ST2`** e **`C-A1-ST3`**, o status canônico
+    correspondente é aplicado **uniformemente a TODOS os fragmentos emitíveis daquele `Rxx`**,
+    pela tradução **já materializada** por `canonicalizar_status(rotulo: str) -> str`
+    (`src/casa77_sdr/response_status.py`, **não alterado**); **nenhuma quarta tradução é
+    criada** e o vocabulário de **`C-3`** permanece **fechado**. **`SP3`**: dentro de um `Rxx`
+    coberto por `ST1`–`ST3`, **todos** os fragmentos recebem **o mesmo** status canônico
+    derivado, sendo **proibido** decidir status por **posição**, **ordem**, **índice**,
+    **redação**, **conteúdo**, **quantidade de fragmentos** ou **`id`** — preservando
+    literalmente **`C-A5-I5`** e **`C-A5-M6`** —, **sem exceção implícita** e **sem status
+    divergente** entre fragmentos do mesmo `Rxx`. **`SP4`**: **`PARCIAL` permanece
+    integralmente sujeito a `C-A1-ST4`** — **não** recebe tradução automática, **não** recebe
+    propagação automática, **não** vira quarto status e **não** é convertido em `APROVADO`,
+    `AGUARDA_APROVACAO` ou `BLOQUEADO` —, de modo que, **enquanto não existir mapeamento
+    explícito aprovado no nível dos fragmentos emitíveis**, o status dos fragmentos daquele
+    `Rxx` **permanece NÃO RESOLVIDO**, ***fail-closed*** e **sem inferência**. **`SP5`**:
+    qualquer rótulo fora das traduções automáticas de `ST1`–`ST3` — **inclusive `PARCIAL`** —
+    **não produz status propagado automaticamente**, e a **ausência de tradução não é
+    corrigida, normalizada nem inferida**. **`SP6`**: o status propagado é **DERIVADO** da
+    autoridade Markdown vigente e **não cria declaração de status adicional** no Markdown de
+    cada fragmento — **`C-2d`** preservada, e o Markdown **não alterado** —; o **futuro
+    índice** poderá **armazenar status por fragmento** conforme **`C-2i`**, e **isso NÃO
+    migra a autoridade**: até **`C-A1-ST6`–`C-A1-ST10`** estarem **integralmente satisfeitas**,
+    `knowledge/respostas-aprovadas.md` **continua a autoridade de status** (**`C-11`**).
+    **`SP7`**: propagar status **NÃO** cria índice, **NÃO** cria fragmento, **NÃO** altera
+    identidade, **NÃO** extrai rótulo, **NÃO** resolve `PARCIAL`, **NÃO** executa a bijeção
+    física, **NÃO** satisfaz **`ST6`**, **`ST7`**, **`ST8`** integralmente, **`ST9`** ou
+    **`ST10`**, **NÃO** migra a autoridade de status e **NÃO** materializa `C`.
+    **Normas preservadas literalmente.** **`C-1`–`C-15`**, **`C-A1-ST`**, **`C-A5`** e
+    **`MT1`–`MT12`** **não foram reescritos, renumerados, substituídos nem duplicados em
+    versão concorrente**; **`C-3`** continua com **três** status e **sem quarto**; **`C-2d`**
+    continua vedando status armazenado no nível do `Rxx`; **`C-2i`** continua exigindo status
+    obrigatório no fragmento do **futuro** índice; e **`C-11`** continua colocando a autoridade
+    de status em `knowledge/respostas-aprovadas.md`. **`C-A5-X2` fica fechada apenas na sua
+    PRIMEIRA metade** — a **propagação** —, permanecendo **ABERTO** o **mapeamento concreto de
+    `PARCIAL`**, que era a sua segunda metade; **`C-A5-X3`** e **`C-A5-X4`** permanecem
+    **literais e inalteradas**.
+    **Corpus.** `knowledge/respostas-aprovadas.md` **não foi alterado** e **não foi usado como
+    fundamento normativo**; **nenhuma contagem foi registrada** por esta arbitragem e
+    **nenhum conteúdo comercial foi reproduzido**.
+    **O que esta arbitragem destrava — e somente isto.** A **semântica** de propagação para
+    rótulos **já corretamente identificados**. Ela **NÃO** torna pronta nenhuma entrega
+    funcional e **NÃO** escolhe a próxima. Permanecem **ABERTAS**, entre outras: a **extração
+    física / gramática do rótulo do cabeçalho**; o **mapeamento concreto de `PARCIAL`**; a
+    **sintaxe de *placeholder***; a **gramática de `caminho_yaml`**; o **formato `hora`**;
+    **C-7**; o **índice físico**; a **bijeção física**; **`C-A1-ST6`–`C-A1-ST10`**; e a
+    **migração da autoridade de status**.
+    **Estado corrente preservado.** O **último commit funcional aprovado continua
+    `4b6ea8ca00c171275d75ea17c4414011a4f1a835`** — da **C11**, que **continua a última entrega
+    funcional** — e a **baseline funcional continua `3404 passed`** em **Python 3.14.5**;
+    **nenhuma suíte foi executada nesta entrega**. Continuam: **`C` ARBITRADA / NÃO
+    MATERIALIZADA**; **`C-A5` MATERIALIZADA no corpus** e **`C-A5-M2` ATIVA**;
+    `knowledge/indice-respostas-aprovadas.yaml` **INEXISTENTE**; a **bijeção física NÃO
+    EXECUTADA**; a **autoridade de status NÃO MIGRADA** (**C-11**);
+    **`C-A1-ST6`–`C-A1-ST10` NÃO satisfeitas**. **PROPAGAR STATUS NÃO É EXTRAIR RÓTULO, NÃO É
+    RESOLVER `PARCIAL`, NÃO É MIGRAR AUTORIDADE E NÃO É MATERIALIZAR `C`.**
+    **Próxima ação.** **A DÉCIMA SEGUNDA MICROENTREGA FUNCIONAL DE `C` (C12 FUNCIONAL)
+    CONTINUA NÃO ESCOLHIDA, NÃO PLANEJADA E NÃO INICIADA**, e **não é escolhida por este
+    item**. **Nenhuma pendência é eleita**, **nenhum módulo, função, exceção ou mensagem é
+    nomeado**, **nenhuma implementação é planejada** e **nenhuma subetapa é criada**.
+    **Relação com os itens anteriores.** **Os itens 87 a 94 permanecem corretos como registro
+    do momento em que foram escritos.** Este item 95 **não os reescreve**; ele registra o
+    estado **posterior**. Em particular, o **item 94** continua correto ao registrar a **C11
+    funcional integrada** e ao afirmar que, quando foi escrito, a C12 funcional não havia sido
+    escolhida — e ela **continua não escolhida** após este item, que é **documental** e **não
+    funcional**.
 
 ## Arbitragens
 
