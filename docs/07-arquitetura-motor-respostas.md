@@ -824,6 +824,85 @@ continua NÃO EXECUTADA**; a **autoridade de status continua NÃO MIGRADA** (**`
 `knowledge/respostas-aprovadas.md` **não foi alterado**. **PROPAGAR STATUS NÃO É EXTRAIR
 RÓTULO, NÃO É RESOLVER `PARCIAL`, NÃO É MIGRAR AUTORIDADE E NÃO É MATERIALIZAR `C`.**
 
+##### Gramática física do rótulo de status no cabeçalho `Rxx`
+
+Micro-arbitragem **documental** e **posterior**. Ela fecha **uma única** matéria: **qual é a
+gramática física determinística do rótulo de status em um cabeçalho `Rxx`**. Ela **não**
+reescreve, renumera ou substitui `C-1`–`C-15`, `C-A1-ST`, `C-A5`, `MT1`–`MT12` ou `SP1`–`SP7`,
+**não** cria versão concorrente deles, **não** altera o vocabulário fechado de **`C-3`** e
+**não** cria identificador normativo novo: os rótulos **`GR1`**–**`GR7`** abaixo são **locais
+deste bloco**, existem só para referência interna e **não** são etapa, subetapa, `Exx` nem
+nomenclatura normativa de `C`; eles **não criam a 3B.8**, que **continua não existindo**.
+**Nenhum extrator é implementado aqui**; **nenhum módulo, função, assinatura, exceção ou
+mensagem é decidido**; e **nenhuma subetapa é criada**.
+
+**Esta arbitragem NÃO arbitra propagação** — isso é `SP1`–`SP7`, já fechado —, **NÃO arbitra
+`PARCIAL`**, **NÃO cria índice**, **NÃO decide ordem de chamadas entre módulos** e **NÃO
+escolhe assinatura ou módulo futuro.**
+
+A forma física completa arbitrada, chamada **`G2`** neste bloco, é:
+
+```text
+## Rxx — <titulo> — <rotulo>
+```
+
+com o **separador literal** de **três caracteres**, `U+0020 U+2014 U+0020` — **SPACE + EM
+DASH + SPACE**.
+
+| # | Decisão |
+|---|---|
+| GR1 | **Domínio.** A gramática aplica-se **exclusivamente** a uma linha que **já satisfaça a forma estrutural de cabeçalho `## Rxx`** reconhecida pelas regras vigentes. Ela **não define ordem de chamadas**, **não decide composição técnica** e **não altera** `C8`, `C-A5`, `C-A1-ST` ou `SP1`–`SP7`. O reconhecimento estrutural do cabeçalho **permanece exatamente como está**, e os detalhes técnicos já existentes no leitor da representação marcada continuam sendo **detalhes técnicos**, **não** norma nova. |
+| GR2 | **Forma física — `G2`.** **`GR2.1`** o separador literal ocorre **EXATAMENTE DUAS VEZES** na linha. **`GR2.2`** `<titulo>` é **não vazio**. **`GR2.3`** `<rotulo>` é **não vazio**. **`GR2.4`** nem título nem rótulo podem **começar ou terminar** com **espaço ASCII `U+0020`** ou **tab `U+0009`**. **`GR2.5`** uma **terceira** ocorrência do separador literal é **inválida**. **`GR2.6`** **menos de duas** ocorrências é **inválida**. **`GR2.7`** **não são equivalentes** ao separador: `-` (`U+002D`), `–` (`U+2013`) ou qualquer outro caractere semelhante. **`GR2.8`** espaçamento divergente **não é corrigido**. **`GR2.9`** são **proibidos** `strip`, `lstrip`, `rstrip`, normalização, colapso de espaços, inferência e tolerância implícita. **`GR2.10`** o rótulo obtido é **literal/opaco**, e a gramática **NÃO decide pertença a `ST1`–`ST3`**. |
+| GR3 | **Rótulo literal.** O rótulo é **literal e opaco**: **zero tradução**, **zero normalização**, **zero canonicalização**, **zero inferência**. A tradução das **três** linhas automáticas de **`C-A1-ST1`**–**`C-A1-ST3`** continua sendo responsabilidade de `canonicalizar_status(rotulo: str) -> str` (`src/casa77_sdr/response_status.py`), **não alterado por esta arbitragem**. Identificar fisicamente um rótulo **não é** canonicalizá-lo. |
+| GR4 | **Fail-closed.** Forma divergente de `G2` é **recusada**, **nunca corrigida, normalizada ou inferida**. As espécies de impedimento são, **apenas conceitualmente** nesta norma: **separador ausente**; **cardinalidade de separador diferente de 2**; **segmento vazio**; e **branco de borda**. **NÃO** são definidos aqui **nome de exceção**, **mensagem**, **módulo**, **função** ou **assinatura** — isso pertence a mandato técnico posterior. |
+| GR5 | **Título.** O `<titulo>` é **obrigatório para satisfazer a forma física**. Ele **não é produto da futura extração** — o que se busca extrair é o **rótulo** — e **não recebe semântica comercial nova** por esta arbitragem. |
+| GR6 | **Resultado conceitual.** Uma **futura** fronteira poderá produzir uma **associação** entre o **`Rxx`** e o **`rotulo_literal`**. **Não** são fixados aqui: nome da função; assinatura; estrutura exata de retorno; exceção; mensagem; ordem de chamadas; nem composição técnica. |
+| GR7 | **Limites.** Esta arbitragem fecha **SOMENTE** a **gramática física necessária para identificar deterministicamente o rótulo de status em um cabeçalho `Rxx`**. Ela **NÃO** fecha: **`PARCIAL`**; a **representação física do mapeamento de `PARCIAL`**; o **índice**; ***bindings***; ***placeholder***; **`caminho_yaml`**; **`hora`**; **C-7**; a **bijeção física**; **`C-A1-ST6`–`C-A1-ST10`**; nem a **migração de autoridade**. |
+
+**`PARCIAL` — extraível fisicamente, ainda não resolvido.** O rótulo `PARCIAL` é
+**fisicamente extraível pela mesma gramática `G2`**, exatamente como qualquer outro rótulo.
+Isso **não muda coisa alguma** quanto ao seu tratamento: ele **NÃO** recebe tradução
+automática, **NÃO** recebe propagação automática, **NÃO** é quarto status, **continua sob
+`C-A1-ST4`** e **continua sob `SP4`/`SP5`**, permanecendo **pendente de mapeamento explícito
+futuro** no nível dos fragmentos emitíveis. **EXTRAIR `PARCIAL` NÃO É RESOLVER `PARCIAL`.**
+
+**Relação com `C-A5-X2`, sem reescrita retroativa.** **`C-A5-X2`** registrou como **ABERTAS**
+**duas** matérias: **1.** a **propagação do status** do cabeçalho `Rxx` aos fragmentos; e
+**2.** o **mapeamento concreto de `PARCIAL`**. Após `SP1`–`SP7`, a **propagação** ficou
+**fechada semanticamente**, e o **mapeamento concreto de `PARCIAL` continua ABERTO**. **A
+gramática física do rótulo é uma lacuna SEPARADA**, e **não** é nenhuma das duas: este bloco
+**não esgota `C-A5-X2`**, **não fecha "a segunda metade" de `C-A5-X2`** e **não resolve
+`PARCIAL`**. **`C-A5-X2` não é reescrita retroativamente** e permanece **literal**, assim como
+**`C-A5-X3`** e **`C-A5-X4`**.
+
+**Evidência estrutural do corpus atual — evidência, não norma.** Consulta **estritamente
+read-only** ao blob versionado `3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`, **reverificada
+mecanicamente**, **sem reproduzir conteúdo comercial**: **30** cabeçalhos `## Rxx`; **30/30
+conformes a `G2`**; **0** divergentes; **0** títulos contendo o separador literal;
+**exatamente 60** ocorrências de `U+2014` nos cabeçalhos `Rxx`, **duas por cabeçalho**; **0**
+ocorrências de `U+002D` ou `U+2013` nesses cabeçalhos; e **quatro** rótulos físicos distintos
+— `APROVADO`, `AGUARDA APROVAÇÃO`, `APROVADO com handoff obrigatório` e `PARCIAL`. Esses
+fatos **sustentam** que `G2` **não exige alteração do corpus atual**, mas são **EVIDÊNCIA DE
+COMPATIBILIDADE, NÃO FONTE NORMATIVA**: eles **NÃO** são a origem da regra, **NÃO** autorizam
+alteração de `knowledge/respostas-aprovadas.md` — que **não foi alterado** — e **NÃO**
+substituem `C-3`, `C-A1-ST`, `C-A5` ou `SP1`–`SP7`.
+
+**O que esta arbitragem destrava — e somente isto.** A **gramática física** pela qual um
+rótulo de status pode ser **deterministicamente identificado** em um cabeçalho `Rxx` já
+estruturalmente reconhecido. Permanecem **ABERTAS**, entre outras: o **mapeamento concreto de
+`PARCIAL`**; a **sintaxe de *placeholder***; a **gramática de `caminho_yaml`**; o **formato
+`hora`**; **C-7**; o **índice físico**; a **bijeção física**; **`C-A1-ST6`–`C-A1-ST10`**; e a
+**migração da autoridade de status**.
+
+**Estado após este bloco.** **`C` continua ARBITRADA / NÃO MATERIALIZADA**; **`C-A5` continua
+MATERIALIZADA no corpus** e **`C-A5-M2` continua ATIVA**;
+`knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**; a **bijeção física
+continua NÃO EXECUTADA**; a **autoridade de status continua NÃO MIGRADA** (**`C-11`**);
+**`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**; a **3B.8 continua INEXISTENTE**; e
+`knowledge/respostas-aprovadas.md` **não foi alterado**. **ARBITRAR A GRAMÁTICA FÍSICA DO
+RÓTULO NÃO É EXTRAIR O RÓTULO, NÃO É CANONICALIZAR STATUS, NÃO É RESOLVER `PARCIAL`, NÃO É
+MIGRAR AUTORIDADE E NÃO É MATERIALIZAR `C`.**
+
 ##### C-A1-M — Prioridade de modelagem, prosa e auditoria de consumidores
 
 | # | Regra |
