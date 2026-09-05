@@ -765,6 +765,65 @@ A **autoridade do status** só migra para o índice quando **as cinco** condiç�
 
 Antes disso, `knowledge/respostas-aprovadas.md` **continua a autoridade de status** (C-11).
 
+##### Propagação do status de `Rxx` aos fragmentos
+
+Micro-arbitragem **documental** e **posterior**. Ela fecha **uma única** matéria: **como o
+status de um `Rxx`, uma vez que o seu rótulo já tenha sido corretamente identificado, é
+propagado aos fragmentos emitíveis daquele `Rxx`**. Ela **não** reescreve, renumera ou
+substitui `C-1`–`C-15`, `C-A1-ST`, `C-A5` ou `MT1`–`MT12`, **não** cria versão concorrente
+deles, **não** altera o vocabulário fechado de **`C-3`** e **não** cria identificador
+normativo novo: os rótulos **`SP1`**–**`SP7`** abaixo são **locais deste bloco**, existem só
+para referência interna e **não** são etapa, subetapa, `Exx` nem nomenclatura normativa de
+`C`. **Nenhum propagador é implementado aqui**; nenhum módulo, função, assinatura, exceção ou
+mensagem é decidido; e **nenhuma subetapa é criada** — a **3B.8 continua não existindo**.
+
+**Pré-condição explícita, e limite duro do escopo.** A expressão **"rótulo já corretamente
+identificado"** é **pré-condição** desta arbitragem, **não** resultado dela. Esta arbitragem
+**NÃO decide**: como **localizar** o rótulo na linha física do cabeçalho; **separadores** do
+cabeçalho; **posição física** do rótulo; **gramática do título**; ***parsing*** de `## Rxx`;
+nem **algoritmo de extração** do rótulo. **Essas matérias permanecem ABERTAS** como decisão
+normativa/técnica **futura e separada** — e **não** são atribuídas por antecipação a um
+futuro executor. O que segue vale **exclusivamente** para um rótulo **já** corretamente
+identificado e associado ao seu `Rxx`.
+
+A alternativa adotada é **PROPAGAÇÃO UNIFORME / FAIL-CLOSED**.
+
+| # | Decisão |
+|---|---|
+| SP1 | **Escopo.** A regra opera **conceitualmente** sobre **um `Rxx`**, **os seus fragmentos emitíveis declarados** e **um rótulo de status já corretamente identificado e associado àquele `Rxx`**. Ela **não extrai coisa alguma do Markdown**, **não analisa Markdown**, **não localiza cabeçalho**, **não localiza rótulo** e **não decide de onde o rótulo veio**. |
+| SP2 | **`ST1`–`ST3` — propagação uniforme.** Quando o rótulo associado ao `Rxx` for **EXATAMENTE** uma das **três** traduções automáticas já fechadas por **`C-A1-ST1`**, **`C-A1-ST2`** e **`C-A1-ST3`**, o **status canônico correspondente** é aplicado **uniformemente a TODOS os fragmentos emitíveis daquele `Rxx`**. A tradução continua sendo **exatamente** a já materializada por `canonicalizar_status(rotulo: str) -> str` (`src/casa77_sdr/response_status.py`), **sem alteração**. **Nenhuma quarta tradução é criada** e o vocabulário de **`C-3`** permanece fechado. |
+| SP3 | **Sem exceção por posição ou conteúdo.** Dentro de um `Rxx` coberto por `ST1`–`ST3`, **todos** os seus fragmentos recebem **o mesmo** status canônico derivado. É **proibido** decidir status por **posição** do fragmento, **ordem**, **índice**, **redação**, **conteúdo**, **quantidade de fragmentos** ou **`id`** — o que preserva literalmente **`C-A5-I5`** e **`C-A5-M6`**. **Nenhuma exceção implícita**, e **nenhum fragmento de um mesmo `Rxx` recebe status divergente**. |
+| SP4 | **`PARCIAL`.** Permanece sujeito **integralmente** a **`C-A1-ST4`**: **não** recebe tradução automática; **não** recebe propagação automática; **não** é convertido em quarto status; **não** é convertido em `APROVADO`; **não** é convertido em `AGUARDA_APROVACAO`; **não** é convertido em `BLOQUEADO`. Enquanto **não existir mapeamento explícito aprovado no nível dos fragmentos emitíveis**, **o status dos fragmentos daquele `Rxx` permanece NÃO RESOLVIDO** — ***fail-closed***, **sem inferência**. |
+| SP5 | **Rótulo sem tradução automática.** Qualquer rótulo que **não** pertença às traduções automáticas de `ST1`–`ST3` **não produz status propagado automaticamente** — e isso **inclui o caso `PARCIAL`**. A **ausência de tradução não é corrigida, normalizada nem inferida**, e **não** é lacuna a ser fechada por conveniência: ela é o comportamento arbitrado. |
+| SP6 | **Autoridade.** O status propagado é **DERIVADO** da autoridade Markdown vigente. Ele **não cria declaração de status adicional** no Markdown de cada fragmento — **`C-2d`** continua valendo (**sem status armazenado no nível do `Rxx`**) e o Markdown **não é alterado** por esta arbitragem. O **futuro índice** poderá **armazenar status por fragmento** conforme **`C-2i`**, e **isso NÃO migra a autoridade**: até que **`C-A1-ST6`–`C-A1-ST10`** estejam **integralmente satisfeitas**, `knowledge/respostas-aprovadas.md` **continua a autoridade de status** (**`C-11`**). |
+| SP7 | **Limites.** Propagar status **NÃO**: cria índice; cria fragmento; altera identidade; extrai rótulo; resolve `PARCIAL`; executa a bijeção física; satisfaz **`ST6`**; satisfaz **`ST7`**; satisfaz **`ST8`** integralmente; satisfaz **`ST9`**; satisfaz **`ST10`**; migra a autoridade de status; nem **materializa `C`**. |
+
+**Relação com `C-A5-X2`, e o que ela deixa de fora.** **`C-A5-X2`** registrou como **ABERTAS**
+duas matérias distintas: a **propagação do status do cabeçalho `Rxx` aos fragmentos** e o
+**mapeamento concreto de `PARCIAL`**. Este bloco fecha **apenas a primeira, e apenas na sua
+parte semântica** — a propagação **uniforme** para rótulos **já corretamente identificados**
+que caiam em `ST1`–`ST3`. O **mapeamento concreto de `PARCIAL` permanece ABERTO** e continua
+regido por **`C-A1-ST4`**. **`C-A5-X3`** e **`C-A5-X4`** permanecem **literais e inalteradas**:
+*placeholder*, `caminho_yaml`, formato `hora` e **C-7** continuam **não decididos**, e
+**C-A5** continua **não criando** índice, *template* físico, *binding* físico, `ASSERTIVA`
+física, extrator, *renderer*, bijeção física ou migração de autoridade.
+
+**O que esta arbitragem destrava — e somente isto.** A **semântica** de propagação para
+rótulos **já corretamente identificados**. Ela **não** torna pronta nenhuma entrega funcional
+e **não** escolhe a próxima. Permanecem **ABERTAS**, entre outras: a **extração física e a
+gramática do rótulo** no cabeçalho; o **mapeamento concreto de `PARCIAL`**; a **sintaxe de
+*placeholder***; a **gramática de `caminho_yaml`**; o **formato `hora`**; **C-7**; o **índice
+físico**; a **bijeção física**; **`C-A1-ST6`–`C-A1-ST10`**; e a **migração da autoridade de
+status**.
+
+**Estado após este bloco.** **`C` continua ARBITRADA / NÃO MATERIALIZADA**; **`C-A5` continua
+MATERIALIZADA no corpus** e **`C-A5-M2` continua ATIVA**;
+`knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**; a **bijeção física
+continua NÃO EXECUTADA**; a **autoridade de status continua NÃO MIGRADA** (**`C-11`**);
+**`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**; a **3B.8 continua INEXISTENTE**; e
+`knowledge/respostas-aprovadas.md` **não foi alterado**. **PROPAGAR STATUS NÃO É EXTRAIR
+RÓTULO, NÃO É RESOLVER `PARCIAL`, NÃO É MIGRAR AUTORIDADE E NÃO É MATERIALIZAR `C`.**
+
 ##### C-A1-M — Prioridade de modelagem, prosa e auditoria de consumidores
 
 | # | Regra |
