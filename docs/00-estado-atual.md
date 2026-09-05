@@ -4,8 +4,70 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-09-04 (**micro-arbitragem documental — conversão do bloco marcado em
-texto canônico**). Esta entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera **somente**
+Atualizado em: 2026-09-05 (**reconciliação documental pós-merge da DÉCIMA PRIMEIRA
+MICROENTREGA FUNCIONAL DE `C` — extração determinística do texto emitível canônico**). Esta
+entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera **somente** este documento, e **não altera
+código, testes, `knowledge/**`, `docs/07-arquitetura-motor-respostas.md`, `prompts/**` nem
+`CLAUDE.md`. **A DÉCIMA PRIMEIRA MICROENTREGA FUNCIONAL DE `C` ESTÁ INTEGRADA À `main`** pelo
+**PR #109** — **commit funcional `4b6ea8ca00c171275d75ea17c4414011a4f1a835`**
+(`feat: add deterministic emittable response text extraction`), **merge commit
+`ceecd638131899974ce43b4685b254bf01d7bbad`** (merge commit **normal**, dois parents:
+`690a09c2a5…` e `4b6ea8ca00…`), branch de origem `feat/c-emittable-text-extraction`. Ela
+adiciona **dois arquivos novos** — `src/casa77_sdr/response_emittable_text.py` (**+478**, blob
+`ff811210cc59f9c50b7f019d1d6798af9083439f`) e `tests/test_response_emittable_text.py`
+(**+1253**, blob `156bbbf86d42e6cd1a3474ed111b12115dec5d0a`) —, **2 arquivos, +1731 / −0**,
+**zero arquivo preexistente alterado**. A fronteira entregue é
+`extrair_textos_emitiveis(texto: str) -> tuple[tuple[str, str], ...]`, com **`__all__` de
+exatamente dois nomes** — `TextoEmitivelInvalido` e `extrair_textos_emitiveis` —, devolvendo,
+**em ordem física do documento**, um par `(token_canonico, texto_canonico)` por unidade
+emitível declarada. Ela materializa **`MT3`–`MT11`** do bloco **"Conversão do bloco marcado
+em texto canônico"** de `docs/07`, sem reabrir norma: a **primeira** operação é
+`ler_unidades_marcadas(texto)` — **C8 continua o único juiz estrutural da representação
+marcada**, e `RepresentacaoMarcadaInvalida` **propaga intacta**, sem `try`/`except`, sem
+reclassificação e sem tocar `__cause__`/`__context__` —; **só depois** a C11 localiza
+fisicamente as mesmas unidades declaradas, deriva de novo o token **somente** do `Rxx` do
+cabeçalho e do `id` do marcador — **nunca** por posição, ordem, `zip` ou conteúdo
+(**`C-A5-I5`**) —, e **verifica a sequência local de tokens contra a saída de C8 antes de
+devolver qualquer par**; divergência interna produz `RuntimeError("invariante_estrutural")`,
+**defeito interno**, não entrada inválida. Convenção materializada: prefixo de conteúdo
+**exatamente `> `**; linha `>` interna **única** projeta **`\n\n`**; linha `>` em borda e duas
+ou mais linhas `>` consecutivas são **recusadas**; linhas consecutivas de conteúdo projetam
+**exatamente um `LF`**, **não convertido em espaço**; `LF` e `CRLF` físicos **aceitos**, com o
+`CR` **do par** removido; **`CR` isolado — inclusive no EOF, sem `LF` subsequente — é
+recusado**; **EOF sem newline é aceito**; `U+2028`, `U+2029`, `U+0085`, `U+000B` e `U+000C`
+**recusados**; espaço ou tab **antes do terminador** recusado; **nenhuma correção
+silenciosa**. Categorias técnicas privadas e fechadas — **não** identificadores normativos
+de `C`: `prefixo_invalido`, `linha_vazia_invalida`, `terminador_proibido` e
+`branco_antes_do_terminador`. **A C11 NÃO** valida equivalência, **NÃO** aplica `NFC`,
+**NÃO** converte quebra suave em espaço, **NÃO** lê arquivo, YAML ou índice, **NÃO**
+resolve *binding* ou status, **NÃO** propaga status, **NÃO** resolve `PARCIAL`, **NÃO**
+implementa *placeholder*, `caminho_yaml`, `hora` ou **C-7**, **NÃO** executa a bijeção
+física, **NÃO** materializa `C` e **NÃO** integra *runtime*: **`C-15b` continua no
+comparador existente**, **C8 continua estrutural** e **C10 continua a composição de
+domínios de identidade**. **Baseline funcional corrente: `3404 passed`**, com **`218 passed`**
+no direcionado da C11, em **Python 3.14.5** — delta **+218** sobre os **`3186 passed`**
+anteriores (**3186 + 218 = 3404**), **os mesmos totais sob `-W error`** e **nenhum teste
+preexistente alterado**. Ressalva ambiental **objetiva, não pendência funcional**: o comando
+com o `python` global não tinha o pacote instalado, e os testes canônicos da entrega foram
+executados no `.venv` do projeto, também em Python 3.14.5. Esses números são **evidência da
+entrega funcional C11**, e **NÃO** uma execução desta reconciliação documental: **nenhum
+`pytest` foi executado aqui**, porque **zero código, zero teste e zero `knowledge/**`
+mudaram**. **Não houve CI configurado** para a PR #109 nem para o merge commit — **AUSÊNCIA
+DE CI/CHECKS — NÃO FALHA DE CI**. **EXTRAIR TEXTO CANÔNICO NÃO É VALIDAR EQUIVALÊNCIA, NÃO É
+EXECUTAR A BIJEÇÃO FÍSICA E NÃO É MATERIALIZAR `C`.** **Limites inalterados**: **`C` continua
+ARBITRADA / NÃO MATERIALIZADA**; **`C-A5` continua MATERIALIZADA no corpus** e **`C-A5-M2`
+continua ATIVA**; `knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**; a
+**bijeção física do corpus real continua NÃO EXECUTADA**; a **autoridade de status continua
+NÃO MIGRADA** (**C-11**); **`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas** — **a C11 NÃO
+satisfaz `ST10`**; e continuam **ABERTAS** a propagação de status ao fragmento, o mapeamento
+concreto de `PARCIAL`, a sintaxe de *placeholder*, a gramática de `caminho_yaml`, o formato
+`hora` e **C-7**. A **3B.8 continua INEXISTENTE** e **nenhuma subetapa foi criada**. O **item
+documental 94** abaixo **NÃO é "subetapa 94"**, **NÃO é `E11` nem `E12`** e **NÃO cria a
+3B.8**. **C12 NÃO FOI ESCOLHIDA, NÃO FOI PLANEJADA E NÃO FOI INICIADA.**
+
+**Atualização anterior — 2026-09-04 (micro-arbitragem documental — conversão do bloco marcado
+em texto canônico), preservada como registro daquele momento.** Aquela entrega é
+**EXCLUSIVAMENTE DOCUMENTAL**: altera **somente**
 `docs/07-arquitetura-motor-respostas.md` e este documento, e **não altera código, testes,
 `knowledge/**`, `prompts/**` nem `CLAUDE.md`. **ELA NÃO É MARCO FUNCIONAL** e **NÃO É a
 décima primeira microentrega funcional de `C`**. Ela fecha **uma única** matéria, antes
@@ -590,9 +652,10 @@ o **último marco funcional continua o PR #61**, a **baseline permanece `1215 pa
 |---|---|
 | Projeto | Casa 77 SDR |
 | Branch de referência | `main` |
-| Último commit **funcional** aprovado | `6265b823cb20aab0395840f8125008121de27e43` |
-| Merge correspondente na `main` | `457e29a42472d44175d72031cff05ec1a1ebf9d1` |
-| Última **entrega funcional** concluída | **Décima microentrega funcional de `C` — composição determinística em memória da correspondência canônica**, em `src/casa77_sdr/response_correspondence.py` (**PR #106** — commit funcional `6265b823cb20aab0395840f8125008121de27e43`, merge `457e29a42472d44175d72031cff05ec1a1ebf9d1`, branch de origem `feat/c-response-correspondence`, título `feat: add deterministic canonical response correspondence composition`). **Sem nomenclatura normativa `E2`–`E7`** e **sem numeração de subetapa**. **Inclui**: **`validar_correspondencia_canonica(indice: object, texto_markdown: str) -> None`** como **fronteira pública única** — **`__all__` com exatamente UM nome**, **dois parâmetros**, **sem default** e **sem caminho, arquivo, modo ou configuração**. **Nenhuma exceção nova é criada** e **nenhum nome público além desse é exportado**; **não** é exportada por `casa77_sdr/__init__.py`. **Entrada**: uma **estrutura candidata do índice já em memória** e um **Markdown já em memória**; **a proveniência correta dos dois insumos é pré-condição do chamador**. **Ordem fixa**: **1.** `derivar_tokens_do_indice(indice)` (C9); **2.** `ler_unidades_marcadas(texto_markdown)` (C8); **3.** a relação canônica; **4.** `validar_bijecao(...)` (C6), chamado **uma única vez**. **Relação**: **exatamente `(token, token)`** para cada token do domínio do índice, **na ordem em que C9 os devolveu** — a correspondência é **igualdade da identidade canônica**, e **nunca** pareamento por posição, por ordem, por `zip`, por conteúdo ou por normalização. Rastreabilidade: **`C-A5-T1`** (identidade `<Rxx>/<id>`), **`C-A5-T2`** (separador `/`), **`C-A5-T3`** (composição injetiva, decomposição unívoca pelas formas fechadas), **`C-A5-T4`** (o mesmo token nos **dois** domínios físicos de **`C-A1-B3`** / **`C-A1-B4`**), **`C-A5-T5`** (token derivado, nunca armazenado — a relação **não** é devolvida, armazenada nem persistida) e **`C-A5-I5`** (identidade declarada, jamais derivada de posição, ordem, índice, redação ou conteúdo). **Divisão de responsabilidades — a C10 NÃO cria juiz novo**: **C9** continua responsável pelo **domínio do índice**, **C8** continua responsável pelo **domínio do Markdown** e **C6** continua sendo o **único juiz da bijeção** sobre os domínios recebidos; a C10 **somente compõe** essas três fronteiras. **Zero validação local**: tipo dos insumos, estrutura do índice, estrutura do Markdown, forma do token, duplicidade, cobertura e cardinalidade **já pertencem** às fronteiras chamadas e **não são duplicados aqui**. **Exceções propagam intactas** — **`ProjecaoDeIdentidadeInvalida`**, **`RepresentacaoMarcadaInvalida`** e **`BijecaoInvalida`** —, **sem `try`/`except`**, **sem reclassificação**, **sem enriquecimento de mensagem** e **sem alterar `__cause__` ou `__context__`**; com **ambos** os insumos inválidos, a ordem fixa faz o **lado do índice falhar primeiro**, o que é **decisão técnica local de determinismo**, **não** norma nova de `C`. **Pureza**: fora as três fronteiras públicas e `__future__`, o módulo **não importa nada** — **zero I/O**, **zero *filesystem***, **zero `open`**, **zero `pathlib`**, **zero YAML**, **zero rede**, **zero LLM**, **zero relógio**, **zero calendário**, **zero *locale***, **zero variável de ambiente**, **zero banco**, **zero cache**, **zero estado mutável de módulo**, **zero leitura de `knowledge/**`**; os insumos **não são alterados**. **NÃO inclui**: a **criação ou leitura do índice físico**, que **continua INEXISTENTE**; a **substituição de `validar_indice`**, que **não é importado nem chamado**; a **execução da bijeção física 37/37** do corpus real; a **satisfação de `C-A1-ST6`–`C-A1-ST10`**; a **migração da autoridade de status**; a **extração de texto emitível**; a **propagação de status**; o mapeamento de **`PARCIAL`**; ***placeholder***; **`caminho_yaml`**; o formato **`hora`**; **C-7**; **R2**; **S2-D8**; **`N-b-RES2`**; o **`OrquestradorMotor`**; e a **3B.8**. **COMPOR E VALIDAR EM MEMÓRIA NÃO É EXECUTAR A BIJEÇÃO FÍSICA E NÃO É MATERIALIZAR `C`** — o sucesso afirma **somente** que os **dois insumos fornecidos** produziram domínios cuja relação canônica é **bijetiva entre eles** |
+| Último commit **funcional** aprovado | `4b6ea8ca00c171275d75ea17c4414011a4f1a835` |
+| Merge correspondente na `main` | `ceecd638131899974ce43b4685b254bf01d7bbad` |
+| Última **entrega funcional** concluída | **Décima primeira microentrega funcional de `C` — extração determinística do texto emitível canônico**, em `src/casa77_sdr/response_emittable_text.py` (**PR #109** — commit funcional `4b6ea8ca00c171275d75ea17c4414011a4f1a835`, merge `ceecd638131899974ce43b4685b254bf01d7bbad`, branch de origem `feat/c-emittable-text-extraction`, título `feat: add deterministic emittable response text extraction`). **Sem nomenclatura normativa `E2`–`E7`** e **sem numeração de subetapa**. **Inclui**: **`TextoEmitivelInvalido`** e **`extrair_textos_emitiveis(texto: str) -> tuple[tuple[str, str], ...]`** como **fronteira pública única** — **`__all__` com exatamente dois nomes**, **um único parâmetro**, **sem default** e **sem caminho, arquivo, modo, tolerância ou configuração**; **sem DTO** e **sem dataclass**; **não** é exportada por `casa77_sdr/__init__.py`. A exceção deriva **diretamente de `Exception`**. **Entrada**: a **representação marcada já em memória**; **a origem correta do texto é pré-condição do chamador**. **Saída**: um par **`(token_canonico, texto_canonico)`** por unidade emitível declarada, **na ordem física do documento**; documento vazio ou sem seção `Rxx` devolve `tuple()`. **C8 primeiro, e juiz estrutural único**: a **primeira** operação funcional é `ler_unidades_marcadas(texto)` — tipo não-`str`, subclasse de `str` e toda violação de `C-A5` **continuam de C8**, e `RepresentacaoMarcadaInvalida` **propaga intacta** (zero `try`/`except`, zero reclassificação, `__cause__`/`__context__` inalterados); com violação textual anterior e estrutural posterior, **a estrutural vence** — decisão técnica de composição, **não** norma nova. **Só depois** a C11 percorre a `str` para **localizar as mesmas unidades declaradas**, **deriva de novo o token somente do `Rxx` do cabeçalho e do `id` do marcador** (**`C-A5-T1`**, **`C-A5-T2`**, **`C-A5-I5`** — **nunca** posição, ordem, `zip` ou conteúdo) e **verifica a sequência local de tokens contra a saída de C8 antes de devolver qualquer par**; divergência é **defeito interno** e produz `RuntimeError("invariante_estrutural")`, mensagem muda. **`MT3`–`MT11` materializadas**: prefixo de conteúdo **exatamente `> `** (dois caracteres, removidos por fatiamento — **sem `strip`, `lstrip`, `rstrip`, regex permissiva ou CommonMark**); `>` colado, `>` com dois ou mais espaços, `>` com tab, `> ` com tab e `> ` sem conteúdo **recusados**; linha `>` interna **única** projeta **exatamente `\n\n`**; linha `>` em **borda** e **duas ou mais** linhas `>` consecutivas **recusadas**, sem colapso; linhas consecutivas de conteúdo projetam **exatamente um `LF`**, **não convertido em espaço**; **`LF` e `CRLF` físicos aceitos**, com o `CR` **do par** removido e **nenhum `CR` na saída**; **`CR` isolado — inclusive no EOF, sem `LF` subsequente — recusado**, mesmo quando C8 o aceitou estruturalmente (**`MT2`**); **EOF sem newline aceito**; `U+2028`, `U+2029`, `U+0085`, `U+000B` e `U+000C` **recusados**; espaço ou tab **imediatamente antes do terminador** recusado; **nenhuma correção silenciosa**; **`splitlines()`, *universal newline*, `StringIO` e I/O proibidos** — a divisão é **exclusivamente por `LF`**, preservando por segmento a evidência de ter sido seguido pelo `LF`. **Categorias técnicas privadas e fechadas**, que **não** são identificadores normativos de `C`: `prefixo_invalido`, `terminador_proibido` e `branco_antes_do_terminador` (localizador `linha`) e `linha_vazia_invalida` (localizador `unidade`); mensagem `<categoria>: <localizador>`, **nunca** ecoando conteúdo, token, `Rxx`, `id`, caractere ofensor, `repr`, tipo, linha, posição, índice, tamanho ou cardinalidade; **fail-closed**, ordem local **terminador → prefixo → branco terminal → linhas vazias → montagem**, a **primeira violação encerra** e **nada é devolvido parcialmente**. **Bloco `>` fora de `## Rxx`** é **ignorado integralmente**, sem par e sem validação textual; **seções `Rxx` homônimas** aceitas por C8 podem produzir **token repetido**, devolvido na ordem física — a unicidade global **não** é decidida aqui. **Pureza**: importa **apenas** `__future__` e `ler_unidades_marcadas` — **zero I/O**, **zero *filesystem***, **zero `open`**, **zero `pathlib`**, **zero YAML**, **zero rede**, **zero LLM**, **zero relógio**, **zero calendário**, **zero *locale***, **zero variável de ambiente**, **zero banco**, **zero cache**, **zero estado mutável de módulo**, **zero `unicodedata`**, **zero import de `response_equivalence` ou `response_correspondence`**; a entrada **não é alterada**. **NÃO inclui**: **validação de equivalência** (`C-15b` continua no comparador existente); **`NFC`**; a **conversão de quebra suave em espaço**; a **leitura de arquivo, YAML ou índice**; a **resolução de *bindings***; a **leitura, resolução ou propagação de status**; o mapeamento de **`PARCIAL`**; ***placeholder***; **`caminho_yaml`**; o formato **`hora`**; **C-7**; a **execução da bijeção física 37/37**; a **satisfação de `C-A1-ST6`–`C-A1-ST10`**; a **migração da autoridade de status**; a **integração de *runtime* ou consumidor**; **R2**; **S2-D8**; **`N-b-RES2`**; o **`OrquestradorMotor`**; e a **3B.8**. **EXTRAIR TEXTO CANÔNICO NÃO É VALIDAR EQUIVALÊNCIA, NÃO É EXECUTAR A BIJEÇÃO FÍSICA E NÃO É MATERIALIZAR `C`** |
+| **Entrega funcional imediatamente anterior** | **Décima microentrega funcional de `C` — composição determinística em memória da correspondência canônica**, em `src/casa77_sdr/response_correspondence.py` (**PR #106** — commit funcional `6265b823cb20aab0395840f8125008121de27e43`, merge `457e29a42472d44175d72031cff05ec1a1ebf9d1`, branch de origem `feat/c-response-correspondence`, título `feat: add deterministic canonical response correspondence composition`). **Sem nomenclatura normativa `E2`–`E7`** e **sem numeração de subetapa**. **Inclui**: **`validar_correspondencia_canonica(indice: object, texto_markdown: str) -> None`** como **fronteira pública única** — **`__all__` com exatamente UM nome**, **dois parâmetros**, **sem default** e **sem caminho, arquivo, modo ou configuração**. **Nenhuma exceção nova é criada** e **nenhum nome público além desse é exportado**; **não** é exportada por `casa77_sdr/__init__.py`. **Entrada**: uma **estrutura candidata do índice já em memória** e um **Markdown já em memória**; **a proveniência correta dos dois insumos é pré-condição do chamador**. **Ordem fixa**: **1.** `derivar_tokens_do_indice(indice)` (C9); **2.** `ler_unidades_marcadas(texto_markdown)` (C8); **3.** a relação canônica; **4.** `validar_bijecao(...)` (C6), chamado **uma única vez**. **Relação**: **exatamente `(token, token)`** para cada token do domínio do índice, **na ordem em que C9 os devolveu** — a correspondência é **igualdade da identidade canônica**, e **nunca** pareamento por posição, por ordem, por `zip`, por conteúdo ou por normalização. Rastreabilidade: **`C-A5-T1`** (identidade `<Rxx>/<id>`), **`C-A5-T2`** (separador `/`), **`C-A5-T3`** (composição injetiva, decomposição unívoca pelas formas fechadas), **`C-A5-T4`** (o mesmo token nos **dois** domínios físicos de **`C-A1-B3`** / **`C-A1-B4`**), **`C-A5-T5`** (token derivado, nunca armazenado — a relação **não** é devolvida, armazenada nem persistida) e **`C-A5-I5`** (identidade declarada, jamais derivada de posição, ordem, índice, redação ou conteúdo). **Divisão de responsabilidades — a C10 NÃO cria juiz novo**: **C9** continua responsável pelo **domínio do índice**, **C8** continua responsável pelo **domínio do Markdown** e **C6** continua sendo o **único juiz da bijeção** sobre os domínios recebidos; a C10 **somente compõe** essas três fronteiras. **Zero validação local**: tipo dos insumos, estrutura do índice, estrutura do Markdown, forma do token, duplicidade, cobertura e cardinalidade **já pertencem** às fronteiras chamadas e **não são duplicados aqui**. **Exceções propagam intactas** — **`ProjecaoDeIdentidadeInvalida`**, **`RepresentacaoMarcadaInvalida`** e **`BijecaoInvalida`** —, **sem `try`/`except`**, **sem reclassificação**, **sem enriquecimento de mensagem** e **sem alterar `__cause__` ou `__context__`**; com **ambos** os insumos inválidos, a ordem fixa faz o **lado do índice falhar primeiro**, o que é **decisão técnica local de determinismo**, **não** norma nova de `C`. **Pureza**: fora as três fronteiras públicas e `__future__`, o módulo **não importa nada** — **zero I/O**, **zero *filesystem***, **zero `open`**, **zero `pathlib`**, **zero YAML**, **zero rede**, **zero LLM**, **zero relógio**, **zero calendário**, **zero *locale***, **zero variável de ambiente**, **zero banco**, **zero cache**, **zero estado mutável de módulo**, **zero leitura de `knowledge/**`**; os insumos **não são alterados**. **NÃO inclui**: a **criação ou leitura do índice físico**, que **continua INEXISTENTE**; a **substituição de `validar_indice`**, que **não é importado nem chamado**; a **execução da bijeção física 37/37** do corpus real; a **satisfação de `C-A1-ST6`–`C-A1-ST10`**; a **migração da autoridade de status**; a **extração de texto emitível**; a **propagação de status**; o mapeamento de **`PARCIAL`**; ***placeholder***; **`caminho_yaml`**; o formato **`hora`**; **C-7**; **R2**; **S2-D8**; **`N-b-RES2`**; o **`OrquestradorMotor`**; e a **3B.8**. **COMPOR E VALIDAR EM MEMÓRIA NÃO É EXECUTAR A BIJEÇÃO FÍSICA E NÃO É MATERIALIZAR `C`** — o sucesso afirma **somente** que os **dois insumos fornecidos** produziram domínios cuja relação canônica é **bijetiva entre eles** |
 | **Entrega funcional anterior** | **Nona microentrega funcional de `C` — derivador determinístico dos tokens canônicos do lado do índice**, em `src/casa77_sdr/response_index_tokens.py` (**PR #104** — commit funcional `45876ca609716ede51aefcf8752dd29f98a736a7`, merge `654aaedec2d424ab4184e7a71a0d3c129021abf8`, branch de origem `feat/c-response-index-tokens`, título `feat: add deterministic response index token derivation`). **Sem nomenclatura normativa `E2`–`E7`** e **sem numeração de subetapa**. **Inclui**: **`ProjecaoDeIdentidadeInvalida`** e **`derivar_tokens_do_indice(indice: object) -> tuple[str, ...]`** como **fronteira pública única** — **`__all__` com exatamente dois nomes**, **um único parâmetro**, **sem default** e **sem caminho, arquivo, modo ou configuração**. A exceção deriva **diretamente de `Exception`**. **Entrada**: a **estrutura chega pronta em memória** — a mesma espécie de entrada de `validar_indice`; **a origem correta da estrutura é pré-condição do chamador**. **Saída**: **somente** tokens `<Rxx>/<id>` (**`C-A5-T1`**, separador `/` de **`C-A5-T2`**), na **ordem das listas `respostas` e `fragmentos` recebidas** — decisão técnica determinística de saída, **não** significado normativo novo de identidade (**`C-A5-I5`**, **`C-A5-M6`**) —, **derivados e nunca armazenados** (**`C-A5-T5`**): nada é gravado na estrutura recebida, nenhum campo novo é criado e a entrada **não é alterada**. **Projeção mínima**, e nada além dela: raiz é mapeamento; existe `respostas`; `respostas` é lista; cada resposta é mapeamento; existe `id`; o `Rxx` é `str` **exata** e satisfaz a forma fechada de **C-2b** — `R` + **exatamente dois dígitos ASCII** —; o `Rxx` é único **globalmente** (**C-2a**); existe `fragmentos`; `fragmentos` é lista **não vazia** (**C-2c**); cada fragmento é mapeamento; existe `id`; o `id` é `str` **exata** e satisfaz a gramática fechada de **`C-A5-I3`** — `F` + inteiro decimal ASCII maior que zero, **sem zero à esquerda** —; e o `id` é único **dentro do respectivo `Rxx`** (**`C-A5-I4`**, **C-2h**), de modo que `F1` repetido entre `Rxx` distintos é **válido**. **Política de tipo**: contêineres aceitam subclasses — `dict` e `list` por `isinstance`, **compatível com `response_index.py`**, **sem regra de tipo exato para contêiner** —, enquanto os **componentes da identidade** exigem `str` **exata** e **subclasse de `str` é recusada**, porque poderia redefinir `__eq__`/`__hash__`/`__str__` e decidir sozinha a identidade ou a composição; essa recusa é **defesa local desta fronteira** e **não** altera **C-2**, **C-A5**, `validar_indice`, nem torna retroativamente inválido o que `response_index.py` aceita. **`C-A5-I3` aplicada ao `fragmentos[].id` NÃO cria regra nova**: é a gramática já arbitrada aplicada ao componente já designado por **`C-A5-T3`** / **`C-A5-T4`**; `response_index` exige apenas `str` não vazia nesse campo e **continua correto no seu próprio escopo**. **Categorias técnicas privadas, fechadas e mínimas**, que **não** são identificadores normativos de `C`: `tipo_invalido`, `campo_ausente`, `valor_invalido` e `duplicidade` — subconjunto deliberado do vocabulário já usado por `response_index.py`, **sem taxonomia paralela**; **localizadores estruturais fechados e sem posição**: `indice`, `respostas`, `respostas.item`, `respostas.item.id`, `respostas.item.fragmentos`, `respostas.item.fragmentos.item` e `respostas.item.fragmentos.item.id`. A mensagem tem a forma `<categoria>: <localizador>` e **nunca** ecoa o `Rxx`, o `id`, o valor, o conteúdo, o `repr`, o tipo concreto, uma posição, um tamanho ou uma cardinalidade; **fail-closed**, a **primeira violação encerra** e **nada é acumulado** (**P5**). **Pureza**: importa **apenas** `__future__` — **zero I/O**, **zero *filesystem***, **zero `pathlib`**, **zero `open`**, **zero YAML**, **zero rede**, **zero LLM**, **zero relógio**, **zero calendário**, **zero *locale***, **zero variável de ambiente**, **zero banco**, **zero leitura de `knowledge/**`**, **zero import de `casa77_sdr.*`** — em particular **não importa nem chama `response_index`, `response_index_load`, `response_bijection` ou `response_markdown_units`** — e **zero export** por `casa77_sdr/__init__.py`. **NÃO inclui**: a **substituição de `validar_indice`** — `status`, `bindings`, `itera_sobre`, *placeholder*, `caminho_yaml`, `formato`, `predicado`, mecanismo, origem, fato runtime e chaves desconhecidas **não são julgados aqui**; a **criação ou leitura do índice real**, que **continua INEXISTENTE**; a **construção de correspondências reais**; a **chamada a `validar_bijecao`**; a **execução da bijeção física 37/37**; a **satisfação de `C-A1-ST6`** ou de **`C-A1-ST7`**; a **migração da autoridade de status**; a **extração de texto emitível**; a **propagação de status**; o mapeamento de **`PARCIAL`**; o formato **`hora`**; **C-7**; **R2**; **S2-D8**; **`N-b-RES2`**; o **`OrquestradorMotor`**; e a **3B.8**. **DERIVAR UM DOMÍNIO DE TOKENS NÃO É EXECUTAR A BIJEÇÃO E NÃO É MATERIALIZAR `C`** |
 | **Entrega funcional anterior a essa** | **Oitava microentrega funcional de `C` — leitor/validador determinístico da representação marcada `C-A5`**, em `src/casa77_sdr/response_markdown_units.py` (**PR #102** — commit funcional `341084d951b428d80c4ba573fbc38a4bc9f008c6`, merge `067e894db8bddb96c192d7da3a4431f587f4efc0`, branch de origem `feat/c-response-markdown-units`, título `feat: add deterministic C-A5 markdown unit reader`). **Sem nomenclatura normativa `E2`–`E7`** e **sem numeração de subetapa**. **Inclui**: **`RepresentacaoMarcadaInvalida`** e **`ler_unidades_marcadas(texto: str) -> tuple[str, ...]`** como **fronteira pública única** — **`__all__` com exatamente dois nomes**, **um único parâmetro**, **sem default** e **sem parâmetro de caminho, arquivo, modo, tolerância, configuração ou normalização**. A exceção deriva **diretamente de `Exception`**. **Entrada**: o **texto chega pronto em memória**; **a origem correta do texto é pré-condição do chamador**. **Tipo**: `str` **exata** — **subclasse de `str` recusada antes de qualquer leitura**. **Saída**: **somente** tokens `<Rxx>/<id>` (**`C-A5-T1`**, **`C-A5-T2`**), em **ordem física do documento**, **derivados e nunca armazenados** (**`C-A5-T5`**); documento vazio ou sem seção `Rxx` devolve `tuple()`. **Política de linha local**: divisão **exclusivamente** por `LF` com remoção de **no máximo um** `CR` terminal — `LF` e `CRLF` produzem **resultado idêntico**, **sem `splitlines()`** e **sem *universal newline***; `U+2028`, `U+2029`, `U+0085`, `VT` e `FF` **permanecem conteúdo**. **Delimitação de seção deliberadamente parcial**: apenas cabeçalho ATX na **coluna 0**, um a seis `#` seguidos de espaço ou fim de linha; níveis 1 e 2 encerram a seção `##`, níveis 3–6 não; **`Setext`, *code fence*, bloco `HTML` e código indentado NÃO são interpretados**. **Marcador em dois estágios**: envelope exato `<!-- fragmento: ` + conteúdo interno + ` -->`, **sem nada antes ou depois** — quase-marcador é **conteúdo comum**, não marcador defeituoso —, e depois a **gramática fechada de `C-A5-I3`** (**`F`** + inteiro decimal ASCII maior que zero, sem zero à esquerda). **Bloco de citação fora de `## Rxx`** está **fora do domínio de `C-A5-U2`** e é **ignorado inteiro**, sem token e sem erro; **dentro de `Rxx`, bloco sem marcador válido é fail-closed**, e **marcador válido fora de `Rxx` também**. **Sete redações de `C-A5-X1` cobertas por SEIS categorias estruturais** — `bloco_sem_marcador`, `marcador_sem_bloco` (que absorve **marcador órfão** e **marcador sem bloco imediatamente seguinte**, mecanicamente indistinguíveis nesta fronteira), `marcador_fora_de_secao`, `id_fora_da_gramatica`, `id_duplicado`, `secao_sem_unidade` — mais `tipo_invalido` para o contrato de entrada; **nenhuma oitava falha foi criada** e as categorias são **privadas e fechadas**, jamais identificadores normativos de `C`. **Precedência fixa**: tipo da entrada; depois, em ordem de documento, envelope → gramática do `id` → escopo `Rxx` → existência de bloco imediatamente seguinte → duplicidade do `id` na seção — a **primeira violação encerra** e **nada é acumulado** (**P5**). A mensagem tem a forma `<categoria>: <localizador>`, com localizadores fechados `texto` / `bloco` / `marcador` / `secao`, e **nunca** ecoa o `id`, o `Rxx`, o conteúdo, o `repr`, o tipo concreto, um número de linha, um índice, um tamanho ou uma cardinalidade. **Unicidade de `id` verificada SOMENTE dentro do respectivo `Rxx`** (**`C-A5-I4`**, **C-2h**). **NÃO garante unicidade global dos tokens**: a função **não verifica a unicidade física das seções `## Rxx`**, de modo que duas seções homônimas podem produzir o mesmo `<Rxx>/<id>` — **não-garantia deliberada**, e **`response_bijection` não é importado nem chamado** para supri-la. **`C-A5-I6` é respeitada como norma externa e NÃO é provada**: um *snapshot* único não carrega histórico — **zero `Git`**, **zero armazenamento**, **zero estado entre chamadas**. **Pureza**: importa **apenas** `__future__` — **zero I/O**, **zero *filesystem***, **zero `pathlib`**, **zero YAML**, **zero rede**, **zero LLM**, **zero relógio**, **zero calendário**, **zero *locale***, **zero variável de ambiente**, **zero banco**, **zero dependência de `casa77_sdr.*`** e **zero export** por `casa77_sdr/__init__.py`. **NÃO inclui**: a **extração de texto emitível**; a **leitura ou propagação de status**; o **mapeamento de `PARCIAL`**; a **criação ou leitura do índice real**; a **resolução de *bindings***; a **criação de `ASSERTIVA`**; a **renderização**; a **normalização `C-15`**; a **execução da bijeção física**; a **prova de que o texto recebido seja o corpus oficial, completo ou aprovado**; a **satisfação de `C-A1-ST6`–`C-A1-ST10`**; a **migração da autoridade de status**; a **integração de consumidor**; o formato **`hora`**; **`caminho_yaml`**; ***placeholder***; **C-7**; **R2**; **S2-D8**; **`N-b-RES2`**; o **`OrquestradorMotor`**; e a **3B.8**. **LER A REPRESENTAÇÃO MARCADA NÃO É MATERIALIZAR `C`** |
 | **Entrega funcional anterior a essa, por sua vez** | **Sétima microentrega funcional de `C` — canonicalizador determinístico de rótulo de status já extraído**, em `src/casa77_sdr/response_status.py` (**PR #97** — commit funcional `4749efa74d5684b52b4f457176710ba6e212c627`, merge `8c67e13808da59dbace413fce33c2c22280e69a3`, branch de origem `feat/c-response-status`, título `feat: add deterministic response status canonicalizer`). **Sem nomenclatura normativa `E2`–`E7`.** **Inclui**: **`StatusNaoCanonicalizavel`** e **`canonicalizar_status(rotulo: str) -> str`** como **fronteira pública única** — **`__all__` com exatamente dois nomes**, **um único parâmetro**, **sem default** e **sem parâmetro de contexto, origem, modo, tolerância, fragmento, `Rxx`, configuração ou normalização**. A exceção deriva **diretamente de `Exception`**. **Traduções automáticas — exatamente três**, do contrato `C-A1-ST`: `APROVADO` → `APROVADO` (**C-A1-ST1**); `AGUARDA APROVAÇÃO` → `AGUARDA_APROVACAO` (**C-A1-ST2**); `APROVADO com handoff obrigatório` → `APROVADO` (**C-A1-ST3**), com o **sufixo de handoff NÃO transportado** por ser instrução operacional fora de `C` (C-2f, C-5.1). **Nenhuma quarta tradução**, e **`BLOQUEADO` nunca é produzido como imagem** — embora pertença a `C-3`, nenhuma linha de `C-A1-ST` o produz automaticamente a partir de um rótulo simples. **Entrada**: o **rótulo chega já extraído**; **a origem correta do rótulo é pré-condição do chamador**. **Tipo**: `str` **exata** — **subclasse de `str` recusada antes de qualquer consulta à tabela**, porque poderia redefinir `__eq__`/`__hash__` e decidir sozinha a pertença; **sem `str(...)`**, **sem `repr`**, **sem coerção**. **Comparação literal**: **sem `strip`, `lower`, `upper`, `casefold`, `NFC`, `NFD`, `unicodedata`, colapso de espaços, substituição de espaço inquebrável, tolerância de acento ou de caixa**. **Precedência fixa**: **1.** tipo do rótulo; **2.** pertença à tabela automática; **3.** retorno — a **primeira violação encerra** e **nada é acumulado** (**P5**). **Categorias técnicas privadas e fechadas**, que **não** são identificadores normativos de `C`: `tipo_invalido` e `rotulo_nao_mapeado`; **localizador único**: `rotulo`. A mensagem tem a forma `<categoria>: <localizador>` e **nunca** ecoa o rótulo, o conteúdo, o `repr`, o tipo concreto, um comprimento ou um índice; **sem `__cause__`** e **sem `__context__`**. **Tabela privada imutável** (`tuple` de três pares), **não exposta por `__all__`**, **sem estado mutável de módulo** e com a **entrada não alterada**. **Pureza**: importa **apenas** `__future__` — **zero I/O**, **zero *filesystem***, **zero YAML**, **zero *locale***, **zero rede**, **zero LLM**, **zero relógio**, **zero calendário**, **zero variável de ambiente**, **zero leitura de `knowledge/**`**, **zero dependência de `casa77_sdr.*`** e **zero export** por `casa77_sdr/__init__.py`. **NÃO inclui**: a **tradução automática de `PARCIAL`** (**C-A1-ST4** exige **mapeamento explícito no nível dos fragmentos emitíveis**, **não implementado aqui**); qualquer **mapeamento inventado de `BLOQUEADO`** (**C-A1-ST5** trata de **nota interna**, que **não cria fragmento** e **não cria status**); a **extração do rótulo ou do fragmento do Markdown**; a **identidade física de fragmento**; a **criação ou leitura do índice real**; a **resolução de *bindings***; a **execução da bijeção física**; a **prova de completude do corpus**; a **satisfação de `C-A1-ST6`–`C-A1-ST10`**; a **migração da autoridade de status**; a **integração de consumidor**; o formato **`hora`**; **R2**; **S2-D8**; **`N-b-RES2`**; o **`OrquestradorMotor`**; **LLM**; e a **3B.8**. **CANONICALIZAR STATUS NÃO É MATERIALIZAR `C`** |
@@ -760,6 +823,7 @@ o **último marco funcional continua o PR #61**, a **baseline permanece `1215 pa
 | **Oitava microentrega funcional de `C` — leitor/validador determinístico da representação marcada `C-A5`** (`src/casa77_sdr/response_markdown_units.py` + `tests/test_response_markdown_units.py`): materializa **somente a leitura das identidades** da representação marcada — a função pura `ler_unidades_marcadas(texto: str) -> tuple[str, ...]` recebe Markdown **já em memória** e devolve **exclusivamente** os tokens canônicos `<Rxx>/<id>` de **`C-A5-T1`**, em **ordem física do documento**, **derivados e nunca armazenados** (**`C-A5-T5`**). Valida a representação física de **`C-A5-U1`**–**`C-A5-U3`** e **`C-A5-I1`**–**`C-A5-I4`**, com **política de linha local** (`LF` e `CRLF` equivalentes, **sem `splitlines()`** e **sem *universal newline***), **delimitação ATX deliberadamente parcial** (**sem `Setext`, *code fence*, bloco `HTML` ou código indentado**), **envelope de marcador em dois estágios** e **gramática fechada do `id`**. Cobre as **sete redações fail-closed de `C-A5-X1`** por **seis categorias estruturais privadas** — `marcador órfão` e `marcador sem bloco imediatamente seguinte` são **mecanicamente indistinguíveis** nesta fronteira e compartilham `marcador_sem_bloco` — mais `tipo_invalido`; **nenhuma oitava falha foi criada**. **Bloco de citação fora de `## Rxx` é ignorado inteiro** por estar fora do domínio de **`C-A5-U2`**; **dentro de `Rxx` o bloco sem marcador válido é fail-closed**, e **marcador válido fora de `Rxx` também**. **Não garante unicidade global dos tokens** — não verifica a unicidade física das seções `## Rxx` — e **não prova historicamente `C-A5-I6`**. **Zero I/O, zero `pathlib`, zero YAML, zero rede, zero LLM, zero relógio, zero *locale*, zero ambiente, zero banco, zero import de `casa77_sdr.*` e zero export em `__init__.py`.** **Não extrai texto emitível, não lê nem propaga status, não mapeia `PARCIAL`, não cria nem lê índice, não resolve *binding*, não executa a bijeção física e não migra autoridade de status.** **LER A REPRESENTAÇÃO MARCADA NÃO É MATERIALIZAR `C`** | **funcional** | PR #102 — **INTEGRADO à `main`** em 2026-09-04 (commit funcional `341084d951b428d80c4ba573fbc38a4bc9f008c6`, merge `067e894db8bddb96c192d7da3a4431f587f4efc0`, branch de origem `feat/c-response-markdown-units`, mensagem `feat: add deterministic C-A5 markdown unit reader`). Arquivos: `src/casa77_sdr/response_markdown_units.py` (blob `3c99d89aa0028f673548f5cc932ec166d592cd7f`) e `tests/test_response_markdown_units.py` (blob `ee3dc335b3d94588d183c8ebe64771e45df08c14`) — **2 files changed, 1931 insertions(+), 0 deletions(-)**, **nenhum arquivo preexistente alterado** e **corpus preservado no blob `3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`**. Baseline **`2908 passed`** / Python 3.14.5, com **`201 passed`** no direcionado; **`201`** e **`2908`** também sob `-W error`. **Cria o novo marco funcional** e **não recebe numeração de subetapa** |
 | **Nona microentrega funcional de `C` — derivador determinístico dos tokens canônicos do lado do índice** (`src/casa77_sdr/response_index_tokens.py` + `tests/test_response_index_tokens.py`): materializa **somente a derivação do domínio de identidades do lado do índice** — a função pura `derivar_tokens_do_indice(indice: object) -> tuple[str, ...]` recebe a **estrutura já em memória** e devolve **exclusivamente** os tokens canônicos `<Rxx>/<id>` de **`C-A5-T1`**, com o separador `/` de **`C-A5-T2`**, na ordem das listas recebidas e **derivados, nunca armazenados** (**`C-A5-T5`**). Lê **apenas a projeção mínima** — raiz, `respostas`, o `id` de cada resposta e o `id` de cada fragmento —, aplicando a forma fechada **C-2b** e a unicidade global **C-2a** ao `Rxx`, a gramática fechada **`C-A5-I3`** ao `fragmentos[].id`, a exigência de **ao menos um** fragmento (**C-2c**) e a unicidade **local ao `Rxx`** (**`C-A5-I4`**, **C-2h**). Contêineres aceitam subclasses (`isinstance`, compatível com `response_index.py`); os **componentes da identidade** exigem `str` **exata**, como **defesa local** que **não altera C-2, C-A5 nem `validar_indice`**. **Não substitui `validar_indice`**: `status`, `bindings`, `itera_sobre`, *placeholder*, `caminho_yaml`, `formato`, `predicado`, mecanismo, origem e chaves desconhecidas **não são julgados**. **Não cria nem lê o índice real**, que **continua INEXISTENTE**; **não constrói correspondências**, **não chama `validar_bijecao`** e **não executa a bijeção física**. **Zero I/O, zero `pathlib`, zero YAML, zero rede, zero LLM, zero relógio, zero *locale*, zero ambiente, zero banco, zero import de `casa77_sdr.*` e zero export em `__init__.py`.** **DERIVAR UM DOMÍNIO DE TOKENS NÃO É EXECUTAR A BIJEÇÃO E NÃO É MATERIALIZAR `C`** | **funcional** | PR #104 — **INTEGRADO à `main`** em 2026-09-04 (commit funcional `45876ca609716ede51aefcf8752dd29f98a736a7`, merge `654aaedec2d424ab4184e7a71a0d3c129021abf8`, branch de origem `feat/c-response-index-tokens`, mensagem `feat: add deterministic response index token derivation`). Arquivos: `src/casa77_sdr/response_index_tokens.py` (blob `84b69472a702a6d436729dbe40a89cf4fcc07bb0`) e `tests/test_response_index_tokens.py` (blob `90bf631403bf2ba7c463348a660f64766f9104aa`) — **2 files changed, 1181 insertions(+), 0 deletions(-)**, **nenhum arquivo preexistente alterado**. Baseline **`3111 passed`** / Python 3.14.5, com **`203 passed`** no direcionado; **`203`** e **`3111`** também sob `-W error`; delta **+203** sobre os **`2908 passed`** anteriores. **Sem CI configurado** — ausência de checks, **não** falha de CI. **Cria o novo marco funcional** e **não recebe numeração de subetapa** |
 | **Décima microentrega funcional de `C` — composição determinística em memória da correspondência canônica** (`src/casa77_sdr/response_correspondence.py` + `tests/test_response_correspondence.py`): materializa **somente a composição** de três fronteiras já existentes — `validar_correspondencia_canonica(indice: object, texto_markdown: str) -> None` recebe uma **estrutura candidata do índice** e um **Markdown**, ambos **já em memória**, e julga se os dois denotam **as mesmas identidades canônicas `<Rxx>/<id>`**. Ordem **fixa**: `derivar_tokens_do_indice` (C9) → `ler_unidades_marcadas` (C8) → relação **diagonal `(token, token)`**, um par por token do domínio do índice na ordem em que ele os devolveu → `validar_bijecao` (C6), chamado **uma única vez**. A correspondência é **igualdade da identidade canônica** — **nunca** posição, ordem, `zip`, conteúdo ou normalização —, conforme **`C-A5-T1`**, **`C-A5-T2`**, **`C-A5-T3`**, **`C-A5-T4`**, **`C-A5-T5`** e **`C-A5-I5`**, servindo aos **dois** domínios de **`C-A1-B3`** / **`C-A1-B4`**. **Não cria juiz novo**: C9 continua dona do domínio do índice, C8 do domínio do Markdown e C6 do julgamento da bijeção. **Zero validação local**, **zero exceção nova** — `ProjecaoDeIdentidadeInvalida`, `RepresentacaoMarcadaInvalida` e `BijecaoInvalida` **propagam intactas**, sem `try`/`except` e sem tocar `__cause__`/`__context__`. **Não substitui `validar_indice`**, que **não é importado nem chamado**; **não cria nem lê o índice físico**, que **continua INEXISTENTE**; **não executa a bijeção física 37/37**; **não migra autoridade de status**. **Zero I/O, zero `pathlib`, zero YAML, zero rede, zero LLM, zero relógio, zero *locale*, zero ambiente, zero banco, zero cache, zero estado mutável de módulo**, e os insumos **não são alterados**. **COMPOR E VALIDAR EM MEMÓRIA NÃO É EXECUTAR A BIJEÇÃO FÍSICA E NÃO É MATERIALIZAR `C`** | **funcional** | PR #106 — **INTEGRADO à `main`** em 2026-09-04 (commit funcional `6265b823cb20aab0395840f8125008121de27e43`, merge `457e29a42472d44175d72031cff05ec1a1ebf9d1`, branch de origem `feat/c-response-correspondence`, mensagem `feat: add deterministic canonical response correspondence composition`). Arquivos: `src/casa77_sdr/response_correspondence.py` (blob `e3e895246f42a0a5f60c61b7cb68b2a922559134`) e `tests/test_response_correspondence.py` (blob `b4ba305e51dd166596def93a6381209802b23330`) — **2 files changed, 843 insertions(+), 0 deletions(-)**, **nenhum arquivo preexistente alterado**. Baseline **`3186 passed`** / Python 3.14.5, com **`75 passed`** no direcionado; **`75`** e **`3186`** também sob `-W error`; delta **+75** sobre os **`3111 passed`** anteriores (**3111 + 75 = 3186**). **Sem CI configurado** — ausência de checks, **não** falha de CI. **Cria o novo marco funcional** e **não recebe numeração de subetapa** |
+| **Décima primeira microentrega funcional de `C` — extração determinística do texto emitível canônico** (`src/casa77_sdr/response_emittable_text.py` + `tests/test_response_emittable_text.py`): materializa **`MT3`–`MT11`** — `extrair_textos_emitiveis(texto: str) -> tuple[tuple[str, str], ...]` recebe a **representação marcada já em memória** e devolve, **em ordem física**, um par **`(token_canonico, texto_canonico)`** por unidade emitível declarada. **C8 é chamado primeiro e continua o único juiz estrutural**: `RepresentacaoMarcadaInvalida` **propaga intacta**; só depois a C11 **localiza as mesmas unidades**, deriva o token **somente do `Rxx` e do `id` declarados** (**`C-A5-I5`** — nunca posição, ordem, `zip` ou conteúdo) e **verifica a sequência local de tokens contra C8 antes de devolver qualquer par** (`RuntimeError("invariante_estrutural")` em divergência interna). Prefixo **exatamente `> `**; linha `>` interna única → **`\n\n`**; linha `>` em borda ou consecutiva → **recusa**; linhas consecutivas de conteúdo → **um `LF`**, não convertido em espaço; `LF` e `CRLF` aceitos, `CR` do par removido; **`CR` isolado, inclusive no EOF, recusado**; **EOF sem newline aceito**; terminadores exóticos e whitespace terminal **recusados**; **nenhuma correção silenciosa**. Categorias fechadas: `prefixo_invalido`, `linha_vazia_invalida`, `terminador_proibido`, `branco_antes_do_terminador`. **Não valida equivalência, não aplica `NFC`, não converte quebra suave em espaço, não lê arquivo/YAML/índice, não resolve *binding* ou status, não executa a bijeção física, não materializa `C`.** **Zero I/O, zero `pathlib`, zero YAML, zero rede, zero LLM, zero relógio, zero *locale*, zero ambiente, zero banco, zero cache, zero estado mutável de módulo**, entrada **não alterada**. **EXTRAIR TEXTO CANÔNICO NÃO É VALIDAR EQUIVALÊNCIA, NÃO É EXECUTAR A BIJEÇÃO FÍSICA E NÃO É MATERIALIZAR `C`** | **funcional** | PR #109 — **INTEGRADO à `main`** em 2026-09-05 (commit funcional `4b6ea8ca00c171275d75ea17c4414011a4f1a835`, parent único `690a09c2a594f422b450afc3d780054be2168554`, merge `ceecd638131899974ce43b4685b254bf01d7bbad`, branch de origem `feat/c-emittable-text-extraction`, mensagem `feat: add deterministic emittable response text extraction`). Arquivos: `src/casa77_sdr/response_emittable_text.py` (blob `ff811210cc59f9c50b7f019d1d6798af9083439f`) e `tests/test_response_emittable_text.py` (blob `156bbbf86d42e6cd1a3474ed111b12115dec5d0a`) — **2 files changed, 1731 insertions(+), 0 deletions(-)**, **nenhum arquivo preexistente alterado**. Baseline **`3404 passed`** / Python 3.14.5, com **`218 passed`** no direcionado; **`218`** e **`3404`** também sob `-W error`; delta **+218** sobre os **`3186 passed`** anteriores (**3186 + 218 = 3404**), executados no `.venv` do projeto. **Sem CI configurado** — ausência de checks, **não** falha de CI. **Cria o novo marco funcional** e **não recebe numeração de subetapa** |
 
 O PR #4 atualiza base comercial e documentação a partir de decisões de Douglas Bianchi
 (2026-08-15). Ele **não** é implementação funcional do motor e não altera o marco
@@ -996,9 +1060,33 @@ criada, escolhida ou autorizada**.
 
 ## Testes
 
-**Baseline funcional corrente: `3186 passed` / Python 3.14.5.**
+**Baseline funcional corrente: `3404 passed` / Python 3.14.5.**
 
-**Execuções da PR #106, registro da entrega C10** (2026-09-04, Python 3.14.5) — **quatro
+**Execuções da PR #109, registro da entrega C11** (2026-09-05, Python 3.14.5) — **três
+execuções, todas aprovadas**, realizadas **na entrega funcional**, sobre os **bytes da árvore
+de trabalho** que vieram a ser exatamente os blobs integrados (SHA-256 reconferidos
+imediatamente antes do *staging* e novamente após o *commit*):
+
+| Momento | Comando | Resultado |
+|---|---|---|
+| **baseline pré-implementação** | `.venv\Scripts\python.exe -m pytest -q -W error` | **`3186 passed`** |
+| **direcionado** | `.venv\Scripts\python.exe -m pytest -q tests/test_response_emittable_text.py -W error` | **`218 passed`** |
+| **suíte completa estrita** | `.venv\Scripts\python.exe -m pytest -q -W error` | **`3404 passed`** |
+
+**Zero failures, zero errors e zero warnings** sob `-W error`. O delta é **+218**,
+**exatamente** o número de testes do arquivo direcionado **novo** — **`3186 + 218 = 3404`** —,
+e **nenhum teste preexistente foi alterado ou removido**. **Ressalva ambiental, objetiva e não
+funcional**: o comando literal `python -m pytest` com o **`python` global** falhou na coleta
+por **não ter o pacote `casa77_sdr` instalado**; os testes canônicos da entrega foram
+executados com o interpretador do **`.venv` do projeto**, também **Python 3.14.5** — **nenhuma
+alteração de ambiente, dependência ou configuração foi feita**. O **staged foi auditado** —
+blobs `ff811210…` e `156bbbf8…`, `A/A`, `478 / 0` e `1253 / 0` — e os **blobs integrados à
+`main` são exatamente esses blobs**, conferidos em `origin/main` e no commit funcional. **Estes
+números são evidência da ENTREGA FUNCIONAL C11, e NÃO uma execução da reconciliação
+documental**: nesta reconciliação **nenhum `pytest` foi executado**, porque **zero código,
+zero teste e zero `knowledge/**` mudaram**.
+
+**Execuções anteriores — PR #106, registro da entrega C10** (2026-09-04, Python 3.14.5) — **quatro
 execuções, todas aprovadas**, realizadas **na entrega funcional**, sobre os **bytes da árvore
 de trabalho** que vieram a ser exatamente os blobs integrados:
 
@@ -1441,7 +1529,7 @@ na **3B.7**, integrada pelo **PR #29** (merge `568919f5…`) — `src/casa77_sdr
 A **3B.7 está CONCLUÍDA e integrada à `main`**. Etapas 5 a 10 permanecem futuras e com a
 numeração preservada, conforme `docs/05-roadmap.md` — **não alterado por esta entrega**.
 
-Existem agora **quinze entregas funcionais posteriores à 3B.7 e SEM numeração oficial de
+Existem agora **dezenove entregas funcionais posteriores à 3B.7 e SEM numeração oficial de
 subetapa**: (a) a **evolução temporal do contrato de persistência operacional**
 (`instante_ultima_transicao`), integrada pelo **PR #33**; (b) a **implementação
 funcional da política N-a** — produção determinística do conjunto elegível **E** em
@@ -1477,15 +1565,28 @@ pura de `C-6`** em `src/casa77_sdr/response_format.py` —, integrada pelo **PR 
 bijetiva de `C-A1-B3` / `C-A1-B4`** em `src/casa77_sdr/response_bijection.py` —, integrada
 pelo **PR #95**; e (o) a **sétima microentrega funcional de `C`** — o **canonicalizador
 determinístico de rótulo de status já extraído** em `src/casa77_sdr/response_status.py` —,
-integrada pelo **PR #97**.
-**Nenhuma das sete materializa `C`**: o índice `knowledge/indice-respostas-aprovadas.yaml`
+integrada pelo **PR #97**; e (p) a **oitava microentrega funcional de `C`** — o
+**leitor/validador determinístico da representação marcada `C-A5`** em
+`src/casa77_sdr/response_markdown_units.py` —, integrada pelo **PR #102**; e (q) a **nona
+microentrega funcional de `C`** — o **derivador determinístico dos tokens canônicos do lado do
+índice** em `src/casa77_sdr/response_index_tokens.py` —, integrada pelo **PR #104**; e (r) a
+**décima microentrega funcional de `C`** — a **composição determinística em memória da
+correspondência canônica** em `src/casa77_sdr/response_correspondence.py` —, integrada pelo
+**PR #106**; e (s) a **décima primeira microentrega funcional de `C`** — a **extração
+determinística do texto emitível canônico** em `src/casa77_sdr/response_emittable_text.py` —,
+integrada pelo **PR #109**.
+**Nenhuma das onze materializa `C`**: o índice `knowledge/indice-respostas-aprovadas.yaml`
 **continua inexistente**, o carregador **não conhece caminho implícito** para ele, o
 comparador **opera sobre `str` que lhe são entregues**, sem analisar Markdown e sem I/O, os
 formatadores **recebem valores já resolvidos**, sem consultar fonte alguma, o avaliador
 **recebe predicado e valor já prontos**, julgando **apenas o domínio booleano estrito**, o
 verificador **recebe os três domínios já prontos**, julgando **apenas se a relação é bijetiva
 entre eles**, e o canonicalizador **recebe o rótulo já extraído**, traduzindo **apenas as três
-linhas de `C-A1-ST1`–`C-A1-ST3`** — em todos os casos **sem consumidor integrado**. O formato
+linhas de `C-A1-ST1`–`C-A1-ST3`**, o leitor da representação marcada **devolve apenas
+tokens `<Rxx>/<id>`**, o derivador **projeta tokens de uma estrutura já em memória**, a
+composição **compõe fronteiras já existentes sem juiz novo** e o extrator **recebe a
+representação marcada já em memória e devolve texto canônico, sem comparar e sem `NFC`** —
+em todos os casos **sem consumidor integrado**. O formato
 **`hora` continua NÃO MATERIALIZADO**, **`PARCIAL` continua sem tradução automática** e a
 **autoridade de status continua em `knowledge/respostas-aprovadas.md`** (**C-11**).
 Nenhuma delas é renomeada para **3B.8** — **a 3B.8 não existe** —, nenhuma **altera a
@@ -1625,14 +1726,16 @@ a **pendência residual continua aberta**.
    de subetapa** e **não criou nomenclatura normativa `E2`–`E7`**. A **entrega funcional
    anterior** é a **sexta microentrega — o verificador determinístico da correspondência
    bijetiva de `C-A1-B3` / `C-A1-B4`** (PR #95), que permanece integrada. **A entrega
-   funcional mais recente NÃO é mais a do PR #97**: desde o **PR #106** ela é a **décima
-   microentrega funcional de `C` — a composição determinística em memória da correspondência
-   canônica**, em `src/casa77_sdr/response_correspondence.py`, registrada no **item 92**; a
+   funcional mais recente NÃO é mais a do PR #97**: desde o **PR #109** ela é a **décima
+   primeira microentrega funcional de `C` — a extração determinística do texto emitível
+   canônico**, em `src/casa77_sdr/response_emittable_text.py`, registrada no **item 94**; a
+   **décima** é a composição determinística em memória da correspondência canônica, em
+   `src/casa77_sdr/response_correspondence.py` (PR #106), registrada no **item 92**; a
    **nona** é o derivador determinístico dos tokens canônicos do lado do índice, em
    `src/casa77_sdr/response_index_tokens.py` (PR #104), registrada no **item 91**; e a
    **oitava** é o leitor/validador determinístico da representação marcada `C-A5`, em
    `src/casa77_sdr/response_markdown_units.py` (PR #102), registrada no **item 90**.
-   **Nenhuma das dez microentregas materializa
+   **Nenhuma das onze microentregas materializa
    `C`**: o índice `knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE** e
    **`C` continua ARBITRADA / NÃO MATERIALIZADA como entrega completa**. **CANONICALIZAR
    STATUS NÃO É MATERIALIZAR `C`**: o canonicalizador **recebe o rótulo já extraído** — **a
@@ -1654,16 +1757,21 @@ a **pendência residual continua aberta**.
    `knowledge/respostas-aprovadas.md` continua a autoridade (**C-11**). O formato **`hora`
    continua NÃO MATERIALIZADO**, por **lacuna normativa ainda não arbitrada** sobre a escolha
    mecânica entre `HH:MM` e `Hh` (`C-A1-F3`) — **e esta reconciliação não a arbitra**.
-2. Commit funcional atual: `4749efa74d5684b52b4f457176710ba6e212c627`. Merge
-   correspondente: `8c67e13808da59dbace413fce33c2c22280e69a3`.
-3. Baseline funcional atual: **`2707 passed`**, com **`261 passed`** no teste direcionado de
-   `tests/test_response_status.py`, em **Python 3.14.5** — **zero failures e zero
-   errors**, e **zero warnings** sob `-W error`. Baseline anterior integrado: **`2446
-   passed`**; delta **+261**, correspondente exatamente ao arquivo direcionado **novo**,
-   **sem alteração de teste preexistente**. As **quatro execuções** — **`261`** e **`2707`**,
-   ambas também sob `-W error` — foram **medidas após o merge, sobre a `main` integrada**, e
-   **reexecutadas nesta reconciliação depois da edição**, com os mesmos resultados; os
-   **blobs integrados coincidem com os blobs staged auditados** — ver a seção **Testes**.
+2. Commit funcional atual: `4b6ea8ca00c171275d75ea17c4414011a4f1a835` (PR #109). Merge
+   correspondente: `ceecd638131899974ce43b4685b254bf01d7bbad`. O par
+   `4749efa74d5684b52b4f457176710ba6e212c627` / `8c67e13808da59dbace413fce33c2c22280e69a3`
+   (PR #97), registrado aqui anteriormente, **permanece correto como registro daquele
+   momento**.
+3. Baseline funcional atual: **`3404 passed`**, com **`218 passed`** no teste direcionado de
+   `tests/test_response_emittable_text.py`, em **Python 3.14.5** — **zero failures e zero
+   errors**, e **zero warnings** sob `-W error`. Baseline anterior integrado: **`3186
+   passed`**; delta **+218**, correspondente exatamente ao arquivo direcionado **novo**,
+   **sem alteração de teste preexistente**. As execuções — **`218`** e **`3404`**, ambas sob
+   `-W error` — foram **medidas na entrega funcional C11, antes do merge**, sobre os bytes
+   que vieram a ser exatamente os blobs integrados; **nenhum `pytest` foi executado nesta
+   reconciliação**. O registro anterior deste item — **`2707 passed`** / **`261 passed`**
+   do PR #97 — **permanece correto como registro daquele momento**; ver a seção
+   **Testes**.
 4. A **última subetapa funcional numerada** continua sendo a **3B.7 — `ResolvedorIdentidade` determinístico** (PR #29, commit `25ab2726…`, merge
    `568919f5…`), que permanece **CONCLUÍDA**.
 5. **O conjunto H, o `havia_estado_esperado` e o produtor N-I continuam com produtor em
@@ -4521,6 +4629,149 @@ a **pendência residual continua aberta**.
     estado **posterior**. Em particular, o **item 92** continua correto ao afirmar que, quando
     foi escrito, a décima primeira microentrega ainda não havia sido escolhida — e ela
     **continua não escolhida** após este item, que é **documental** e **não funcional**.
+
+94. **A DÉCIMA PRIMEIRA MICROENTREGA FUNCIONAL DE `C` — A EXTRAÇÃO DETERMINÍSTICA DO TEXTO
+    EMITÍVEL CANÔNICO — ESTÁ INTEGRADA À `main` PELO PR #109.**
+    **ESTE ITEM 94 É REGISTRO HISTÓRICO DOCUMENTAL. NÃO É "SUBETAPA 94", NÃO É `E11` NEM
+    `E12`, NÃO É IDENTIFICADOR NORMATIVO DE `C` E NÃO CRIA A 3B.8** — a **3B.8 continua
+    INEXISTENTE**, e a **3B.7 continua a última subetapa numerada**. Ele registra **somente**
+    a integração da décima primeira microentrega funcional, **já integrada** quando este item
+    foi escrito.
+    **Integração.** **PR #109** — **commit funcional
+    `4b6ea8ca00c171275d75ea17c4414011a4f1a835`** (`feat: add deterministic emittable response
+    text extraction`), **parent único `690a09c2a594f422b450afc3d780054be2168554`**, **merge
+    commit `ceecd638131899974ce43b4685b254bf01d7bbad`** (merge commit **normal**, dois
+    parents: `690a09c2a5…` e `4b6ea8ca00…`; **zero squash, zero rebase**), branch de origem
+    `feat/c-emittable-text-extraction`, **preservada**. **A `main` passou de
+    `690a09c2a594f422b450afc3d780054be2168554` para
+    `ceecd638131899974ce43b4685b254bf01d7bbad`.** Merge realizado **sob autorização humana
+    explícita**, protegido por `--match-head-commit`.
+    **Escopo.** **Dois arquivos novos, e nenhum outro**:
+    `src/casa77_sdr/response_emittable_text.py` — **+478 / −0**, blob
+    **`ff811210cc59f9c50b7f019d1d6798af9083439f`** — e
+    `tests/test_response_emittable_text.py` — **+1253 / −0**, blob
+    **`156bbbf86d42e6cd1a3474ed111b12115dec5d0a`**. Total: **2 arquivos, +1731 / −0**.
+    **Zero arquivo preexistente alterado**: **zero `docs/**`**, **zero `knowledge/**`**,
+    **zero `prompts/**`**, **zero `CLAUDE.md`**, **zero `src/casa77_sdr/__init__.py`**, **zero
+    `response_markdown_units.py`** (blob `3c99d89aa0028f673548f5cc932ec166d592cd7f`
+    preservado), **zero `response_equivalence.py`** (blob
+    `3a0d6fce566fad36a774753e21b40147aede4a5e` preservado), **zero
+    `response_correspondence.py`** (blob `e3e895246f42a0a5f60c61b7cb68b2a922559134`
+    preservado) e **zero configuração**.
+    **Fronteira entregue.**
+    `extrair_textos_emitiveis(texto: str) -> tuple[tuple[str, str], ...]`, com
+    **`__all__ = ["TextoEmitivelInvalido", "extrair_textos_emitiveis"]`** — exatamente dois
+    nomes. `TextoEmitivelInvalido` deriva **diretamente de `Exception`**. **Sem DTO, sem
+    dataclass**; **não** é exportada por `casa77_sdr/__init__.py`. Cada elemento do retorno é
+    o par **`(token_canonico, texto_canonico)`** — o token `<Rxx>/<id>` **declarado** e o texto
+    canônico da unidade —, **em ordem física do documento**. Documento vazio ou sem `Rxx`
+    devolve `tuple()`, o que **não afirma nada** sobre o corpus real.
+    **C8 primeiro, e juiz estrutural único.** A **primeira** operação funcional é
+    `tokens_c8 = ler_unidades_marcadas(texto)`; **nenhum tipo é validado localmente antes
+    disso**. Tipo não-`str`, subclasse de `str` e toda violação estrutural de `C-A5`
+    **continuam pertencendo a C8**, e `RepresentacaoMarcadaInvalida` **propaga intacta** —
+    **zero `try`/`except`**, **zero *wrapper***, **zero reclassificação**, **zero
+    enriquecimento**, **`__cause__`/`__context__` inalterados** (a produção não contém nenhum
+    nó `Try`/`ExceptHandler`, provado por AST). Com uma violação textual **anterior** e uma
+    estrutural **posterior** no mesmo documento, **a estrutural vence**, porque o portão de C8
+    é **integral e anterior** — **decisão técnica de composição, não norma nova de `C`**.
+    **Localização e invariante C8 ↔ C11.** Só **após** o portão a C11 percorre a `str` para
+    **localizar fisicamente as mesmas unidades declaradas**, **derivar de novo o token
+    somente do `Rxx` do cabeçalho e do `id` do marcador** (**`C-A5-T1`**, **`C-A5-T2`**,
+    **`C-A5-I5`** — **nunca** por posição, índice, ordem, `zip` ou conteúdo; `zip` e `index`
+    estão ausentes da produção) e converter cada bloco. A caminhada local **não rejulga
+    `C-A5`**. **Antes de devolver qualquer par**, a sequência local de tokens é comparada com
+    `tokens_c8`; divergência levanta **`RuntimeError("invariante_estrutural")`** — mensagem
+    **muda**, sem token, `Rxx`, `id`, conteúdo, posição ou cardinalidade —, que representa
+    **defeito interno de consistência**, **não** entrada textual inválida. Sem `assert`. A
+    igualdade **verifica** as duas caminhadas; ela **não atribui identidade por posição**.
+    **`MT3`–`MT11` materializadas — a norma de `docs/07` não foi reaberta.** **`MT3`/`MT4`**:
+    prefixo de conteúdo **exatamente `> `**, dois caracteres removidos por **fatiamento** —
+    **sem `strip`, `lstrip`, `rstrip`, regex permissiva, CommonMark ou normalização** —; `>`
+    colado, `>` seguido de dois ou mais espaços, `>` seguido de tab, `> ` seguido de tab e
+    `> ` sem conteúdo → **`prefixo_invalido: linha`**. **`MT5`–`MT7`**: a linha vazia interna
+    é **`>` sozinho**; **uma** delas entre conteúdo projeta **exatamente `\n\n`**; linha `>`
+    na **borda inicial**, na **borda final** ou **duas ou mais consecutivas** →
+    **`linha_vazia_invalida: unidade`**, **sem colapsar e sem corrigir**. **`MT8`**: o texto é
+    dividido **exclusivamente por `LF`**, preservando por segmento a evidência de **ter sido
+    seguido** pelo `LF` — **sem `splitlines()`, sem *universal newline*, sem `StringIO`, sem
+    arquivo**; um `CR` terminal pertence a um `CRLF` **somente** quando o segmento termina em
+    `\r` **e** foi efetivamente seguido de `\n` — então **aquele único `CR` é removido** e o
+    terminador canônico é `LF`; `\r` **sem** `LF` seguinte é **`CR` isolado** e é recusado,
+    **inclusive no EOF** — e isso vale **mesmo quando C8 aceitou o bloco estruturalmente**
+    pela sua política local de linha (**`MT2`**: estruturalmente reconhecido ≠ textualmente
+    válido); `CR` residual (dois `CR` antes de `LF`), `U+2028`, `U+2029`, `U+0085`, `U+000B` e
+    `U+000C` → **`terminador_proibido: linha`**; **nenhum `CR` permanece na saída**; **EOF sem
+    terminador é válido**; mistura `LF`/`CRLF` entre linhas é aceita. **`MT9`**: linhas
+    consecutivas de conteúdo projetam **exatamente um `LF`**, **não convertido em espaço** —
+    a conversão `LF` → `U+0020` **continua com `C-15b`** (**`D3`**). **`MT10`**: espaço ou
+    tab **imediatamente antes** do terminador → **`branco_antes_do_terminador: linha`**,
+    **nunca corrigido**. **`MT11`**: dois desfechos — `str` canônica **não vazia** ou recusa
+    **fail-closed**; **nada é devolvido parcialmente**. **Ordem local de falha**, dentro de
+    cada unidade e em ordem física: **1.** terminador; **2.** prefixo; **3.** branco terminal;
+    **4.** linhas vazias (sobre a unidade inteira); **5.** montagem — a **primeira** violação
+    encerra. **Zero `NFC`**: composto e decomposto **permanecem distintos** na saída.
+    **Categorias técnicas privadas e fechadas** — **quatro**, e **não** identificadores
+    normativos de `C`: `prefixo_invalido`, `linha_vazia_invalida`, `terminador_proibido` e
+    `branco_antes_do_terminador`; **localizadores fechados**: `linha` e `unidade`; mensagem
+    **`<categoria>: <localizador>`**, **nunca** ecoando conteúdo, token, `Rxx`, `id`,
+    caractere ofensor, `repr`, tipo concreto, número de linha, posição, índice, tamanho ou
+    cardinalidade. **`MT12` cumprida**: a taxonomia, o nome de módulo, o nome de função, a
+    assinatura e as mensagens foram decididos **pelo mandato técnico da C11**, **não** pela
+    arbitragem.
+    **Fora do domínio, e duplicidade global.** Bloco `>` **fora** de qualquer `## Rxx` está
+    fora de **`C-A5-U2`** e é **ignorado integralmente** — sem par e **sem validação `MT`**
+    —, preservando a semântica de C8; marcador inválido ou marcador válido fora de `Rxx` **já
+    foi recusado por C8** antes da C11. Se C8 aceitar **seções `Rxx` homônimas**, a C11 pode
+    devolver **dois pares com o mesmo token**, na ordem física — a unicidade global **não é
+    decidida aqui**, e **nenhuma regra nova foi criada**.
+    **Pureza.** Importa **apenas** `__future__` e `ler_unidades_marcadas`: **zero I/O**,
+    **zero *filesystem***, **zero `open`**, **zero `pathlib`**, **zero YAML**, **zero rede**,
+    **zero LLM**, **zero relógio**, **zero calendário**, **zero *locale***, **zero variável de
+    ambiente**, **zero banco**, **zero cache**, **zero estado mutável de módulo**, **zero
+    `unicodedata`**, **zero import de `response_equivalence` ou `response_correspondence`**.
+    A entrada **não é alterada**. Fixtures de teste **sintéticas** — **zero conteúdo real de
+    fragmento aprovado, zero dado comercial, zero PII, zero segredo**.
+    **Testes.** **`218 passed`** no direcionado e **`3404 passed`** na suíte completa, **os
+    mesmos totais sob `-W error`**, em **Python 3.14.5** — **zero failures, zero errors, zero
+    warnings**. Baseline pré-implementação **`3186 passed`**; delta **+218**, com
+    **`3186 + 218 = 3404`**; **nenhum teste preexistente foi alterado ou removido**. **Ressalva
+    ambiental, objetiva e não funcional**: o comando literal `python -m pytest` com o
+    **`python` global** não tinha o pacote `casa77_sdr` instalado; os testes canônicos da
+    entrega foram executados no **`.venv` do projeto**, também em Python 3.14.5 — **nenhuma
+    alteração de ambiente, dependência ou configuração**. **Não há CI remoto configurado**:
+    a PR #109 e o merge commit não possuem *statuses*, *check-runs* nem *workflow runs* —
+    **AUSÊNCIA DE CI/CHECKS — NÃO FALHA DE CI**.
+    **Responsabilidades preservadas — a C11 NÃO:** valida equivalência; aplica `NFC`;
+    converte quebra suave em espaço; lê arquivo; lê YAML; lê índice; resolve *binding*;
+    resolve status; propaga status; resolve `PARCIAL`; implementa *placeholder*; implementa
+    `caminho_yaml`; implementa `hora`; implementa **C-7**; executa a bijeção física;
+    materializa `C`; integra *runtime*. **`C-15b` continua no comparador existente**
+    (`response_equivalence.py`, **intacto**); **C8 continua estrutural**; **C10 continua a
+    composição de domínios de identidade**.
+    **Estado corrente preservado.** **EXTRAIR TEXTO CANÔNICO NÃO É VALIDAR EQUIVALÊNCIA, NÃO
+    É EXECUTAR A BIJEÇÃO FÍSICA E NÃO É MATERIALIZAR `C`.** O sucesso da C11 afirma **somente**
+    que cada bloco declarado do texto recebido satisfaz `MT3`–`MT11` e produziu uma `str` do
+    domínio `D1`–`D7`; ele **não** prova que o texto seja o corpus oficial, que o corpus
+    esteja completo ou aprovado, que as seções `Rxx` sejam fisicamente únicas, nem afirma
+    coisa alguma sobre status, `PARCIAL`, índice real, *bindings*, `ASSERTIVA`, equivalência
+    `C-15`, bijeção física ou `C-A1-ST6`–`C-A1-ST10`. Continuam, portanto: **`C` ARBITRADA /
+    NÃO MATERIALIZADA**; **`C-A5` MATERIALIZADA no corpus** e **`C-A5-M2` ATIVA**;
+    `knowledge/indice-respostas-aprovadas.yaml` **INEXISTENTE**; a **bijeção física do corpus
+    real NÃO EXECUTADA**; a **autoridade de status NÃO MIGRADA** — o Markdown continua a
+    autoridade (**C-11**); **`C-A1-ST6`–`C-A1-ST10` NÃO satisfeitas** — **a C11 NÃO satisfaz
+    `ST10`** e **NÃO migra autoridade**; e **ABERTAS** a propagação de status ao fragmento, o
+    mapeamento concreto de `PARCIAL`, a sintaxe de *placeholder*, a gramática de
+    `caminho_yaml`, o formato `hora` e **C-7**.
+    **Próxima ação.** **C12 NÃO FOI ESCOLHIDA, NÃO FOI PLANEJADA E NÃO FOI INICIADA** —
+    **nenhuma pendência é eleita** por este item, **nenhuma arquitetura ou decisão técnica
+    nova é criada** e **nenhuma subetapa é criada**.
+    **Relação com os itens anteriores.** **Os itens 87 a 93 permanecem corretos como registro
+    do momento em que foram escritos.** Este item 94 **não os reescreve**; ele registra o
+    estado **posterior**. Em particular, o **item 92** continua correto ao afirmar que, quando
+    foi escrito, a décima primeira microentrega ainda não havia sido escolhida, e o **item
+    93** continua correto ao registrar a micro-arbitragem **anterior** à C11 — ela veio a ser
+    **esta**, registrada aqui.
 
 ## Arbitragens
 
