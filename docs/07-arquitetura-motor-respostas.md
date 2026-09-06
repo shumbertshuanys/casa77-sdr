@@ -1058,6 +1058,86 @@ alterado**; **`PARCIAL` continua NÃO RESOLVIDO NO CORPUS** — agora com o stat
 decidido**, mas com a **declaração física ainda não aplicada**. **DECIDIR O STATUS NÃO É
 APLICAR A DECLARAÇÃO, NÃO É ALTERAR O CORPUS E NÃO É MATERIALIZAR `C`.**
 
+##### Regime exclusivo de `status-fragmento` sob `PARCIAL`
+
+**REGISTRO POSTERIOR. NÃO CRIA `PM13`, NÃO RENUMERA, NÃO REINTERPRETA E NÃO ALTERA
+`PM1`–`PM12`.** Este registro é escrito **depois** das regras `PM1`–`PM12` e do registro da
+decisão humana de `R28/F1`, e é **deliberadamente separado** deles. Ele **não** cria rótulo
+local novo — **`PM13` não existe** —, **não** renumera, **não** reinterpreta e **não** altera
+nenhuma daquelas doze regras, que permanecem **literais**. Em particular, **`PM7` não é
+alterado nem absorvido**: ele continua sendo o **caso particular de `ST1`–`ST3`**, com
+**fundamento próprio** — a existência de propagação uniforme por `SP2`/`SP3` e a preservação
+de `SP6`.
+
+Ele fecha **uma única** lacuna: **o comportamento de uma linha que satisfaz EXATAMENTE o
+envelope de `PM1` dentro de uma seção `Rxx` cujo cabeçalho satisfaz `G2`, mas cujo rótulo
+literal NÃO é `PARCIAL`.**
+
+**A decisão.** **`status-fragmento` é PERMITIDO EXCLUSIVAMENTE sob cabeçalho `G2` cujo rótulo
+literal seja EXATAMENTE `PARCIAL`.** Sob **qualquer outro** rótulo literal, **a presença de uma
+linha que satisfaça exatamente o envelope de `PM1` é *FAIL-CLOSED***.
+
+**Fundamento normativo — exaustivo.** Apenas dois pontos o sustentam, e **nenhum outro é
+autorizado**. **`PM8`**: a declaração é a **fonte explícita do status do fragmento *sob
+`PARCIAL`***, e **somente** ali. **`PM11`**: é o **rótulo físico `PARCIAL` que ATIVA** o regime
+de status explicitamente declarado por fragmento — fora desse regime, **não há regime a
+ativar**, e uma declaração seria uma **segunda fonte de status sem regime que a autorize**. **A
+composição atual do corpus NÃO é fundamento**: o corpus é **evidência**, jamais origem de
+norma.
+
+**Consequências, por regime:**
+
+| Rótulo literal do cabeçalho `G2` | Comportamento de `status-fragmento` |
+|---|---|
+| `PARCIAL` | **Obrigatório.** `PM5` e `PM11` permanecem **literais**: **exatamente uma** declaração válida por fragmento emitível — nenhuma é *fail-closed*, duas ou mais são *fail-closed*. |
+| `ST1`, `ST2` ou `ST3` | **Proibido.** **`PM7` permanece literal**, com o seu fundamento próprio (`SP2`/`SP3` já propagam uniformemente; `SP6` seria comprometido). |
+| Qualquer outro rótulo `G2` válido | **Igualmente proibido**, por este registro. A presença de uma declaração exata é *fail-closed*. |
+| Fora de seção `Rxx` | **`PM6` permanece literal e aplicável** — declaração fora de seção `Rxx` já é *fail-closed* por `PM6`. |
+
+**`G2` e `SP5` permanecem intactos.** Um rótulo que não pertença a `ST1`–`ST3` nem seja
+`PARCIAL` **continua podendo satisfazer `G2`**, **continua literal e opaco** (**`GR2.10`**,
+**`GR3`**), **não se torna gramaticalmente inválido**, **não** recebe tradução automática,
+**não** recebe propagação automática, **não** é corrigido, **não** é normalizado e **não** é
+inferido. **O seu status permanece NÃO RESOLVIDO, conforme `SP5`** — e isso **continua sendo o
+comportamento arbitrado**, não uma lacuna. **Este registro proíbe SOMENTE a presença de
+`status-fragmento` nesse regime**, e **nada mais**.
+
+**Quatro cláusulas de precisão.**
+
+**1. Ausência não é erro desta regra.** A **ausência** de `status-fragmento` sob rótulo
+não-`PARCIAL` **NÃO** é erro — nem desta regra, nem de `PM5`, cuja obrigatoriedade vale
+**somente** sob `PARCIAL`. O status daquele `Rxx` permanece **não resolvido por `SP5`**, que é
+o comportamento correto.
+
+**2. Somente o envelope exato.** A regra alcança **exclusivamente** a linha que satisfaça
+**exatamente** `PM1`. Uma **quase-declaração** — indentada, com *whitespace* divergente, com
+conteúdo antes ou depois, com envelope incompleto, com tab, ou com qualquer outra divergência —
+**permanece conteúdo comum**, exatamente como sob `C-A5`/`PM6`. **Sob rótulo não-`PARCIAL`,
+isso não gera erro `PM` por si só.**
+
+**3. Rótulo desconhecido continua válido.** Esta regra **NÃO** torna inválido um rótulo
+desconhecido. **`GR2.10`**, **`GR3`** e **`SP5`** são **preservados**: o rótulo continua
+literal, opaco, gramaticalmente válido e sem tradução — o que é proibido ali é **a declaração**,
+não **o rótulo**.
+
+**4. Conteúdo emitível está fora.** Uma linha iniciada por `>` **não satisfaz `PM1`** e
+**não pertence a esta regra**. Nada aqui toca o bloco de citação, o texto emitível ou
+`MT3`–`MT11`.
+
+**Nenhum detalhe técnico é norma aqui.** Este registro **não** define — e **não** autoriza que
+se leia dele — módulo, função, assinatura, exceção, categorias técnicas, localizadores,
+mensagens, precedência interna de validação, tipo de erro interno, estratégia de importação,
+inspeção de árvore sintática ou arquivos futuros. **Tudo isso pertence a mandato técnico
+próprio**, ainda **não** emitido.
+
+**Estado após este registro.** **`PM1`–`PM12` permanecem inalteradas** e **`PM13` não existe**;
+`G2`/`GR1`–`GR7`, `SP1`–`SP7`, `C-3`, `C-A1-ST`, `C-A1-P2` e `C-A5` permanecem **literais**;
+`knowledge/respostas-aprovadas.md` **não foi alterado** e permanece no blob
+`3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`; a decisão humana **`R28/F1 = APROVADO` continua
+DECIDIDA e NÃO APLICADA**; e **`PARCIAL` continua NÃO RESOLVIDO no corpus**. **FECHAR A LACUNA
+NORMATIVA NÃO É IMPLEMENTAR VERIFICAÇÃO, NÃO É APLICAR DECLARAÇÃO, NÃO É ALTERAR O CORPUS E
+NÃO É MATERIALIZAR `C`.**
+
 ##### C-A1-M — Prioridade de modelagem, prosa e auditoria de consumidores
 
 | # | Regra |
