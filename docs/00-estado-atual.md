@@ -1801,7 +1801,8 @@ criada, escolhida ou autorizada**.
 **Baseline funcional corrente: `4477 passed` / Python 3.14.5.**
 
 **Execuções da PR #124, registro da associação física de seção e fragmentos** (2026-09-06,
-Python 3.14.5) — **cinco execuções, todas aprovadas**, realizadas **na entrega funcional**,
+Python 3.14.5) — **seis execuções listadas, todas aprovadas**, realizadas **na entrega
+funcional**,
 sobre os bytes que vieram a ser exatamente os blobs integrados:
 
 | Momento | Comando | Resultado |
