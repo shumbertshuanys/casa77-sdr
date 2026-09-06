@@ -61,10 +61,11 @@ identidade.
 **Política de linha — a estrutural de `C8`/`C12`, repetida em `PM10`.** O texto é
 dividido **exclusivamente** por `LF`; de cada segmento é removido **no máximo
 um** `CR` terminal. `LF` e `CRLF` são estruturalmente equivalentes; um `CR`
-residual permanece **conteúdo literal** e torna a linha incapaz de ser cabeçalho,
-declaração ou marcador; `U+2028`, `U+2029`, `U+0085`, `VT`, `FF` e `U+00A0`
-permanecem conteúdo. `splitlines()` **não** é usado, *universal newline* **não**
-é aplicado e **nenhum** caractere é normalizado.
+residual permanece **conteúdo literal** — ele **não** é removido nem
+normalizado, e o seu efeito sobre cabeçalho, declaração ou marcador é
+determinado pelas **respectivas gramáticas**; `U+2028`, `U+2029`, `U+0085`,
+`VT`, `FF` e `U+00A0` permanecem conteúdo. `splitlines()` **não** é usado,
+*universal newline* **não** é aplicado e **nenhum** caractere é normalizado.
 
 **Regime, e uma única regra de regime.** A declaração é aceita **se e somente
 se** o rótulo literal da seção física corrente for **exatamente** `PARCIAL`. Os
