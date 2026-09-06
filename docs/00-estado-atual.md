@@ -4,9 +4,60 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-09-06 (**reconciliação documental pós-merge da DÉCIMA QUARTA MICROENTREGA
-FUNCIONAL DE `C` — leitor/validador determinístico de status por fragmento sob `PARCIAL`**).
-Esta entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera **somente** este documento, e **não
+Atualizado em: 2026-09-06 (**reconciliação documental pós-aplicação física de
+`R28/F1 = APROVADO` ao corpus**). Esta entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera
+**somente** este documento, e **não altera código, testes, `knowledge/**`,
+`docs/07-arquitetura-motor-respostas.md`, `prompts/**` nem `CLAUDE.md`. **ELA NÃO É MARCO
+FUNCIONAL** e **NÃO cria numeração funcional nova**. **`R28/F1 = APROVADO` — DECIDIDO
+HUMANAMENTE E AGORA APLICADO AO CORPUS.** A aplicação está integrada à `main` pelo **PR #122**
+— **commit `77f8119488f0dc568721ca159fc13d3acd9f234d`** (`knowledge: apply R28 F1 fragment
+status`), **merge commit `f3c35a4c738c9ab2e4343a3c012833144b514ca1`** (merge commit **normal**,
+dois parents: `7cb6e9f1b4…` e `77f8119488…`), branch de origem
+`knowledge/apply-r28-f1-status`. O **corpus** `knowledge/respostas-aprovadas.md` passou do blob
+**`3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`** para
+**`3a30fe764b80902227fdefb9282f3916650e4f17`**, com diff de **exatamente `+1 / −0`**: a
+**única** linha adicionada é `<!-- status-fragmento: APROVADO -->`, colocada **imediatamente
+antes** do marcador `C-A5` `<!-- fragmento: F1 -->` da seção `R28`, com **zero linha física**
+entre ambas. **Nada mais foi tocado**: cabeçalho `R28`, marcador `F1`, bloco emitível, notas
+internas e todos os demais `Rxx` permanecem **inalterados**, e **`knowledge/casa77.yaml` não
+foi alterado** — **zero preço, capacidade ou regra comercial nova**. **`PM1`, `PM2` e `PM5`
+satisfeitas**: o envelope é **exato** (prefixo `<!-- status-fragmento: `, valor, sufixo
+` -->`, sem nada antes e sem nada depois); a declaração ocupa a **linha imediatamente
+anterior** ao marcador, preservando **`C-A5-I1`** e **`C-A5-I2`**; e a seção, cujo rótulo
+literal é **exatamente `PARCIAL`**, passa a ter **exatamente uma** declaração válida para o seu
+único fragmento emitível. **A decisão não foi inferida**: ela é o ato humano já registrado no
+**item documental 100**, e o valor pertence ao **vocabulário fechado de `C-3`** (`C-3a`).
+**Validação pela C14 sobre o corpus real**, registrada como evidência da PR #122 e **não
+reexecutada aqui**: **`C8` passou — 37 tokens**; **`C12` passou — 30 cabeçalhos, 1 rotulado
+`PARCIAL`**; **`C14` passou**, com resultado **`(("R28/F1", "APROVADO"),)`**; **direcionado da
+C14 `243 passed`**; **regressão completa `4343 passed`**; **Python 3.14.5**, sob **`-W error`**,
+com **zero failures, zero errors e zero warnings** e **nenhum teste ajustado**. **Nenhum
+`pytest` foi executado nesta reconciliação**, porque **zero código, zero teste e zero
+`knowledge/**` mudaram aqui**. **A aplicação de `R28/F1` NÃO**: cria o índice físico; executa a
+bijeção física; migra a autoridade de status (**C-11**); completa a composição de status;
+resolve *bindings*; resolve `ASSERTIVA`; resolve *placeholder*; resolve `caminho_yaml`; resolve
+`hora`; resolve **C-7**; resolve automaticamente nota interna ou `null` (**`C-A1-P2`**
+permanece literal); nem **materializa `C` integralmente**. **`C-A1-ST6`–`C-A1-ST10` NÃO são
+declaradas satisfeitas por esta aplicação**: em particular, **`C-A1-ST8` exige o status de
+TODOS os fragmentos resolvidos**, e a evidência atual cobre **um** fragmento — a validação de
+`R28/F1` **não é extrapolada** para cobertura global de status, que exigiria **prova própria**.
+**Portanto `C` continua ARBITRADA / NÃO MATERIALIZADA.** **A C14 CONTINUA SENDO A ÚLTIMA
+MICROENTREGA FUNCIONAL DE CÓDIGO INTEGRADA** — commit funcional
+`75025cc07c8d95f998c61f7516bf3db82bc9c06f`, merge `e8db60d95c104993d657de32b80e749dee8003ef`,
+**baseline `4343 passed` em Python 3.14.5**: a **PR #122 é a aplicação física, no corpus, de
+decisão humana já arbitrada**, e **NÃO** é renomeada como "C15" — **nenhuma numeração funcional
+nova é criada**, a **3B.8 continua INEXISTENTE** e **nenhuma subetapa foi criada**. **PRÓXIMA
+AÇÃO**: a antiga próxima ação — *aplicar fisicamente `R28/F1`* — **está CUMPRIDA e deixa de
+constar**; a **próxima ação técnica requer definição e auditoria da próxima pendência de `C`
+após a aplicação física de `R28/F1`**, e **essa pendência NÃO é eleita nem iniciada nesta
+entrega**. O **item documental 103** abaixo **NÃO é "subetapa 103"**, **NÃO é `C15`**, **NÃO é
+`E15`**, **NÃO é identificador normativo** e **NÃO cria a 3B.8** — registra **somente** a
+aplicação física integrada de `R28/F1`.
+
+**Atualização anterior — 2026-09-06 (reconciliação documental pós-merge da DÉCIMA QUARTA
+MICROENTREGA FUNCIONAL DE `C` — leitor/validador determinístico de status por fragmento sob
+`PARCIAL`), preservada como registro daquele momento.**
+Aquela entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera **somente** este documento, e **não
 altera código, testes, `knowledge/**`, `docs/07-arquitetura-motor-respostas.md`, `prompts/**`
 nem `CLAUDE.md`. **A DÉCIMA QUARTA MICROENTREGA FUNCIONAL DE `C` ESTÁ INTEGRADA À `main`**
 pelo **PR #120** — **commit funcional `75025cc07c8d95f998c61f7516bf3db82bc9c06f`** (`feat: add
@@ -6360,6 +6411,81 @@ a **pendência residual continua aberta**.
      como **decidido e não aplicado** — o que **continua verdadeiro** —, e o **item 101**
      continua correto ao registrar que a lacuna normativa pré-C14 fora fechada **sem**
      implementar C14: é **esta** entrega que a implementa.
+
+103. **A DECISÃO HUMANA `R28/F1 = APROVADO` ESTÁ FISICAMENTE APLICADA AO CORPUS E INTEGRADA À
+     `main` PELO PR #122.**
+     **ESTE ITEM 103 É REGISTRO HISTÓRICO DOCUMENTAL. NÃO É "SUBETAPA 103", NÃO É `C15`, NÃO É
+     `E15`, NÃO É IDENTIFICADOR NORMATIVO E NÃO CRIA A 3B.8** — a **3B.8 continua
+     INEXISTENTE**, e a **3B.7 continua a última subetapa numerada**. Ele registra **somente** a
+     aplicação física integrada de `R28/F1`.
+     **Integração.** **PR #122** — **commit `77f8119488f0dc568721ca159fc13d3acd9f234d`**
+     (`knowledge: apply R28 F1 fragment status`, **sem body, sem trailer**), **parent
+     `7cb6e9f1b4c09361905a08312d83b77eb441e3f7`**, **merge commit
+     `f3c35a4c738c9ab2e4343a3c012833144b514ca1`** (merge commit **normal**, dois parents:
+     `7cb6e9f1b4…` e `77f8119488…`), branch de origem `knowledge/apply-r28-f1-status`. **A
+     `main` passou de `7cb6e9f1b4c09361905a08312d83b77eb441e3f7` para
+     `f3c35a4c738c9ab2e4343a3c012833144b514ca1`.**
+     **Escopo.** **Um único arquivo**: `knowledge/respostas-aprovadas.md`, com **exatamente
+     `+1 / −0`**. O corpus passou do blob **`3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`** para
+     **`3a30fe764b80902227fdefb9282f3916650e4f17`**. **Zero `src/**`**, **zero `tests/**`**,
+     **zero `docs/**`**, **zero `prompts/**`**, **zero `CLAUDE.md`**, **zero
+     `knowledge/casa77.yaml`** e **zero configuração**.
+     **A alteração física.** A **única** linha adicionada é
+     `<!-- status-fragmento: APROVADO -->`, colocada **imediatamente antes** do marcador `C-A5`
+     `<!-- fragmento: F1 -->` da seção `R28`, com **zero linha física** entre ambas. **Nada mais
+     foi tocado**: cabeçalho `R28`, marcador `F1`, bloco emitível, notas internas e todos os
+     demais `Rxx` permanecem **inalterados**; **zero remoção**; e **nenhum dado comercial novo**
+     foi versionado — a única informação nova é a **declaração estrutural de status já
+     humanamente aprovada**.
+     **`PM1`, `PM2` e `PM5` satisfeitas.** O envelope é **exato** (`PM1`); a declaração ocupa a
+     **linha imediatamente anterior** ao marcador, preservando **`C-A5-I1`** e **`C-A5-I2`**
+     (`PM2`); e a seção, cujo rótulo literal é **exatamente `PARCIAL`**, passa a ter **exatamente
+     uma** declaração válida para o seu único fragmento emitível (`PM5`). A associação
+     permanece **adjacência estrutural status → marcador** (`PM3`), **nunca identidade**: o
+     token continua `<Rxx>/<id>`.
+     **A decisão não foi inferida.** Ela é o **ato humano explícito** já registrado no **item
+     documental 100** — **não** derivada de nota interna, de `null`, de conteúdo, de posição, do
+     rótulo físico `PARCIAL` nem por ferramenta ou modelo algum —, e o valor pertence ao
+     **vocabulário fechado de `C-3`** (`C-3a`).
+     **Validação pela C14 sobre o corpus real**, registrada como evidência da PR #122: **`C8`
+     passou — 37 tokens**; **`C12` passou — 30 cabeçalhos, 1 rotulado `PARCIAL`**; **`C14`
+     passou**, com resultado **`(("R28/F1", "APROVADO"),)`**. Antes da aplicação, a C14 sobre o
+     corpus falhava com `declaracao_ausente: marcador` — **o comportamento correto**. Nenhum
+     código foi modificado para viabilizar a validação, e **nenhum teste persistente contra o
+     corpus real foi criado**.
+     **Testes.** **Direcionado da C14 `243 passed`**; **regressão completa `4343 passed`**; em
+     **Python 3.14.5**, sob **`-W error`**, com **zero failures, zero errors e zero warnings** e
+     **nenhum teste ajustado** para acomodar a alteração. **NENHUM `pytest` FOI EXECUTADO NESTA
+     RECONCILIAÇÃO**, porque **zero código, zero teste e zero `knowledge/**` mudaram aqui**.
+     **Limites — o que a aplicação NÃO faz.** Ela **NÃO** cria o índice físico, **NÃO** executa
+     a bijeção física, **NÃO** migra a autoridade de status (**C-11**), **NÃO** completa a
+     composição de status, **NÃO** resolve *bindings*, **NÃO** resolve `ASSERTIVA`, **NÃO**
+     resolve *placeholder*, **NÃO** resolve `caminho_yaml`, **NÃO** resolve `hora`, **NÃO**
+     resolve **C-7**, **NÃO** resolve automaticamente nota interna ou `null` — **`C-A1-P2`
+     permanece literal** — e **NÃO materializa `C` integralmente**. **`C` continua ARBITRADA /
+     NÃO MATERIALIZADA.**
+     **`C-A1-ST6`–`C-A1-ST10`.** **Nenhuma delas é declarada satisfeita por causa desta
+     aplicação.** Em particular, **`C-A1-ST8` exige o status de TODOS os fragmentos
+     resolvidos**, e a evidência atual cobre **um** fragmento: a validação de `R28/F1` **não é
+     extrapolada** para cobertura global de status, o que exigiria **prova própria**. **`C-A4-G8`
+     continua valendo**: cobertura estrutural **não** é emissibilidade.
+     **Última entrega funcional de código.** **A C14 continua sendo a última microentrega
+     funcional de código integrada** — commit funcional
+     `75025cc07c8d95f998c61f7516bf3db82bc9c06f`, merge
+     `e8db60d95c104993d657de32b80e749dee8003ef`, **baseline `4343 passed` em Python 3.14.5**. A
+     **PR #122 é a aplicação física, no corpus, de decisão humana já arbitrada**, e **NÃO é
+     renomeada como "C15"**: **nenhuma numeração funcional nova foi criada**.
+     **Próxima ação.** A antiga próxima ação — *aplicar fisicamente `R28/F1`* — **está
+     CUMPRIDA** e deixa de constar. A **próxima ação técnica requer definição e auditoria da
+     próxima pendência de `C` após a aplicação física de `R28/F1`**, e **essa pendência NÃO foi
+     eleita nem iniciada** nesta entrega.
+     **Relação com os itens anteriores.** **Os itens 87 a 102 permanecem corretos como registro
+     do momento em que foram escritos.** Este item 103 **não os reescreve**; ele registra o
+     estado **posterior**. Em particular, o **item 100** continua correto ao registrar `R28/F1`
+     como **decidido e ainda não aplicado à época**, e o **item 102** continua correto ao
+     registrar que, **naquele momento**, o corpus não continha declaração e uma verificação de
+     `PM5` falharia por declaração ausente — **é esta entrega que aplica a decisão**, e as duas
+     afirmações permanecem verdadeiras **como registro daquele momento**.
 
 ## Arbitragens
 
