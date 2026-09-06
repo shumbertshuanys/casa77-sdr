@@ -259,6 +259,7 @@ Pedir a lista de buffets recomendados → R03 + handoff (lista nominal não est�
 
 Aprovado:
 
+<!-- status-fragmento: APROVADO -->
 <!-- fragmento: F1 -->
 > A casa tem suíte da noiva, com sala de convivência e banheiro exclusivo. Ela não está
 > inclusa no valor padrão da locação.
