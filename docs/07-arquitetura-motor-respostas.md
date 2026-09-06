@@ -1016,6 +1016,48 @@ continua NÃO EXECUTADA**; a **autoridade de status continua NÃO MIGRADA** (**`
 STATUS POR FRAGMENTO NÃO É ATRIBUIR STATUS, NÃO É ALTERAR O CORPUS, NÃO É IMPLEMENTAR PARSER,
 NÃO É RESOLVER `PARCIAL` E NÃO É MATERIALIZAR `C`.**
 
+**REGISTRO POSTERIOR — DECISÃO HUMANA DE STATUS DE `R28/F1`. NÃO É REGRA, NÃO É `PM13` E NÃO
+ALTERA `PM1`–`PM12`.** O que segue é **registro de um ato de autoridade humana**, escrito
+**depois** das regras acima e **deliberadamente separado** delas: ele **não** cria rótulo
+local novo, **não** renumera, **não** reinterpreta e **não** altera nenhuma das regras `PM1` a
+`PM12`, que permanecem **literais e inalteradas**.
+
+**Existe decisão humana explícita para `R28/F1`, e o valor decidido é `APROVADO`.** O valor
+pertence ao **vocabulário fechado de `C-3`** (`C-3a`). A decisão é **humana e deliberada**:
+ela **NÃO** foi inferida de nota interna, **NÃO** foi inferida de `null`, **NÃO** foi inferida
+de conteúdo, **NÃO** foi inferida do rótulo físico `PARCIAL` do cabeçalho e **NÃO** foi
+escolhida por ferramenta ou modelo algum. Isso é exatamente o que **`C-A1-P2`** e **`PM11`**
+exigem: sob `PARCIAL`, o status **é declarado por ato humano explícito**, nunca derivado.
+
+**A decisão está APROVADA e AINDA NÃO APLICADA.** Ela **não** foi aplicada fisicamente a
+`knowledge/respostas-aprovadas.md`, que **não foi alterado** e permanece no blob
+`3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`. **Enquanto não aplicada, o corpus continua
+mecanicamente sem a declaração obrigatória de `PM5`** para aquele fragmento: uma verificação
+estrutural de `PM5` sobre o corpus atual **falharia por declaração ausente**, e isso é o
+comportamento correto — **decidir não é aplicar**.
+
+**Forma futura decorrente da decisão.** Quando — e somente quando — a aplicação física for
+executada por entrega própria, ela deverá usar **exatamente** a linha
+`<!-- status-fragmento: APROVADO -->`, **imediatamente antes** do marcador `C-A5` de
+`R28/F1`, com **zero linha física** entre ambos, conforme `PM1` e `PM2`. **Esta linha é
+SOMENTE a forma futura decorrente da decisão, e NÃO uma alteração executada aqui**: nenhuma
+declaração foi inserida, nenhum cabeçalho foi alterado, nenhum fragmento foi alterado e
+nenhuma nota foi alterada.
+
+**O significado da decisão é estrito.** `APROVADO` significa **somente** o **status canônico
+de `C-3` do fragmento emitível `R28/F1`**. A decisão **NÃO** resolve nota interna, **NÃO**
+altera `null`, **NÃO** aprova dado comercial, **NÃO** elimina handoff, **NÃO** autoriza emissão
+sem as demais validações, **NÃO** decide **S2-D8**, **NÃO** cria `E09`, **NÃO** elimina `E09`,
+**NÃO** resolve *binding*, **NÃO** resolve `ASSERTIVA`, **NÃO** resolve **C-8** e **NÃO**
+satisfaz **`C-A1-ST8`** isoladamente — `C-A1-ST8` exige o status de **todos** os fragmentos
+resolvidos, e **`C-A4-G8`** continua valendo: **cobertura estrutural não é emissibilidade**.
+
+**Estado após este registro.** **`PM1`–`PM12` permanecem inalteradas**; `C-3`, `C-A1-P2`,
+`C-A1-ST` e `C-A5` permanecem **literais**; `knowledge/respostas-aprovadas.md` **não foi
+alterado**; **`PARCIAL` continua NÃO RESOLVIDO NO CORPUS** — agora com o status **humanamente
+decidido**, mas com a **declaração física ainda não aplicada**. **DECIDIR O STATUS NÃO É
+APLICAR A DECLARAÇÃO, NÃO É ALTERAR O CORPUS E NÃO É MATERIALIZAR `C`.**
+
 ##### C-A1-M — Prioridade de modelagem, prosa e auditoria de consumidores
 
 | # | Regra |

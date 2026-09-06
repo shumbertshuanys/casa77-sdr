@@ -4,8 +4,57 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-09-06 (**micro-arbitragem documental — mapeamento físico de status por
-fragmento sob `PARCIAL`**). Esta entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera **somente**
+Atualizado em: 2026-09-06 (**registro da decisão humana de status de `R28/F1` = `APROVADO` —
+APROVADA HUMANAMENTE / AINDA NÃO APLICADA AO CORPUS**). Esta entrega é **EXCLUSIVAMENTE
+DOCUMENTAL**: altera **somente** `docs/07-arquitetura-motor-respostas.md` e este documento, e
+**não altera código, testes, `knowledge/**`, `prompts/**` nem `CLAUDE.md`. **ELA NÃO É MARCO
+FUNCIONAL** e **NÃO É a décima quarta microentrega funcional de `C`**. Ela registra **uma
+única** coisa: **existe decisão humana explícita de que o status canônico do fragmento
+emitível `R28/F1` é `APROVADO`**, registrada em `docs/07` como **registro posterior
+claramente separado** dentro do bloco **"Mapeamento físico de status por fragmento sob
+`PARCIAL`"**. **`PM1`–`PM12` NÃO foram alteradas**, **nenhum `PM13` foi criado** e **nenhuma
+regra foi reinterpretada**. **A decisão é humana e deliberada**: ela **NÃO** foi inferida de
+nota interna, **NÃO** foi inferida de `null`, **NÃO** foi inferida de conteúdo, **NÃO** foi
+inferida do rótulo físico `PARCIAL` do cabeçalho e **NÃO** foi escolhida por ferramenta ou
+modelo algum — exatamente o que **`C-A1-P2`** e **`PM11`** exigem. O valor pertence ao
+**vocabulário fechado de `C-3`** (`C-3a`). **A decisão está APROVADA e AINDA NÃO APLICADA**:
+`knowledge/respostas-aprovadas.md` **NÃO foi alterado** e permanece **byte-a-byte** no blob
+`3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`; **nenhuma linha `<!-- status-fragmento: APROVADO
+-->` foi inserida**; **nenhum cabeçalho, fragmento ou nota foi alterado**. **Enquanto não
+aplicada, o corpus continua mecanicamente sem a declaração obrigatória de `PM5`** para aquele
+fragmento — uma verificação estrutural de `PM5` sobre o corpus atual **falharia por declaração
+ausente**, e isso é o comportamento correto: **decidir não é aplicar**. A **forma futura
+decorrente da decisão** — a ser executada por **entrega própria**, não por esta — é
+**exatamente** a linha `<!-- status-fragmento: APROVADO -->` **imediatamente antes** do
+marcador `C-A5` de `R28/F1`, com **zero linha física** entre ambos (`PM1`, `PM2`); **essa
+linha é SOMENTE forma futura, e NÃO alteração executada aqui**. **O significado da decisão é
+estrito**: `APROVADO` significa **somente** o **status canônico de `C-3` do fragmento emitível
+`R28/F1`** — a decisão **NÃO** resolve nota interna, **NÃO** altera `null`, **NÃO** aprova
+dado comercial, **NÃO** elimina handoff, **NÃO** autoriza emissão sem as demais validações,
+**NÃO** decide **S2-D8**, **NÃO** cria `E09`, **NÃO** elimina `E09`, **NÃO** resolve *binding*,
+**NÃO** resolve `ASSERTIVA`, **NÃO** resolve **C-8** e **NÃO** satisfaz **`C-A1-ST8`**
+isoladamente (que exige o status de **todos** os fragmentos resolvidos), permanecendo válido
+**`C-A4-G8`** — **cobertura estrutural não é emissibilidade**. **Precisão sobre a pendência de
+`PARCIAL`**: antes desta entrega ela era **status humano não decidido + não aplicado**; depois
+desta entrega ela é **status humano DECIDIDO (`APROVADO`), com a declaração `PM` AINDA NÃO
+APLICADA ao corpus** — portanto **o corpus continua estruturalmente NÃO RESOLVIDO até a
+aplicação física da declaração**. **Estado preservado**: **a C13 continua a última entrega
+funcional integrada** — commit funcional `cbf3e379c9b6697cd502b6a7a0bd3e9bb76c1a27`, merge
+`50c1d5e681a11923c443c1f117de5751ea846cdd` —, com **baseline `4100 passed`** em **Python
+3.14.5**; **`PM1`–`PM12` continuam integradas** pelo PR #117; **nenhum `pytest` foi executado
+nesta entrega**, porque **zero código, zero teste e zero `knowledge/**` mudaram**. **`C`
+continua ARBITRADA / NÃO MATERIALIZADA**; o **índice físico continua INEXISTENTE**; a
+**bijeção física continua NÃO EXECUTADA**; a **autoridade de status continua NÃO MIGRADA**
+(**C-11**); e **`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**. O **item documental 100**
+abaixo **NÃO é "subetapa 100"**, **NÃO é `E14`**, **NÃO é identificador normativo de `C`**,
+**NÃO é microentrega funcional** e **NÃO cria a 3B.8** — registra **exclusivamente** esta
+decisão humana. **C14 NÃO FOI ESCOLHIDA, NÃO FOI PLANEJADA E NÃO FOI INICIADA**: esta entrega
+**não planeja C14**, **não implementa C14**, **não escolhe assinatura**, **não cria módulo** e
+**não cria teste**.
+
+**Atualização anterior — 2026-09-06 (micro-arbitragem documental — mapeamento físico de status
+por fragmento sob `PARCIAL`), preservada como registro daquele momento.** Aquela entrega é
+**EXCLUSIVAMENTE DOCUMENTAL**: altera **somente**
 `docs/07-arquitetura-motor-respostas.md` e este documento, e **não altera código, testes,
 `knowledge/**`, `prompts/**` nem `CLAUDE.md`. **ELA NÃO É MARCO FUNCIONAL** e **NÃO É a
 décima quarta microentrega funcional de `C`**. Ela fecha **uma única** matéria: **a
@@ -5840,6 +5889,77 @@ a **pendência residual continua aberta**.
     a última entrega funcional — **ela continua sendo** —, e o **item 97** continua correto ao
     registrar que a **representação física do mapeamento de `PARCIAL` estava ABERTA** quando foi
     escrito: é **esta** entrega que a fecha **estruturalmente**, **sem** resolvê-la no corpus.
+
+100. **A PRESENTE ENTREGA É EXCLUSIVAMENTE O REGISTRO DA DECISÃO HUMANA DE STATUS
+     `R28/F1 = APROVADO`.**
+     **ESTE ITEM 100 É REGISTRO HISTÓRICO DOCUMENTAL. NÃO É "SUBETAPA 100", NÃO É `E14`, NÃO É
+     IDENTIFICADOR NORMATIVO DE `C`, NÃO É MICROENTREGA FUNCIONAL E NÃO CRIA A 3B.8** — a
+     **3B.8 continua INEXISTENTE**, e a **3B.7 continua a última subetapa numerada**. Ele
+     registra **exclusivamente** a decisão humana `R28/F1 = APROVADO`, **aprovada e ainda não
+     aplicada**.
+     **Escopo.** **Dois arquivos documentais, e nenhum outro**:
+     `docs/07-arquitetura-motor-respostas.md` — **registro posterior**, claramente separado,
+     dentro do bloco **"Mapeamento físico de status por fragmento sob `PARCIAL`"** — e este
+     documento. **Zero `src/**`**, **zero `tests/**`**, **zero `knowledge/**`**, **zero
+     `prompts/**`**, **zero `CLAUDE.md`**, **zero configuração**. **Nenhum `pytest` foi
+     executado**, porque **zero código e zero teste mudaram**.
+     **`PM1`–`PM12` inalteradas.** O registro **NÃO** cria `PM13`, **NÃO** renumera, **NÃO**
+     reinterpreta e **NÃO** altera nenhuma das doze regras, que permanecem **literais**. Ele
+     também **não** altera `C-3`, `C-A1-P2`, `C-A1-ST`, `C-A5`, `SP1`–`SP7` ou `GR1`–`GR7`.
+     **A decisão.** **Existe decisão humana explícita** de que o status canônico do fragmento
+     emitível **`R28/F1`** é **`APROVADO`**. O valor pertence ao **vocabulário fechado de
+     `C-3`** (`C-3a`). A identidade `R28/F1` é a identidade canônica de `C-A5-T1` / `C-A5-T2`
+     — conferida **estruturalmente e read-only** no blob
+     `3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`: a seção `## R28` existe, o seu rótulo físico
+     de cabeçalho é `PARCIAL` e ela contém **exatamente 1** marcador `C-A5`, de `id` `F1`.
+     **Nenhuma inferência foi utilizada.** A decisão é **humana e deliberada**: **NÃO** foi
+     inferida de nota interna, **NÃO** foi inferida de `null`, **NÃO** foi inferida de
+     conteúdo, **NÃO** foi inferida do rótulo físico `PARCIAL` do cabeçalho, **NÃO** foi
+     inferida de posição ou contexto e **NÃO** foi escolhida por ferramenta ou modelo algum —
+     exatamente o que **`C-A1-P2`** e **`PM11`** exigem: sob `PARCIAL`, o status é **declarado
+     por ato humano explícito**, nunca derivado.
+     **Aprovada, ainda NÃO aplicada.** `knowledge/respostas-aprovadas.md` **NÃO foi alterado**
+     e permanece **byte-a-byte** no blob `3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`; **nenhuma
+     linha `<!-- status-fragmento: APROVADO -->` foi inserida**; **nenhum cabeçalho, fragmento
+     ou nota foi alterado**; e o corpus continua com **0** ocorrências de `status-fragmento`.
+     **Enquanto não aplicada, o corpus continua mecanicamente sem a declaração obrigatória de
+     `PM5`** para aquele fragmento: uma verificação estrutural de `PM5` sobre o corpus atual
+     **falharia por declaração ausente**, e isso é o **comportamento correto** — **DECIDIR NÃO
+     É APLICAR**.
+     **Forma futura decorrente da decisão.** A aplicação física, quando executada por **entrega
+     própria**, deverá usar **exatamente** `<!-- status-fragmento: APROVADO -->`,
+     **imediatamente antes** do marcador `C-A5` de `R28/F1`, com **zero linha física** entre
+     ambos (`PM1`, `PM2`). **Essa linha é SOMENTE a forma futura decorrente da decisão, e NÃO
+     uma alteração executada nesta entrega.**
+     **Significado estrito.** `APROVADO` significa **somente** o **status canônico de `C-3` do
+     fragmento emitível `R28/F1`**. A decisão **NÃO** resolve nota interna, **NÃO** altera
+     `null`, **NÃO** aprova dado comercial, **NÃO** elimina handoff, **NÃO** autoriza emissão
+     sem as demais validações, **NÃO** decide **S2-D8**, **NÃO** cria `E09`, **NÃO** elimina
+     `E09`, **NÃO** resolve *binding*, **NÃO** resolve `ASSERTIVA`, **NÃO** resolve **C-8** e
+     **NÃO** satisfaz **`C-A1-ST8`** isoladamente — `C-A1-ST8` exige o status de **todos** os
+     fragmentos resolvidos, e **`C-A4-G8`** continua valendo: **cobertura estrutural não é
+     emissibilidade**.
+     **Precisão sobre a pendência de `PARCIAL`.** **Antes** desta entrega: **status humano não
+     decidido e não aplicado**. **Depois** desta entrega: **status humano DECIDIDO
+     (`APROVADO`), com a declaração `PM` AINDA NÃO APLICADA ao corpus**. Portanto **o corpus
+     continua estruturalmente NÃO RESOLVIDO até a aplicação física da declaração**.
+     **Marco funcional inalterado.** **A C13 continua a última entrega funcional integrada** —
+     **commit funcional `cbf3e379c9b6697cd502b6a7a0bd3e9bb76c1a27`**, **merge
+     `50c1d5e681a11923c443c1f117de5751ea846cdd`** —, com **baseline `4100 passed`** em **Python
+     3.14.5**. Esta entrega **não cria marco funcional** e **não recebe numeração de subetapa**.
+     **`C` continua ARBITRADA / NÃO MATERIALIZADA**; o **índice físico continua INEXISTENTE**;
+     a **bijeção física continua NÃO EXECUTADA**; a **autoridade de status continua NÃO
+     MIGRADA** (**C-11**); e **`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**.
+     **C14.** **C14 NÃO FOI INICIADA.** Esta entrega **não planeja C14**, **não implementa
+     C14**, **não escolhe assinatura**, **não cria módulo** e **não cria teste**. Nenhuma
+     pendência é eleita aqui, e a escolha da próxima ação funcional exige **planejamento
+     separado**.
+     **Relação com os itens anteriores.** **Os itens 87 a 99 permanecem corretos como registro
+     do momento em que foram escritos.** Este item 100 **não os reescreve**; ele registra o
+     estado **posterior**. Em particular, o **item 99** continua correto ao registrar que
+     **nenhum status real havia sido atribuído** quando foi escrito, e ao registrar que a
+     resolução do corpus dependeria de **aplicação humana explícita**: esta entrega é a
+     **decisão** humana, e **não** a sua aplicação.
 
 ## Arbitragens
 
