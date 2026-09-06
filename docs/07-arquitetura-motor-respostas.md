@@ -903,6 +903,119 @@ continua NÃO EXECUTADA**; a **autoridade de status continua NÃO MIGRADA** (**`
 RÓTULO NÃO É EXTRAIR O RÓTULO, NÃO É CANONICALIZAR STATUS, NÃO É RESOLVER `PARCIAL`, NÃO É
 MIGRAR AUTORIDADE E NÃO É MATERIALIZAR `C`.**
 
+##### Mapeamento físico de status por fragmento sob `PARCIAL`
+
+Micro-arbitragem **documental** e **posterior**. Ela fecha **uma única** matéria: **a
+representação física e as regras estruturais do status explícito por fragmento quando o
+cabeçalho `G2` do respectivo `Rxx` contém o rótulo `PARCIAL`**. Ela **não** reescreve,
+renumera ou substitui `C-1`–`C-15`, `C-A1-ST`, `C-A1-P`, `C-A5`, `MT1`–`MT12`, `SP1`–`SP7` ou
+`GR1`–`GR7`, **não** cria versão concorrente deles, **não** altera o vocabulário fechado de
+**`C-3`** e **não** cria identificador normativo novo: os rótulos **`PM1`**–**`PM12`** abaixo
+são **locais deste bloco**, existem só para referência interna e **não** são etapa, subetapa,
+`Exx` nem nomenclatura normativa de `C`; eles **não criam a 3B.8**, que **continua não
+existindo**. **Nenhum parser é implementado aqui**; **nenhum módulo, função, assinatura,
+exceção ou mensagem é decidido**; **nenhum status real é atribuído a fragmento algum**; e
+**`knowledge/**` não é alterado**.
+
+**Esta arbitragem NÃO arbitra propagação** — isso é `SP1`–`SP7`, já fechado —, **NÃO altera a
+gramática do cabeçalho** — isso é `GR1`–`GR7`, já fechado —, **NÃO altera `C8`, `C11`, `C12`
+ou `C13`**, **NÃO cria índice**, **NÃO decide ordem de chamadas entre módulos** e **NÃO
+escolhe assinatura ou módulo futuro.**
+
+A forma física completa arbitrada é:
+
+```text
+<!-- status-fragmento: <valor> -->
+<!-- fragmento: <id> -->
+> conteúdo
+```
+
+| # | Regra |
+|---|---|
+| PM1 | **Portador.** A declaração é a **linha física própria** `<!-- status-fragmento: <valor> -->`. O envelope é **EXATO**: prefixo literal `<!-- status-fragmento: `, seguido de `<valor>`, seguido do sufixo literal ` -->`. **Nada antes** do prefixo e **nada depois** do sufixo na mesma linha. **Zero `strip`**, **zero normalização**, **zero tolerância implícita**: indentação, espaço adicional, tab, prefixo ou sufixo divergente **não** satisfazem o envelope. |
+| PM2 | **Posição.** A declaração ocupa a **linha imediatamente anterior** ao marcador `C-A5`, com **zero linha física** entre ambos. O marcador continua ocupando a **linha imediatamente anterior à primeira linha do bloco**, com **zero linha em branco** — **`C-A5-I1`** e **`C-A5-I2`** são **preservados literalmente**. A declaração **NUNCA** fica entre o marcador e o bloco. |
+| PM3 | **Associação.** A declaração associa-se ao **marcador `C-A5` válido existente na linha imediatamente seguinte**. Essa associação é **adjacência estrutural status → marcador**, e **NÃO** é: identidade; parte do token; parte do `id`; nem posição usada para **definir** identidade — **`C-A5-I5`** permanece intacto. A identidade continua **exclusivamente** `<Rxx>/<id>` (**`C-A5-T1`**, **`C-A5-T2`**). A declaração **não contém `id`**, **não duplica `id`**, **não cria identidade** e **não altera identidade**. |
+| PM4 | **Vocabulário — `V1`, status canônico direto.** `<valor>` é **EXATAMENTE UM** dos **três** valores de **`C-3`**: `APROVADO`, `AGUARDA_APROVACAO` ou `BLOQUEADO`. **Sem quarto valor.** **`PARCIAL` é INVÁLIDO como valor.** Os rótulos físicos de `ST1`–`ST3` **não** são usados neste campo, **`canonicalizar_status` não é chamado** e **nenhuma tabela de tradução é criada** — o campo já carrega o status canônico. A comparação futura é **literal**, com **tipo e forma fechados**: **zero `strip`**, **zero tolerância de caixa**, **zero `NFC`**, **zero coerção**. |
+| PM5 | **Cardinalidade.** Sob cabeçalho `G2` cujo rótulo seja `PARCIAL`, **cada** fragmento emitível possui **EXATAMENTE UMA** declaração física válida de `status-fragmento`. **Nenhuma** declaração é ***fail-closed***; **duas ou mais** para o mesmo marcador são ***fail-closed***. **Nenhuma inferência** e **nenhum valor padrão** — o que preserva `C-3` (**sem valor padrão**; fragmento sem status é **erro de contrato**, nunca `APROVADO` implícito). |
+| PM6 | ***Fail-closed*.** São **conceitualmente inválidos**: declaração **ausente**; declaração **órfã**; **múltiplas** declarações para o mesmo marcador; declaração **fora de seção `Rxx`**; declaração **sem marcador válido imediatamente seguinte**; **linha em branco** entre declaração e marcador; **valor fora de `C-3`**; **`PARCIAL` como valor**; ***whitespace* divergente**; **conteúdo adicional** na linha; e **envelope divergente que deixe o marcador sem a declaração obrigatória**. **NÃO** são definidos aqui **classe Python**, **nome de exceção**, **mensagem técnica**, **função**, **módulo** ou **assinatura** — isso pertence a futura materialização técnica. |
+| PM7 | **Proibição sob `ST1`–`ST3`.** Sob cabeçalho cujo rótulo pertença a `C-A1-ST1`, `C-A1-ST2` ou `C-A1-ST3`, a declaração `status-fragmento` é **PROIBIDA** — **mesmo** que o valor explícito coincida com o status que `SP2`/`SP3` propagariam. Razão: `SP2`/`SP3` já definem **propagação uniforme**; permitir a declaração criaria **duas fontes concorrentes ou redundantes** de status dentro da autoridade Markdown e comprometeria **`SP6`**. Forma divergente é ***fail-closed***. |
+| PM8 | **Autoridade.** A declaração vive na **autoridade Markdown vigente** e é a **fonte explícita** do status do fragmento sob `PARCIAL`. O **futuro índice** poderá armazenar esse status **por fragmento** conforme **`C-2i`**, e **isso NÃO migra autoridade**: até que **`C-A1-ST6`**–**`C-A1-ST10`** estejam **integralmente satisfeitas**, `knowledge/respostas-aprovadas.md` **continua a autoridade de status** (**`C-11`**). |
+| PM9 | **Não emissão.** `status-fragmento` **NÃO** é fragmento emitível, **NÃO** é nota comercial, **NÃO** é instrução emitível, **NÃO** recebe *binding*, **NÃO** recebe `ASSERTIVA` e **NÃO** pode ser emitido ao interessado. **`C-2m`**–**`C-2p`** e **`C-A5-U4`** são **preservados**. Ela também **não** é bloco de citação e, portanto, **não** entra na bijeção de **`C-A1-B3`** / **`C-A1-B4`**. |
+| PM10 | **Política de linha.** Reutiliza-se **integralmente** a política estrutural já vigente em `C8`/`C12`: divisão **exclusivamente por `LF`**; **no máximo um `CR` terminal** removido por segmento; **sem `splitlines()`**; **sem *universal newline***. **Nenhuma terceira política é criada.** `CR` residual, `U+2028`, `U+2029`, `U+0085`, `VT`, `FF` e `U+00A0` **permanecem conteúdo literal** conforme a política estrutural vigente, e o **envelope precisa permanecer literal**. |
+| PM11 | **Significado físico de `PARCIAL`.** **No Markdown vigente, o rótulo físico `PARCIAL` ativa o regime de STATUS EXPLICITAMENTE DECLARADO POR FRAGMENTO.** Nesta fronteira ele significa **exatamente**: **não** aplicar propagação automática do cabeçalho; **exigir** uma declaração `status-fragmento` para **cada** fragmento; e **resolver cada fragmento individualmente** por valor de `C-3` explícito. `PARCIAL` **NÃO** é status canônico, **NÃO** é armazenado no `Rxx` do índice, **NÃO** é armazenado no fragmento, **NÃO** é convertido em quarto status, **NÃO** exige dois ou mais status distintos, **NÃO** exige mistura de status e **NÃO** exige cardinalidade mínima de dois fragmentos. Uma seção fisicamente rotulada `PARCIAL` pode ter **um** fragmento ou **vários**, **todos com o mesmo status** ou **com status distintos**. **Isso NÃO define uma função geral de agregação de status de `Rxx`.** |
+| PM12 | **Limites.** Esta arbitragem **NÃO**: atribui status real; altera `knowledge/**`; altera `C8`, `C11`, `C12` ou `C13`; implementa *parser*; implementa a próxima entrega funcional; cria índice; executa a bijeção física; satisfaz **`C-A1-ST6`**, **`C-A1-ST7`**, **`C-A1-ST8`**, **`C-A1-ST9`** ou **`C-A1-ST10`**; migra a autoridade de status; resolve *binding*; resolve *placeholder*; resolve `caminho_yaml`; resolve **C-7**; cria a **3B.8**; nem **materializa `C`**. |
+
+**Relação com `C-3`, sem reescrita.** **`C-3` permanece literal e não é reescrita.** O **modelo
+futuro** continua exatamente como está: o **`Rxx` não armazena status** (**`C-2d`**);
+**`PARCIAL` nunca é valor armazenado**; e os **únicos status armazenáveis pertencem aos
+fragmentos** e são os **três** de `C-3` (**`C-2i`**). Esta micro-arbitragem **NÃO cria nem
+define um campo de "status agregado do `Rxx`"**. O rótulo físico, histórico e de Markdown
+`PARCIAL` é **o sinal de que, naquela seção, a autoridade precisa fornecer status explícito
+por fragmento**, conforme **`C-A1-ST4`**. Portanto, **o rótulo físico `PARCIAL` NÃO é tratado
+aqui como resultado de uma nova função computacional de agregação**, e **nenhuma função
+agregadora geral é criada**. A observação de `C-3` de que um `Rxx` agregado pode ser parcial
+**apenas como derivação** dos status dos seus fragmentos **permanece literal e inalterada**.
+
+**Quase-declaração — o padrão de `C8` é preservado.** Uma linha que **não** satisfaça o
+envelope exato de `PM1` **não** é automaticamente "uma declaração inválida": ela **permanece
+conteúdo comum**, exatamente como uma quase-marcação permanece conteúdo comum sob `C-A5`.
+Porém, **sob `PARCIAL`**, se disso resultar um marcador `C-A5` **sem** a declaração válida
+obrigatória imediatamente anterior, **`PM5` falha por declaração ausente**. **Nenhuma intenção
+é inferida**: a fronteira não tenta adivinhar que a linha "queria ser" uma declaração.
+
+**`C-A1-P2` preservada.** **Nota interna continua não sendo fragmento**, continua **não
+recebendo status**, continua **não bloqueando automaticamente** fragmento e continua **não
+determinando automaticamente** o valor de `status-fragmento`. **Nada é inferido** — nem
+`APROVADO`, nem `AGUARDA_APROVACAO`, nem `BLOQUEADO` — a partir de nota interna, de `null`, de
+conteúdo, de posição ou de contexto. O valor é **declarado explicitamente por ato humano**, ou
+não existe.
+
+**Evidência estrutural do corpus atual — evidência, não norma.** Consulta **estritamente
+read-only** ao blob versionado `3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`, **sem reproduzir
+conteúdo comercial**: **30** cabeçalhos `## Rxx`; **exatamente 1** com rótulo físico
+`PARCIAL` — o **`R28`** já citado por `C-A1-P2` —, contendo **exatamente 1** marcador `C-A5`;
+**37** marcadores `C-A5` no total, **37/37** imediatamente seguidos pela primeira linha do
+bloco, **sem linha em branco** (**`C-A5-I2`** satisfeito); e **0** ocorrências de
+`status-fragmento` em todo o corpus — os **37** comentários HTML existentes são **exatamente**
+os 37 marcadores `C-A5`, de modo que o portador de `PM1` **não colide com nada existente**.
+Esses fatos **sustentam** que a forma arbitrada é **estruturalmente compatível** com o corpus
+atual, mas são **EVIDÊNCIA DE COMPATIBILIDADE, NÃO FONTE NORMATIVA**: eles **NÃO** são a
+origem da regra, **NÃO** autorizam alteração de `knowledge/respostas-aprovadas.md` — que
+**não foi alterado** — e **NÃO** substituem `C-3`, `C-A1-ST`, `C-A1-P`, `C-A5`, `SP1`–`SP7` ou
+`GR1`–`GR7`. **EVIDÊNCIA NÃO É NORMA**, e **nenhum status é aqui atribuído ao `R28` nem a
+qualquer outro fragmento real**.
+
+**`PARCIAL` após esta arbitragem — a distinção que importa.** A **norma estrutural** fica
+**FECHADA** quanto a: **portador**; **posição**; **associação**; **vocabulário**;
+**cardinalidade**; ***fail-closed***; **proibição sob `ST1`–`ST3`**; e **significado físico de
+`PARCIAL`**. O **corpus real**, porém, **continua NÃO RESOLVIDO**: **nenhum status real de
+fragmento é atribuído por esta entrega**. Portanto, e sem ambiguidade: **`PARCIAL` CONTINUA
+NÃO RESOLVIDO NO CORPUS ATÉ APLICAÇÃO HUMANA EXPLÍCITA DOS STATUS POR FRAGMENTO.**
+
+**Relação com `C-A5-X2`, sem reescrita retroativa.** **`C-A5-X2`** registrou como **ABERTAS**
+**duas** matérias: **1.** a **propagação do status**; e **2.** o **mapeamento concreto de
+`PARCIAL`**. Após `SP1`–`SP7` a propagação ficou **fechada semanticamente**, e após este bloco
+a **representação física** do mapeamento de `PARCIAL` fica **arbitrada** — mas a **aplicação
+ao corpus continua ABERTA**. **`C-A5-X2` não é reescrita retroativamente** e permanece
+**literal**, assim como **`C-A5-X3`** e **`C-A5-X4`**.
+
+**O que esta arbitragem destrava — e somente isto.** A **representação física** e as **regras
+estruturais** pelas quais o status de um fragmento pode ser **explicitamente declarado** sob um
+cabeçalho `Rxx` rotulado `PARCIAL`. Permanecem **ABERTAS**, entre outras: a **aplicação humana
+dos status reais no corpus**; a **materialização técnica** desta forma; a **composição
+documental** com `C8`/`C12`/`C13`; a **sintaxe de *placeholder***; a **gramática de
+`caminho_yaml`**; o **formato `hora`**; **C-7**; o **índice físico**; a **bijeção física**;
+**`C-A1-ST6`–`C-A1-ST10`**; e a **migração da autoridade de status**.
+
+**Estado após este bloco.** **`C` continua ARBITRADA / NÃO MATERIALIZADA**; **`C-A5` continua
+MATERIALIZADA no corpus** e **`C-A5-M2` continua ATIVA**;
+`knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**; a **bijeção física
+continua NÃO EXECUTADA**; a **autoridade de status continua NÃO MIGRADA** (**`C-11`**);
+**`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**; a **3B.8 continua INEXISTENTE**; e
+`knowledge/respostas-aprovadas.md` **não foi alterado**. **ARBITRAR A REPRESENTAÇÃO FÍSICA DO
+STATUS POR FRAGMENTO NÃO É ATRIBUIR STATUS, NÃO É ALTERAR O CORPUS, NÃO É IMPLEMENTAR PARSER,
+NÃO É RESOLVER `PARCIAL` E NÃO É MATERIALIZAR `C`.**
+
 ##### C-A1-M — Prioridade de modelagem, prosa e auditoria de consumidores
 
 | # | Regra |
