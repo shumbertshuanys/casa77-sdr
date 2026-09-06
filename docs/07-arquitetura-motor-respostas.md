@@ -1090,7 +1090,7 @@ norma.
 | Rótulo literal do cabeçalho `G2` | Comportamento de `status-fragmento` |
 |---|---|
 | `PARCIAL` | **Obrigatório.** `PM5` e `PM11` permanecem **literais**: **exatamente uma** declaração válida por fragmento emitível — nenhuma é *fail-closed*, duas ou mais são *fail-closed*. |
-| `ST1`, `ST2` ou `ST3` | **Proibido.** **`PM7` permanece literal**, com o seu fundamento próprio (`SP2`/`SP3` já propagam uniformemente; `SP6` seria comprometido). |
+| `APROVADO`, `AGUARDA APROVAÇÃO` ou `APROVADO com handoff obrigatório` (`C-A1-ST1`–`C-A1-ST3`) | **Proibido.** **`PM7` permanece literal**, com o seu fundamento próprio (`SP2`/`SP3` já propagam uniformemente; `SP6` seria comprometido). |
 | Qualquer outro rótulo `G2` válido | **Igualmente proibido**, por este registro. A presença de uma declaração exata é *fail-closed*. |
 | Fora de seção `Rxx` | **`PM6` permanece literal e aplicável** — declaração fora de seção `Rxx` já é *fail-closed* por `PM6`. |
 
