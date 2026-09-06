@@ -4,8 +4,68 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-09-06 (**registro da decisão humana de status de `R28/F1` = `APROVADO` —
-APROVADA HUMANAMENTE / AINDA NÃO APLICADA AO CORPUS**). Esta entrega é **EXCLUSIVAMENTE
+Atualizado em: 2026-09-06 (**fechamento da lacuna normativa pré-C14 — regime exclusivo de
+`status-fragmento` sob `PARCIAL`**). Esta entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera
+**somente** `docs/07-arquitetura-motor-respostas.md` e este documento, e **não altera código,
+testes, `knowledge/**`, `prompts/**` nem `CLAUDE.md`. **ELA NÃO É MARCO FUNCIONAL** e **NÃO É
+a décima quarta microentrega funcional de `C`**. **A LACUNA PRÉ-C14 ESTÁ FECHADA
+DOCUMENTALMENTE.** Ela fecha **uma única** matéria: **o comportamento de uma linha que
+satisfaz EXATAMENTE o envelope de `PM1` dentro de uma seção `Rxx` cujo cabeçalho satisfaz
+`G2`, mas cujo rótulo literal NÃO é `PARCIAL`** — registrada em `docs/07` como **registro
+posterior claramente separado**, no bloco **"Regime exclusivo de `status-fragmento` sob
+`PARCIAL`"**, escrito **depois** de `PM1`–`PM12` e do registro da decisão humana de `R28/F1`.
+**A decisão**: **`status-fragmento` é PERMITIDO EXCLUSIVAMENTE sob cabeçalho `G2` cujo rótulo
+literal seja EXATAMENTE `PARCIAL`**; sob **qualquer outro** rótulo literal, **a presença de uma
+linha que satisfaça exatamente o envelope de `PM1` é *FAIL-CLOSED***. **Consequências por
+regime**: sob `PARCIAL`, **`PM5` e `PM11` permanecem literais** — **exatamente uma** declaração
+válida por fragmento emitível, com nenhuma e com duas ou mais sendo *fail-closed*; sob
+`ST1`–`ST3`, **`PM7` permanece literal**, com **fundamento próprio** (`SP2`/`SP3` já propagam
+uniformemente, e `SP6` seria comprometido); sob **qualquer outro rótulo `G2` válido**, a
+declaração é **igualmente proibida** por este registro; e **fora de seção `Rxx`**, **`PM6`
+permanece literal e aplicável**. **Fundamento normativo exaustivo**: **`PM8`** — a declaração é
+fonte explícita do status do fragmento **sob `PARCIAL`**, e somente ali — e **`PM11`** — é o
+rótulo físico `PARCIAL` que **ativa** o regime de status explicitamente declarado por
+fragmento, de modo que fora dele **não há regime a ativar**. **A composição atual do corpus NÃO
+é fundamento**: o corpus é **evidência**, jamais origem de norma. **`G2` e `SP5` permanecem
+INTACTOS**: um rótulo fora de `ST1`–`ST3` e de `PARCIAL` **continua podendo satisfazer `G2`**,
+**continua literal e opaco** (**`GR2.10`**, **`GR3`**), **não** se torna gramaticalmente
+inválido, **não** recebe tradução automática, **não** recebe propagação automática, **não** é
+corrigido, **não** é normalizado e **não** é inferido — **o seu status permanece NÃO RESOLVIDO
+conforme `SP5`**, que continua sendo o comportamento arbitrado; **este registro proíbe SOMENTE
+a presença de `status-fragmento` nesse regime**. **Quatro cláusulas de precisão**: **1.** a
+**ausência** de `status-fragmento` sob rótulo não-`PARCIAL` **NÃO é erro** desta regra nem de
+`PM5` — o status permanece não resolvido por `SP5`; **2.** a regra alcança **somente** a linha
+que satisfaça **exatamente** `PM1`, e toda **quase-declaração** — indentação, *whitespace*
+divergente, conteúdo antes ou depois, envelope incompleto, tab ou qualquer outra divergência —
+**permanece conteúdo comum**, sem gerar erro `PM` por si só sob rótulo não-`PARCIAL`; **3.** a
+regra **NÃO** torna inválido um rótulo desconhecido — **`GR2.10`**, **`GR3`** e **`SP5`**
+preservados: o proibido ali é **a declaração**, não **o rótulo**; **4.** uma linha iniciada por
+`>` **não satisfaz `PM1`** e **não pertence** a esta regra. **`PM1`–`PM12` permanecem
+INALTERADAS**, **nenhum `PM13` foi criado**, **nada foi renumerado ou reinterpretado** e
+**`PM7` não foi alterado nem absorvido**. **Nenhum detalhe técnico é norma aqui**: módulo,
+função, assinatura, exceção, categorias técnicas, localizadores, mensagens, precedência
+interna, tipo de erro interno, estratégia de importação, inspeção de árvore sintática e
+arquivos futuros **não** são definidos — pertencem a **mandato técnico próprio**, ainda **não**
+emitido. **Corpus inalterado**: `knowledge/respostas-aprovadas.md` permanece **byte-a-byte** no
+blob `3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`, **nenhuma linha `<!-- status-fragmento:
+APROVADO -->` foi inserida**, e a decisão humana **`R28/F1 = APROVADO` continua DECIDIDA e
+AINDA NÃO APLICADA** — portanto **`PARCIAL` continua NÃO RESOLVIDO no corpus**. **Estado
+preservado**: **a C13 continua a última entrega funcional integrada** — commit funcional
+`cbf3e379c9b6697cd502b6a7a0bd3e9bb76c1a27`, merge `50c1d5e681a11923c443c1f117de5751ea846cdd`
+—, com **baseline `4100 passed`** em **Python 3.14.5**; **nenhum `pytest` foi executado nesta
+entrega**, porque **zero código, zero teste e zero `knowledge/**` mudaram**. **`C` continua
+ARBITRADA / NÃO MATERIALIZADA**; o **índice físico continua INEXISTENTE**; a **bijeção física
+continua NÃO EXECUTADA**; a **autoridade de status continua NÃO MIGRADA** (**C-11**); e
+**`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**. O **item documental 101** abaixo **NÃO é
+"subetapa 101"**, **NÃO é `E14`**, **NÃO é identificador normativo de `C`**, **NÃO é
+microentrega funcional** e **NÃO cria a 3B.8** — registra **somente** o fechamento desta lacuna
+pré-C14. **C14 CONTINUA NÃO INICIADA FUNCIONALMENTE**: esta entrega **não implementa C14**,
+**não cria módulo**, **não cria teste** e **não fixa API como norma** — ela **apenas elimina a
+lacuna normativa que bloqueava o mandato técnico**.
+
+**Atualização anterior — 2026-09-06 (registro da decisão humana de status de `R28/F1` =
+`APROVADO` — APROVADA HUMANAMENTE / AINDA NÃO APLICADA AO CORPUS), preservada como registro
+daquele momento.** Aquela entrega é **EXCLUSIVAMENTE
 DOCUMENTAL**: altera **somente** `docs/07-arquitetura-motor-respostas.md` e este documento, e
 **não altera código, testes, `knowledge/**`, `prompts/**` nem `CLAUDE.md`. **ELA NÃO É MARCO
 FUNCIONAL** e **NÃO É a décima quarta microentrega funcional de `C`**. Ela registra **uma
@@ -5960,6 +6020,86 @@ a **pendência residual continua aberta**.
      **nenhum status real havia sido atribuído** quando foi escrito, e ao registrar que a
      resolução do corpus dependeria de **aplicação humana explícita**: esta entrega é a
      **decisão** humana, e **não** a sua aplicação.
+
+101. **A PRESENTE ENTREGA É EXCLUSIVAMENTE O FECHAMENTO DA LACUNA NORMATIVA PRÉ-C14 — O
+     REGIME EXCLUSIVO DE `status-fragmento` SOB `PARCIAL`.**
+     **ESTE ITEM 101 É REGISTRO HISTÓRICO DOCUMENTAL. NÃO É "SUBETAPA 101", NÃO É `E14`, NÃO É
+     IDENTIFICADOR NORMATIVO DE `C`, NÃO É MICROENTREGA FUNCIONAL E NÃO CRIA A 3B.8** — a
+     **3B.8 continua INEXISTENTE**, e a **3B.7 continua a última subetapa numerada**. Ele
+     registra **somente** o fechamento desta lacuna pré-C14.
+     **Escopo.** **Dois arquivos documentais, e nenhum outro**:
+     `docs/07-arquitetura-motor-respostas.md` — **registro posterior**, claramente separado, no
+     bloco **"Regime exclusivo de `status-fragmento` sob `PARCIAL`"**, escrito **depois** de
+     `PM1`–`PM12` e do registro da decisão humana de `R28/F1` — e este documento. **Zero
+     `src/**`**, **zero `tests/**`**, **zero `knowledge/**`**, **zero `prompts/**`**, **zero
+     `CLAUDE.md`**, **zero configuração**. **Nenhum `pytest` foi executado**, porque **zero
+     código e zero teste mudaram**.
+     **A lacuna fechada.** **O comportamento de uma linha que satisfaz EXATAMENTE o envelope de
+     `PM1` dentro de uma seção `Rxx` cujo cabeçalho satisfaz `G2`, mas cujo rótulo literal NÃO
+     é `PARCIAL`.**
+     **A decisão.** **`status-fragmento` é PERMITIDO EXCLUSIVAMENTE sob cabeçalho `G2` cujo
+     rótulo literal seja EXATAMENTE `PARCIAL`.** Sob **qualquer outro** rótulo literal, **a
+     presença de uma linha que satisfaça exatamente o envelope de `PM1` é *FAIL-CLOSED***.
+     **Consequências por regime.** Sob **`PARCIAL`**: **`PM5`** e **`PM11`** permanecem
+     **literais** — **exatamente uma** declaração válida por fragmento emitível, com **nenhuma**
+     e com **duas ou mais** sendo *fail-closed*. Sob **`ST1`–`ST3`**: **`PM7` permanece
+     literal**, e continua sendo **caso particular com fundamento próprio** — `SP2`/`SP3` já
+     propagam uniformemente, e `SP6` seria comprometido. Sob **qualquer outro rótulo `G2`
+     válido**: a declaração é **igualmente proibida** por este registro. **Fora de seção
+     `Rxx`**: **`PM6` permanece literal e aplicável**.
+     **Fundamento normativo — exaustivo.** Apenas **`PM8`** — a declaração é **fonte explícita
+     do status do fragmento *sob `PARCIAL`***, e somente ali — e **`PM11`** — é o **rótulo
+     físico `PARCIAL` que ATIVA** o regime de status explicitamente declarado por fragmento, de
+     modo que **fora dele não há regime a ativar** e uma declaração seria **segunda fonte de
+     status sem regime que a autorize**. **A composição atual do corpus NÃO é fundamento**: o
+     corpus é **evidência**, jamais origem de norma.
+     **`G2` e `SP5` preservados.** Um rótulo fora de `ST1`–`ST3` e de `PARCIAL` **continua
+     podendo satisfazer `G2`**, **continua literal e opaco** (**`GR2.10`**, **`GR3`**), **não**
+     se torna gramaticalmente inválido, **não** recebe tradução automática, **não** recebe
+     propagação automática, **não** é corrigido, **não** é normalizado e **não** é inferido — e
+     **o seu status permanece NÃO RESOLVIDO conforme `SP5`**, que continua sendo o comportamento
+     **arbitrado**, não uma lacuna. **Este registro proíbe SOMENTE a presença de
+     `status-fragmento` nesse regime**, e nada mais.
+     **Quatro cláusulas de precisão.** **1. Ausência.** A **ausência** de `status-fragmento` sob
+     rótulo não-`PARCIAL` **NÃO é erro** desta regra nem de `PM5` — cuja obrigatoriedade vale
+     **somente** sob `PARCIAL` —, e o status permanece **não resolvido por `SP5`**. **2.
+     Envelope exato.** A regra alcança **exclusivamente** a linha que satisfaça **exatamente**
+     `PM1`; toda **quase-declaração** — indentação, *whitespace* divergente, conteúdo antes ou
+     depois, envelope incompleto, tab, ou qualquer outra divergência — **permanece conteúdo
+     comum** e, **sob rótulo não-`PARCIAL`, não gera erro `PM` por si só**. **3. Rótulo
+     desconhecido.** A regra **NÃO** torna inválido um rótulo desconhecido: **`GR2.10`**,
+     **`GR3`** e **`SP5`** são **preservados** — o proibido ali é **a declaração**, não **o
+     rótulo**. **4. Conteúdo emitível.** Uma linha iniciada por `>` **não satisfaz `PM1`** e
+     **não pertence** a esta regra; nada aqui toca o bloco de citação, o texto emitível ou
+     `MT3`–`MT11`.
+     **`PM1`–`PM12` inalteradas, e `PM13` não existe.** O registro **não** cria rótulo local
+     novo, **não** renumera, **não** reinterpreta e **não** altera nenhuma das doze regras. Em
+     particular, **`PM7` não é alterado nem absorvido**: ele continua sendo o **caso particular
+     de `ST1`–`ST3`**, com **fundamento próprio**.
+     **Nenhum detalhe técnico é norma.** Não são definidos — e não podem ser lidos deste
+     registro — módulo, função, assinatura, exceção, categorias técnicas, localizadores,
+     mensagens, precedência interna de validação, tipo de erro interno, estratégia de
+     importação, inspeção de árvore sintática ou arquivos futuros. **Tudo isso pertence a
+     mandato técnico próprio**, ainda **não** emitido.
+     **Corpus inalterado.** `knowledge/respostas-aprovadas.md` permanece **byte-a-byte** no blob
+     `3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`; **nenhuma linha `<!-- status-fragmento:
+     APROVADO -->` foi inserida**; a decisão humana **`R28/F1 = APROVADO` continua DECIDIDA e
+     AINDA NÃO APLICADA**; e **`PARCIAL` continua NÃO RESOLVIDO no corpus**.
+     **Marco funcional inalterado.** **A C13 continua a última entrega funcional integrada** —
+     **commit funcional `cbf3e379c9b6697cd502b6a7a0bd3e9bb76c1a27`**, **merge
+     `50c1d5e681a11923c443c1f117de5751ea846cdd`** —, com **baseline `4100 passed`** em **Python
+     3.14.5**. Esta entrega **não cria marco funcional** e **não recebe numeração de subetapa**.
+     **`C` continua ARBITRADA / NÃO MATERIALIZADA**; o **índice físico continua INEXISTENTE**;
+     a **bijeção física continua NÃO EXECUTADA**; a **autoridade de status continua NÃO
+     MIGRADA** (**C-11**); e **`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**.
+     **C14.** **C14 CONTINUA NÃO INICIADA FUNCIONALMENTE.** Esta entrega **não implementa
+     C14**, **não cria módulo**, **não cria teste** e **não fixa API como norma** — ela **apenas
+     elimina a lacuna normativa que bloqueava o mandato técnico**.
+     **Relação com os itens anteriores.** **Os itens 87 a 100 permanecem corretos como registro
+     do momento em que foram escritos.** Este item 101 **não os reescreve**; ele registra o
+     estado **posterior**. Em particular, o **item 99** continua correto ao registrar
+     `PM1`–`PM12` como arbitradas, e o **item 100** continua correto ao registrar `R28/F1` como
+     **decidido e não aplicado** — o que **continua verdadeiro** após esta entrega.
 
 ## Arbitragens
 
