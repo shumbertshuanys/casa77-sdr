@@ -4,8 +4,58 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-09-06 (**reconciliação documental pós-merge da associação física
-determinística de seção e fragmentos**). Esta entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera
+Atualizado em: 2026-09-07 (**micro-arbitragem documental do comportamento da futura composição
+total de status diante de `SP5`**). Esta entrega é **EXCLUSIVAMENTE DOCUMENTAL / NORMATIVA**:
+altera **somente** `docs/07-arquitetura-motor-respostas.md` e este documento, e **não altera
+código, testes, `knowledge/**`, `prompts/**`, `CLAUDE.md`, configuração nem dependências. **A
+MICRO-ARBITRAGEM SOBRE O COMPORTAMENTO DA FUTURA COMPOSIÇÃO TOTAL DIANTE DE `SP5` DEIXA DE
+ESTAR NÃO RESPONDIDA**: ela está agora **DECIDIDA DOCUMENTALMENTE nesta branch/PR**. **A
+DECISÃO É FAIL-CLOSED NA FRONTEIRA DE COMPOSIÇÃO TOTAL**, com **ZERO RETORNO PARCIAL**: quando
+uma futura fronteira **cujo contrato seja resolver e devolver o status de TODOS os fragmentos
+emitíveis** encontrar fragmento sob seção cujo rótulo satisfaça `G2` mas **não** pertença a
+`ST1`–`ST3` e **não** seja `PARCIAL`, o fragmento **permanece NÃO RESOLVIDO por `SP5`** e a
+composição total **falha fechada** — **sem devolver resultado parcial**, **sem omitir
+silenciosamente o fragmento**, **sem marcador ou valor de ausência**, **sem valor sentinela**,
+**sem quarto status**, **sem converter o rótulo** e **sem tornar o cabeçalho `G2` inválido**.
+**UM RETORNO BEM-SUCEDIDO DA COMPOSIÇÃO TOTAL NÃO PODE COEXISTIR COM FRAGMENTO NÃO RESOLVIDO
+POR ESSE RAMO.** **Duas alternativas foram expressamente REJEITADAS**: a **omissão
+silenciosa** e a **representação explícita de ausência em retorno bem-sucedido** (`None`,
+sentinela, quarto valor, status especial ou estrutura de "não resolvido" coexistindo com
+sucesso total) — esta segunda rejeição valendo **para a fronteira de composição TOTAL**, sem
+impedir que **outras APIs futuras, com OUTRO contrato**, representem estado não resolvido de
+outra forma. **`SP5` CONTINUA SEMANTICAMENTE INTACTA**: o rótulo desconhecido **continua `G2`
+válido, literal e opaco**, **não** é corrigido, **não** é normalizado, **não** é inferido, e o
+seu status **permanece NÃO RESOLVIDO** — comportamento **arbitrado**, jamais lacuna.
+**`PARCIAL` continua EXPRESSAMENTE FORA desse ramo**, sob **`C-A1-ST4`**, **`SP4`**,
+**`PM1`–`PM12`**, o **regime exclusivo de `status-fragmento`** e a **C14**: na composição total
+futura ele é resolvido **exclusivamente** pelas declarações explícitas válidas de
+`status-fragmento`, **sem propagação automática**, e, quando essas declarações forem
+**inválidas, ausentes ou proibidas**, as **falhas já existentes da C14 continuam prevalecendo**
+segundo o contrato **já materializado** — **nenhuma semântica nova de `PARCIAL` foi criada**.
+**NENHUMA EXCEÇÃO CONCRETA FOI DESENHADA**: nome de classe, mensagem, categorias,
+localizadores, herança, propagação de exceção existente × criação de exceção nova e
+precedência entre falhas de composição ainda não desenhadas **continuam NÃO DECIDIDOS**.
+**`C-A1-ST8` continua literal — status de TODOS os fragmentos resolvidos — e NÃO é satisfeita
+por esta arbitragem**: ela apenas impede que uma composição total **declare sucesso** enquanto
+houver fragmento não resolvido pelo ramo desconhecido de `SP5`, e a satisfação de `ST8`
+continuará exigindo **execução e auditoria próprias**. **Evidência estrutural do corpus atual,
+NÃO fundamento normativo**: **30** seções `Rxx` — **25** com rótulo de `C-A1-ST1`, **2** de
+`C-A1-ST2`, **2** de `C-A1-ST3`, **1** `PARCIAL` e **0** com outro rótulo `G2` válido —, com
+`knowledge/respostas-aprovadas.md` **inalterado**, byte-a-byte no blob
+`3a30fe764b80902227fdefb9282f3916650e4f17`; **a regra permanece válida ainda que um futuro
+corpus aprovado contenha outro rótulo `G2` válido**. **ZERO CÓDIGO IMPLEMENTADO, ZERO TESTE,
+ZERO `knowledge/**`** e **NENHUM `pytest` FOI EXECUTADO AQUI** — a **baseline permanece `4477
+passed` / Python 3.14.5**, que é **evidência da entrega funcional do PR #124** e **não** uma
+execução desta arbitragem. **`C` CONTINUA ARBITRADA / NÃO MATERIALIZADA.** **PRÓXIMA AÇÃO**:
+**após a integração desta arbitragem, retornar ao Claude Desktop para produzir o plano técnico
+fechado da composição total de status** — **a implementação NÃO está pronta** e **não é
+declarada pronta antes da integração desta decisão**. O **item documental 105** abaixo **NÃO é
+"subetapa 105"**, **NÃO é `C15`**, **NÃO é `E15`**, **NÃO é identificador normativo** e **NÃO
+cria a 3B.8** — registra **exclusivamente** esta micro-arbitragem.
+
+**Atualização anterior — 2026-09-06 (reconciliação documental pós-merge da associação física
+determinística de seção e fragmentos), preservada como registro daquele momento.** Aquela
+entrega é **EXCLUSIVAMENTE DOCUMENTAL**: altera
 **somente** este documento, e **não altera código, testes, `knowledge/**`,
 `docs/07-arquitetura-motor-respostas.md`, `prompts/**` nem `CLAUDE.md`. **A PR #120 deixou de
 ser a entrega funcional de código mais recente**: o **PR #124** integrou à `main` uma **nova
@@ -6705,6 +6755,87 @@ a **pendência residual continua aberta**.
      estado **posterior**. Em particular, o **item 102** continua correto ao registrar a C14
      como a última entrega funcional **à época**, e o **item 103** continua correto ao registrar
      `R28/F1` como **aplicado** — o que **continua verdadeiro**.
+
+105. **O COMPORTAMENTO DA FUTURA COMPOSIÇÃO TOTAL DE STATUS DIANTE DE `SP5` ESTÁ DECIDIDO
+     DOCUMENTALMENTE — FAIL-CLOSED, COM ZERO RETORNO PARCIAL.**
+     **ESTE ITEM 105 É REGISTRO DOCUMENTAL. NÃO É "SUBETAPA 105", NÃO É `C15`, NÃO É `E15`, NÃO
+     É IDENTIFICADOR NORMATIVO E NÃO CRIA A 3B.8** — a **3B.8 continua INEXISTENTE**, e a
+     **3B.7 continua a última subetapa numerada**. Ele registra **exclusivamente** esta
+     micro-arbitragem.
+     **Escopo da entrega.** **EXCLUSIVAMENTE DOCUMENTAL / NORMATIVA**: **dois arquivos** —
+     `docs/07-arquitetura-motor-respostas.md` e `docs/00-estado-atual.md`. **Zero `src/**`,
+     zero `tests/**`, zero `knowledge/**`, zero `prompts/**`, zero `CLAUDE.md`, zero
+     configuração e zero dependência.** **Nenhum compositor foi implementado**, e **nenhum
+     módulo, função, assinatura, exceção ou mensagem foi decidido.**
+     **A decisão.** Quando uma **futura fronteira cujo contrato seja resolver e devolver o
+     status de TODOS os fragmentos emitíveis do documento** encontrar fragmento pertencente a
+     seção cujo rótulo literal **satisfaça `G2`** mas **não** pertença às traduções automáticas
+     de `ST1`–`ST3` e **não** seja `PARCIAL`, o fragmento **permanece NÃO RESOLVIDO por `SP5`**
+     e a **composição total FALHA FECHADA**. Ela **não devolve resultado parcial**, **não omite
+     silenciosamente** o fragmento, **não** o devolve com **marcador ou valor de ausência**,
+     **não cria valor sentinela**, **não cria quarto status**, **não converte** o rótulo e
+     **não torna** o cabeçalho `G2` inválido.
+     **A invariante.** **UM RETORNO BEM-SUCEDIDO DA FUTURA COMPOSIÇÃO TOTAL NÃO PODE COEXISTIR
+     COM FRAGMENTO NÃO RESOLVIDO POR ESSE RAMO DE `SP5`** — sucesso total e fragmento não
+     resolvido são **mutuamente exclusivos** naquela fronteira.
+     **Alternativas rejeitadas.** **1. Omissão silenciosa — REJEITADA**: a composição **não
+     pode** deixar o fragmento não resolvido fora da saída e ainda declarar sucesso. **2.
+     Representação explícita de ausência em retorno bem-sucedido — REJEITADA**: **`None`**,
+     **sentinela**, **quarto valor**, **status especial** ou estrutura de "não resolvido"
+     **coexistindo com sucesso total** não substituem status pertencente a **`C-3`**. Esta
+     segunda rejeição vale **para a fronteira de composição TOTAL de status**, e **não impede**
+     que **outras APIs futuras, com OUTRO contrato**, representem estado não resolvido de outra
+     forma.
+     **`SP5` permanece semanticamente INTACTA.** Rótulo fora de `ST1`–`ST3` **não produz
+     propagação automática**; a **ausência de tradução não é corrigida, normalizada nem
+     inferida**; o rótulo desconhecido que satisfaça `G2` **continua gramaticalmente válido**,
+     **literal** e **opaco** (**`GR2.10`**, **`GR3`**); e o seu status **permanece NÃO
+     RESOLVIDO** — **comportamento arbitrado**, jamais lacuna. `SP1`–`SP7` permanecem
+     **inalteradas** e **`SP8` não existe**.
+     **`PARCIAL` continua EXPRESSAMENTE FORA deste ramo.** Ele permanece sob **`C-A1-ST4`**,
+     **`SP4`**, **`PM1`–`PM12`**, o **regime exclusivo de `status-fragmento`** e a **C14**. Na
+     composição total futura, os fragmentos sob `PARCIAL` são resolvidos **exclusivamente**
+     pelas **declarações explícitas válidas** de `status-fragmento`, **sem propagação
+     automática**; se essas declarações forem **inválidas, ausentes ou proibidas**, as **falhas
+     já existentes da C14 continuam prevalecendo** segundo o contrato **já materializado**.
+     **Nenhuma semântica nova de `PARCIAL` foi criada.**
+     **Nenhuma exceção concreta foi desenhada.** **Nome de classe**, **mensagem**,
+     **categorias**, **localizadores**, **herança**, a escolha entre **propagar exceção
+     existente** ou **criar exceção nova** e a **precedência exata entre falhas de composição
+     ainda não desenhadas** **continuam NÃO DECIDIDOS** — pertencem a **planejamento técnico
+     próprio e posterior**.
+     **Relação com `C-A1-ST8`.** **`C-A1-ST8` continua literal — status de TODOS os fragmentos
+     resolvidos — e ESTA ARBITRAGEM NÃO O SATISFAZ.** Ela garante **somente** que uma futura
+     composição total **não declare sucesso** enquanto houver fragmento não resolvido pelo ramo
+     desconhecido de `SP5`; a satisfação de `ST8` continuará exigindo **execução e auditoria
+     próprias** sobre os insumos canônicos pertinentes.
+     **Evidência estrutural do corpus — NÃO fundamento normativo.** No corpus canônico vigente
+     `knowledge/respostas-aprovadas.md`, **inalterado** e byte-a-byte no blob
+     `3a30fe764b80902227fdefb9282f3916650e4f17`, há **30** seções `Rxx`: **25** com rótulo de
+     `C-A1-ST1`, **2** de `C-A1-ST2`, **2** de `C-A1-ST3`, **1** `PARCIAL` e **0** com outro
+     rótulo `G2` válido. **ESSA DISTRIBUIÇÃO É EVIDÊNCIA DO CORPUS ATUAL E NÃO FUNDAMENTO
+     NORMATIVO DA ARBITRAGEM**: a regra **permanece válida** ainda que um **futuro corpus
+     aprovado** contenha outro rótulo `G2` válido.
+     **Testes.** **NENHUM `pytest` FOI EXECUTADO NESTA ENTREGA**, porque **zero código, zero
+     teste e zero `knowledge/**` mudaram**. A **baseline registrada permanece `4477 passed` /
+     Python 3.14.5**, sob **`-W error`**, **evidência da entrega funcional do PR #124** — e
+     **nenhuma execução nova é alegada aqui**.
+     **Limites.** Esta arbitragem **NÃO**: implementa composição total; resolve `SP5`;
+     canonicaliza status; propaga status; interpreta `PARCIAL`; cria índice; executa a bijeção
+     física; implementa *bindings*; implementa `ASSERTIVA`; define *placeholder*; define
+     `caminho_yaml`; define `hora`; resolve **C-7**; migra a autoridade de status (**C-11**);
+     satisfaz **`C-A1-ST6`**–**`C-A1-ST10`**; nem cria a **3B.8**. **`C` CONTINUA ARBITRADA /
+     NÃO MATERIALIZADA.**
+     **Próxima ação.** **Após a integração desta arbitragem, retornar ao Claude Desktop para
+     produzir o plano técnico fechado da composição total de status.** **A implementação NÃO
+     está pronta** e **não é declarada pronta antes da integração desta decisão**.
+     **Relação com os itens anteriores.** **Os itens 87 a 104 permanecem corretos como registro
+     do momento em que foram escritos.** Este item 105 **não os reescreve**; ele registra o
+     estado **posterior**. Em particular, o **item 104** continua correto ao registrar que, **à
+     época**, a micro-arbitragem do comportamento da futura composição total diante de `SP5`
+     **continuava NÃO RESPONDIDA** — **é este item que a responde** —, e continua correto ao
+     registrar a associação física de seção e fragmentos como a **entrega funcional de código
+     mais recente**, o que **continua verdadeiro**.
 
 ## Arbitragens
 
