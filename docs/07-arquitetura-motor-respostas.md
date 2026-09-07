@@ -1138,6 +1138,114 @@ DECIDIDA e NÃO APLICADA**; e **`PARCIAL` continua NÃO RESOLVIDO no corpus**. *
 NORMATIVA NÃO É IMPLEMENTAR VERIFICAÇÃO, NÃO É APLICAR DECLARAÇÃO, NÃO É ALTERAR O CORPUS E
 NÃO É MATERIALIZAR `C`.**
 
+##### Comportamento da futura composição total de status diante de `SP5`
+
+**REGISTRO POSTERIOR, ESCRITO JUNTO DE `SP5`. NÃO CRIA `SP8`, NÃO RENUMERA, NÃO REINTERPRETA E
+NÃO ALTERA `SP1`–`SP7`.** Este registro é escrito **depois** de `SP1`–`SP7`, de
+`G2`/`GR1`–`GR7`, de `PM1`–`PM12` e do **regime exclusivo de `status-fragmento` sob
+`PARCIAL`**, e é **deliberadamente separado** deles. Ele **não** cria rótulo local novo —
+**`SP8` não existe** —, **não** renumera, **não** reinterpreta e **não** altera nenhuma das
+sete regras `SP`, que permanecem **literais**. Ele **não** é etapa, subetapa, `Exx` nem
+identificador normativo, e **não cria a 3B.8**, que continua **inexistente**. **Nenhum
+compositor é implementado aqui**; **nenhum módulo, função, assinatura, exceção ou mensagem é
+decidido**.
+
+Ele fecha **uma única** matéria: **o que uma FUTURA FRONTEIRA DE COMPOSIÇÃO TOTAL DE STATUS
+deve fazer ao encontrar fragmento cujo status permanece NÃO RESOLVIDO pelo ramo de rótulo
+desconhecido de `SP5`.**
+
+**Escopo — o que é "composição TOTAL".** Chama-se aqui **composição total de status** uma
+futura fronteira **cujo contrato seja resolver e devolver o status de TODOS os fragmentos
+emitíveis do documento**. Este registro alcança **exclusivamente** essa espécie de fronteira.
+Ele **não** alcança `C8`, `C12`, `C14`, a associação física de seção e fragmentos, a
+canonicalização de rótulo (`SP2`) nem a propagação por `Rxx` (`SP1`–`SP3`), e **não** decide o
+comportamento de qualquer fronteira futura cujo contrato seja **outro**.
+
+**A decisão — FAIL-CLOSED NA FRONTEIRA DE COMPOSIÇÃO TOTAL.** Quando uma fronteira de
+composição total encontrar fragmento pertencente a seção cujo rótulo literal **satisfaça
+`G2`** mas **não** pertença às traduções automáticas de `ST1`–`ST3` e **não** seja `PARCIAL`,
+ela **FALHA FECHADA**. Especificamente, ela:
+
+**1.** **reconhece** que o status daquele fragmento permanece **NÃO RESOLVIDO por `SP5`**;
+**2.** **falha fechada na fronteira de composição total**;
+**3.** **não devolve resultado parcial**;
+**4.** **não omite silenciosamente** o fragmento;
+**5.** **não devolve** o fragmento com marcador ou valor de ausência;
+**6.** **não cria valor sentinela**;
+**7.** **não cria quarto status** — o vocabulário de **`C-3`** permanece **fechado em três
+valores**;
+**8.** **não converte** o rótulo;
+**9.** **não torna** o cabeçalho `G2` inválido.
+
+**A invariante.** **UM RETORNO BEM-SUCEDIDO DA FUTURA COMPOSIÇÃO TOTAL NÃO PODE COEXISTIR COM
+FRAGMENTO NÃO RESOLVIDO POR ESSE RAMO DE `SP5`.** Sucesso total e fragmento não resolvido são
+**mutuamente exclusivos** naquela fronteira. **Não existe retorno bem-sucedido contendo esse
+fragmento como não resolvido**; **não existe omissão silenciosa**; e **não existe quarto
+status**.
+
+**`SP5` permanece semanticamente INTACTA.** Este registro **não** altera coisa alguma do que
+`SP5` já arbitrou, e continua verdadeiro que: um rótulo fora das traduções automáticas de
+`ST1`–`ST3` **não produz propagação automática**; a **ausência de tradução não é corrigida**,
+**não é normalizada** e **não é inferida**; um rótulo desconhecido que satisfaça `G2`
+**continua gramaticalmente válido** (**`GR2.10`**, **`GR3`**); o rótulo **continua literal e
+opaco**; o seu status **permanece NÃO RESOLVIDO**; e **isso continua sendo o comportamento
+arbitrado**, jamais lacuna a fechar por conveniência. **O que este registro fecha é SOMENTE o
+comportamento da futura composição TOTAL diante desse estado** — e **nada mais**.
+
+**`PARCIAL` está EXPRESSAMENTE FORA deste ramo.** Esta cláusula **NÃO** trata `PARCIAL` como
+rótulo desconhecido. `PARCIAL` continua sob **`C-A1-ST4`**, **`SP4`**, **`PM1`–`PM12`**, o
+**regime exclusivo de `status-fragmento`** e a **C14**, sem semântica nova. Na futura
+composição total: os fragmentos sob `PARCIAL` são resolvidos **exclusivamente** pelas
+**declarações explícitas válidas de `status-fragmento`**; **não** recebem propagação
+automática; e, se houver **violação do contrato já materializado da C14** — incluindo **valor
+inválido**, **declaração órfã** ou **ausência da declaração obrigatória** —, as **falhas já
+existentes da C14 continuam prevalecendo segundo a sua precedência própria**. **Nenhuma
+semântica nova de `PARCIAL` é criada aqui.**
+
+**Alternativas REJEITADAS para a futura composição total.**
+
+**1. Omissão silenciosa — REJEITADA.** A composição **não pode** simplesmente deixar o
+fragmento não resolvido **fora da saída** e **ainda assim declarar sucesso**.
+
+**2. Representação explícita de ausência em retorno bem-sucedido — REJEITADA.** A composição
+**não deve** introduzir `None`, **sentinela**, **quarto valor**, **status especial** ou
+*tuple*/estrutura de "não resolvido" **coexistindo com sucesso total**, como substituto de
+status pertencente a **`C-3`**. Esta rejeição **não impede** que **outras APIs futuras, com
+OUTRO contrato**, representem estado não resolvido de outra forma: a decisão vale **para a
+fronteira de composição TOTAL de status**.
+
+**A taxonomia concreta da futura exceção NÃO é decidida aqui.** Este registro fixa **apenas**
+**falha pública/observável da composição total + zero retorno parcial**. Ele **não** fixa —
+e **não** autoriza que se leia dele — **nome de classe de exceção**, **mensagem**,
+**categorias**, **localizadores**, **herança**, se uma **exceção existente será propagada** ou
+uma **nova será criada**, nem a **precedência exata** entre falhas de composição **ainda não
+desenhadas**. Tudo isso pertence a **planejamento técnico próprio, posterior e ainda não
+emitido**.
+
+**Relação com `C-A1-ST8`.** **`C-A1-ST8` continua literal: status de TODOS os fragmentos
+resolvidos.** **Esta arbitragem NÃO satisfaz `ST8`.** Ela garante **somente** que uma futura
+composição total **não declare sucesso enquanto houver fragmento não resolvido pelo ramo
+desconhecido de `SP5`**. A satisfação de `ST8` continuará **exigindo execução e auditoria
+próprias** sobre os insumos canônicos pertinentes.
+
+**Evidência estrutural do corpus atual — NÃO fundamento normativo.** No corpus canônico
+vigente — `knowledge/respostas-aprovadas.md`, blob
+`3a30fe764b80902227fdefb9282f3916650e4f17` — há **30** seções `Rxx`, das quais **25** com
+rótulo de `C-A1-ST1`, **2** de `C-A1-ST2`, **2** de `C-A1-ST3`, **1** `PARCIAL` e **0** com
+outro rótulo `G2` válido. **ESSA DISTRIBUIÇÃO É EVIDÊNCIA DO CORPUS ATUAL E NÃO FUNDAMENTO
+NORMATIVO DESTA ARBITRAGEM.** A regra acima **permanece válida** ainda que um **futuro corpus
+aprovado** venha a conter outro rótulo `G2` válido.
+
+**Estado após este registro.** **`SP1`–`SP7` permanecem inalteradas** e **`SP8` não existe**;
+`G2`/`GR1`–`GR7`, `PM1`–`PM12`, o **regime exclusivo de `status-fragmento`**, `C-3`,
+`C-A1-ST`, `C-A1-P2` e `C-A5` permanecem **literais**; **nenhuma exceção concreta foi
+desenhada**; **nenhum código foi implementado**; `knowledge/respostas-aprovadas.md` **não foi
+alterado** e permanece no blob `3a30fe764b80902227fdefb9282f3916650e4f17`; a **3B.8 continua
+INEXISTENTE**; a **autoridade de status continua NÃO MIGRADA** (**`C-11`**); e
+**`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**. **ARBITRAR O COMPORTAMENTO DA FUTURA
+COMPOSIÇÃO TOTAL NÃO É IMPLEMENTAR COMPOSIÇÃO, NÃO É RESOLVER O STATUS QUE `SP5` MANTÉM NÃO
+RESOLVIDO, NÃO É SATISFAZER `ST8`, NÃO É MIGRAR AUTORIDADE E NÃO É MATERIALIZAR `C`.**
+
 ##### C-A1-M — Prioridade de modelagem, prosa e auditoria de consumidores
 
 | # | Regra |
