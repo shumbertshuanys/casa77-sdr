@@ -1944,7 +1944,7 @@ criada, escolhida ou autorizada**.
 **Baseline funcional corrente: `4594 passed` / Python 3.14.5.**
 
 **Execuções da PR #127, registro da composição total de status dos fragmentos emitíveis**
-(2026-09-07, Python 3.14.5) — **sete execuções listadas, todas aprovadas**, realizadas **na
+(2026-09-07, Python 3.14.5) — **oito execuções listadas, todas aprovadas**, realizadas **na
 entrega funcional**, sobre os bytes que vieram a ser exatamente os blobs integrados:
 
 | Momento | Comando | Resultado |
