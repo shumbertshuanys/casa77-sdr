@@ -2195,6 +2195,262 @@ conteúdo é alterado** e **nenhuma prosa é atomizada** por este registro.
 
 ---
 
+#### Micro-arbitragem documental da gramática de caminho_yaml
+
+Micro-arbitragem **documental** e **posterior**. Ela fecha **uma única** matéria: **qual é a
+gramática determinística de `caminho_yaml`**. Ela **não** reescreve, renumera ou substitui
+`C-1`–`C-15`, `C-A1`, `C-A2`, `C-A5`, `MT1`–`MT12`, `SP1`–`SP7`, `G2`/`GR1`–`GR7` ou
+`PM1`–`PM12`, **não** cria versão concorrente deles, **não** altera o vocabulário fechado de
+**`C-3`** e **não** cria identificador normativo novo: **`C-A6` NÃO EXISTE**, e **nenhuma
+subetapa, `C15`, `E15` ou `3B.8` é criada** — a **3B.8 continua inexistente**. Os rótulos
+**`CY1`**–**`CY14`** abaixo são **locais deste bloco**, existem **somente** como rastreabilidade
+interna e **não são normativos fora desta micro-arbitragem**: não são etapa, subetapa, `Exx`,
+nem nomenclatura de `C`.
+
+**Nenhum parser é implementado aqui**; **nenhum resolver é implementado**; **nenhum módulo,
+função, assinatura, exceção, mensagem ou API é decidido**; **nenhum índice é criado**; **nenhum
+*binding* é materializado**; e **`knowledge/**` não é alterado**.
+
+**A decisão adotada é a alternativa `A2`: `caminho_yaml` permanece semanticamente uma `str`,
+com CAMINHO ABSOLUTO SEM MARCADOR e CAMINHO RELATIVO EXPLICITAMENTE MARCADO POR `@`.**
+
+##### `CY1` — objeto arbitrado: a `str` depois do parsing
+
+`caminho_yaml` é, **depois do parsing YAML**, uma **`str`**. Esta gramática governa **essa
+`str`**, e **nada mais**. Ela **não** decide sintaxe de arquivo, estilo de serialização,
+*loader*, ordem de chaves, comentários ou qualquer aspecto físico do futuro índice. **A
+gramática é semântica**, não textual-de-arquivo.
+
+##### `CY2` — as duas formas semânticas, e apenas duas
+
+| Forma | Marcador inicial | Raiz de resolução | Onde é permitida |
+|---|---|---|---|
+| **Absoluta** | **nenhum** | o **mapeamento raiz** de `knowledge/casa77.yaml` **já carregado** | **fora** de `itera_sobre` **e também dentro** de fragmento que possua `itera_sobre` |
+| **Relativa** | **`@`**, exatamente na posição inicial | o **item corrente** da coleção percorrida por `itera_sobre` | **somente** em *binding* de fragmento que **declare** `itera_sobre` |
+
+Um caminho relativo em fragmento **sem** `itera_sobre` é ***FAIL-CLOSED* estrutural**.
+
+**A forma é sempre explícita na própria `str`.** **O contexto jamais transforma silenciosamente
+um caminho absoluto em relativo**, nem o contrário: não há promoção, rebaixamento, inferência
+ou reinterpretação por vizinhança.
+
+##### `CY3` — `C-4h` e `C-A1-S2` permanecem literais
+
+**`C-4h` permanece literal**: os *bindings* do item **PODEM** usar caminho relativo. **`C-A1-S2`
+disciplina a disponibilidade e a semântica dos caminhos relativos durante a iteração** — ela
+**NÃO** torna todos os *bindings* de um fragmento iterado **obrigatoriamente** relativos.
+Portanto, **num mesmo fragmento com `itera_sobre`, *bindings* absolutos e relativos podem
+coexistir**, cada um dizendo o que é **na própria `str`**. **`C-A1-S1` (proibição de seleção
+posicional) permanece literal e inalterada.**
+
+##### `CY4` — gramática semântica
+
+```text
+caminho           ::= caminho_absoluto | caminho_relativo
+
+caminho_absoluto  ::= segmento ( "." segmento )*
+caminho_relativo  ::= "@" ( "." segmento )*
+
+segmento          ::= chave seletor?
+seletor           ::= "[" chave "=" literal "]"
+
+chave             ::= NOME, exceto se composta exclusivamente por dígitos
+literal           ::= NOME
+
+NOME              ::= um ou mais caracteres de:
+                      A-Z
+                      a-z
+                      0-9
+                      _
+```
+
+**Alfabeto semântico permitido, e nada além**: `A-Z`, `a-z`, `0-9`, `_`, `.`, `[`, `]`, `=` e
+`@`. Qualquer outro caractere na `str` torna a forma **inválida**.
+
+##### `CY5` — canonicalidade semântica
+
+Dentro da `str` **já parseada**: ***whitespace* PROIBIDO**; **aspas como caracteres do valor
+PROIBIDAS**; ***escape* inexistente**; **Unicode não ASCII PROIBIDO**; **caixa
+significativa**; **sem normalização**; **sem `casefold`**; **sem coerção**; **sem tolerância**.
+
+São **inválidos**: `.` final (*trailing*); **segmento vazio**; **seletor vazio**; **chave
+seletora vazia**; **literal vazio**; **`@` fora da posição inicial**; e **dois seletores no
+mesmo segmento**.
+
+##### `CY6` — YAML físico × valor semântico
+
+**A gramática `CY` governa a `str` APÓS o parsing YAML.** O caractere `@` **não pode iniciar um
+*plain scalar* YAML**. Logo, no **futuro** arquivo físico do índice, um caminho relativo deverá
+ser serializado **com *quoting* YAML** — por exemplo, de forma **sintética**:
+
+```yaml
+caminho_yaml: "@.campo_exemplo"
+```
+
+**As aspas pertencem à serialização YAML.** Elas **NÃO** pertencem à `str` e **NÃO** pertencem à
+gramática `CY`. **Nada aqui decide aspas simples × duplas como estilo canônico**: ambas são
+**apenas serialização** quando produzem **a mesma `str`**.
+
+##### `CY7` — literal seletor é sempre `str` (restrição deliberada do MVP)
+
+**RESTRIÇÃO NORMATIVA DELIBERADA DO MVP**: o **literal seletor** é **sempre semanticamente uma
+`str`**, com conteúdo em `[A-Za-z0-9_]+`. **Zero inferência** de **inteiro**, **boolean**,
+**`null`** ou **qualquer outro tipo YAML**. A comparação futura é **literal**, **por `str`** e
+**sem coerção**.
+
+##### `CY8` — serialização dos identificadores no YAML comercial
+
+Do lado da base autoritativa: **um identificador estrutural usado por `caminho_yaml` DEVE
+resultar em `str` depois do parsing de `knowledge/casa77.yaml`**. Se um futuro identificador
+introduzido por **`MD-18`** possuir conteúdo que, escrito como *plain scalar*, seja interpretado
+pelo *loader* YAML como **número**, **boolean**, **`null`** ou **outro tipo não-`str`**, ele
+**DEVERÁ ser serializado com *quoting* YAML** no arquivo factual. Exemplo **apenas sintético**:
+um identificador semântico `"2026"` precisa **permanecer `str`**, e **não** virar inteiro. **As
+aspas pertencem à serialização e não fazem parte do identificador semântico.**
+
+**`knowledge/casa77.yaml` NÃO é alterado por esta entrega**, e **nenhum identificador novo é
+criado aqui**.
+
+##### `CY9` — chave exclusivamente numérica
+
+Uma chave YAML textual `"123"` **NÃO é semanticamente uma posição**. Ainda assim, **a gramática
+do MVP deliberadamente NÃO a torna endereçável**: **chave composta apenas de dígitos é forma
+inválida de `caminho_yaml`**.
+
+Os motivos são **três, e apenas estes**: **fechamento conservador**; **auditabilidade
+estática**; e **compatibilidade com a materialização vigente de `C-A1-S1` em `E1`**. **Não se
+escreve aqui, e não se lê daqui, que "chave numérica = posição".**
+
+##### `CY10` — seletor
+
+Forma: **`[chave=literal]`**, **no máximo um por segmento**. Permitido em **caminho absoluto**,
+em **caminho relativo** e em **`itera_sobre` absoluto**.
+
+**Proibidos**: `[0]`; **posição**; `first`; `last`; ***fallback***; **busca parcial**;
+***substring***; **similaridade**; e **inferência** de qualquer espécie.
+
+Resolução: **zero *matches* → *FAIL-CLOSED***; **um *match* → continua**; **mais de um *match*
+→ *FAIL-CLOSED***.
+
+##### `CY11` — `@` isolado
+
+**`@`**, sozinho, é **caminho relativo válido** e significa **o próprio item corrente**. Isso
+mantém **expressável** a futura iteração sobre **coleção de escalares**. **Não se afirma aqui
+que o corpus atual utilize esse caso.**
+
+##### `CY12` — `itera_sobre`: mínimo inseparável
+
+Registra-se **somente** o mínimo que não se pode separar desta gramática: `itera_sobre` é uma
+**`str`**; usa a **forma ABSOLUTA** da mesma gramática-base; **`@` é PROIBIDO em
+`itera_sobre`**; precisa **resolver para uma coleção**; **seletores estruturais são
+permitidos**; **mapa, escalar ou `null` como terminal de `itera_sobre` é *FAIL-CLOSED*
+estrutural**; **isto não é `C-7`**; e **o item atual torna-se a raiz dos *bindings* relativos**.
+
+**NÃO são decididos aqui**: **ordem**; **coleção vazia**; **composição textual**; **repetição de
+*placeholder***; **propagação de erro entre itens**; e **execução operacional**.
+
+##### `CY13` — três responsabilidades distintas
+
+| Responsabilidade | Acessa o YAML factual? | O que valida |
+|---|---|---|
+| **Parser da gramática** | **não** | sintaxe; alfabeto; absoluto × relativo; seletor; canonicalidade; chave numérica **não endereçável** |
+| **Validação estrutural do índice** | **não** | **relativo somente** em fragmento com `itera_sobre`; **`@` proibido no próprio `itera_sobre`** |
+| **Resolver** | **sim**, contra o YAML **já carregado** | existência da chave; tipo intermediário; seletor sobre lista; **zero / um / múltiplos *matches***; `itera_sobre` terminando em **coleção** |
+
+**Nenhuma dessas três é implementada aqui**, e **nenhuma fronteira técnica é desenhada**.
+
+##### `CY14` — terminal, `C-7`, `ASSERTIVA` e `RUNTIME_AUTORITATIVO`
+
+**Terminal.** Ao alcançar o nó terminal, a **resolução é SUCESSO** e o **valor é devolvido como
+está** — podendo ser **escalar**, **lista**, **mapa** ou **`null`**. A **admissibilidade
+posterior** pertence a **`C-5`**, **`C-6`** e **`C-7`**. **Nenhum juiz adicional de tipo
+terminal é criado.**
+
+**`C-7` é preservada, e NÃO é reaberta nem materializada**: **chave inexistente ≠ `null`**;
+**atravessar `null` no meio é falha estrutural**; **terminal `null` significa caminho
+resolvido**, e o tratamento pertence a **`C-7`**; **zero ou múltiplos *matches* são falha de
+caminho**, não `C-7`; a estrutura `pendente` pertence a **`C-7`** **somente após** resolução
+apropriada; e **o resolver não lê chaves irmãs por conveniência**.
+
+**`ASSERTIVA` e `RENDERIZADO`.** A **mesma** gramática vale para `RENDERIZADO` de origem `YAML`
+e para `ASSERTIVA` de origem `YAML`. A diferença entre os dois mecanismos ocorre **depois da
+resolução**. **Não existe gramática paralela.**
+
+**`RUNTIME_AUTORITATIVO` é preservado**: ele **PROÍBE** `caminho_yaml` e continua usando
+**apenas** `fato_runtime`.
+
+##### Relação com `E1` — nada é alterado
+
+**`src/casa77_sdr/response_index.py` continua INALTERADO.** `E1` valida a **estrutura básica** e
+aplica **parte** da proibição posicional (**`C-A1-S1`**); ele **NÃO fecha a gramática completa**.
+A futura materialização da gramática **poderá subsumir logicamente** parte dessas validações,
+mas **nesta entrega nada é removido, nada é alterado, nenhum teste é alterado e nenhuma
+responsabilidade é migrada**.
+
+##### Categorias conceituais de *FAIL-CLOSED*
+
+Apenas **conceituais**. **NÃO** são definidos aqui **classe Python**, **exceção concreta**,
+**mensagem**, **herança**, **função**, **módulo**, **API** nem **precedência técnica concreta**.
+
+| Camada | Espécies de impedimento |
+|---|---|
+| **Sintaxe** | forma inválida; referência **não endereçável / posicional** |
+| **Estrutura do índice** | **relativo sem `itera_sobre`**; **`@` em `itera_sobre`** |
+| **Resolução** | segmento inexistente; tipo estrutural incompatível; **zero *match***; **múltiplos *matches***; `itera_sobre` que **não resolve para coleção** |
+
+Todas são ***FAIL-CLOSED***.
+
+##### Exemplos — SOMENTE SINTÉTICOS
+
+Os exemplos abaixo usam **nomes e identificadores INVENTADOS**. Eles **não reproduzem
+identificador, valor, preço, capacidade, horário, condição comercial ou qualquer fato real** de
+`knowledge/casa77.yaml`.
+
+| Exemplo sintético | Forma | Leitura |
+|---|---|---|
+| `bloco_exemplo.campo_exemplo` | absoluta | dois segmentos a partir da raiz |
+| `bloco_exemplo.colecao_exemplo[id=item_exemplo].campo_exemplo` | absoluta | seletor **estrutural**, exatamente um por segmento |
+| `@.campo_exemplo` | relativa | um campo **do item corrente** |
+| `@` | relativa | **o próprio item corrente** (`CY11`) |
+| `bloco_exemplo.123` | **inválida** | chave **exclusivamente numérica** (`CY9`) |
+| `bloco_exemplo.colecao_exemplo[0]` | **inválida** | **seleção posicional** (`C-A1-S1`, `CY10`) |
+| `bloco_exemplo.@campo_exemplo` | **inválida** | **`@` fora da posição inicial** (`CY5`) |
+| `bloco_exemplo.` | **inválida** | `.` final (`CY5`) |
+
+##### Evidência estrutural do *snapshot* atual — EVIDÊNCIA, NÃO NORMA
+
+Fatos **estruturais e sanitizados** do `knowledge/casa77.yaml` vigente, registrados **sem
+qualquer valor, identificador real, preço, capacidade, horário ou condição comercial**: o YAML
+atual é **compatível** com esta gramática; existem **5** coleções de mapas, das quais **4**
+possuem **identificador estrutural utilizável** e **1 não possui**; existem **12** listas de
+escalares; e **nenhum *binding* aprovado atual exige `itera_sobre`** — os únicos usos de
+`itera_sobre` neste documento são as **regras** `C-2j`, `C-4g`, `C-A1-S2` e `C-A1-S3`, e
+**nenhum *binding* de `C-A2-B` o declara**.
+
+**ESTE *SNAPSHOT* É EVIDÊNCIA DO ESTADO ATUAL E NÃO ALTERA NORMA.** A gramática permanece
+válida ainda que um futuro `knowledge/casa77.yaml` aprovado tenha outra distribuição estrutural.
+
+##### Estado após esta micro-arbitragem
+
+| # | Estado |
+|---|---|
+| 1 | **Gramática de `caminho_yaml` = ARBITRADA DOCUMENTALMENTE / NÃO MATERIALIZADA.** |
+| 2 | **Índice físico** `knowledge/indice-respostas-aprovadas.yaml` = **INEXISTENTE**. |
+| 3 | **Parser da gramática = INEXISTENTE**; **resolver = INEXISTENTE**. |
+| 4 | **Sintaxe de *placeholder* = ABERTA.** |
+| 5 | **Formato `hora` = PENDÊNCIA SEPARADA**, não decidida aqui. |
+| 6 | **`C-7` = NÃO MATERIALIZADA**, e **não reaberta**. |
+| 7 | **`C-A1-ST6`–`C-A1-ST10` = NÃO satisfeitas.** |
+| 8 | **Autoridade de status NÃO migrada** — `knowledge/respostas-aprovadas.md` continua a autoridade (**`C-11`**). |
+| 9 | **`C` continua ARBITRADA / NÃO MATERIALIZADA**; **`C-A6` não existe**; **a 3B.8 continua INEXISTENTE**. |
+| 10 | **Zero código, zero teste e zero `knowledge/**`** foram alterados; **`src/casa77_sdr/response_index.py` continua inalterado**. |
+
+**ARBITRAR A GRAMÁTICA DE `caminho_yaml` NÃO É IMPLEMENTAR PARSER, NÃO É IMPLEMENTAR RESOLVER,
+NÃO É CRIAR ÍNDICE, NÃO É RESOLVER *PLACEHOLDER*, NÃO É MATERIALIZAR `C-7`, NÃO É MIGRAR
+AUTORIDADE E NÃO É MATERIALIZAR `C`.**
+
+---
+
 ## 3. Comparação técnica — Opção A × Opção B
 
 ### Opção A — Python, aplicação modular simples
