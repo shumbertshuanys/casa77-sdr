@@ -4,8 +4,113 @@ Documento de estado: registra etapa, subetapa, PRs, commits, testes e próxima a
 **Não contém dado comercial.** Preço, capacidade, tipo de evento, horário, restrição e
 qualquer outra condição vivem exclusivamente em `knowledge/casa77.yaml`.
 
-Atualizado em: 2026-09-07 (**reconciliação documental pós-merge da composição total
-determinística de status dos fragmentos emitíveis**). Esta entrega é **EXCLUSIVAMENTE
+Atualizado em: 2026-09-07 (**micro-arbitragem documental da gramática de `caminho_yaml`**).
+Esta entrega é **EXCLUSIVAMENTE DOCUMENTAL / NORMATIVA**: altera **somente**
+`docs/07-arquitetura-motor-respostas.md` e este documento, e **não altera código, testes,
+`knowledge/**`, `prompts/**`, `CLAUDE.md`, configuração nem dependências. **A GRAMÁTICA DE
+`caminho_yaml` DEIXA DE ESTAR ABERTA**: ela está agora **ARBITRADA DOCUMENTALMENTE**, na
+alternativa aprovada **`A2`** — **`caminho_yaml` permanece semanticamente uma `str`, com
+CAMINHO ABSOLUTO SEM MARCADOR e CAMINHO RELATIVO EXPLICITAMENTE MARCADO POR `@`**. **A
+gramática governa a `str` DEPOIS do parsing YAML**, e **não** decide sintaxe de arquivo, estilo
+de serialização, *loader* ou qualquer aspecto físico do futuro índice. **Duas formas semânticas,
+e apenas duas**: a **absoluta**, **sem marcador**, cuja raiz é o **mapeamento raiz de
+`knowledge/casa77.yaml` já carregado**, permitida **fora** de `itera_sobre` **e também dentro**
+de fragmento que o possua; e a **relativa**, marcada por **`@`** exatamente na posição inicial,
+cuja raiz é o **item corrente** da coleção percorrida por `itera_sobre`, permitida **somente**
+em *binding* de fragmento que **declare** `itera_sobre` — relativo **sem** `itera_sobre` é
+***FAIL-CLOSED* estrutural**. **A forma é sempre explícita na própria `str`** e **o contexto
+jamais transforma silenciosamente absoluto em relativo**. **`C-4h` e `C-A1-S2` permanecem
+literais**: `C-4h` continua dizendo que os *bindings* do item **PODEM** usar caminho relativo, e
+`C-A1-S2` **disciplina** a disponibilidade e a semântica dos relativos durante a iteração **sem**
+tornar todos os *bindings* obrigatoriamente relativos — **absolutos e relativos podem coexistir**
+num mesmo fragmento com `itera_sobre`. **`C-A1-S1` continua literal**: **seleção posicional
+permanece PROIBIDA**. **Gramática**: `caminho ::= caminho_absoluto | caminho_relativo`;
+`caminho_absoluto ::= segmento ( "." segmento )*`; `caminho_relativo ::= "@" ( "." segmento )*`;
+`segmento ::= chave seletor?`; `seletor ::= "[" chave "=" literal "]"`; **chave** é `NOME`
+**exceto se composta exclusivamente por dígitos**; **literal** é `NOME`; e `NOME` é um ou mais
+caracteres de `A-Z`, `a-z`, `0-9` e `_`. **Alfabeto semântico permitido, e nada além**: `A-Z`,
+`a-z`, `0-9`, `_`, `.`, `[`, `]`, `=` e `@`. **Canonicalidade semântica**: ***whitespace*
+proibido**, **aspas como caracteres do valor proibidas**, ***escape* inexistente**, **Unicode
+não ASCII proibido**, **caixa significativa**, **zero normalização, `casefold`, coerção ou
+tolerância**; são **inválidos** o `.` final, o segmento vazio, o seletor vazio, a chave seletora
+vazia, o literal vazio, o `@` fora da posição inicial e **dois seletores no mesmo segmento**.
+**YAML físico × valor semântico**: como `@` **não pode iniciar um *plain scalar* YAML**, um
+caminho relativo deverá ser serializado **com *quoting*** no futuro arquivo do índice — as
+**aspas pertencem à serialização e NÃO à `str` nem à gramática**, e **aspas simples × duplas
+NÃO são decididas** aqui. **Literal seletor é sempre `str`** — restrição **deliberada** do MVP,
+conteúdo em `[A-Za-z0-9_]+`, **zero inferência** de inteiro, boolean, `null` ou outro tipo YAML,
+com comparação futura **literal, por `str`, sem coerção**. **Serialização dos identificadores no
+YAML comercial**: um identificador estrutural usado por `caminho_yaml` **DEVE resultar em `str`
+depois do parsing** de `knowledge/casa77.yaml`; se um futuro identificador de **`MD-18`** tiver
+conteúdo que, como *plain scalar*, seja lido pelo *loader* como número, boolean, `null` ou outro
+tipo não-`str`, ele **DEVERÁ ser serializado com *quoting*** — exemplo **apenas sintético**, um
+identificador semântico `"2026"` precisa **permanecer `str`**. **`knowledge/casa77.yaml` NÃO foi
+alterado** e **nenhum identificador novo foi criado**. **Chave exclusivamente numérica**: uma
+chave YAML textual `"123"` **não é semanticamente uma posição**, mas a gramática do MVP
+**deliberadamente não a torna endereçável** — **chave só de dígitos é forma inválida** —, por
+**fechamento conservador**, **auditabilidade estática** e **compatibilidade com a materialização
+vigente de `C-A1-S1` em `E1`**; **não se escreve nem se lê daqui que "chave numérica = posição"**.
+**Seletor**: `[chave=literal]`, **no máximo um por segmento**, permitido em absoluto, relativo e
+`itera_sobre` absoluto; **proibidos** `[0]`, posição, `first`, `last`, *fallback*, busca parcial,
+*substring*, similaridade e inferência; **zero *matches* → *FAIL-CLOSED***, **um → continua**,
+**mais de um → *FAIL-CLOSED***. **`@` isolado** é caminho relativo **válido** e significa **o
+próprio item corrente**, mantendo expressável a futura iteração sobre coleção de escalares —
+**sem afirmar que o corpus atual use esse caso**. **`itera_sobre` — mínimo inseparável**: é
+`str`; usa a **forma ABSOLUTA** da mesma gramática-base; **`@` é proibido** nele; precisa
+**resolver para coleção**; admite **seletores estruturais**; **mapa, escalar ou `null` como
+terminal é *FAIL-CLOSED* estrutural**; **não é `C-7`**; e **o item atual torna-se a raiz dos
+*bindings* relativos** — **sem decidir** ordem, coleção vazia, composição textual, repetição de
+*placeholder*, propagação de erro entre itens ou execução operacional. **Três responsabilidades
+distintas** ficam registradas e **nenhuma é implementada**: o **parser da gramática** (sem YAML
+factual), a **validação estrutural do índice** (sem YAML factual) e o **resolver** (contra o
+YAML já carregado). **Terminal**: ao alcançar o nó terminal a resolução é **SUCESSO** e o valor
+é devolvido **como está** — escalar, lista, mapa ou `null` —, e a admissibilidade posterior
+pertence a **`C-5`**, **`C-6`** e **`C-7`**; **nenhum juiz adicional de tipo terminal é criado**.
+**`C-7` é preservada e NÃO é reaberta nem materializada**. **`ASSERTIVA` e `RENDERIZADO` de
+origem `YAML` usam a MESMA gramática**, com a diferença ocorrendo **depois da resolução** —
+**nenhuma gramática paralela**. **`RUNTIME_AUTORITATIVO` continua PROIBINDO `caminho_yaml`** e
+usando **apenas** `fato_runtime`. **`E1` continua INALTERADO**:
+`src/casa77_sdr/response_index.py` valida a estrutura básica e **parte** da proibição posicional,
+**não fecha a gramática completa**, e **nada foi removido, alterado ou migrado**, **nenhum teste
+foi tocado**. **Categorias de *FAIL-CLOSED* são apenas CONCEITUAIS** — sintaxe, estrutura do
+índice e resolução —, e **NÃO** foram definidos classe Python, exceção concreta, mensagem,
+herança, função, módulo, API ou precedência técnica concreta. **Os rótulos locais `CY1`–`CY14`
+existem SOMENTE como rastreabilidade interna do bloco e NÃO são normativos fora dele**; **`C-A6`
+NÃO EXISTE** e **nenhuma subetapa, `C15`, `E15` ou 3B.8 foi criada**. **Todos os exemplos são
+SINTÉTICOS**: **nenhum identificador, valor, preço, capacidade, horário ou condição comercial
+real é reproduzido**. **Evidência estrutural sanitizada do *snapshot* atual, registrada como
+EVIDÊNCIA e NÃO como norma**: o YAML vigente é **compatível** com a gramática; há **5** coleções
+de mapas — **4 com identificador estrutural utilizável** e **1 sem** —, **12** listas de
+escalares, e **nenhum *binding* aprovado atual exige `itera_sobre`**. **ESTADO APÓS ESTA
+MICRO-ARBITRAGEM**: **gramática de `caminho_yaml` = ARBITRADA DOCUMENTALMENTE / NÃO
+MATERIALIZADA**; **índice físico INEXISTENTE**; **parser INEXISTENTE**; **resolver
+INEXISTENTE**; ***placeholder* ABERTO**; **`hora` = pendência separada**; **`C-7` NÃO
+MATERIALIZADA**; **`C-A1-ST6`–`C-A1-ST10` NÃO satisfeitas**; **`C-11` NÃO migrada**; **`C`
+continua ARBITRADA / NÃO MATERIALIZADA**; **3B.8 INEXISTENTE**. **ZERO CÓDIGO, ZERO TESTE e
+ZERO `knowledge/**`** e **NENHUM `pytest` FOI EXECUTADO AQUI** — a **baseline permanece `4594
+passed` / Python 3.14.5**, evidência da entrega funcional do **PR #127**, e a **última entrega
+funcional de código continua sendo a composição total de status**. **PRÓXIMA AÇÃO**: **retornar
+ao GPT para auditoria da micro-arbitragem integrada à PR antes de qualquer planejamento técnico
+posterior** — **nenhuma implementação foi eleita**, e ***placeholder*, parser, resolver, índice,
+`C-7` e `hora` NÃO foram iniciados**. O **item documental 107** abaixo **NÃO é "subetapa 107"**,
+**NÃO é `C15`**, **NÃO é `E15`**, **NÃO é identificador normativo** e **NÃO cria a 3B.8** —
+registra **exclusivamente** esta micro-arbitragem.
+
+**Atualização anterior — 2026-09-07 (reconciliação do estado corrente de `C` na tabela de
+pendências técnicas em aberto), preservada como registro daquele momento.** Aquela entrega é
+**EXCLUSIVAMENTE DOCUMENTAL**, alterou **uma única linha** de `docs/00-estado-atual.md`
+(**`+1 / −1`**) e está integrada à `main` pelo **PR #129** — commit
+`ed7d60edbe833c0ce820c092e10404de45ce393f`, merge
+`66ca40f355ed58a6aaebf5079dd0758cc18387ad`, branch de origem
+`docs/reconcile-current-c-materialization-state`. Ela reconciliou a leitura corrente da
+pendência `C` com os registros posteriores já existentes — **`C-A2-N9`**, **`C-A2-N10`**,
+**`C-A2-N11` (16/16)** e **`C-A2-N12`** = **CUMPRIDAS**, **`FE-11b` = APLICADA / MATERIALIZADA
+POR REMOÇÃO** e **`FE-11a` = APLICADA / RECONCILIADA** —, **preservando integralmente os
+registros históricos equivalentes** e **sem materializar coisa alguma**.
+
+**Atualização anterior — 2026-09-07 (reconciliação documental pós-merge da composição total
+determinística de status dos fragmentos emitíveis), preservada como registro daquele momento.**
+Aquela entrega é **EXCLUSIVAMENTE
 DOCUMENTAL**: altera **somente** este documento, e **não altera código, testes,
 `knowledge/**`, `docs/07-arquitetura-motor-respostas.md`, `prompts/**`, `CLAUDE.md`,
 configuração nem dependências. **A PR #124 deixou de ser a entrega funcional de código mais
@@ -7101,6 +7206,143 @@ a **pendência residual continua aberta**.
      o que **continua verdadeiro**, e cuja decisão *fail-closed* **é agora materializada em
      código** por esta entrega.
 
+107. **A GRAMÁTICA DE `caminho_yaml` ESTÁ ARBITRADA DOCUMENTALMENTE — ALTERNATIVA `A2`.**
+     **ESTE ITEM 107 É REGISTRO DOCUMENTAL. NÃO É "SUBETAPA 107", NÃO É `C15`, NÃO É `E15`, NÃO
+     É IDENTIFICADOR NORMATIVO E NÃO CRIA A 3B.8** — a **3B.8 continua INEXISTENTE**, e a
+     **3B.7 continua a última subetapa numerada**. Ele registra **exclusivamente** a arbitragem
+     documental da gramática de `caminho_yaml`. **`C-A6` NÃO EXISTE.**
+     **Escopo da entrega.** **EXCLUSIVAMENTE DOCUMENTAL / NORMATIVA**: **dois arquivos** —
+     `docs/07-arquitetura-motor-respostas.md` e `docs/00-estado-atual.md`. **Zero `src/**`, zero
+     `tests/**`, zero `knowledge/**`, zero `prompts/**`, zero `CLAUDE.md`, zero configuração e
+     zero dependência.** **Nenhum parser é implementado**, **nenhum resolver é implementado**,
+     **nenhum índice é criado**, **nenhum *binding* é materializado** e **nenhum módulo, função,
+     assinatura, exceção, mensagem ou API é decidido**.
+     **Posição do bloco.** `docs/07` §2.3, **imediatamente antes** de
+     `## 3. Comparação técnica — Opção A × Opção B`, sob o cabeçalho exato
+     **"Micro-arbitragem documental da gramática de caminho_yaml"**. Os rótulos locais
+     **`CY1`–`CY14`** existem **somente** como rastreabilidade interna do bloco e **NÃO são
+     normativos fora dele**.
+     **Decisão central — alternativa `A2`.** `caminho_yaml` **permanece semanticamente uma
+     `str`**, e a gramática governa **essa `str`, DEPOIS do parsing YAML**. Existem **exatamente
+     duas** formas semânticas: a **ABSOLUTA**, **sem marcador**, cuja raiz é o **mapeamento raiz
+     de `knowledge/casa77.yaml` já carregado**, **permitida fora de `itera_sobre` e também
+     dentro** de fragmento que o possua; e a **RELATIVA**, marcada por **`@` exatamente na
+     posição inicial**, cuja raiz é o **item corrente** da coleção percorrida por `itera_sobre`,
+     **permitida somente** em *binding* de fragmento que **declare** `itera_sobre` — **relativo
+     sem `itera_sobre` é *FAIL-CLOSED* estrutural**. **A forma é sempre explícita na própria
+     `str`**, e **o contexto jamais transforma silenciosamente absoluto em relativo**.
+     **`C-4h` × `C-A1-S2` — ambas preservadas.** **`C-4h` permanece literal**: os *bindings* do
+     item **PODEM** usar caminho relativo. **`C-A1-S2` disciplina** a disponibilidade e a
+     semântica dos relativos durante a iteração, mas **NÃO torna todos os *bindings*
+     obrigatoriamente relativos** — **absolutos e relativos podem coexistir** num mesmo fragmento
+     com `itera_sobre`. **`C-A1-S1` permanece literal**: **seleção posicional continua
+     PROIBIDA**.
+     **Gramática.** `caminho ::= caminho_absoluto | caminho_relativo`; `caminho_absoluto ::=
+     segmento ( "." segmento )*`; `caminho_relativo ::= "@" ( "." segmento )*`; `segmento ::=
+     chave seletor?`; `seletor ::= "[" chave "=" literal "]"`; **chave** é `NOME` **exceto se
+     composta exclusivamente por dígitos**; **literal** é `NOME`; `NOME` é um ou mais caracteres
+     de `A-Z`, `a-z`, `0-9` e `_`. **Alfabeto semântico permitido, e nada além**: `A-Z`, `a-z`,
+     `0-9`, `_`, `.`, `[`, `]`, `=` e `@`.
+     **Canonicalidade semântica.** ***Whitespace* PROIBIDO**; **aspas como caracteres do valor
+     PROIBIDAS**; ***escape* inexistente**; **Unicode não ASCII PROIBIDO**; **caixa
+     significativa**; **zero normalização, `casefold`, coerção e tolerância**. São **inválidos**:
+     `.` final; segmento vazio; seletor vazio; chave seletora vazia; literal vazio; **`@` fora da
+     posição inicial**; e **dois seletores no mesmo segmento**.
+     **YAML físico × valor semântico.** Como **`@` não pode iniciar um *plain scalar* YAML**, um
+     caminho relativo **deverá ser serializado com *quoting*** no futuro arquivo do índice — por
+     exemplo, de forma **sintética**, `caminho_yaml: "@.campo_exemplo"`. **As aspas pertencem à
+     serialização YAML** e **NÃO** pertencem à `str` nem à gramática. **Aspas simples × duplas
+     NÃO foram decididas**: ambas são apenas serialização quando produzem **a mesma `str`**.
+     **Literal seletor é sempre `str`.** **Restrição normativa DELIBERADA do MVP**: conteúdo em
+     `[A-Za-z0-9_]+`, **zero inferência** de inteiro, boolean, `null` ou outro tipo YAML, com
+     comparação futura **literal, por `str`, sem coerção**.
+     **Serialização dos identificadores no YAML comercial.** Um identificador estrutural usado
+     por `caminho_yaml` **DEVE resultar em `str` depois do parsing** de `knowledge/casa77.yaml`.
+     Se um futuro identificador introduzido por **`MD-18`** tiver conteúdo que, escrito como
+     *plain scalar*, seja lido pelo *loader* como **número**, **boolean**, **`null`** ou outro
+     tipo **não-`str`**, ele **DEVERÁ ser serializado com *quoting***. Exemplo **apenas
+     sintético**: um identificador semântico `"2026"` precisa **permanecer `str`**, e não virar
+     inteiro. **As aspas não fazem parte do identificador semântico.**
+     **`knowledge/casa77.yaml` NÃO foi alterado** e **nenhum identificador novo foi criado**.
+     **Chave exclusivamente numérica.** Uma chave YAML textual `"123"` **NÃO é semanticamente uma
+     posição**; ainda assim, **a gramática do MVP deliberadamente NÃO a torna endereçável** —
+     **chave composta apenas de dígitos é forma inválida**. Motivos, e apenas estes: **fechamento
+     conservador**, **auditabilidade estática** e **compatibilidade com a materialização vigente
+     de `C-A1-S1` em `E1`**. **Não se escreve nem se lê daqui que "chave numérica = posição".**
+     **Seletor.** Forma `[chave=literal]`, **no máximo um por segmento**, permitido em **caminho
+     absoluto**, **caminho relativo** e **`itera_sobre` absoluto**. **Proibidos**: `[0]`,
+     posição, `first`, `last`, *fallback*, busca parcial, *substring*, similaridade e inferência.
+     Resolução: **zero *matches* → *FAIL-CLOSED***; **um → continua**; **mais de um →
+     *FAIL-CLOSED***.
+     **`@` isolado.** É **caminho relativo válido** e significa **o próprio item corrente**,
+     mantendo **expressável** a futura iteração sobre coleção de escalares. **Não se afirma que o
+     corpus atual utilize esse caso.**
+     **`itera_sobre` — mínimo inseparável.** É `str`; usa a **forma ABSOLUTA** da mesma
+     gramática-base; **`@` é PROIBIDO** nele; precisa **resolver para coleção**; admite
+     **seletores estruturais**; **mapa, escalar ou `null` como terminal é *FAIL-CLOSED*
+     estrutural**; **não é `C-7`**; e **o item atual torna-se a raiz dos *bindings* relativos**.
+     **NÃO foram decididos**: ordem; coleção vazia; composição textual; repetição de
+     *placeholder*; propagação de erro entre itens; execução operacional.
+     **Três responsabilidades distintas, nenhuma implementada.** **Parser da gramática** — sem
+     acessar o YAML factual — valida sintaxe, alfabeto, absoluto × relativo, seletor,
+     canonicalidade e chave numérica não endereçável. **Validação estrutural do índice** — sem
+     ler o YAML factual — valida que o **relativo só ocorre em fragmento com `itera_sobre`** e
+     que **`@` é proibido no próprio `itera_sobre`**. **Resolver** — contra o YAML **já
+     carregado** — valida existência da chave, tipo intermediário, seletor sobre lista, **zero /
+     um / múltiplos *matches*** e `itera_sobre` terminando em coleção.
+     **Terminal.** Ao alcançar o nó terminal, a **resolução é SUCESSO** e o **valor é devolvido
+     como está** — escalar, lista, mapa ou `null`. A **admissibilidade posterior** pertence a
+     **`C-5`**, **`C-6`** e **`C-7`**, e **nenhum juiz adicional de tipo terminal foi criado**.
+     **`C-7` preservada, NÃO reaberta e NÃO materializada.** **Chave inexistente ≠ `null`**;
+     **atravessar `null` no meio é falha estrutural**; **terminal `null` significa caminho
+     resolvido**, e o tratamento pertence a **`C-7`**; **zero ou múltiplos *matches* são falha de
+     caminho**; a estrutura `pendente` pertence a **`C-7`** **somente após** resolução
+     apropriada; e **o resolver não lê chaves irmãs por conveniência**.
+     **`ASSERTIVA` / `RENDERIZADO` e `RUNTIME_AUTORITATIVO`.** A **mesma** gramática vale para
+     `RENDERIZADO` e `ASSERTIVA` de origem `YAML`, com a diferença ocorrendo **depois da
+     resolução** — **nenhuma gramática paralela**. **`RUNTIME_AUTORITATIVO` continua PROIBINDO
+     `caminho_yaml`** e usando **apenas** `fato_runtime`.
+     **`E1` inalterado.** `src/casa77_sdr/response_index.py` **continua INALTERADO**: `E1` valida
+     a **estrutura básica** e **parte** da proibição posicional, e **NÃO fecha a gramática
+     completa**. A futura materialização **poderá subsumir logicamente** parte dessas validações,
+     mas **nesta entrega nada foi removido, nada foi alterado, nenhum teste foi tocado e nenhuma
+     responsabilidade foi migrada**.
+     **Categorias de *FAIL-CLOSED* — apenas CONCEITUAIS.** **Sintaxe**: forma inválida;
+     referência não endereçável/posicional. **Estrutura do índice**: relativo sem `itera_sobre`;
+     `@` em `itera_sobre`. **Resolução**: segmento inexistente; tipo estrutural incompatível;
+     zero *match*; múltiplos *matches*; `itera_sobre` que não resolve para coleção. **NÃO foram
+     definidos** classe Python, exceção concreta, mensagem, herança, função, módulo, API nem
+     precedência técnica concreta.
+     **Exemplos SINTÉTICOS.** Todos os exemplos do bloco usam **nomes e identificadores
+     INVENTADOS** — `bloco_exemplo.colecao_exemplo[id=item_exemplo].campo_exemplo`, `@.campo_exemplo`,
+     `@` —, e **nenhum identificador, valor, preço, capacidade, horário ou condição comercial
+     real de `knowledge/casa77.yaml` é reproduzido**.
+     **Evidência estrutural sanitizada do *snapshot* — EVIDÊNCIA, NÃO NORMA.** O YAML vigente é
+     **compatível** com a gramática; há **5** coleções de mapas, das quais **4** possuem
+     **identificador estrutural utilizável** e **1 não possui**; há **12** listas de escalares; e
+     **nenhum *binding* aprovado atual exige `itera_sobre`**. **Nenhum valor, identificador real,
+     preço, capacidade, horário ou condição comercial foi registrado**, e **o *snapshot* não
+     altera norma**.
+     **Testes.** **NENHUM `pytest` FOI EXECUTADO NESTA ENTREGA**, porque **zero código, zero
+     teste e zero `knowledge/**` mudaram**. A **baseline registrada permanece `4594 passed` /
+     Python 3.14.5**, sob **`-W error`**, **evidência da entrega funcional do PR #127** — e
+     **nenhuma execução nova é alegada aqui**. A **entrega funcional de código mais recente
+     continua sendo a composição total de status** (PR #127).
+     **Estado após esta micro-arbitragem.** **Gramática de `caminho_yaml` = ARBITRADA
+     DOCUMENTALMENTE / NÃO MATERIALIZADA**; **índice físico INEXISTENTE**; **parser
+     INEXISTENTE**; **resolver INEXISTENTE**; ***placeholder* ABERTO**; **`hora` = pendência
+     separada**; **`C-7` NÃO MATERIALIZADA**; **`C-A1-ST6`–`C-A1-ST10` NÃO satisfeitas**;
+     **`C-11` NÃO migrada**; **`C` continua ARBITRADA / NÃO MATERIALIZADA**; **3B.8 INEXISTENTE**.
+     **Próxima ação.** **Retornar ao GPT para auditoria da micro-arbitragem integrada à PR antes
+     de qualquer planejamento técnico posterior.** **Nenhuma implementação foi eleita**, e
+     ***placeholder*, parser, resolver, índice, `C-7` e `hora` NÃO foram iniciados**.
+     **Relação com os itens anteriores.** **Os itens 87 a 106 permanecem corretos como registro
+     do momento em que foram escritos.** Este item 107 **não os reescreve**; ele registra o
+     estado **posterior**. Em particular, todos os registros anteriores que afirmam que a
+     **gramática de `caminho_yaml` estava ABERTA** — inclusive **`C-A5-X3`**, **`GR7`** e
+     **`PM12`** em `docs/07`, e as atualizações datadas e itens antigos deste documento —
+     **permanecem corretos para o momento em que foram escritos** e **não foram alterados**.
+
 ## Arbitragens
 
 Decisões de governança. Não criam marco funcional nem código. A coluna Decisão informa o
@@ -7832,7 +8074,7 @@ Registradas aqui como estado, não resolvidas nesta entrega.
 | # | Pendência | Antes de quê precisa ser arbitrada |
 |---|---|---|
 | B | Colisão conceitual de nome: `RegistroAtendimento` já existe em `src/casa77_sdr/persistence.py` como dataclass de transporte, enquanto `docs/07` usa o mesmo nome para uma responsabilidade futura | implementar o componente `RegistroAtendimento` descrito em `docs/07` |
-| C | Contrato estruturado, legível por máquina, ligando as respostas aprovadas (`Rxx`) aos campos do YAML. **ARBITRADA / NÃO MATERIALIZADA.** **CONTRATO: ARBITRADO** — o contrato documental estruturado do futuro índice está **fechado e aprovado** em `docs/07` §2.3, registrado em `docs/07` §12, item 19. **MATERIALIZAÇÃO: NÃO EXISTE** — o arquivo `knowledge/indice-respostas-aprovadas.yaml` **continua inexistente**; `knowledge/respostas-aprovadas.md` **permanece Markdown** e foi **atualizado apenas como fonte de redação aprovada pela Entrega 2**, **sem conversão em *template* ou índice**; **nenhum status foi removido do Markdown**; e não há *renderer*, *template* físico nem *binding* físico. **A partir do PR #84 existe um VALIDADOR ESTRUTURAL** — a microentrega **`E1`**, `src/casa77_sdr/response_index.py` —, que valida a **forma** de uma estrutura já parseada que pretende ser o índice, **sem criar o índice**, **sem lê-lo**, **sem loader** e **sem ler `knowledge/**`. **A partir do PR #86 existe também um CARREGADOR *fail-closed*** — `src/casa77_sdr/response_index_load.py` —, que lê e recusa um artefato **explicitamente apontado**, delegando toda a forma ao validador. **A partir do PR #89 existe também um COMPARADOR de equivalência textual** — `src/casa77_sdr/response_equivalence.py` —, que julga a equivalência de `C-15b` entre **duas `str` já em representação canônica**, **sem analisar Markdown**, **sem I/O** e **sem conhecer o índice**. **A partir do PR #91 existem também os FORMATADORES determinísticos de `C-6`** — `src/casa77_sdr/response_format.py` —, que materializam **cinco** dos seis formatos do vocabulário fechado — **`inteiro`**, **`inteiro_agrupado`**, **`simbolo_moeda`**, **`texto`** e **`lista`** — como **funções puras sobre valores já resolvidos**; o formato **`hora` NÃO foi materializado** e sua **lacuna normativa continua ABERTA**. **A partir do PR #93 existe também o AVALIADOR determinístico booleano de `ASSERTIVA`** — `src/casa77_sdr/response_assertion.py` —, que julga um **predicado do vocabulário fechado** sobre um **valor já resolvido**, **apenas no domínio booleano estrito**; valor fora dele é **NÃO AVALIÁVEL** e **nunca vira assertiva falsa**, e essa recusa é **delimitação técnica fail-closed daquela microentrega**, **não** expansão de **`C-7`**. **A partir do PR #95 existe também o VERIFICADOR determinístico da correspondência bijetiva de `C-A1-B3` / `C-A1-B4`** — `src/casa77_sdr/response_bijection.py` —, que julga se uma relação **já fornecida pelo chamador** é **bijetiva entre dois domínios também já fornecidos**, sobre **tokens opacos** `str` **exata** e pares `tuple` **exata**, por **igualdade nativa exata de `str`**, **sem normalização, sem coerção, sem *parsing* e sem I/O**; ele **não extrai fragmentos, não extrai unidades, não define identidade física de fragmento, não lê índice real, não prova completude dos domínios, não executa a bijeção física do corpus real e não satisfaz `C-A1-ST7` isoladamente** — **a completude dos domínios é pré-condição do chamador**. **A partir do PR #97 existe também o CANONICALIZADOR determinístico de rótulo de status** — `src/casa77_sdr/response_status.py` —, que traduz um **rótulo já extraído** para o status canônico de `C-3` **somente** nas três linhas com tradução automática arbitrada em `C-A1-ST1`–`C-A1-ST3`, com `str` **exata**, **comparação literal**, **zero normalização** e **fail-closed**; **`PARCIAL` continua sem tradução automática** (**C-A1-ST4**, que exige mapeamento explícito por fragmento emitível) e **`BLOQUEADO` não recebeu mapeamento inventado** (**C-A1-ST5**, nota interna). Ele **não extrai rótulo nem fragmento, não cria identidade física de fragmento, não lê índice real, não satisfaz `C-A1-ST6`–`C-A1-ST10` e não migra a autoridade de status**. **Nenhum dos sete materializa C**: o validador confere a forma de algo que **ainda não existe**; o carregador só sabe **ler** esse algo **quando o caminho lhe é dado explicitamente** — `carregar_indice(...)` recebe o caminho como argumento, **sem caminho implícito ou padrão, sem descobrir o arquivo e sem resolver automaticamente o caminho canônico**; o comparador **recebe as duas `str` prontas**; os formatadores **recebem o valor já resolvido**; o avaliador **recebe predicado e valor já prontos**; o verificador **recebe os três domínios já prontos**; e o canonicalizador **recebe o rótulo já extraído** — todos **sem resolver *binding***, **sem ler `caminho_yaml`**, **sem consultar `knowledge/**`** e **sem consumidor integrado**. **Essa atualização de conteúdo NÃO materializa C.** **C continua aberta SOMENTE quanto à materialização.** **S2-D8 é pendência separada**, também **ARBITRADA / NÃO MATERIALIZADA** desde a arbitragem S2-D8 (`docs/07` §4.4.1), e também aberta **somente quanto à materialização** | **materializar** o índice `knowledge/indice-respostas-aprovadas.yaml` pelo contrato de `docs/07` §2.3 — **agora refinado por C-A1**, que fecha equivalência de *template*, formatos, convenção de `lista`, seleção em coleção, unidade de bijeção, migração de status e os alvos `MD-x` — e, só então, implementar `ValidadorConsistenciaBase` e, em cascata, `SeletorFatos` e `ValidadorResposta`. **`C-A2` está ARBITRADA DOCUMENTALMENTE**: os fatos `A1`–`A4` ficam **FECHADOS** e o conteúdo humano `B1`–`B16` foi **APROVADO HUMANAMENTE** e, pela **Entrega 2**, **APLICADO À FONTE DE RESPOSTAS** — **corpus 37 fragmentos / 30 `Rxx`**, com **`FE-1`–`FE-14` APLICADAS** — incluindo **`FE-11a` = APLICADA / RECONCILIADA** e **`FE-11b` = APLICADA / MATERIALIZADA POR REMOÇÃO** (PR #77 e PR #78), de modo que a leitura anterior de **`FE-11b` RETIDA atrás de `C-A1-M4`** permanece correta **somente como registro histórico** e **não** descreve o estado corrente. **GATES DE `C-A2` — ESTADO CORRENTE**: **`C-A2-N9` = CUMPRIDA**; **`C-A2-N10` = CUMPRIDA**; **`C-A2-N11` = CUMPRIDA — 16/16**; **`C-A2-N12` = CUMPRIDA** — a validação `C-8` / `C-15` / `C-A1` foi **reexecutada integralmente**, de forma **estritamente read-only**, contra `bd9687c69ddf7db9306363d5de4cf74072b5a134`, com **37/37 fragmentos emitíveis** em **12 eixos**, **444/444 resultados** (**265 `PASS`**, **179 `N/A`**), **0 `FAIL-CLOSED`**, **0 `NÃO DETERMINÁVEL`** e **0 `DIVERGÊNCIA DE BASE`**. **NADA DISSO MATERIALIZA C**: **`C` continua ARBITRADA / NÃO MATERIALIZADA**; `knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**; **nenhuma resposta foi convertida em *template* físico**; **nenhum *binding* físico foi materializado**; **nenhuma `ASSERTIVA` física foi materializada**; **nenhum status saiu do Markdown** e **a autoridade de status continua no Markdown aprovado** (**`C-11`**); e **`knowledge/casa77.yaml` não foi alterado**. **PRÓXIMA AÇÃO**: **retomar a auditoria já realizada da próxima pendência de `C`, cujo candidato técnico priorizado permanece sujeito à integração desta correção documental** — **`caminho_yaml` NÃO está arbitrado**, **nenhuma micro-arbitragem foi iniciada** e **nenhuma implementação foi eleita aqui** |
+| C | Contrato estruturado, legível por máquina, ligando as respostas aprovadas (`Rxx`) aos campos do YAML. **ARBITRADA / NÃO MATERIALIZADA.** **CONTRATO: ARBITRADO** — o contrato documental estruturado do futuro índice está **fechado e aprovado** em `docs/07` §2.3, registrado em `docs/07` §12, item 19. **MATERIALIZAÇÃO: NÃO EXISTE** — o arquivo `knowledge/indice-respostas-aprovadas.yaml` **continua inexistente**; `knowledge/respostas-aprovadas.md` **permanece Markdown** e foi **atualizado apenas como fonte de redação aprovada pela Entrega 2**, **sem conversão em *template* ou índice**; **nenhum status foi removido do Markdown**; e não há *renderer*, *template* físico nem *binding* físico. **A partir do PR #84 existe um VALIDADOR ESTRUTURAL** — a microentrega **`E1`**, `src/casa77_sdr/response_index.py` —, que valida a **forma** de uma estrutura já parseada que pretende ser o índice, **sem criar o índice**, **sem lê-lo**, **sem loader** e **sem ler `knowledge/**`. **A partir do PR #86 existe também um CARREGADOR *fail-closed*** — `src/casa77_sdr/response_index_load.py` —, que lê e recusa um artefato **explicitamente apontado**, delegando toda a forma ao validador. **A partir do PR #89 existe também um COMPARADOR de equivalência textual** — `src/casa77_sdr/response_equivalence.py` —, que julga a equivalência de `C-15b` entre **duas `str` já em representação canônica**, **sem analisar Markdown**, **sem I/O** e **sem conhecer o índice**. **A partir do PR #91 existem também os FORMATADORES determinísticos de `C-6`** — `src/casa77_sdr/response_format.py` —, que materializam **cinco** dos seis formatos do vocabulário fechado — **`inteiro`**, **`inteiro_agrupado`**, **`simbolo_moeda`**, **`texto`** e **`lista`** — como **funções puras sobre valores já resolvidos**; o formato **`hora` NÃO foi materializado** e sua **lacuna normativa continua ABERTA**. **A partir do PR #93 existe também o AVALIADOR determinístico booleano de `ASSERTIVA`** — `src/casa77_sdr/response_assertion.py` —, que julga um **predicado do vocabulário fechado** sobre um **valor já resolvido**, **apenas no domínio booleano estrito**; valor fora dele é **NÃO AVALIÁVEL** e **nunca vira assertiva falsa**, e essa recusa é **delimitação técnica fail-closed daquela microentrega**, **não** expansão de **`C-7`**. **A partir do PR #95 existe também o VERIFICADOR determinístico da correspondência bijetiva de `C-A1-B3` / `C-A1-B4`** — `src/casa77_sdr/response_bijection.py` —, que julga se uma relação **já fornecida pelo chamador** é **bijetiva entre dois domínios também já fornecidos**, sobre **tokens opacos** `str` **exata** e pares `tuple` **exata**, por **igualdade nativa exata de `str`**, **sem normalização, sem coerção, sem *parsing* e sem I/O**; ele **não extrai fragmentos, não extrai unidades, não define identidade física de fragmento, não lê índice real, não prova completude dos domínios, não executa a bijeção física do corpus real e não satisfaz `C-A1-ST7` isoladamente** — **a completude dos domínios é pré-condição do chamador**. **A partir do PR #97 existe também o CANONICALIZADOR determinístico de rótulo de status** — `src/casa77_sdr/response_status.py` —, que traduz um **rótulo já extraído** para o status canônico de `C-3` **somente** nas três linhas com tradução automática arbitrada em `C-A1-ST1`–`C-A1-ST3`, com `str` **exata**, **comparação literal**, **zero normalização** e **fail-closed**; **`PARCIAL` continua sem tradução automática** (**C-A1-ST4**, que exige mapeamento explícito por fragmento emitível) e **`BLOQUEADO` não recebeu mapeamento inventado** (**C-A1-ST5**, nota interna). Ele **não extrai rótulo nem fragmento, não cria identidade física de fragmento, não lê índice real, não satisfaz `C-A1-ST6`–`C-A1-ST10` e não migra a autoridade de status**. **Nenhum dos sete materializa C**: o validador confere a forma de algo que **ainda não existe**; o carregador só sabe **ler** esse algo **quando o caminho lhe é dado explicitamente** — `carregar_indice(...)` recebe o caminho como argumento, **sem caminho implícito ou padrão, sem descobrir o arquivo e sem resolver automaticamente o caminho canônico**; o comparador **recebe as duas `str` prontas**; os formatadores **recebem o valor já resolvido**; o avaliador **recebe predicado e valor já prontos**; o verificador **recebe os três domínios já prontos**; e o canonicalizador **recebe o rótulo já extraído** — todos **sem resolver *binding***, **sem ler `caminho_yaml`**, **sem consultar `knowledge/**`** e **sem consumidor integrado**. **Essa atualização de conteúdo NÃO materializa C.** **C continua aberta SOMENTE quanto à materialização.** **S2-D8 é pendência separada**, também **ARBITRADA / NÃO MATERIALIZADA** desde a arbitragem S2-D8 (`docs/07` §4.4.1), e também aberta **somente quanto à materialização** | **materializar** o índice `knowledge/indice-respostas-aprovadas.yaml` pelo contrato de `docs/07` §2.3 — **agora refinado por C-A1**, que fecha equivalência de *template*, formatos, convenção de `lista`, seleção em coleção, unidade de bijeção, migração de status e os alvos `MD-x` — e, só então, implementar `ValidadorConsistenciaBase` e, em cascata, `SeletorFatos` e `ValidadorResposta`. **`C-A2` está ARBITRADA DOCUMENTALMENTE**: os fatos `A1`–`A4` ficam **FECHADOS** e o conteúdo humano `B1`–`B16` foi **APROVADO HUMANAMENTE** e, pela **Entrega 2**, **APLICADO À FONTE DE RESPOSTAS** — **corpus 37 fragmentos / 30 `Rxx`**, com **`FE-1`–`FE-14` APLICADAS** — incluindo **`FE-11a` = APLICADA / RECONCILIADA** e **`FE-11b` = APLICADA / MATERIALIZADA POR REMOÇÃO** (PR #77 e PR #78), de modo que a leitura anterior de **`FE-11b` RETIDA atrás de `C-A1-M4`** permanece correta **somente como registro histórico** e **não** descreve o estado corrente. **GATES DE `C-A2` — ESTADO CORRENTE**: **`C-A2-N9` = CUMPRIDA**; **`C-A2-N10` = CUMPRIDA**; **`C-A2-N11` = CUMPRIDA — 16/16**; **`C-A2-N12` = CUMPRIDA** — a validação `C-8` / `C-15` / `C-A1` foi **reexecutada integralmente**, de forma **estritamente read-only**, contra `bd9687c69ddf7db9306363d5de4cf74072b5a134`, com **37/37 fragmentos emitíveis** em **12 eixos**, **444/444 resultados** (**265 `PASS`**, **179 `N/A`**), **0 `FAIL-CLOSED`**, **0 `NÃO DETERMINÁVEL`** e **0 `DIVERGÊNCIA DE BASE`**. **NADA DISSO MATERIALIZA C**: **`C` continua ARBITRADA / NÃO MATERIALIZADA**; `knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**; **nenhuma resposta foi convertida em *template* físico**; **nenhum *binding* físico foi materializado**; **nenhuma `ASSERTIVA` física foi materializada**; **nenhum status saiu do Markdown** e **a autoridade de status continua no Markdown aprovado** (**`C-11`**); e **`knowledge/casa77.yaml` não foi alterado**. **GRAMÁTICA DE `caminho_yaml` = ARBITRADA DOCUMENTALMENTE / NÃO MATERIALIZADA**, na alternativa **`A2`** (`docs/07` §2.3, bloco **"Micro-arbitragem documental da gramática de caminho_yaml"**): **`str` depois do parsing**, **absoluto sem marcador** e **relativo marcado por `@`**, com **`C-4h`, `C-A1-S1` e `C-A1-S2` preservadas**. **A MATERIALIZAÇÃO TÉCNICA NÃO EXISTE**: **parser da gramática INEXISTENTE**, **resolver INEXISTENTE**, **índice físico `knowledge/indice-respostas-aprovadas.yaml` INEXISTENTE**, e **`src/casa77_sdr/response_index.py` INALTERADO**. **Continuam ABERTAS ou PENDENTES, sem decisão aqui**: a **sintaxe de *placeholder*** (**ABERTA**), o **formato `hora`** (**pendência separada**) e **`C-7`** (**NÃO MATERIALIZADA**, e **não reaberta**). **`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**, **`C-11` NÃO migrou** e **`C` continua ARBITRADA / NÃO MATERIALIZADA**. **PRÓXIMA AÇÃO**: **retornar ao GPT para auditoria da micro-arbitragem integrada à PR antes de qualquer planejamento técnico posterior** — **nenhuma implementação foi eleita** e **nenhuma etapa posterior foi iniciada** |
 
 As pendências **B e C permanecem inalteradas** pelas arbitragens S2, S3, R, R-H e R-I e
 pela implementação funcional da **3B.7** (PR #29). **B continua integralmente aberta.**
