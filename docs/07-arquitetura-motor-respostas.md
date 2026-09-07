@@ -1197,8 +1197,9 @@ rótulo desconhecido. `PARCIAL` continua sob **`C-A1-ST4`**, **`SP4`**, **`PM1`�
 **regime exclusivo de `status-fragmento`** e a **C14**, sem semântica nova. Na futura
 composição total: os fragmentos sob `PARCIAL` são resolvidos **exclusivamente** pelas
 **declarações explícitas válidas de `status-fragmento`**; **não** recebem propagação
-automática; e, se essas declarações forem **inválidas, ausentes ou proibidas**, as **falhas já
-existentes da C14 continuam prevalecendo** segundo o contrato **já materializado**. **Nenhuma
+automática; e, se houver **violação do contrato já materializado da C14** — incluindo **valor
+inválido**, **declaração órfã** ou **ausência da declaração obrigatória** —, as **falhas já
+existentes da C14 continuam prevalecendo segundo a sua precedência própria**. **Nenhuma
 semântica nova de `PARCIAL` é criada aqui.**
 
 **Alternativas REJEITADAS para a futura composição total.**
@@ -1242,8 +1243,8 @@ desenhada**; **nenhum código foi implementado**; `knowledge/respostas-aprovadas
 alterado** e permanece no blob `3a30fe764b80902227fdefb9282f3916650e4f17`; a **3B.8 continua
 INEXISTENTE**; a **autoridade de status continua NÃO MIGRADA** (**`C-11`**); e
 **`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**. **ARBITRAR O COMPORTAMENTO DA FUTURA
-COMPOSIÇÃO TOTAL NÃO É IMPLEMENTAR COMPOSIÇÃO, NÃO É RESOLVER `SP5`, NÃO É SATISFAZER `ST8`,
-NÃO É MIGRAR AUTORIDADE E NÃO É MATERIALIZAR `C`.**
+COMPOSIÇÃO TOTAL NÃO É IMPLEMENTAR COMPOSIÇÃO, NÃO É RESOLVER O STATUS QUE `SP5` MANTÉM NÃO
+RESOLVIDO, NÃO É SATISFAZER `ST8`, NÃO É MIGRAR AUTORIDADE E NÃO É MATERIALIZAR `C`.**
 
 ##### C-A1-M — Prioridade de modelagem, prosa e auditoria de consumidores
 

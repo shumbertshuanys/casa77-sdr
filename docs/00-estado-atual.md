@@ -29,9 +29,10 @@ seu status **permanece NÃO RESOLVIDO** — comportamento **arbitrado**, jamais 
 **`PARCIAL` continua EXPRESSAMENTE FORA desse ramo**, sob **`C-A1-ST4`**, **`SP4`**,
 **`PM1`–`PM12`**, o **regime exclusivo de `status-fragmento`** e a **C14**: na composição total
 futura ele é resolvido **exclusivamente** pelas declarações explícitas válidas de
-`status-fragmento`, **sem propagação automática**, e, quando essas declarações forem
-**inválidas, ausentes ou proibidas**, as **falhas já existentes da C14 continuam prevalecendo**
-segundo o contrato **já materializado** — **nenhuma semântica nova de `PARCIAL` foi criada**.
+`status-fragmento`, **sem propagação automática**, e, quando houver **violação do contrato já
+materializado da C14** — incluindo **valor inválido**, **declaração órfã** ou **ausência da
+declaração obrigatória** —, as **falhas já existentes da C14 continuam prevalecendo segundo a
+sua precedência própria** — **nenhuma semântica nova de `PARCIAL` foi criada**.
 **NENHUMA EXCEÇÃO CONCRETA FOI DESENHADA**: nome de classe, mensagem, categorias,
 localizadores, herança, propagação de exceção existente × criação de exceção nova e
 precedência entre falhas de composição ainda não desenhadas **continuam NÃO DECIDIDOS**.
@@ -6796,8 +6797,9 @@ a **pendência residual continua aberta**.
      **`SP4`**, **`PM1`–`PM12`**, o **regime exclusivo de `status-fragmento`** e a **C14**. Na
      composição total futura, os fragmentos sob `PARCIAL` são resolvidos **exclusivamente**
      pelas **declarações explícitas válidas** de `status-fragmento`, **sem propagação
-     automática**; se essas declarações forem **inválidas, ausentes ou proibidas**, as **falhas
-     já existentes da C14 continuam prevalecendo** segundo o contrato **já materializado**.
+     automática**; se houver **violação do contrato já materializado da C14** — incluindo
+     **valor inválido**, **declaração órfã** ou **ausência da declaração obrigatória** —, as
+     **falhas já existentes da C14 continuam prevalecendo segundo a sua precedência própria**.
      **Nenhuma semântica nova de `PARCIAL` foi criada.**
      **Nenhuma exceção concreta foi desenhada.** **Nome de classe**, **mensagem**,
      **categorias**, **localizadores**, **herança**, a escolha entre **propagar exceção
@@ -6820,7 +6822,8 @@ a **pendência residual continua aberta**.
      teste e zero `knowledge/**` mudaram**. A **baseline registrada permanece `4477 passed` /
      Python 3.14.5**, sob **`-W error`**, **evidência da entrega funcional do PR #124** — e
      **nenhuma execução nova é alegada aqui**.
-     **Limites.** Esta arbitragem **NÃO**: implementa composição total; resolve `SP5`;
+     **Limites.** Esta arbitragem **NÃO**: implementa composição total; transforma em resolvido
+     o status que permanece **NÃO RESOLVIDO por `SP5`**;
      canonicaliza status; propaga status; interpreta `PARCIAL`; cria índice; executa a bijeção
      física; implementa *bindings*; implementa `ASSERTIVA`; define *placeholder*; define
      `caminho_yaml`; define `hora`; resolve **C-7**; migra a autoridade de status (**C-11**);
