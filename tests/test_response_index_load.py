@@ -568,7 +568,8 @@ respostas:
     assert str(erro.value) == "duplicidade: respostas[1].id"
 
 
-def test_selecao_posicional_delega_para_e1(tmp_path: Path) -> None:
+def test_forma_posicional_delega_para_e1(tmp_path: Path) -> None:
+    """A forma posicional continua recusada — agora pela gramática canônica."""
     caminho = escrever(
         tmp_path,
         """\
@@ -591,8 +592,117 @@ respostas:
         carregar_indice(caminho)
 
     assert str(erro.value) == (
-        "selecao_posicional: respostas[0].fragmentos[0].bindings[0].caminho_yaml"
+        "valor_invalido: respostas[0].fragmentos[0].bindings[0].caminho_yaml"
     )
+
+
+def test_gramatica_invalida_chega_como_indice_invalido(tmp_path: Path) -> None:
+    """O carregador NÃO reembala a falha de gramática como `IndiceIlegivel`."""
+    caminho = escrever(
+        tmp_path,
+        """\
+respostas:
+  - id: R01
+    fragmentos:
+      - id: fragmento_exemplo
+        status: APROVADO
+        bindings:
+          - nome: quantidade_exemplo
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: bloco_exemplo..campo_exemplo
+            placeholder: "{{quantidade_exemplo}}"
+            formato: inteiro
+""",
+    )
+
+    with pytest.raises(IndiceInvalido) as erro:
+        carregar_indice(caminho)
+
+    assert str(erro.value) == (
+        "valor_invalido: respostas[0].fragmentos[0].bindings[0].caminho_yaml"
+    )
+    assert not isinstance(erro.value, IndiceIlegivel)
+
+
+def test_relativo_sem_itera_sobre_chega_como_indice_invalido(
+    tmp_path: Path,
+) -> None:
+    caminho = escrever(
+        tmp_path,
+        """\
+respostas:
+  - id: R01
+    fragmentos:
+      - id: fragmento_exemplo
+        status: APROVADO
+        bindings:
+          - nome: quantidade_exemplo
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: "@.campo_exemplo"
+            placeholder: "{{quantidade_exemplo}}"
+            formato: inteiro
+""",
+    )
+
+    with pytest.raises(IndiceInvalido) as erro:
+        carregar_indice(caminho)
+
+    assert str(erro.value) == (
+        "combinacao_invalida: respostas[0].fragmentos[0].bindings[0].caminho_yaml"
+    )
+    assert not isinstance(erro.value, IndiceIlegivel)
+
+
+def test_relativo_com_itera_sobre_atravessa_o_carregador(tmp_path: Path) -> None:
+    """`CY6`: o caminho relativo é serializado com aspas no YAML físico."""
+    caminho = escrever(
+        tmp_path,
+        """\
+respostas:
+  - id: R01
+    fragmentos:
+      - id: fragmento_exemplo
+        status: APROVADO
+        itera_sobre: bloco_exemplo.colecao_exemplo
+        bindings:
+          - nome: quantidade_exemplo
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: "@.campo_exemplo"
+            placeholder: "{{quantidade_exemplo}}"
+            formato: inteiro
+""",
+    )
+
+    estrutura = carregar_indice(caminho)
+
+    fragmento_lido = estrutura["respostas"][0]["fragmentos"][0]
+    assert fragmento_lido["bindings"][0]["caminho_yaml"] == "@.campo_exemplo"
+
+
+def test_arroba_em_itera_sobre_chega_como_indice_invalido(tmp_path: Path) -> None:
+    caminho = escrever(
+        tmp_path,
+        """\
+respostas:
+  - id: R01
+    fragmentos:
+      - id: fragmento_exemplo
+        status: APROVADO
+        itera_sobre: "@"
+        bindings: []
+""",
+    )
+
+    with pytest.raises(IndiceInvalido) as erro:
+        carregar_indice(caminho)
+
+    assert str(erro.value) == (
+        "valor_invalido: respostas[0].fragmentos[0].itera_sobre"
+    )
+    assert not isinstance(erro.value, IndiceIlegivel)
 
 
 @pytest.mark.parametrize("raiz", ["- respostas", "42", "texto_solto", "null"])

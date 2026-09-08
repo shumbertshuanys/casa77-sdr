@@ -18,6 +18,8 @@ import pytest
 import yaml
 
 from casa77_sdr.response_index import IndiceInvalido, validar_indice
+from casa77_sdr.response_yaml_path import CaminhoYamlInvalido
+from casa77_sdr.response_yaml_path_context import CaminhoYamlContextoInvalido
 
 RAIZ = Path(__file__).resolve().parents[1]
 YAML_REAL = RAIZ / "knowledge" / "casa77.yaml"
@@ -710,7 +712,12 @@ def test_predicado_invalido(predicado: str) -> None:
     assert categoria_de(erro) == "valor_invalido"
 
 
-# 9. Seleção posicional
+# 9. Seleção posicional — agora recusada pela gramática canônica de `CY13`
+#
+# `C-A1-S1` continua valendo, mas E1 deixou de detectar "posição" por heurística
+# própria: `[0]` não tem forma de seletor e chave exclusivamente numérica não é
+# endereçável (`CY9`). As duas formas viram `valor_invalido`, e a categoria
+# `selecao_posicional` deixou de ser produzida — deliberadamente.
 
 
 @pytest.mark.parametrize(
@@ -723,25 +730,36 @@ def test_predicado_invalido(predicado: str) -> None:
         "bloco_exemplo.colecao_exemplo[3].item_exemplo",
     ],
 )
-def test_selecao_posicional_em_caminho_yaml(caminho: str) -> None:
+def test_forma_posicional_em_caminho_yaml_e_valor_invalido(caminho: str) -> None:
     with pytest.raises(IndiceInvalido) as erro:
         validar_indice(_com_binding(binding_renderizado(caminho_yaml=caminho)))
 
-    assert categoria_de(erro) == "selecao_posicional"
+    assert categoria_de(erro) == "valor_invalido"
 
 
 @pytest.mark.parametrize(
     "caminho",
     ["colecao_exemplo.0.campo_exemplo", "colecao_exemplo[0].campo_exemplo"],
 )
-def test_selecao_posicional_em_itera_sobre(caminho: str) -> None:
+def test_forma_posicional_em_itera_sobre_e_valor_invalido(caminho: str) -> None:
     corpo = fragmento(itera_sobre=caminho)
 
     with pytest.raises(IndiceInvalido) as erro:
         validar_indice(indice(resposta(fragmentos=[corpo])))
 
-    assert categoria_de(erro) == "selecao_posicional"
+    assert categoria_de(erro) == "valor_invalido"
     assert localizador_de(erro) == "respostas[0].fragmentos[0].itera_sobre"
+
+
+def test_selecao_posicional_nao_e_mais_categoria_de_e1() -> None:
+    """A categoria foi retirada: nenhuma forma posicional a produz mais."""
+    for caminho in ("colecao_exemplo[0]", "colecao_exemplo.0.campo_exemplo"):
+        with pytest.raises(IndiceInvalido) as erro:
+            validar_indice(
+                _com_binding(binding_renderizado(caminho_yaml=caminho))
+            )
+
+        assert categoria_de(erro) != "selecao_posicional"
 
 
 @pytest.mark.parametrize(
@@ -753,8 +771,8 @@ def test_selecao_posicional_em_itera_sobre(caminho: str) -> None:
         "bloco_exemplo.campo_exemplo",
     ],
 )
-def test_seletor_textual_nao_e_posicional(caminho: str) -> None:
-    """E1 não julga a gramática do seletor; só recusa a forma numérica."""
+def test_seletor_textual_canonico_e_aceito(caminho: str) -> None:
+    """Um seletor por segmento, com chave e literal em `NOME`, é canônico."""
     corpo = _com_binding(binding_renderizado(caminho_yaml=caminho))
 
     assert validar_indice(corpo) is None
@@ -772,12 +790,14 @@ def test_seletor_textual_nao_e_posicional(caminho: str) -> None:
         "bloco_exemplo.colecao_exemplo[codigo=teste][0]",
     ],
 )
-def test_selecao_posicional_apos_seletor_textual(caminho: str) -> None:
-    """O índice numérico é recusado em qualquer seletor, não só no primeiro."""
+def test_indice_numerico_apos_seletor_textual_e_valor_invalido(
+    caminho: str,
+) -> None:
+    """Dois seletores no mesmo segmento já quebram a gramática canônica."""
     with pytest.raises(IndiceInvalido) as erro:
         validar_indice(_com_binding(binding_renderizado(caminho_yaml=caminho)))
 
-    assert categoria_de(erro) == "selecao_posicional"
+    assert categoria_de(erro) == "valor_invalido"
 
 
 @pytest.mark.parametrize(
@@ -788,7 +808,7 @@ def test_selecao_posicional_apos_seletor_textual(caminho: str) -> None:
         "colecao_exemplo[id=teste].subcolecao_exemplo[0]",
     ],
 )
-def test_selecao_posicional_apos_seletor_textual_em_itera_sobre(
+def test_indice_numerico_apos_seletor_textual_em_itera_sobre(
     caminho: str,
 ) -> None:
     corpo = fragmento(itera_sobre=caminho)
@@ -796,7 +816,7 @@ def test_selecao_posicional_apos_seletor_textual_em_itera_sobre(
     with pytest.raises(IndiceInvalido) as erro:
         validar_indice(indice(resposta(fragmentos=[corpo])))
 
-    assert categoria_de(erro) == "selecao_posicional"
+    assert categoria_de(erro) == "valor_invalido"
     assert localizador_de(erro) == "respostas[0].fragmentos[0].itera_sobre"
 
 
@@ -808,9 +828,324 @@ def test_selecao_posicional_apos_seletor_textual_em_itera_sobre(
         "bloco_exemplo.colecao_exemplo[id=teste][codigo=outro].campo_exemplo",
     ],
 )
-def test_seletores_textuais_encadeados_nao_sao_posicionais(caminho: str) -> None:
-    """Encadear seletores textuais não vira posicional: E1 não fecha gramática."""
-    corpo = _com_binding(binding_renderizado(caminho_yaml=caminho))
+def test_seletores_encadeados_no_mesmo_segmento_sao_invalidos(
+    caminho: str,
+) -> None:
+    """`CY10`: no máximo **um** seletor por segmento — antes E1 os aceitava."""
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(_com_binding(binding_renderizado(caminho_yaml=caminho)))
+
+    assert categoria_de(erro) == "valor_invalido"
+
+
+# 9-bis. Composição com CY13 — integração, não reteste das matrizes unitárias
+#
+# As suítes de `response_yaml_path` e `response_yaml_path_context` continuam
+# sendo a autoridade unitária da gramática e do contexto. Aqui se prova apenas
+# que E1 **compõe** aquelas fronteiras: delega, traduz e encadeia a causa.
+
+
+def _fragmento_iterando(caminho: str, **extra: Any) -> dict[str, Any]:
+    return indice(
+        resposta(
+            fragmentos=[
+                fragmento(
+                    itera_sobre="bloco_exemplo.colecao_exemplo",
+                    bindings=[binding_renderizado(caminho_yaml=caminho)],
+                    **extra,
+                )
+            ]
+        )
+    )
+
+
+def test_absoluto_canonico_sem_itera_sobre_e_aceito() -> None:
+    corpo = _com_binding(
+        binding_renderizado(caminho_yaml="bloco_exemplo.campo_exemplo")
+    )
+
+    assert validar_indice(corpo) is None
+
+
+def test_absoluto_canonico_com_itera_sobre_e_aceito() -> None:
+    """Iterar não proíbe endereçar a raiz do YAML."""
+    assert validar_indice(_fragmento_iterando("bloco_exemplo.campo_exemplo")) is None
+
+
+def test_relativo_com_itera_sobre_e_aceito() -> None:
+    assert validar_indice(_fragmento_iterando("@.campo_exemplo")) is None
+
+
+def test_arroba_isolado_em_binding_com_itera_sobre_e_aceito() -> None:
+    """`CY11`: `@` sozinho é o próprio item corrente."""
+    assert validar_indice(_fragmento_iterando("@")) is None
+
+
+@pytest.mark.parametrize(
+    "caminho", ["@.campo_exemplo", "@", "@.colecao_exemplo[id=teste]"]
+)
+def test_relativo_sem_itera_sobre_e_combinacao_invalida(caminho: str) -> None:
+    """A falha é de COMBINAÇÃO entre dois campos, não do valor isolado."""
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(_com_binding(binding_renderizado(caminho_yaml=caminho)))
+
+    assert categoria_de(erro) == "combinacao_invalida"
+    assert localizador_de(erro) == (
+        "respostas[0].fragmentos[0].bindings[0].caminho_yaml"
+    )
+
+
+def test_arroba_isolado_em_itera_sobre_e_valor_invalido() -> None:
+    """`CY12`: `@` é proibido no próprio `itera_sobre`."""
+    corpo = fragmento(itera_sobre="@")
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(indice(resposta(fragmentos=[corpo])))
+
+    assert categoria_de(erro) == "valor_invalido"
+    assert localizador_de(erro) == "respostas[0].fragmentos[0].itera_sobre"
+
+
+def test_relativo_segmentado_em_itera_sobre_e_valor_invalido() -> None:
+    corpo = fragmento(itera_sobre="@.colecao_exemplo")
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(indice(resposta(fragmentos=[corpo])))
+
+    assert categoria_de(erro) == "valor_invalido"
+    assert localizador_de(erro) == "respostas[0].fragmentos[0].itera_sobre"
+
+
+@pytest.mark.parametrize(
+    "caminho",
+    [
+        "bloco_exemplo.",
+        ".bloco_exemplo",
+        "bloco_exemplo..campo_exemplo",
+        "bloco_exemplo campo",
+        "bloco-exemplo",
+        "bloco_exemplo.@campo",
+        "@@",
+        "@campo_exemplo",
+        "colecao_exemplo[id=]",
+        "colecao_exemplo[=teste]",
+        "colecao_exemplo[id]",
+        "colecao_exemplo[id=teste",
+        "café",
+        "bloco_exemplo.123",
+        "123",
+        "colecao_exemplo[123=teste]",
+    ],
+)
+def test_gramatica_malformada_em_caminho_yaml_e_valor_invalido(
+    caminho: str,
+) -> None:
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(_com_binding(binding_renderizado(caminho_yaml=caminho)))
+
+    assert categoria_de(erro) == "valor_invalido"
+
+
+@pytest.mark.parametrize(
+    "caminho", ["bloco_exemplo.", "bloco_exemplo 2", "bloco_exemplo.123", "@@"]
+)
+def test_gramatica_malformada_em_itera_sobre_e_valor_invalido(
+    caminho: str,
+) -> None:
+    corpo = fragmento(itera_sobre=caminho)
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(indice(resposta(fragmentos=[corpo])))
+
+    assert categoria_de(erro) == "valor_invalido"
+    assert localizador_de(erro) == "respostas[0].fragmentos[0].itera_sobre"
+
+
+def test_literal_seletor_numerico_e_aceito() -> None:
+    """`CY7`: o literal do seletor é sempre semanticamente uma `str`."""
+    corpo = _com_binding(
+        binding_renderizado(caminho_yaml="colecao_exemplo[id=2026]")
+    )
+
+    assert validar_indice(corpo) is None
+
+
+def test_chave_exclusivamente_numerica_e_valor_invalido() -> None:
+    """`CY9`: não endereçável — e E1 NÃO a classifica como 'posição'."""
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(
+            _com_binding(binding_renderizado(caminho_yaml="bloco_exemplo.123"))
+        )
+
+    assert categoria_de(erro) == "valor_invalido"
+
+
+@pytest.mark.parametrize(
+    "caminho", ["bloco exemplo", " bloco_exemplo", "bloco_exemplo ", "bloco\texemplo"]
+)
+def test_canonicidade_de_whitespace_e_valor_invalido(caminho: str) -> None:
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(_com_binding(binding_renderizado(caminho_yaml=caminho)))
+
+    assert categoria_de(erro) == "valor_invalido"
+
+
+def test_subclasse_de_str_em_caminho_yaml_e_tipo_invalido() -> None:
+    """Tipo EXATO: a subclasse é recusada localmente, antes da delegação."""
+
+    class Caminho(str):
+        pass
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(
+            _com_binding(
+                binding_renderizado(
+                    caminho_yaml=Caminho("bloco_exemplo.campo_exemplo")
+                )
+            )
+        )
+
+    assert categoria_de(erro) == "tipo_invalido"
+    assert localizador_de(erro) == (
+        "respostas[0].fragmentos[0].bindings[0].caminho_yaml"
+    )
+
+
+def test_subclasse_de_str_em_itera_sobre_e_tipo_invalido() -> None:
+    class Caminho(str):
+        pass
+
+    corpo = fragmento(itera_sobre=Caminho("bloco_exemplo.colecao_exemplo"))
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(indice(resposta(fragmentos=[corpo])))
+
+    assert categoria_de(erro) == "tipo_invalido"
+    assert localizador_de(erro) == "respostas[0].fragmentos[0].itera_sobre"
+
+
+def test_itera_sobre_invalido_vence_binding_invalido() -> None:
+    """Precedência: o fragmento é julgado antes dos seus *bindings*."""
+    corpo = fragmento(
+        itera_sobre="@",
+        bindings=[binding_renderizado(caminho_yaml="bloco_exemplo.")],
+    )
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(indice(resposta(fragmentos=[corpo])))
+
+    assert localizador_de(erro) == "respostas[0].fragmentos[0].itera_sobre"
+
+
+def test_origem_invalida_vence_caminho_invalido() -> None:
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(
+            _com_binding(
+                binding_renderizado(origem="INVENTADA", caminho_yaml="bloco.")
+            )
+        )
+
+    assert categoria_de(erro) == "valor_invalido"
+    assert localizador_de(erro) == (
+        "respostas[0].fragmentos[0].bindings[0].origem"
+    )
+
+
+def test_caminho_invalido_vence_formato_invalido() -> None:
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(
+            _com_binding(
+                binding_renderizado(
+                    caminho_yaml="bloco_exemplo.", formato="inventado"
+                )
+            )
+        )
+
+    assert localizador_de(erro) == (
+        "respostas[0].fragmentos[0].bindings[0].caminho_yaml"
+    )
+
+
+def test_caminho_invalido_vence_predicado_invalido() -> None:
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(
+            _com_binding(
+                binding_assertiva(
+                    caminho_yaml="bloco_exemplo.", predicado="INVENTADO"
+                )
+            )
+        )
+
+    assert localizador_de(erro) == (
+        "respostas[0].fragmentos[0].bindings[0].caminho_yaml"
+    )
+
+
+@pytest.mark.parametrize(
+    "caminho", ["segredo_sintetico_no_caminho.", "@.segredo_sintetico_relativo"]
+)
+def test_mensagem_nao_ecoa_o_caminho_recebido(caminho: str) -> None:
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(_com_binding(binding_renderizado(caminho_yaml=caminho)))
+
+    mensagem = str(erro.value)
+    assert "segredo_sintetico" not in mensagem
+    assert mensagem.count(": ") == 1
+
+
+def test_causa_da_falha_gramatical_e_a_excecao_do_parser() -> None:
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(
+            _com_binding(binding_renderizado(caminho_yaml="bloco_exemplo."))
+        )
+
+    assert isinstance(erro.value.__cause__, CaminhoYamlInvalido)
+
+
+def test_causa_da_falha_contextual_de_binding_e_a_excecao_de_contexto() -> None:
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(
+            _com_binding(binding_renderizado(caminho_yaml="@.campo_exemplo"))
+        )
+
+    assert isinstance(erro.value.__cause__, CaminhoYamlContextoInvalido)
+
+
+def test_causa_da_falha_contextual_de_itera_sobre_e_a_excecao_de_contexto() -> None:
+    corpo = fragmento(itera_sobre="@")
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(indice(resposta(fragmentos=[corpo])))
+
+    assert isinstance(erro.value.__cause__, CaminhoYamlContextoInvalido)
+
+
+def test_causa_da_falha_gramatical_de_itera_sobre_e_a_excecao_do_parser() -> None:
+    corpo = fragmento(itera_sobre="bloco_exemplo.")
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(indice(resposta(fragmentos=[corpo])))
+
+    assert isinstance(erro.value.__cause__, CaminhoYamlInvalido)
+
+
+def test_excecoes_de_cy13_nao_atravessam_a_fronteira_publica() -> None:
+    """A API pública de E1 continua levantando somente `IndiceInvalido`."""
+    for corpo in (
+        _com_binding(binding_renderizado(caminho_yaml="bloco_exemplo.")),
+        _com_binding(binding_renderizado(caminho_yaml="@.campo_exemplo")),
+        indice(resposta(fragmentos=[fragmento(itera_sobre="@")])),
+    ):
+        with pytest.raises(IndiceInvalido) as erro:
+            validar_indice(corpo)
+
+        assert not isinstance(erro.value, CaminhoYamlInvalido)
+        assert not isinstance(erro.value, CaminhoYamlContextoInvalido)
+
+
+def test_runtime_autoritativo_nao_delega_caminho() -> None:
+    """Sem `caminho_yaml` não há delegação: `RUNTIME_AUTORITATIVO` é intocado."""
+    corpo = _com_binding(binding_runtime())
 
     assert validar_indice(corpo) is None
 
@@ -910,6 +1245,130 @@ def test_modulo_nao_importa(proibido: str) -> None:
             importados.update(alias.name for alias in no.names)
 
     assert proibido not in importados
+
+
+def _importados_do_modulo() -> set[str]:
+    """Módulos e nomes importados por `response_index.py`, pela AST."""
+    arvore = ast.parse(MODULO.read_text(encoding="utf-8"))
+    importados: set[str] = set()
+    for no in ast.walk(arvore):
+        if isinstance(no, ast.Import):
+            importados.update(alias.name for alias in no.names)
+        elif isinstance(no, ast.ImportFrom) and no.module:
+            importados.add(no.module)
+            importados.update(alias.name for alias in no.names)
+    return importados
+
+
+def _identificadores_do_modulo() -> set[str]:
+    """Nomes REALMENTE usados em código — docstring não é vocabulário."""
+    arvore = ast.parse(MODULO.read_text(encoding="utf-8"))
+    return {
+        no.id for no in ast.walk(arvore) if isinstance(no, ast.Name)
+    } | {
+        no.attr for no in ast.walk(arvore) if isinstance(no, ast.Attribute)
+    }
+
+
+def test_modulo_importa_as_duas_fronteiras_contextuais() -> None:
+    """E1 compõe `CY13` linha 2 — a única porta autorizada."""
+    importados = _importados_do_modulo()
+
+    assert "casa77_sdr.response_yaml_path_context" in importados
+    assert "validar_caminho_de_binding" in importados
+    assert "validar_itera_sobre" in importados
+
+
+def test_modulo_importa_as_excecoes_necessarias_para_traduzir() -> None:
+    importados = _importados_do_modulo()
+
+    assert "CaminhoYamlContextoInvalido" in importados
+    assert "CaminhoYamlInvalido" in importados
+    assert "casa77_sdr.response_yaml_path" in importados
+
+
+def test_modulo_nao_importa_nem_chama_o_parser_diretamente() -> None:
+    """Uma única autoridade gramatical: E1 fala com a linha 2, não com a 1."""
+    assert "analisar_caminho_yaml" not in _importados_do_modulo()
+    assert "analisar_caminho_yaml" not in _identificadores_do_modulo()
+
+
+def test_modulo_nao_importa_o_resolver_factual() -> None:
+    """`CY13` linha 3 fica fora: E1 prova forma e contexto, nunca resolução."""
+    importados = _importados_do_modulo()
+
+    assert "casa77_sdr.response_yaml_resolve" not in importados
+    assert "resolver_caminho" not in importados
+    assert "resolver_itera_sobre" not in importados
+
+    identificadores = _identificadores_do_modulo()
+    assert "resolver_caminho" not in identificadores
+    assert "resolver_itera_sobre" not in identificadores
+
+
+@pytest.mark.parametrize(
+    "legado",
+    [
+        "_tem_selecao_posicional",
+        "_seletores",
+        "_segmento_numerico",
+        "_SELECAO_POSICIONAL",
+    ],
+)
+def test_logica_legada_de_caminho_foi_removida(legado: str) -> None:
+    """Zero segunda autoridade gramatical dentro de E1."""
+    arvore = ast.parse(MODULO.read_text(encoding="utf-8"))
+    definidos = {
+        no.name
+        for no in ast.walk(arvore)
+        if isinstance(no, (ast.FunctionDef, ast.AsyncFunctionDef))
+    } | {
+        alvo.id
+        for no in ast.walk(arvore)
+        if isinstance(no, ast.Assign)
+        for alvo in no.targets
+        if isinstance(alvo, ast.Name)
+    }
+
+    assert legado not in definidos
+    assert legado not in _identificadores_do_modulo()
+
+
+def test_captura_de_excecao_e_estreita() -> None:
+    """Só as duas exceções nominais de `CY13` são interceptadas."""
+    arvore = ast.parse(MODULO.read_text(encoding="utf-8"))
+    capturados: set[str] = set()
+    for no in ast.walk(arvore):
+        if isinstance(no, ast.ExceptHandler):
+            assert no.type is not None, "except nu é proibido"
+            assert isinstance(no.type, ast.Name)
+            capturados.add(no.type.id)
+
+    assert capturados == {"_CaminhoYamlInvalido", "_CaminhoYamlContextoInvalido"}
+
+
+def test_toda_traducao_encadeia_a_causa() -> None:
+    """`raise ... from exc` em todo `raise` dentro de `except`."""
+    arvore = ast.parse(MODULO.read_text(encoding="utf-8"))
+    for no in ast.walk(arvore):
+        if isinstance(no, ast.ExceptHandler):
+            lancamentos = [
+                interno
+                for interno in ast.walk(no)
+                if isinstance(interno, ast.Raise)
+            ]
+            assert lancamentos
+            for lancamento in lancamentos:
+                assert lancamento.cause is not None
+
+
+def test_assinatura_publica_permanece_intacta() -> None:
+    """Nenhum parâmetro novo foi acrescentado à fronteira pública."""
+    import inspect
+
+    from casa77_sdr.response_index import validar_indice as publica
+
+    assert list(inspect.signature(publica).parameters) == ["indice"]
 
 
 def test_modulo_nao_abre_arquivo() -> None:
