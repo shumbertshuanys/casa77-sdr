@@ -48,7 +48,8 @@ execução desta atualização:
 - **`5262 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings.
 
-Não há CI configurada no repositório: ausência de CI, não falha de CI.
+CI configurada em GitHub Actions, em `.github/workflows/ci.yml`, com Python **3.13** e **3.14**.
+Resultados de execução são evidência do GitHub e não são acumulados neste snapshot.
 
 ---
 
@@ -138,5 +139,5 @@ eventos confirmados e condições já estruturadas.
 
 ## 7. Próxima ação
 
-A próxima microentrega funcional ainda não está eleita. A priorização volta ao GPT após a
-conclusão da migração de governança v2.
+A migração de governança v2 continua sob o próximo mandato do GPT. Nenhuma nova microentrega
+funcional de `C` é eleita por esta entrega.
