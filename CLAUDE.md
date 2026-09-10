@@ -73,8 +73,8 @@ restrições são carregados de arquivo estruturado ou banco de dados.
 - Uma funcionalidade principal por execução.
 - Não avançar automaticamente para a etapa seguinte.
 
-Ao concluir, informar apenas: o que foi criado/alterado, arquivos afetados, como testar,
-pendências que impedem o próximo passo.
+Ao concluir, seguir o esquema único de resposta definido em
+`docs/governanca/01-regras.md` §11 e no mandato vigente.
 
 ## Ordem do projeto
 
@@ -93,8 +93,13 @@ Não avançar de etapa sem pedido específico.
 
 ## Estado do projeto
 
-Antes de qualquer tarefa, consultar `docs/00-estado-atual.md` para etapa, subetapa, PR,
-commits, testes e próxima ação.
+Antes de qualquer tarefa, consultar `docs/00-estado-atual.md` para o snapshot operacional
+corrente. Histórico, PRs, commits e diffs são verificados no Git/GitHub conforme
+`docs/governanca/02-mapa-de-fontes.md`.
+
+Quando o mandato exigir verificação determinística de estado Git, usar
+`scripts/repo_state.py` (`pre` / `post`; ver `--help`). `RESULT` diferente de `PASS` exige
+STOP. O script produz evidência mecânica e não substitui a auditoria do GPT.
 
 Para qualquer dado comercial ou operacional, consultar `knowledge/casa77.yaml`. Lacunas
 conhecidas estão em `knowledge/informacoes-pendentes.md`.
