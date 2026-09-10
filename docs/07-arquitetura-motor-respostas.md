@@ -1,15 +1,19 @@
-# 07 — Arquitetura do Motor de Respostas (Etapa 3A)
+# 07 — Arquitetura do Motor de Respostas
 
-Decisão técnica documentada para o MVP. **Nenhum código, dependência, configuração ou
-serviço foi criado nesta etapa.**
+Documento arquitetural **vigente** do motor de respostas do Casa 77 SDR. Define
+responsabilidades, contratos, dependências, fronteiras e invariantes do MVP, e é a
+**autoridade arquitetural** do projeto, ao lado do código e dos testes aprovados na `main`.
 
-Base: `docs/02-fluxo-comercial.md`, `docs/03-regras-de-conversa.md`,
+Deriva de `docs/02-fluxo-comercial.md`, `docs/03-regras-de-conversa.md`,
 `docs/04-handoff-humano.md`, `docs/06-maquina-de-estados.md`, `knowledge/casa77.yaml`,
-`knowledge/respostas-aprovadas.md`, `knowledge/informacoes-pendentes.md`.
+`knowledge/respostas-aprovadas.md` e `knowledge/informacoes-pendentes.md`.
 
-> **Como no documento 06, esta arquitetura não contém constante comercial.** Preço,
-> capacidade, pacote, horário, data bloqueada e condição são sempre lidos de
-> `knowledge/casa77.yaml` em tempo de execução. Campos são referenciados pelo nome.
+**Estado de implementação e progresso não vivem aqui**: vivem em `docs/00-estado-atual.md`,
+confrontado com a `main`. **Histórico técnico não vive aqui**: vive no Git e no GitHub.
+
+**Dado comercial não vive aqui.** Preço, capacidade, pacote, horário, data bloqueada e
+condição são lidos de `knowledge/casa77.yaml` em tempo de execução; campos são referenciados
+pelo nome.
 
 ---
 
@@ -109,10 +113,10 @@ abaixo.
 
 #### RECONCILIAÇÃO NORMATIVA LIMITADA de docs/07 §2.2 pela arbitragem S2-D8
 
-**Estado: ARBITRADA / NÃO MATERIALIZADA.** Reconciliação **exclusivamente documental** e
-**limitada**. **F1**–**F6** são **preservadas**, e **F4(a)**–**F4(d)** permanecem
-**literais e inalteradas**. S2-D8 refina **somente a consequência conversacional** de F4 —
-o que o interessado recebe —, **nunca** o tratamento da divergência em si.
+**Contrato arbitrado.** Este refinamento é **limitado à consequência conversacional de F4**.
+**F1**–**F6** são **preservadas**, e **F4(a)**–**F4(d)** permanecem **literais e
+inalteradas**. S2-D8 refina **somente o que o interessado recebe**, **nunca** o tratamento da
+divergência em si.
 
 | # | Invariante de F4-B — vale **sempre**, sem exceção |
 |---|---|
@@ -136,30 +140,30 @@ inalterada** (§2.3), e a `ASSERTIVA` continua **consistency-only** (**C-5**, **
 
 ### 2.3 Arbitragem C — contrato do índice estruturado de respostas aprovadas
 
-**Estado: ARBITRADA / NÃO MATERIALIZADA.** O contrato descrito nesta seção está **fechado**
-e existe **apenas documentalmente, aqui**; **nenhuma de suas materializações futuras existe
-ainda** em `knowledge/`, em `src/` ou em `tests/`. Em particular, e sem atenuação:
+Esta seção **fecha o contrato** de `C` e **não o materializa**.
 
-| # | Continua verdadeiro |
-|---|---|
-| C-E1 | o **índice não existe** — nenhum arquivo foi criado |
-| C-E2 | `knowledge/respostas-aprovadas.md` **não foi convertido** e **não foi alterado** |
-| C-E3 | **nenhum renderizador** existe |
-| C-E4 | **nenhum analisador do índice** existe |
-| C-E5 | `ValidadorConsistenciaBase` continua **não implementado** |
-| C-E6 | `SeletorFatos` continua **não implementado** |
-| C-E7 | `ValidadorResposta` continua **não implementado** |
-| C-E8 | **S2-D8 continua ABERTA** (doc 06 §11; §12, item 10) |
-| C-E9 | **nenhuma condição de ciclo nova** foi criada (§4.4) |
+`C` fecha o contrato e **não autoriza, por si**, criar o índice, o renderizador, o analisador
+nem implementar `ValidadorConsistenciaBase`, `SeletorFatos` ou `ValidadorResposta`. Ela
+**não** converte nem altera `knowledge/respostas-aprovadas.md` e **não** cria condição de
+ciclo (§4.4). **O estado de materialização vive em `docs/00-estado-atual.md`**, confrontado
+com a `main`.
 
-**C não está implementada.** Esta seção fecha o contrato futuro; ela não o materializa.
+Pendência **C**: falta um contrato estruturado, **legível por máquina**, relacionando cada
+`Rxx` aos campos de `knowledge/casa77.yaml`. Esta seção **fecha esse contrato**. Enquanto o
+artefato que o materializa não existir, **F3**–**F5** (§2.2) são política sem mecanismo — a
+conferência dependeria de alguém reler o Markdown, que é exatamente o que §2.2 recusa como
+garantia.
 
-Pendência **C**, registrada em `docs/00-estado-atual.md`: falta um contrato estruturado,
-**legível por máquina**, relacionando cada `Rxx` aos campos de `knowledge/casa77.yaml`.
-Esta seção **fecha esse contrato**; o **artefato que o materializa continua inexistente**.
-Enquanto a materialização não existir, **F3**–**F5** (§2.2) seguem sendo política sem
-mecanismo — a conferência depende de alguém reler o Markdown, que é exatamente o que §2.2
-recusa como garantia.
+**`C-P` — Precedência entre as camadas de `C`.** O contrato de `C` é lido em camadas, nesta
+ordem: **`C-1`–`C-15`**, depois **`C-A1`**, **`C-A2`**, **`C-A3`**, **`C-A4`** e **`C-A5`**.
+Onde uma camada posterior **refina, fecha ou substitui** matéria de camada anterior,
+**prevalece a posterior**. Cada camada fecha **exclusivamente** a matéria que declara fechar
+— em particular, **`C-A5` fecha exclusivamente a identidade física do fragmento emitível** —,
+e matéria não declarada permanece aberta.
+
+Esta seção enuncia **contrato**, não estado. O grau de materialização de `C`, dos seus gates
+e dos seus artefatos não vive aqui: vive em `docs/00-estado-atual.md`, confrontado com a
+`main`.
 
 #### C-1 — Artefato futuro aprovado
 
@@ -403,8 +407,8 @@ decisão de conteúdo futura — nunca de um formatador que "quase" acerta.
 
 #### C-9 — Conflitos já identificados
 
-Registro **factual**, sem valores comerciais: a auditoria de planejamento identificou casos
-que **não podem ser convertidos silenciosamente**. **Nenhum deles é decidido aqui.**
+Registro **sem valores comerciais** dos casos que **não podem ser convertidos
+silenciosamente**. **Nenhum deles é decidido aqui.**
 
 | `Rxx` | Natureza do conflito |
 |---|---|
@@ -464,9 +468,9 @@ C **NÃO**:
 | C-12g | cria `DetectorHandoff` |
 | C-12h | cria condição de ciclo |
 
-**S2-D8 permanece ABERTA** (doc 06 §11; §12, item 10). O status `BLOQUEADO` de um fragmento
-**não é, por si só**, `E09` nem `pendencia_impeditiva`: ele é um fato sobre a base, não uma
-decisão de ciclo. **O consumo futuro pertence à arbitragem S2-D8**, não a C.
+**S2-D8 é ARBITRADA** (doc 06 §11; §12, item 10). O status `BLOQUEADO` de
+um fragmento **não é, por si só**, `E09` nem `pendencia_impeditiva`: ele é um fato sobre a
+base, não uma decisão de ciclo. **O consumo pertence a S2-D8**, não a C.
 
 #### C-13 — Efeito sobre F3–F5
 
@@ -494,35 +498,19 @@ implementa**:
 | C-14g | os **12** `CriterioIdentidade` e os **oito** campos de `DecisaoIdentidade` (§7.1) |
 
 C **não cria** componente, estado, evento, transição, condição, critério, enum de execução,
-pendência nova nem subetapa. **A 3B.8 não existe.**
+pendência nova nem subetapa.
 
-**Nota temporal sobre C-14f.** A linha C-14f registra o que C preservou **no momento da
-arbitragem C**, e continua correta como registro histórico. A micro-arbitragem **AJ2**,
-**posterior** (§6.3), mantém as **11** `IntencaoConversacional` e os erros
-**`E-Nb-1`–`E-Nb-19`**, mas **estende** a fronteira de cenários de `K-Nb-1`–`K-Nb-40` para
-**`K-Nb-1`–`K-Nb-51`**. **C não é reaberta por isso** e permanece **ARBITRADA / NÃO
-MATERIALIZADA**.
+**Precedência de C-14f × AJ2.** Na fronteira de cenários **AJ2 prevalece** sobre `C-14f`
+(**`C-P`**): as **11** `IntencaoConversacional` e os erros **`E-Nb-1`–`E-Nb-19`** permanecem,
+e a fronteira de cenários é **`K-Nb-1`–`K-Nb-51`** (§6.3). **C não é reaberta por isso.**
 
 #### Micro-arbitragem C-A1 — fechamento do contrato de materialização
 
-**Estado: ARBITRADA DOCUMENTALMENTE.** Entrega **exclusivamente documental**, **posterior** à
-arbitragem C. Ela **refina a leitura futura** do contrato de materialização e **fecha** as
-decisões técnicas que faltavam; ela **não** cria o índice, **não** altera o YAML, **não**
-converte respostas em *templates*, **não** muda status real, **não** implementa renderizador
-nem carregador e **não** materializa **C**, **R2** ou **S2-D8**.
-
-| # | Preservação histórica |
-|---|---|
-| C-A1-H1 | **C-1**–**C-14** continuam **registro histórico** da arbitragem C original e **não são reescritas** |
-| C-A1-H2 | C-A1 **refina a leitura futura** daquelas regras; **nenhuma regra histórica é falsificada** |
-| C-A1-H3 | **nenhum estado passado é reescrito**; onde C-1–C-14 descrevem o momento da arbitragem C, continuam corretas como tal |
-| C-A1-H4 | após esta entrega: **C-A1 = ARBITRADA DOCUMENTALMENTE**; **C = ARBITRADA / NÃO MATERIALIZADA**; **C-A2 = ABERTA** como arbitragem residual humana |
-
-A base factual desta micro-arbitragem é uma **auditoria read-only** de
-`knowledge/respostas-aprovadas.md` contra `knowledge/casa77.yaml`, **não versionada** e
-mantida **fora do repositório**, identificada pelo SHA-256
-`c0cf81d6e1a93c8ba19ed5a1863c93be4f1c37954702a8e94720a8a6b4ec79b0`. Ela **não** é fonte
-comercial e **não** introduz dado novo.
+`C-A1` **refina** o contrato de materialização e **fecha** as decisões técnicas que faltavam,
+prevalecendo sobre `C-1`–`C-15` na matéria que declara fechar (**`C-P`**). Ela **não** cria o
+índice, **não** altera o YAML, **não** converte respostas em *templates*, **não** muda status
+real, **não** implementa renderizador nem carregador e **não** materializa **C**, **R2** ou
+**S2-D8**.
 
 ##### C-15 — *Template* e equivalência
 
@@ -536,12 +524,11 @@ comercial e **não** introduz dado novo.
 
 ##### Representação canônica de entrada para C-15b
 
-Micro-arbitragem **documental** e **posterior**, localizada aqui porque refina **apenas a
-leitura de `C-15b`**. Ela **não renumera** `C-15a`–`C-15e`, **não os reescreve** e **não cria
-identificador normativo novo**: os rótulos **D1**–**D7** abaixo são **locais deste bloco** e
-existem só para referência interna. **Nenhum comparador é implementado aqui**, nenhum módulo,
-função, assinatura, exceção ou mensagem é decidido, e **nenhuma subetapa é criada** — a
-**3B.8 continua não existindo**.
+Refinamento que incide **apenas sobre a leitura de `C-15b`**, segundo a precedência `C-P`.
+Ele **não renumera** `C-15a`–`C-15e`, **não os reescreve** e **não cria identificador
+normativo novo**: os rótulos **D1**–**D7** abaixo são **locais deste bloco** e existem só para
+referência interna. Este bloco define somente o contrato; a implementação de módulo, função, assinatura, exceção
+e mensagem técnica pertence à fronteira executora correspondente.
 
 O que ela fecha é **a representação de entrada** sobre a qual a equivalência de `C-15` será
 futuramente julgada. A decisão adotada é **texto canônico já extraído**.
@@ -574,40 +561,29 @@ autoridade de status** (`C-A1-ST6`–`C-A1-ST10`). Esta ressalva é **normativa 
 implementar formato; decidir candidatura de fragmento; decidir migração de status; ou
 materializar **C** por si só. **Comparar NÃO é materializar C.**
 
-**Evidência estrutural do corpus atual** — metadados apenas, **sem reproduzir frase alguma** e
-**sem registrar *hash* de conteúdo** (`C-15e`, `C-1k`–`C-1m`): **37** fragmentos emitíveis, dos
-quais **29** multilinha; **0** parágrafos internos; **0** estruturas de lista, *heading* ou
-bloco de código **dentro** dos fragmentos; **0** *hard breaks* explícitos; **0** ocorrências de
-`CR`/`CRLF`; e **37/37 compatíveis** com a representação canônica acima. As contagens de
-fragmento e de parágrafo interno vêm da **auditoria read-only** já registrada; a ausência de
-`CR`/`CRLF`, de terminadores exóticos, de *hard break* e de bloco de código foi **reverificada
-mecanicamente** sobre o blob versionado. Como o corpus **não possui parágrafo interno**, **D4**
-fecha representação **futura** **sem alterar conteúdo corrente**.
-
-**Risco operacional registrado, não resolvido:** *checkouts* e ambientes podem materializar
-terminações de linha **distintas das existentes no blob Git**. Esta entrega **não altera
+**Risco arquitetural — terminação de linha.** *Checkouts* e ambientes podem materializar
+terminações de linha distintas das do repositório. Esta arbitragem **não altera
 `.gitattributes`**, **não decide configuração de Git** e **não afirma** que qualquer
-configuração seja universal ou garantida. O risco fica **registrado** e a adaptação, quando
-necessária, pertence ao **futuro produtor/extrator**, nunca ao comparador.
+configuração seja universal ou garantida. A adaptação, quando necessária, pertence ao
+**produtor/extrator**, nunca ao comparador.
 
 **Fora desta arbitragem**, e explicitamente **não decididos**: nome de módulo, nome de função,
 assinatura final, ordem de parâmetros, taxonomia de exceção, mensagem de erro, comportamento
 para tipo não-`str`, ordem entre **NFC** e a dobra de quebra suave, `hora`, gramática de
 `caminho_yaml`, identidade física do fragmento, sintaxe de *placeholder*, extrator físico,
-índice, *renderer*, formatos, **R2**, **S2-D8**, **`N-b-RES2`**, **`OrquestradorMotor`**,
-`.gitattributes` e a **3B.8**.
+índice, *renderer*, formatos, **R2**, **S2-D8**, **`N-b-RES2`**, **`OrquestradorMotor`** e
+`.gitattributes`.
 
 ##### Conversão do bloco marcado em texto canônico
 
-Micro-arbitragem **documental** e **posterior**. Ela fecha **uma única** matéria: **como um
+Refinamento que fecha, segundo **`C-P`**, **uma única** matéria: **como um
 bloco físico emitível de `C-A5-U1` é convertido deterministicamente em uma `str` do domínio
 canônico `D1`–`D7`, ou recusado *fail-closed***. Ela **não** reescreve, renumera ou substitui
 `D1`–`D7`, **não** cria versão concorrente deles, **não** altera `C-15`, `C-15b`, `C-A1-B`,
 `C-A1-ST` ou qualquer bloco de `C-A5`, e **não** cria identificador normativo novo: os rótulos
 **`MT1`**–**`MT12`** abaixo são **locais deste bloco**, existem só para referência interna e
-**não** são etapa, subetapa, `Exx` nem nomenclatura normativa de `C`. **Nenhum extrator é
-implementado aqui**; nenhum módulo, função, assinatura, exceção ou mensagem é decidido; e
-**nenhuma subetapa é criada** — a **3B.8 continua não existindo**.
+**não** são etapa, subetapa, `Exx` nem nomenclatura normativa de `C`. Este bloco define somente o contrato; a implementação de módulo, função, assinatura, exceção
+e mensagem técnica pertence à fronteira executora correspondente.
 
 **Relação com `D1`–`D7`, preservados literalmente.** Aquele bloco define o **domínio de
 chegada**; este define **como se chega nele**. **`D3`** continua sendo a convenção de
@@ -648,42 +624,35 @@ marcada **já em memória** e produzir texto canônico para `C-15b` **sem invent
 prefixo, de parágrafo, de quebra suave, de terminador físico ou de recusa de sintaxe inválida.
 **Essa entrega não é implementada aqui e não é escolhida aqui.**
 
-**Evidência estrutural do corpus atual — evidência, não norma.** Metadados apenas, **sem
-reproduzir frase alguma** e **sem registrar *hash* de conteúdo** (`C-15e`, `C-1k`–`C-1m`),
-reverificados mecanicamente sobre o blob versionado: **37** blocos emitíveis, dos quais **29**
-multilinha; **73/73** linhas de conteúdo na forma **exata `> `**; **0** linhas vazias internas
-`>`; **0** linhas vazias em borda de bloco; **0** pares de linhas vazias consecutivas; **0**
-linhas com espaço ou tab antes do terminador; **0** linhas fora das duas formas admitidas; e
-**0** ocorrências de `CR`, `U+2028`, `U+2029`, `U+0085`, `U+000B` ou `U+000C`. Esses fatos
-**sustentam** que a convenção escolhida **não exige alteração do corpus atual**, mas **NÃO
-são a origem normativa da regra**, **NÃO autorizam alteração de
-`knowledge/respostas-aprovadas.md`** e **NÃO substituem `D1`–`D7`, `C-15` ou `C-A5`**. O
-corpus foi consultado **read-only** e **não foi alterado**.
-
-**Risco operacional já registrado, e não resolvido aqui.** *Checkouts* e ambientes podem
-materializar terminações de linha distintas das do blob Git. **`MT8`** fecha a política **do
-extrator** diante disso; esta entrega **não altera `.gitattributes`**, **não decide
-configuração de Git** e **não afirma** que qualquer configuração seja universal.
+**Risco arquitetural — terminação de linha.** *Checkouts* e ambientes podem materializar
+terminações de linha distintas das do repositório. **`MT8`** fecha a política **do extrator**
+diante disso; esta arbitragem **não altera `.gitattributes`**, **não decide configuração de
+Git** e **não afirma** que qualquer configuração seja universal.
 
 **Fora desta arbitragem**, e explicitamente **não decididos**: propagação de status ao
 fragmento; mapeamento de `PARCIAL`; sintaxe de *placeholder*; gramática de `caminho_yaml`;
 formato `hora`; **C-7**; extração do **rótulo de status**; índice físico; *bindings*;
 `ASSERTIVA` física; *renderer*; execução física da bijeção; satisfação de
 `C-A1-ST6`–`C-A1-ST10`; migração da autoridade de status; consumidores;
-**`OrquestradorMotor`**; **R2**; **S2-D8**; **`N-b-RES2`**; `.gitattributes`; e a **3B.8**.
-**CONVERTER O BLOCO MARCADO EM TEXTO CANÔNICO NÃO É MATERIALIZAR `C`**, e **`C` continua
-ARBITRADA / NÃO MATERIALIZADA**.
+**`OrquestradorMotor`**; **R2**; **S2-D8**; **`N-b-RES2`**; e `.gitattributes`.
+**CONVERTER O BLOCO MARCADO EM TEXTO CANÔNICO NÃO É MATERIALIZAR `C`.**
 
 ##### C-A1-F — Refinamentos normativos de C-6
 
 **Nenhum formato novo é criado.** O vocabulário de C-6 permanece fechado; o que segue é
-**refinamento posterior** da sua leitura.
+**refinamento** da sua leitura, segundo **`C-P`**.
 
 | # | Formato | Refinamento |
 |---|---|---|
 | C-A1-F1 | `inteiro_agrupado` | **o mesmo inteiro**, com **uma única** convenção de agrupamento, **fechada e determinística** para o MVP. **Sem arredondamento, sem cálculo e sem alteração do valor.** |
 | C-A1-F2 | `simbolo_moeda` | opera sobre uma **tabela fechada** de códigos monetários suportados pelo MVP. A entrada é **somente** o código **explicitamente recebido por *binding*** (C-6c). **Código não suportado → FALHA.** **Nunca inferir moeda** e **nunca ler outro campo implicitamente**. A tabela pertence ao **contrato/implementação do formato**, **não ao índice**. |
 | C-A1-F3 | `hora` | **dois padrões fechados**: `HH:MM` — representação **geral** — e `Hh` — permitido **somente quando os minutos são `00`**. Minutos diferentes de `00` com `Hh` → **FALHA**. **Sem fuso, sem cálculo e sem arredondamento.** |
+| C-A1-F3a | `hora` — **regra mecânica de escolha** | Dentro dos **dois padrões já fechados por `C-A1-F3`**, e **sobre o valor de hora já resolvido**: minutos **`00`** → **`Hh`**; minutos **diferentes de `00`** → **`HH:MM`**. A regra é **total** e **determinística** — para todo valor admissível existe exatamente uma representação. Apresentação **pura** (`C-6`, `C-8`): **não calcula, não arredonda, não converte fuso, não consulta locale e não lê campo adicional**. **`C-A1-F3` permanece literal**: os dois padrões continuam sendo os únicos admissíveis, e **`Hh` continua proibido** com minutos diferentes de `00`. **Nenhum horário concreto é fixado por esta regra** — a escolha depende exclusivamente do valor recebido. |
+
+**`C-A1-F3a` fecha a lacuna normativa; não materializa o formato.** `formatar_hora` não existe
+em `src/casa77_sdr/response_format.py`, cuja nota sobre a ausência da regra mecânica permanece
+temporariamente defasada até a futura entrega funcional que materializar o formato. Essa
+entrega ainda não foi eleita. `C` não é materializada por esta arbitragem.
 
 ##### C-A1-L — Convenção final do formato `lista`
 
@@ -767,15 +736,15 @@ Antes disso, `knowledge/respostas-aprovadas.md` **continua a autoridade de statu
 
 ##### Propagação do status de `Rxx` aos fragmentos
 
-Micro-arbitragem **documental** e **posterior**. Ela fecha **uma única** matéria: **como o
+Refinamento que fecha, segundo **`C-P`**, **uma única** matéria: **como o
 status de um `Rxx`, uma vez que o seu rótulo já tenha sido corretamente identificado, é
 propagado aos fragmentos emitíveis daquele `Rxx`**. Ela **não** reescreve, renumera ou
 substitui `C-1`–`C-15`, `C-A1-ST`, `C-A5` ou `MT1`–`MT12`, **não** cria versão concorrente
 deles, **não** altera o vocabulário fechado de **`C-3`** e **não** cria identificador
 normativo novo: os rótulos **`SP1`**–**`SP7`** abaixo são **locais deste bloco**, existem só
 para referência interna e **não** são etapa, subetapa, `Exx` nem nomenclatura normativa de
-`C`. **Nenhum propagador é implementado aqui**; nenhum módulo, função, assinatura, exceção ou
-mensagem é decidido; e **nenhuma subetapa é criada** — a **3B.8 continua não existindo**.
+`C`. Este bloco define somente o contrato; a implementação de módulo, função, assinatura, exceção
+e mensagem técnica pertence à fronteira executora correspondente.
 
 **Pré-condição explícita, e limite duro do escopo.** A expressão **"rótulo já corretamente
 identificado"** é **pré-condição** desta arbitragem, **não** resultado dela. Esta arbitragem
@@ -798,43 +767,26 @@ A alternativa adotada é **PROPAGAÇÃO UNIFORME / FAIL-CLOSED**.
 | SP6 | **Autoridade.** O status propagado é **DERIVADO** da autoridade Markdown vigente. Ele **não cria declaração de status adicional** no Markdown de cada fragmento — **`C-2d`** continua valendo (**sem status armazenado no nível do `Rxx`**) e o Markdown **não é alterado** por esta arbitragem. O **futuro índice** poderá **armazenar status por fragmento** conforme **`C-2i`**, e **isso NÃO migra a autoridade**: até que **`C-A1-ST6`–`C-A1-ST10`** estejam **integralmente satisfeitas**, `knowledge/respostas-aprovadas.md` **continua a autoridade de status** (**`C-11`**). |
 | SP7 | **Limites.** Propagar status **NÃO**: cria índice; cria fragmento; altera identidade; extrai rótulo; resolve `PARCIAL`; executa a bijeção física; satisfaz **`ST6`**; satisfaz **`ST7`**; satisfaz **`ST8`** integralmente; satisfaz **`ST9`**; satisfaz **`ST10`**; migra a autoridade de status; nem **materializa `C`**. |
 
-**Relação com `C-A5-X2`, e o que ela deixa de fora.** **`C-A5-X2`** registrou como **ABERTAS**
-duas matérias distintas: a **propagação do status do cabeçalho `Rxx` aos fragmentos** e o
-**mapeamento concreto de `PARCIAL`**. Este bloco fecha **apenas a primeira, e apenas na sua
-parte semântica** — a propagação **uniforme** para rótulos **já corretamente identificados**
-que caiam em `ST1`–`ST3`. O **mapeamento concreto de `PARCIAL` permanece ABERTO** e continua
-regido por **`C-A1-ST4`**. **`C-A5-X3`** e **`C-A5-X4`** permanecem **literais e inalteradas**:
-*placeholder*, `caminho_yaml`, formato `hora` e **C-7** continuam **não decididos**, e
-**C-A5** continua **não criando** índice, *template* físico, *binding* físico, `ASSERTIVA`
-física, extrator, *renderer*, bijeção física ou migração de autoridade.
+**Escopo de SP.** `SP` fecha a **semântica de propagação** sob `ST1`–`ST3`, para rótulos **já
+corretamente identificados**. As demais matérias **não pertencem a SP** e são regidas pelos
+respectivos contratos deste documento — em particular **`C-A1-ST4`** para `PARCIAL`, e
+**`C-A5-X3`**/**`C-A5-X4`**, que permanecem **literais**.
 
-**O que esta arbitragem destrava — e somente isto.** A **semântica** de propagação para
-rótulos **já corretamente identificados**. Ela **não** torna pronta nenhuma entrega funcional
-e **não** escolhe a próxima. Permanecem **ABERTAS**, entre outras: a **extração física e a
-gramática do rótulo** no cabeçalho; o **mapeamento concreto de `PARCIAL`**; a **sintaxe de
-*placeholder***; a **gramática de `caminho_yaml`**; o **formato `hora`**; **C-7**; o **índice
-físico**; a **bijeção física**; **`C-A1-ST6`–`C-A1-ST10`**; e a **migração da autoridade de
-status**.
-
-**Estado após este bloco.** **`C` continua ARBITRADA / NÃO MATERIALIZADA**; **`C-A5` continua
-MATERIALIZADA no corpus** e **`C-A5-M2` continua ATIVA**;
-`knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**; a **bijeção física
-continua NÃO EXECUTADA**; a **autoridade de status continua NÃO MIGRADA** (**`C-11`**);
-**`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**; a **3B.8 continua INEXISTENTE**; e
-`knowledge/respostas-aprovadas.md` **não foi alterado**. **PROPAGAR STATUS NÃO É EXTRAIR
-RÓTULO, NÃO É RESOLVER `PARCIAL`, NÃO É MIGRAR AUTORIDADE E NÃO É MATERIALIZAR `C`.**
+**Limites deste bloco.** A **autoridade de status** permanece em
+`knowledge/respostas-aprovadas.md` enquanto **`C-A1-ST6`–`C-A1-ST10`** não estiverem
+satisfeitas (**`C-11`**). **PROPAGAR STATUS NÃO É EXTRAIR RÓTULO, NÃO É RESOLVER `PARCIAL`,
+NÃO É MIGRAR AUTORIDADE E NÃO É MATERIALIZAR `C`.**
 
 ##### Gramática física do rótulo de status no cabeçalho `Rxx`
 
-Micro-arbitragem **documental** e **posterior**. Ela fecha **uma única** matéria: **qual é a
+Refinamento que fecha, segundo **`C-P`**, **uma única** matéria: **qual é a
 gramática física determinística do rótulo de status em um cabeçalho `Rxx`**. Ela **não**
 reescreve, renumera ou substitui `C-1`–`C-15`, `C-A1-ST`, `C-A5`, `MT1`–`MT12` ou `SP1`–`SP7`,
 **não** cria versão concorrente deles, **não** altera o vocabulário fechado de **`C-3`** e
 **não** cria identificador normativo novo: os rótulos **`GR1`**–**`GR7`** abaixo são **locais
 deste bloco**, existem só para referência interna e **não** são etapa, subetapa, `Exx` nem
-nomenclatura normativa de `C`; eles **não criam a 3B.8**, que **continua não existindo**.
-**Nenhum extrator é implementado aqui**; **nenhum módulo, função, assinatura, exceção ou
-mensagem é decidido**; e **nenhuma subetapa é criada**.
+nomenclatura normativa de `C`. Este bloco define somente o contrato; a implementação de módulo, função, assinatura, exceção
+e mensagem técnica pertence à fronteira executora correspondente.
 
 **Esta arbitragem NÃO arbitra propagação** — isso é `SP1`–`SP7`, já fechado —, **NÃO arbitra
 `PARCIAL`**, **NÃO cria índice**, **NÃO decide ordem de chamadas entre módulos** e **NÃO
@@ -866,56 +818,28 @@ automática, **NÃO** recebe propagação automática, **NÃO** é quarto status
 `C-A1-ST4`** e **continua sob `SP4`/`SP5`**, permanecendo **pendente de mapeamento explícito
 futuro** no nível dos fragmentos emitíveis. **EXTRAIR `PARCIAL` NÃO É RESOLVER `PARCIAL`.**
 
-**Relação com `C-A5-X2`, sem reescrita retroativa.** **`C-A5-X2`** registrou como **ABERTAS**
-**duas** matérias: **1.** a **propagação do status** do cabeçalho `Rxx` aos fragmentos; e
-**2.** o **mapeamento concreto de `PARCIAL`**. Após `SP1`–`SP7`, a **propagação** ficou
-**fechada semanticamente**, e o **mapeamento concreto de `PARCIAL` continua ABERTO**. **A
-gramática física do rótulo é uma lacuna SEPARADA**, e **não** é nenhuma das duas: este bloco
-**não esgota `C-A5-X2`**, **não fecha "a segunda metade" de `C-A5-X2`** e **não resolve
-`PARCIAL`**. **`C-A5-X2` não é reescrita retroativamente** e permanece **literal**, assim como
-**`C-A5-X3`** e **`C-A5-X4`**.
+**Relação com `C-A5-X2`.** **`C-A5-X2`** delimita o escopo original de `C-A5`. **SP** rege a
+**propagação** e **PM** rege a **representação estrutural de `PARCIAL`**; a **aplicação
+física** e o **estado de execução** pertencem a `docs/00-estado-atual.md`.
 
-**Evidência estrutural do corpus atual — evidência, não norma.** Consulta **estritamente
-read-only** ao blob versionado `3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`, **reverificada
-mecanicamente**, **sem reproduzir conteúdo comercial**: **30** cabeçalhos `## Rxx`; **30/30
-conformes a `G2`**; **0** divergentes; **0** títulos contendo o separador literal;
-**exatamente 60** ocorrências de `U+2014` nos cabeçalhos `Rxx`, **duas por cabeçalho**; **0**
-ocorrências de `U+002D` ou `U+2013` nesses cabeçalhos; e **quatro** rótulos físicos distintos
-— `APROVADO`, `AGUARDA APROVAÇÃO`, `APROVADO com handoff obrigatório` e `PARCIAL`. Esses
-fatos **sustentam** que `G2` **não exige alteração do corpus atual**, mas são **EVIDÊNCIA DE
-COMPATIBILIDADE, NÃO FONTE NORMATIVA**: eles **NÃO** são a origem da regra, **NÃO** autorizam
-alteração de `knowledge/respostas-aprovadas.md` — que **não foi alterado** — e **NÃO**
-substituem `C-3`, `C-A1-ST`, `C-A5` ou `SP1`–`SP7`.
-
-**O que esta arbitragem destrava — e somente isto.** A **gramática física** pela qual um
-rótulo de status pode ser **deterministicamente identificado** em um cabeçalho `Rxx` já
-estruturalmente reconhecido. Permanecem **ABERTAS**, entre outras: o **mapeamento concreto de
-`PARCIAL`**; a **sintaxe de *placeholder***; a **gramática de `caminho_yaml`**; o **formato
-`hora`**; **C-7**; o **índice físico**; a **bijeção física**; **`C-A1-ST6`–`C-A1-ST10`**; e a
-**migração da autoridade de status**.
-
-**Estado após este bloco.** **`C` continua ARBITRADA / NÃO MATERIALIZADA**; **`C-A5` continua
-MATERIALIZADA no corpus** e **`C-A5-M2` continua ATIVA**;
-`knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**; a **bijeção física
-continua NÃO EXECUTADA**; a **autoridade de status continua NÃO MIGRADA** (**`C-11`**);
-**`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**; a **3B.8 continua INEXISTENTE**; e
-`knowledge/respostas-aprovadas.md` **não foi alterado**. **ARBITRAR A GRAMÁTICA FÍSICA DO
-RÓTULO NÃO É EXTRAIR O RÓTULO, NÃO É CANONICALIZAR STATUS, NÃO É RESOLVER `PARCIAL`, NÃO É
-MIGRAR AUTORIDADE E NÃO É MATERIALIZAR `C`.**
+**Limites deste bloco.** A **autoridade de status** permanece em
+`knowledge/respostas-aprovadas.md` enquanto **`C-A1-ST6`–`C-A1-ST10`** não estiverem
+satisfeitas (**`C-11`**). **ARBITRAR A GRAMÁTICA FÍSICA DO RÓTULO NÃO É EXTRAIR O RÓTULO,
+NÃO É CANONICALIZAR STATUS, NÃO É RESOLVER `PARCIAL`, NÃO É MIGRAR AUTORIDADE E NÃO É
+MATERIALIZAR `C`.**
 
 ##### Mapeamento físico de status por fragmento sob `PARCIAL`
 
-Micro-arbitragem **documental** e **posterior**. Ela fecha **uma única** matéria: **a
+Refinamento que fecha, segundo **`C-P`**, **uma única** matéria: **a
 representação física e as regras estruturais do status explícito por fragmento quando o
 cabeçalho `G2` do respectivo `Rxx` contém o rótulo `PARCIAL`**. Ela **não** reescreve,
 renumera ou substitui `C-1`–`C-15`, `C-A1-ST`, `C-A1-P`, `C-A5`, `MT1`–`MT12`, `SP1`–`SP7` ou
 `GR1`–`GR7`, **não** cria versão concorrente deles, **não** altera o vocabulário fechado de
 **`C-3`** e **não** cria identificador normativo novo: os rótulos **`PM1`**–**`PM12`** abaixo
 são **locais deste bloco**, existem só para referência interna e **não** são etapa, subetapa,
-`Exx` nem nomenclatura normativa de `C`; eles **não criam a 3B.8**, que **continua não
-existindo**. **Nenhum parser é implementado aqui**; **nenhum módulo, função, assinatura,
-exceção ou mensagem é decidido**; **nenhum status real é atribuído a fragmento algum**; e
-**`knowledge/**` não é alterado**.
+`Exx` nem nomenclatura normativa de `C`. Este bloco define somente o contrato; a implementação de módulo, função, assinatura, exceção
+e mensagem técnica pertence à fronteira executora correspondente.
+Este contrato **não atribui status a fragmento algum** e **não altera `knowledge/**`**.
 
 **Esta arbitragem NÃO arbitra propagação** — isso é `SP1`–`SP7`, já fechado —, **NÃO altera a
 gramática do cabeçalho** — isso é `GR1`–`GR7`, já fechado —, **NÃO altera `C8`, `C11`, `C12`
@@ -943,7 +867,7 @@ A forma física completa arbitrada é:
 | PM9 | **Não emissão.** `status-fragmento` **NÃO** é fragmento emitível, **NÃO** é nota comercial, **NÃO** é instrução emitível, **NÃO** recebe *binding*, **NÃO** recebe `ASSERTIVA` e **NÃO** pode ser emitido ao interessado. **`C-2m`**–**`C-2p`** e **`C-A5-U4`** são **preservados**. Ela também **não** é bloco de citação e, portanto, **não** entra na bijeção de **`C-A1-B3`** / **`C-A1-B4`**. |
 | PM10 | **Política de linha.** Reutiliza-se **integralmente** a política estrutural já vigente em `C8`/`C12`: divisão **exclusivamente por `LF`**; **no máximo um `CR` terminal** removido por segmento; **sem `splitlines()`**; **sem *universal newline***. **Nenhuma terceira política é criada.** `CR` residual, `U+2028`, `U+2029`, `U+0085`, `VT`, `FF` e `U+00A0` **permanecem conteúdo literal** conforme a política estrutural vigente, e o **envelope precisa permanecer literal**. |
 | PM11 | **Significado físico de `PARCIAL`.** **No Markdown vigente, o rótulo físico `PARCIAL` ativa o regime de STATUS EXPLICITAMENTE DECLARADO POR FRAGMENTO.** Nesta fronteira ele significa **exatamente**: **não** aplicar propagação automática do cabeçalho; **exigir** uma declaração `status-fragmento` para **cada** fragmento; e **resolver cada fragmento individualmente** por valor de `C-3` explícito. `PARCIAL` **NÃO** é status canônico, **NÃO** é armazenado no `Rxx` do índice, **NÃO** é armazenado no fragmento, **NÃO** é convertido em quarto status, **NÃO** exige dois ou mais status distintos, **NÃO** exige mistura de status e **NÃO** exige cardinalidade mínima de dois fragmentos. Uma seção fisicamente rotulada `PARCIAL` pode ter **um** fragmento ou **vários**, **todos com o mesmo status** ou **com status distintos**. **Isso NÃO define uma função geral de agregação de status de `Rxx`.** |
-| PM12 | **Limites.** Esta arbitragem **NÃO**: atribui status real; altera `knowledge/**`; altera `C8`, `C11`, `C12` ou `C13`; implementa *parser*; implementa a próxima entrega funcional; cria índice; executa a bijeção física; satisfaz **`C-A1-ST6`**, **`C-A1-ST7`**, **`C-A1-ST8`**, **`C-A1-ST9`** ou **`C-A1-ST10`**; migra a autoridade de status; resolve *binding*; resolve *placeholder*; resolve `caminho_yaml`; resolve **C-7**; cria a **3B.8**; nem **materializa `C`**. |
+| PM12 | **Limites.** Esta arbitragem **NÃO**: atribui status real; altera `knowledge/**`; altera `C8`, `C11`, `C12` ou `C13`; implementa *parser*; implementa a próxima entrega funcional; cria índice; executa a bijeção física; satisfaz **`C-A1-ST6`**, **`C-A1-ST7`**, **`C-A1-ST8`**, **`C-A1-ST9`** ou **`C-A1-ST10`**; migra a autoridade de status; resolve *binding*; resolve *placeholder*; resolve `caminho_yaml`; resolve **C-7**; cria subetapa; nem **materializa `C`**. |
 
 **Relação com `C-3`, sem reescrita.** **`C-3` permanece literal e não é reescrita.** O **modelo
 futuro** continua exatamente como está: o **`Rxx` não armazena status** (**`C-2d`**);
@@ -970,57 +894,27 @@ determinando automaticamente** o valor de `status-fragmento`. **Nada é inferido
 conteúdo, de posição ou de contexto. O valor é **declarado explicitamente por ato humano**, ou
 não existe.
 
-**Evidência estrutural do corpus atual — evidência, não norma.** Consulta **estritamente
-read-only** ao blob versionado `3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`, **sem reproduzir
-conteúdo comercial**: **30** cabeçalhos `## Rxx`; **exatamente 1** com rótulo físico
-`PARCIAL` — o **`R28`** já citado por `C-A1-P2` —, contendo **exatamente 1** marcador `C-A5`;
-**37** marcadores `C-A5` no total, **37/37** imediatamente seguidos pela primeira linha do
-bloco, **sem linha em branco** (**`C-A5-I2`** satisfeito); e **0** ocorrências de
-`status-fragmento` em todo o corpus — os **37** comentários HTML existentes são **exatamente**
-os 37 marcadores `C-A5`, de modo que o portador de `PM1` **não colide com nada existente**.
-Esses fatos **sustentam** que a forma arbitrada é **estruturalmente compatível** com o corpus
-atual, mas são **EVIDÊNCIA DE COMPATIBILIDADE, NÃO FONTE NORMATIVA**: eles **NÃO** são a
-origem da regra, **NÃO** autorizam alteração de `knowledge/respostas-aprovadas.md` — que
-**não foi alterado** — e **NÃO** substituem `C-3`, `C-A1-ST`, `C-A1-P`, `C-A5`, `SP1`–`SP7` ou
-`GR1`–`GR7`. **EVIDÊNCIA NÃO É NORMA**, e **nenhum status é aqui atribuído ao `R28` nem a
-qualquer outro fragmento real**.
+**`PARCIAL` — a distinção que importa.** A **norma estrutural** é **FECHADA** quanto a:
+**portador**; **posição**; **associação**; **vocabulário**; **cardinalidade**;
+***fail-closed***; **proibição sob `ST1`–`ST3`**; e **significado físico de `PARCIAL`**. Este
+contrato **não atribui status a fragmentos do corpus**: cada status exige **declaração humana
+explícita** conforme as regras desta seção. O **estado de aplicação ao corpus** pertence a
+`docs/00-estado-atual.md`.
 
-**`PARCIAL` após esta arbitragem — a distinção que importa.** A **norma estrutural** fica
-**FECHADA** quanto a: **portador**; **posição**; **associação**; **vocabulário**;
-**cardinalidade**; ***fail-closed***; **proibição sob `ST1`–`ST3`**; e **significado físico de
-`PARCIAL`**. O **corpus real**, porém, **continua NÃO RESOLVIDO**: **nenhum status real de
-fragmento é atribuído por esta entrega**. Portanto, e sem ambiguidade: **`PARCIAL` CONTINUA
-NÃO RESOLVIDO NO CORPUS ATÉ APLICAÇÃO HUMANA EXPLÍCITA DOS STATUS POR FRAGMENTO.**
+**Relação com `C-A5-X2`.** **`C-A5-X2`** delimita o escopo original de `C-A5`. **SP** rege a
+**propagação** e **PM** rege a **representação estrutural de `PARCIAL`**; a **aplicação
+física** e o **estado de execução** pertencem a `docs/00-estado-atual.md`.
 
-**Relação com `C-A5-X2`, sem reescrita retroativa.** **`C-A5-X2`** registrou como **ABERTAS**
-**duas** matérias: **1.** a **propagação do status**; e **2.** o **mapeamento concreto de
-`PARCIAL`**. Após `SP1`–`SP7` a propagação ficou **fechada semanticamente**, e após este bloco
-a **representação física** do mapeamento de `PARCIAL` fica **arbitrada** — mas a **aplicação
-ao corpus continua ABERTA**. **`C-A5-X2` não é reescrita retroativamente** e permanece
-**literal**, assim como **`C-A5-X3`** e **`C-A5-X4`**.
+**Limites deste bloco.** A **autoridade de status** permanece em
+`knowledge/respostas-aprovadas.md` enquanto **`C-A1-ST6`–`C-A1-ST10`** não estiverem
+satisfeitas (**`C-11`**). **ARBITRAR A REPRESENTAÇÃO FÍSICA DO STATUS POR FRAGMENTO NÃO É
+ATRIBUIR STATUS, NÃO É ALTERAR O CORPUS, NÃO É IMPLEMENTAR PARSER, NÃO É RESOLVER `PARCIAL`
+E NÃO É MATERIALIZAR `C`.**
 
-**O que esta arbitragem destrava — e somente isto.** A **representação física** e as **regras
-estruturais** pelas quais o status de um fragmento pode ser **explicitamente declarado** sob um
-cabeçalho `Rxx` rotulado `PARCIAL`. Permanecem **ABERTAS**, entre outras: a **aplicação humana
-dos status reais no corpus**; a **materialização técnica** desta forma; a **composição
-documental** com `C8`/`C12`/`C13`; a **sintaxe de *placeholder***; a **gramática de
-`caminho_yaml`**; o **formato `hora`**; **C-7**; o **índice físico**; a **bijeção física**;
-**`C-A1-ST6`–`C-A1-ST10`**; e a **migração da autoridade de status**.
-
-**Estado após este bloco.** **`C` continua ARBITRADA / NÃO MATERIALIZADA**; **`C-A5` continua
-MATERIALIZADA no corpus** e **`C-A5-M2` continua ATIVA**;
-`knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**; a **bijeção física
-continua NÃO EXECUTADA**; a **autoridade de status continua NÃO MIGRADA** (**`C-11`**);
-**`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**; a **3B.8 continua INEXISTENTE**; e
-`knowledge/respostas-aprovadas.md` **não foi alterado**. **ARBITRAR A REPRESENTAÇÃO FÍSICA DO
-STATUS POR FRAGMENTO NÃO É ATRIBUIR STATUS, NÃO É ALTERAR O CORPUS, NÃO É IMPLEMENTAR PARSER,
-NÃO É RESOLVER `PARCIAL` E NÃO É MATERIALIZAR `C`.**
-
-**REGISTRO POSTERIOR — DECISÃO HUMANA DE STATUS DE `R28/F1`. NÃO É REGRA, NÃO É `PM13` E NÃO
-ALTERA `PM1`–`PM12`.** O que segue é **registro de um ato de autoridade humana**, escrito
-**depois** das regras acima e **deliberadamente separado** delas: ele **não** cria rótulo
-local novo, **não** renumera, **não** reinterpreta e **não** altera nenhuma das regras `PM1` a
-`PM12`, que permanecem **literais e inalteradas**.
+**DECISÃO HUMANA DE STATUS DE `R28/F1`. NÃO É REGRA, NÃO É `PM13` E NÃO ALTERA
+`PM1`–`PM12`.** O que segue é **registro de um ato de autoridade humana**: ele **não** cria
+rótulo local novo, **não** renumera, **não** reinterpreta e **não** altera nenhuma das regras
+`PM1` a `PM12`, que permanecem **literais**.
 
 **Existe decisão humana explícita para `R28/F1`, e o valor decidido é `APROVADO`.** O valor
 pertence ao **vocabulário fechado de `C-3`** (`C-3a`). A decisão é **humana e deliberada**:
@@ -1029,20 +923,13 @@ de conteúdo, **NÃO** foi inferida do rótulo físico `PARCIAL` do cabeçalho e
 escolhida por ferramenta ou modelo algum. Isso é exatamente o que **`C-A1-P2`** e **`PM11`**
 exigem: sob `PARCIAL`, o status **é declarado por ato humano explícito**, nunca derivado.
 
-**A decisão está APROVADA e AINDA NÃO APLICADA.** Ela **não** foi aplicada fisicamente a
-`knowledge/respostas-aprovadas.md`, que **não foi alterado** e permanece no blob
-`3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`. **Enquanto não aplicada, o corpus continua
-mecanicamente sem a declaração obrigatória de `PM5`** para aquele fragmento: uma verificação
-estrutural de `PM5` sobre o corpus atual **falharia por declaração ausente**, e isso é o
-comportamento correto — **decidir não é aplicar**.
+**A decisão humana e a sua aplicação física são atos distintos.** Um fragmento sob `PARCIAL`
+sem a declaração obrigatória de `PM5` **falha por declaração ausente** — esse é o
+comportamento correto: **decidir não é aplicar**.
 
-**Forma futura decorrente da decisão.** Quando — e somente quando — a aplicação física for
-executada por entrega própria, ela deverá usar **exatamente** a linha
-`<!-- status-fragmento: APROVADO -->`, **imediatamente antes** do marcador `C-A5` de
-`R28/F1`, com **zero linha física** entre ambos, conforme `PM1` e `PM2`. **Esta linha é
-SOMENTE a forma futura decorrente da decisão, e NÃO uma alteração executada aqui**: nenhuma
-declaração foi inserida, nenhum cabeçalho foi alterado, nenhum fragmento foi alterado e
-nenhuma nota foi alterada.
+**Forma decorrente da decisão.** Quando aplicada, a representação deve usar **exatamente** a
+linha `<!-- status-fragmento: APROVADO -->`, **imediatamente antes** do marcador `C-A5` de
+`R28/F1`, com **zero linha física** entre ambos, conforme `PM1` e `PM2`.
 
 **O significado da decisão é estrito.** `APROVADO` significa **somente** o **status canônico
 de `C-3` do fragmento emitível `R28/F1`**. A decisão **NÃO** resolve nota interna, **NÃO**
@@ -1052,22 +939,18 @@ sem as demais validações, **NÃO** decide **S2-D8**, **NÃO** cria `E09`, **N�
 satisfaz **`C-A1-ST8`** isoladamente — `C-A1-ST8` exige o status de **todos** os fragmentos
 resolvidos, e **`C-A4-G8`** continua valendo: **cobertura estrutural não é emissibilidade**.
 
-**Estado após este registro.** **`PM1`–`PM12` permanecem inalteradas**; `C-3`, `C-A1-P2`,
-`C-A1-ST` e `C-A5` permanecem **literais**; `knowledge/respostas-aprovadas.md` **não foi
-alterado**; **`PARCIAL` continua NÃO RESOLVIDO NO CORPUS** — agora com o status **humanamente
-decidido**, mas com a **declaração física ainda não aplicada**. **DECIDIR O STATUS NÃO É
-APLICAR A DECLARAÇÃO, NÃO É ALTERAR O CORPUS E NÃO É MATERIALIZAR `C`.**
+**Limites deste registro.** **`PM1`–`PM12`**, `C-3`, `C-A1-P2`, `C-A1-ST` e `C-A5`
+permanecem **literais**. **DECIDIR O STATUS NÃO É APLICAR A DECLARAÇÃO, NÃO É ALTERAR O
+CORPUS E NÃO É MATERIALIZAR `C`.**
 
 ##### Regime exclusivo de `status-fragmento` sob `PARCIAL`
 
-**REGISTRO POSTERIOR. NÃO CRIA `PM13`, NÃO RENUMERA, NÃO REINTERPRETA E NÃO ALTERA
-`PM1`–`PM12`.** Este registro é escrito **depois** das regras `PM1`–`PM12` e do registro da
-decisão humana de `R28/F1`, e é **deliberadamente separado** deles. Ele **não** cria rótulo
-local novo — **`PM13` não existe** —, **não** renumera, **não** reinterpreta e **não** altera
-nenhuma daquelas doze regras, que permanecem **literais**. Em particular, **`PM7` não é
-alterado nem absorvido**: ele continua sendo o **caso particular de `ST1`–`ST3`**, com
-**fundamento próprio** — a existência de propagação uniforme por `SP2`/`SP3` e a preservação
-de `SP6`.
+**NÃO CRIA `PM13`, NÃO RENUMERA, NÃO REINTERPRETA E NÃO ALTERA `PM1`–`PM12`.** Este bloco
+**não** cria rótulo local novo — **`PM13` não existe** —, **não** renumera, **não**
+reinterpreta e **não** altera nenhuma daquelas doze regras, que permanecem **literais**. Em
+particular, **`PM7` não é alterado nem absorvido**: ele continua sendo o **caso particular de
+`ST1`–`ST3`**, com **fundamento próprio** — a existência de propagação uniforme por
+`SP2`/`SP3` e a preservação de `SP6`.
 
 Ele fecha **uma única** lacuna: **o comportamento de uma linha que satisfaz EXATAMENTE o
 envelope de `PM1` dentro de uma seção `Rxx` cujo cabeçalho satisfaz `G2`, mas cujo rótulo
@@ -1130,25 +1013,19 @@ mensagens, precedência interna de validação, tipo de erro interno, estratégi
 inspeção de árvore sintática ou arquivos futuros. **Tudo isso pertence a mandato técnico
 próprio**, ainda **não** emitido.
 
-**Estado após este registro.** **`PM1`–`PM12` permanecem inalteradas** e **`PM13` não existe**;
-`G2`/`GR1`–`GR7`, `SP1`–`SP7`, `C-3`, `C-A1-ST`, `C-A1-P2` e `C-A5` permanecem **literais**;
-`knowledge/respostas-aprovadas.md` **não foi alterado** e permanece no blob
-`3bfb2e9fd18bac016e1dbe2c963ff916ceb0c96c`; a decisão humana **`R28/F1 = APROVADO` continua
-DECIDIDA e NÃO APLICADA**; e **`PARCIAL` continua NÃO RESOLVIDO no corpus**. **FECHAR A LACUNA
-NORMATIVA NÃO É IMPLEMENTAR VERIFICAÇÃO, NÃO É APLICAR DECLARAÇÃO, NÃO É ALTERAR O CORPUS E
-NÃO É MATERIALIZAR `C`.**
+**Limites deste registro.** **`PM1`–`PM12`** permanecem **literais** e **`PM13` não existe**;
+`G2`/`GR1`–`GR7`, `SP1`–`SP7`, `C-3`, `C-A1-ST`, `C-A1-P2` e `C-A5` permanecem **literais**.
+**FECHAR A LACUNA NORMATIVA NÃO É IMPLEMENTAR VERIFICAÇÃO, NÃO É APLICAR DECLARAÇÃO, NÃO É
+ALTERAR O CORPUS E NÃO É MATERIALIZAR `C`.**
 
 ##### Comportamento da futura composição total de status diante de `SP5`
 
-**REGISTRO POSTERIOR, ESCRITO JUNTO DE `SP5`. NÃO CRIA `SP8`, NÃO RENUMERA, NÃO REINTERPRETA E
-NÃO ALTERA `SP1`–`SP7`.** Este registro é escrito **depois** de `SP1`–`SP7`, de
-`G2`/`GR1`–`GR7`, de `PM1`–`PM12` e do **regime exclusivo de `status-fragmento` sob
-`PARCIAL`**, e é **deliberadamente separado** deles. Ele **não** cria rótulo local novo —
-**`SP8` não existe** —, **não** renumera, **não** reinterpreta e **não** altera nenhuma das
-sete regras `SP`, que permanecem **literais**. Ele **não** é etapa, subetapa, `Exx` nem
-identificador normativo, e **não cria a 3B.8**, que continua **inexistente**. **Nenhum
-compositor é implementado aqui**; **nenhum módulo, função, assinatura, exceção ou mensagem é
-decidido**.
+**NÃO CRIA `SP8`, NÃO RENUMERA, NÃO REINTERPRETA E NÃO ALTERA `SP1`–`SP7`.** Este bloco
+**não** cria rótulo local novo — **`SP8` não existe** —, **não** renumera, **não**
+reinterpreta e **não** altera nenhuma das sete regras `SP`, que permanecem **literais**. Ele
+**não** é etapa, subetapa, `Exx` nem identificador normativo, e **não cria subetapa**. Este
+bloco define somente o contrato; a implementação de módulo, função, assinatura, exceção e
+mensagem técnica pertence à fronteira executora correspondente.
 
 Ele fecha **uma única** matéria: **o que uma FUTURA FRONTEIRA DE COMPOSIÇÃO TOTAL DE STATUS
 deve fazer ao encontrar fragmento cujo status permanece NÃO RESOLVIDO pelo ramo de rótulo
@@ -1228,23 +1105,17 @@ composição total **não declare sucesso enquanto houver fragmento não resolvi
 desconhecido de `SP5`**. A satisfação de `ST8` continuará **exigindo execução e auditoria
 próprias** sobre os insumos canônicos pertinentes.
 
-**Evidência estrutural do corpus atual — NÃO fundamento normativo.** No corpus canônico
-vigente — `knowledge/respostas-aprovadas.md`, blob
-`3a30fe764b80902227fdefb9282f3916650e4f17` — há **30** seções `Rxx`, das quais **25** com
-rótulo de `C-A1-ST1`, **2** de `C-A1-ST2`, **2** de `C-A1-ST3`, **1** `PARCIAL` e **0** com
-outro rótulo `G2` válido. **ESSA DISTRIBUIÇÃO É EVIDÊNCIA DO CORPUS ATUAL E NÃO FUNDAMENTO
-NORMATIVO DESTA ARBITRAGEM.** A regra acima **permanece válida** ainda que um **futuro corpus
-aprovado** venha a conter outro rótulo `G2` válido.
+**A distribuição de rótulos do corpus é evidência, não fundamento normativo.** A regra acima
+**permanece válida** ainda que um **futuro corpus aprovado** venha a conter outro rótulo `G2`
+válido.
 
-**Estado após este registro.** **`SP1`–`SP7` permanecem inalteradas** e **`SP8` não existe**;
+**Limites deste registro.** **`SP1`–`SP7`** permanecem **literais** e **`SP8` não existe**;
 `G2`/`GR1`–`GR7`, `PM1`–`PM12`, o **regime exclusivo de `status-fragmento`**, `C-3`,
-`C-A1-ST`, `C-A1-P2` e `C-A5` permanecem **literais**; **nenhuma exceção concreta foi
-desenhada**; **nenhum código foi implementado**; `knowledge/respostas-aprovadas.md` **não foi
-alterado** e permanece no blob `3a30fe764b80902227fdefb9282f3916650e4f17`; a **3B.8 continua
-INEXISTENTE**; a **autoridade de status continua NÃO MIGRADA** (**`C-11`**); e
-**`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**. **ARBITRAR O COMPORTAMENTO DA FUTURA
-COMPOSIÇÃO TOTAL NÃO É IMPLEMENTAR COMPOSIÇÃO, NÃO É RESOLVER O STATUS QUE `SP5` MANTÉM NÃO
-RESOLVIDO, NÃO É SATISFAZER `ST8`, NÃO É MIGRAR AUTORIDADE E NÃO É MATERIALIZAR `C`.**
+`C-A1-ST`, `C-A1-P2` e `C-A5` permanecem **literais**. A **autoridade de status** permanece
+em `knowledge/respostas-aprovadas.md` enquanto **`C-A1-ST6`–`C-A1-ST10`** não estiverem
+satisfeitas (**`C-11`**). **ARBITRAR O COMPORTAMENTO DA FUTURA COMPOSIÇÃO TOTAL NÃO É
+IMPLEMENTAR COMPOSIÇÃO, NÃO É RESOLVER O STATUS QUE `SP5` MANTÉM NÃO RESOLVIDO, NÃO É
+SATISFAZER `ST8`, NÃO É MIGRAR AUTORIDADE E NÃO É MATERIALIZAR `C`.**
 
 ##### C-A1-M — Prioridade de modelagem, prosa e auditoria de consumidores
 
@@ -1326,34 +1197,8 @@ alvo **MD-7′**.
 | C-A1-I2 | A **capacidade operacional** — se o bot pode ou não confirmar disponibilidade — é **outro fato operacional**, e **não existe fonte autoritativa atual suficiente** para essa política específica. |
 | C-A1-I3 | **MD-15′** é o alvo dessa política atômica separada, e permanece **condicionado a confirmação humana em C-A2** (**A4**). |
 
-##### C-A1-N — Contagens projetadas de fragmentos
-
-**São contagens PROJETADAS de fragmentos, não estado físico atual.** As duas questões
-técnicas antes abertas — **convenção do formato `lista`** e **seleção em coleção** — estão
-**ARBITRADAS** por C-A1 e **não** são registradas como pendências.
-
-| # | Cenário | Fragmentos |
-|---|---|---|
-| C-A1-N1 | **total** de fragmentos emitíveis (estado atual, medido) | **35** |
-| C-A1-N2 | **estruturalmente representáveis no contrato ORIGINAL**, sem mudança alguma | **7** |
-| C-A1-N3 | **projetadamente representáveis após os refinamentos normativos de C-A1**, sem alterar o YAML e sem decisão humana | **11** |
-| C-A1-N4 | **projetadamente representáveis após** C-A1 **+** aplicação futura dos alvos de modelo **+** confirmações factuais necessárias | **29** |
-| C-A1-N5 | **residuais** que continuam dependendo de **C-A2** / decisão de conteúdo | **6** |
-
-Verificação: **29 + 6 = 35**.
-
-No nível `Rxx`, **no cenário futuro projetado**:
-
-| # | Classe | `Rxx` |
-|---|---|---|
-| C-A1-N6 | integralmente materializáveis | **24** |
-| C-A1-N7 | parcialmente materializáveis | **4** |
-| C-A1-N8 | integralmente bloqueados | **2** |
-
-Verificação: **24 + 4 + 2 = 30**.
-
-**Estado atual** e **projeção futura** são coisas distintas e **não devem ser confundidas**:
-hoje **nada** está materializado, e **C permanece ARBITRADA / NÃO MATERIALIZADA**.
+As duas questões técnicas antes abertas — **convenção do formato `lista`** e **seleção em
+coleção** — estão **ARBITRADAS** por `C-A1` e **não** são pendências.
 
 ##### C-A1-P — Casos nomeados
 
@@ -1365,34 +1210,10 @@ hoje **nada** está materializado, e **C permanece ARBITRADA / NÃO MATERIALIZAD
 | C-A1-P5 | **R10** | **G7 não se resolve só com A2.** **A2** confirma o **fato humano** — existência ou inexistência de mínimo —; **MD-6** define a **futura representação atômica** que substitui a ambiguidade *campo nulo + observação*. **Sem MD-6, `R10` não compõe as contagens projetadas como materializável.** **C-7 continua preservada** |
 | C-A1-P3 | **R01 / R15** | `AGUARDA_APROVACAO` é **status válido**: a aprovação do texto **não é pré-requisito** para C possuir representação estrutural. **R15** já pode ser estruturalmente representado com `AGUARDA_APROVACAO`; **R01** mantém `AGUARDA_APROVACAO` e depende apenas da futura **resolução estrutural** da sua fonte de localidade (**MD-2**) |
 
-##### C-A1-A2 — Pendências residuais (arbitragem C-A2)
-
-**Pendências, não fatos aprovados.** C-A2 é o **rótulo da futura arbitragem** dos fatos e do
-conteúdo humanos residuais. **Nem C-A1 nem C-A2 são subetapa do roadmap**, e **nenhum dos
-dois cria a 3B.8**.
-
-**Fatos a confirmar em C-A2:**
-
-| # | Fato a confirmar |
-|---|---|
-| A1 | forma de tratamento autorizada do responsável |
-| A2 | política explícita sobre existência ou inexistência de mínimo |
-| A3 | semântica factual necessária para modelar a **retenção integral** |
-| A4 | capacidade operacional do bot de confirmar disponibilidade |
-
-**Conteúdo / redação residual:**
-
-| # | Fragmento residual |
-|---|---|
-| B1 | `R11` `F2` |
-| B2 | `R12` `F1` |
-| B3 | `R18` |
-| B4 | `R19` |
-| B5 | `R23` `F1` |
-| B6 | `R25` `F1` |
-
-**Nenhuma redação nova é escrita** e **nenhuma dessas pendências é resolvida** aqui.
-**R17** e **R20** **não** entram como pendência de redação.
+**Fatos e conteúdo humanos residuais.** Os fatos `A1`–`A4` e o conteúdo `B` são matéria de
+**`C-A2`**, que prevalece sobre esta camada naquilo que declara fechar (**`C-P`**): os fatos
+estão **fechados** em `C-A2-A` e a enumeração de conteúdo é a de `C-A2-B`. **Nem `C-A1` nem
+`C-A2` são subetapa do roadmap.**
 
 ##### C-A1-X — O que C-A1 não altera
 
@@ -1409,42 +1230,22 @@ dois cria a 3B.8**.
 | C-A1-X9 | `CriterioIdentidade` com **12** códigos |
 
 C-A1 **não cria** componente, responsabilidade, condição, estado, evento, transição, ação,
-critério, enum, erro, cenário nem subetapa. **A 3B.8 não existe.** **S2-D8 continua ARBITRADA
-/ NÃO MATERIALIZADA**, **`N-b-RES2` continua ABERTO** e o **`OrquestradorMotor` continua não
-implementado**.
+critério, enum, erro, cenário nem subetapa.
 
 #### Micro-arbitragem C-A2 — fatos e conteúdo humanos residuais
 
-**Estado: ARBITRADA DOCUMENTALMENTE.** Entrega **exclusivamente documental**, **posterior**
-a **C** e a **C-A1**. Ela **fecha** os fatos humanos `A1`–`A4` enumerados por C-A1, **registra
-estruturalmente** o conteúdo humano aprovado como **APROVADO HUMANAMENTE / AINDA NÃO
-APLICADO**, **refina a leitura futura** do contrato de materialização para admitir **fato
-operacional de runtime autoritativo** e **enumera** os efeitos futuros `FE-1`–`FE-14`. Ela
-**não** cria o índice, **não** altera o YAML, **não** aplica texto algum, **não** converte
-respostas em *templates*, **não** muda status real, **não** implementa carregador,
-renderizador ou consulta de calendário e **não** materializa **C**, **R2** ou **S2-D8**.
+`C-A2` **fecha** os fatos humanos `A1`–`A4`, **registra estruturalmente** o conteúdo humano
+aprovado, **refina** o contrato de materialização para admitir **fato operacional de runtime
+autoritativo** e **enumera** os efeitos futuros `FE-1`–`FE-14`. Ela **estende** a enumeração
+de conteúdo para **`B1`–`B16`** e prevalece sobre as camadas anteriores naquilo que declara
+fechar (**`C-P`**).
 
-| # | Continua verdadeiro |
-|---|---|
-| C-A2-E1 | o **índice não existe** — nenhum arquivo foi criado |
-| C-A2-E2 | `knowledge/respostas-aprovadas.md` **não foi convertido** e **não foi alterado** |
-| C-A2-E3 | `knowledge/casa77.yaml` **não foi alterado**; **nenhum alvo `MD-x` foi executado** |
-| C-A2-E4 | **nenhum texto aprovado foi aplicado** a arquivo algum |
-| C-A2-E5 | **nenhum renderizador, analisador ou validador** existe |
-| C-A2-E6 | **nenhum provedor de calendário** foi escolhido, e **nenhuma integração** foi criada |
-| C-A2-E7 | **C continua ARBITRADA / NÃO MATERIALIZADA**; **S2-D8 continua ARBITRADA / NÃO MATERIALIZADA** |
-| C-A2-E8 | **`N-b-RES2` continua ABERTO** e o **`OrquestradorMotor` continua não implementado** |
-| C-A2-E9 | **nenhuma condição de ciclo, evento, estado, motivo de `E09` ou subetapa nova** foi criada — **a 3B.8 não existe** |
-
-##### C-A2-H — Preservação histórica
-
-| # | Regra |
-|---|---|
-| C-A2-H1 | **C-1**–**C-14** e **todo o bloco C-A1** continuam **registro histórico** e **não são reescritos**. |
-| C-A2-H2 | **Regra temporal**: o texto histórico continua **correto para o momento em que foi escrito**; **C-A2 é refinamento posterior da leitura futura**, e **nenhuma regra histórica é falsificada**. |
-| C-A2-H3 | Em particular, **`C-A1-A2`** enumera `A1`–`A4` e `B1`–`B6` **corretamente à época de C-A1**. C-A2 **fecha `A1`–`A4`** e **estende** a enumeração de conteúdo para **`B1`–`B16`** — **sem reescrever** aquele bloco. `B7`–`B15` e `B16` são **decisões posteriores a C-A1**. |
-| C-A2-H4 | Após esta entrega: **C-A2 = ARBITRADA DOCUMENTALMENTE**; **`A1`–`A4` = FECHADAS**; **conteúdo B = APROVADO HUMANAMENTE / AINDA NÃO APLICADO**; **C = ARBITRADA / NÃO MATERIALIZADA**; **S2-D8 = ARBITRADA / NÃO MATERIALIZADA**; **`N-b-RES2` = ABERTO**; **`OrquestradorMotor` = NÃO IMPLEMENTADO**. |
-| C-A2-H5 | **Nenhum marco funcional novo.** O **último commit funcional** permanece `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`. |
+`C-A2` fecha os fatos e o conteúdo sob seu escopo; ela **não autoriza, por si**, aplicação ao
+corpus, conversão de `knowledge/**`, renderizador, analisador ou alteração de dado comercial.
+Ela **não** cria o índice, **não** aplica texto algum, **não** converte respostas em
+*templates*, **não** muda status real, **não** escolhe provedor de calendário, **não** cria
+condição de ciclo, evento, estado, motivo de `E09` nem subetapa, e **não** materializa **C**,
+**R2** ou **S2-D8**.
 
 ##### C-A2-A — Fatos humanos `A1`–`A4`: FECHADOS
 
@@ -1474,28 +1275,29 @@ metadados documentais** — alvo, mecanismo previsto, alvos `MD` necessários, `
 e observação estrutural. Ela **não reproduz** o corpo literal dos textos aprovados e **não
 contém** preço, percentual, prazo, quantidade ou condição comercial.
 
-**A fonte do texto continua sendo `knowledge/respostas-aprovadas.md`**, e a **aplicação**
-pertence à **futura Entrega 2** (**C-A2-E2**, abaixo).
+**A fonte do texto continua sendo `knowledge/respostas-aprovadas.md`.** Esta tabela registra
+somente o **contrato estrutural**; estado de aplicação e progresso pertencem a
+`docs/00-estado-atual.md`.
 
-| B | Alvo | Conteúdo | Aplicação | Mecanismo previsto | `MD` | `FE` | Observação estrutural |
-|---|---|---|---|---|---|---|---|
-| B1 | `R11` `F2` | **texto já aprovado anteriormente — NÃO há nova redação** | **NÃO APLICADO** | **COMBINAÇÃO**: `RENDERIZADO` do fato numérico atomizado de antecedência de montagem; `ASSERTIVA` sobre o fato atômico do prazo de desmontagem; demais literais **estáticos** | **MD-5** | — | resíduo **exclusivamente de modelagem**. **B1 não integra o lote de novas unidades textuais aprovadas** |
-| B2 | `R12` `F1` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `ASSERTIVA` de inclusão do uso das áreas contratadas; `ASSERTIVA` sobre mobiliário incluído; `RENDERIZADO` da quantidade de seguranças; `RENDERIZADO` da quantidade de governantas; `ASSERTIVA` para a função auxiliar de recepção; `ASSERTIVA` para limpeza/entrega inicial incluída; conectivos e redação não variável **estáticos** | **MD-19** | — | **MD-19** atomiza os três fatos ainda narrativos. As representações narrativas antigas **só perdem autoridade depois** dessa cobertura estrutural (**C-A1-M3**) |
-| B3 | `R18` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **`RENDERIZADO`**: formato `lista` sobre `eventos.datas_nao_aceitas`; **um prefixo geral estático**; **preservar todos os itens e a ordem** | — | — | **sem seleção posicional**, **sem prefixo por item**, **sem paráfrase** (**C-A1-L**, **C-A1-S1**) |
-| B4 | `R19` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `ASSERTIVA` de modalidade integral disponível; `RENDERIZADO` da cardinalidade da opção parcelada; `RENDERIZADO` do percentual da primeira parcela; `RENDERIZADO` do percentual da segunda parcela; `ASSERTIVA` de vencimento da primeira parcela na assinatura; `RENDERIZADO` do inteiro de dias antes do evento para o segundo vencimento; `ASSERTIVA` `EH_FALSO` sobre caução | **MD-4**, **MD-18**, **MD-20** | — | os **dois percentuais possuem *bindings* separados**; **nenhuma igualdade caminho-a-caminho** (**C-A1-R3**); **MD-18** seleciona as opções por **identificador estrutural estável**; **MD-20 é MÍNIMO** e prova **somente** a disponibilidade explícita da modalidade integral necessária ao fragmento. **Não criar booleanos redundantes para todas as modalidades apenas por simetria** |
-| B5 | `R23` `F1` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `RENDERIZADO` formato `lista` sobre `restricoes.proibido`; `ASSERTIVA` sobre o fato atômico do motivo da proibição de fogos; redação explicativa aprovada **estática** | **MD-13** | — | a nova redação **não deve depender de renderização direta** da narrativa `restricoes.fogos_motivo`. **MD-13 permanece relevante** para `R23` |
-| B6 | `R25` `F1` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `ASSERTIVA` sobre `estrutura.cozinha.disponivel`; para **cada item** da coleção de equipamentos — selecionar por **identificador estrutural estável, nunca por posição**, `RENDERIZADO` do campo `item` e `RENDERIZADO` do campo `quantidade`; `RENDERIZADO` formato `lista` sobre `estrutura.som.rede_eletrica`; conectivos, pontuação e convenção visual de quantidade **estáticos** | **MD-18** | — | **MD-18 é GENERALIZADO**. **Preservar a coleção de equipamentos como mapeamentos** com `quantidade`/`item`/`especificacao` — **não achatar para *strings***. **Nenhuma especificação adicional é emitida** |
-| B7 | `R02` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **ESTÁTICO** | nenhum — **MD-1** é **SUPERADO / NÃO NECESSÁRIO PARA C** | **FE-8**, **FE-12** | tratamento emitido aprovado: **"responsável comercial"**. **Nenhum nome próprio é emitido ao lead** (**A1**) |
-| B8 | `R03` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **ESTÁTICO** | — | **FE-1**, **FE-9** | é a **resposta padrão de lacuna**. As **duplicatas especializadas** devem ser **sincronizadas na Entrega 2** |
-| B9 | `R04` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `ASSERTIVA` `EH_FALSO` sobre autorização de desconto pelo bot; `ASSERTIVA` `EH_FALSO` sobre desconto à vista; tratamento e encaminhamento **estáticos** | — | **FE-2** | **FE-2** elimina a resposta textual paralela de "insistência" em `docs/03` como **fonte emitível própria**. Na Entrega 2, `docs/03` deve **remeter** ao comportamento aprovado de `R04`/handoff, e **não** manter um segundo texto emitível não catalogado |
-| B10 | `R05` `F1` | **APROVADO HUMANAMENTE** — papel: **FALLBACK de disponibilidade** | **NÃO APLICADO** | **ESTÁTICO** | nenhum **no fragmento** — **MD-15′** é **política externa de autorização** e **NÃO é *binding* nem `ASSERTIVA` de `F1`** | **FE-3**, **FE-7**, **FE-10**, **FE-13**, **FE-14** | `F1` é usado quando **não existe confirmação segura**: ausência de fonte, falha de consulta ou resultado ambíguo. **A seleção do fallback pertence ao motor determinístico, fora de C** (**C-12**) |
-| B11 | `R06` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `RENDERIZADO` da duração mínima; `RENDERIZADO` da duração máxima; `ASSERTIVA` sobre os fatos estruturais de papel — **quem realiza** e **quem confirma** a visita; `ASSERTIVA` `EH_FALSO` sobre `bot_pode_confirmar`; tratamento **"responsável comercial"** estático | **MD-14** | **FE-5** | **MD-14 permanece OBRIGATÓRIO.** **`A1` resolve apenas COMO o papel é chamado**; ela **não substitui** a prova estrutural de quem realiza e de quem confirma a visita |
-| B12 | `R07` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `ASSERTIVA` `EH_FALSO` sobre `bot_pode_fechar`; `ASSERTIVA` `EH_VERDADEIRO` sobre atendimento humano obrigatório; tratamento do responsável **estático** | — | **FE-8** | **não altera poder do bot**: o **contrato continua humano** |
-| B13 | `R08` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **ESTÁTICO** | — | **FE-4**, **FE-6**, **FE-9** | **mensagem padrão de handoff**. **Sincronização especializada obrigatória na Entrega 2** |
-| B14 | `R20` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `ASSERTIVA` `EH_VERDADEIRO` sobre o fato atômico de **retenção integral da entrada**; handoff/tratamento **estáticos** | **MD-17** | — | **não mencionar percentual do contrato**. **MD-18 NÃO é necessário para `R20`** na redação aprovada. **`A3` está satisfeita** |
-| B15 | `R21` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | **COMBINAÇÃO**: `RENDERIZADO` da antecedência mínima; `ASSERTIVA` `EH_VERDADEIRO` sobre dependência de disponibilidade; `ASSERTIVA` `EH_VERDADEIRO` sobre atendimento humano obrigatório; tratamento do responsável **estático** | — | — | **`A4` autoriza confirmar DISPONIBILIDADE**; ela **não autoriza ALTERAÇÃO definitiva de data**. O **handoff de alteração permanece obrigatório** |
-| B16-A | `R05` `F2` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | `ASSERTIVA` de **origem `RUNTIME_AUTORITATIVO`** (**C-A2-RT**, **C-A2-V**) | — | **FE-3**, **FE-7**, **FE-10**, **FE-13**, **FE-14** | **consulta válida + disponível** |
-| B16-B | `R05` `F3` | **APROVADO HUMANAMENTE** | **NÃO APLICADO** | `ASSERTIVA` de **origem `RUNTIME_AUTORITATIVO`** (**C-A2-RT**, **C-A2-V**) | — | **FE-3**, **FE-7**, **FE-10**, **FE-13**, **FE-14** | **consulta válida + indisponível** |
+| B | Alvo | Conteúdo | Mecanismo previsto | `MD` | `FE` | Observação estrutural |
+|---|---|---|---|---|---|---|
+| B1 | `R11` `F2` | **texto já aprovado anteriormente — NÃO há nova redação** | **COMBINAÇÃO**: `RENDERIZADO` do fato numérico atomizado de antecedência de montagem; `ASSERTIVA` sobre o fato atômico do prazo de desmontagem; demais literais **estáticos** | **MD-5** | — | resíduo **exclusivamente de modelagem**. **B1 não integra o lote de novas unidades textuais aprovadas** |
+| B2 | `R12` `F1` | **APROVADO HUMANAMENTE** | **COMBINAÇÃO**: `ASSERTIVA` de inclusão do uso das áreas contratadas; `ASSERTIVA` sobre mobiliário incluído; `RENDERIZADO` da quantidade de seguranças; `RENDERIZADO` da quantidade de governantas; `ASSERTIVA` para a função auxiliar de recepção; `ASSERTIVA` para limpeza/entrega inicial incluída; conectivos e redação não variável **estáticos** | **MD-19** | — | **MD-19** atomiza os três fatos ainda narrativos. As representações narrativas antigas **só perdem autoridade depois** dessa cobertura estrutural (**C-A1-M3**) |
+| B3 | `R18` | **APROVADO HUMANAMENTE** | **`RENDERIZADO`**: formato `lista` sobre `eventos.datas_nao_aceitas`; **um prefixo geral estático**; **preservar todos os itens e a ordem** | — | — | **sem seleção posicional**, **sem prefixo por item**, **sem paráfrase** (**C-A1-L**, **C-A1-S1**) |
+| B4 | `R19` | **APROVADO HUMANAMENTE** | **COMBINAÇÃO**: `ASSERTIVA` de modalidade integral disponível; `RENDERIZADO` da cardinalidade da opção parcelada; `RENDERIZADO` do percentual da primeira parcela; `RENDERIZADO` do percentual da segunda parcela; `ASSERTIVA` de vencimento da primeira parcela na assinatura; `RENDERIZADO` do inteiro de dias antes do evento para o segundo vencimento; `ASSERTIVA` `EH_FALSO` sobre caução | **MD-4**, **MD-18**, **MD-20** | — | os **dois percentuais possuem *bindings* separados**; **nenhuma igualdade caminho-a-caminho** (**C-A1-R3**); **MD-18** seleciona as opções por **identificador estrutural estável**; **MD-20 é MÍNIMO** e prova **somente** a disponibilidade explícita da modalidade integral necessária ao fragmento. **Não criar booleanos redundantes para todas as modalidades apenas por simetria** |
+| B5 | `R23` `F1` | **APROVADO HUMANAMENTE** | **COMBINAÇÃO**: `RENDERIZADO` formato `lista` sobre `restricoes.proibido`; `ASSERTIVA` sobre o fato atômico do motivo da proibição de fogos; redação explicativa aprovada **estática** | **MD-13** | — | a nova redação **não deve depender de renderização direta** da narrativa `restricoes.fogos_motivo`. **MD-13 permanece relevante** para `R23` |
+| B6 | `R25` `F1` | **APROVADO HUMANAMENTE** | **COMBINAÇÃO**: `ASSERTIVA` sobre `estrutura.cozinha.disponivel`; para **cada item** da coleção de equipamentos — selecionar por **identificador estrutural estável, nunca por posição**, `RENDERIZADO` do campo `item` e `RENDERIZADO` do campo `quantidade`; `RENDERIZADO` formato `lista` sobre `estrutura.som.rede_eletrica`; conectivos, pontuação e convenção visual de quantidade **estáticos** | **MD-18** | — | **MD-18 é GENERALIZADO**. **Preservar a coleção de equipamentos como mapeamentos** com `quantidade`/`item`/`especificacao` — **não achatar para *strings***. **Nenhuma especificação adicional é emitida** |
+| B7 | `R02` | **APROVADO HUMANAMENTE** | **ESTÁTICO** | nenhum — **MD-1** é **SUPERADO / NÃO NECESSÁRIO PARA C** | **FE-8**, **FE-12** | tratamento emitido aprovado: **"responsável comercial"**. **Nenhum nome próprio é emitido ao lead** (**A1**) |
+| B8 | `R03` | **APROVADO HUMANAMENTE** | **ESTÁTICO** | — | **FE-1**, **FE-9** | é a **resposta padrão de lacuna**. As **duplicatas especializadas** devem **permanecer sincronizadas** |
+| B9 | `R04` | **APROVADO HUMANAMENTE** | **COMBINAÇÃO**: `ASSERTIVA` `EH_FALSO` sobre autorização de desconto pelo bot; `ASSERTIVA` `EH_FALSO` sobre desconto à vista; tratamento e encaminhamento **estáticos** | — | **FE-2** | **FE-2** elimina a resposta textual paralela de "insistência" em `docs/03` como **fonte emitível própria**. `docs/03` deve **remeter** ao comportamento aprovado de `R04`/handoff, e **não** manter um segundo texto emitível não catalogado |
+| B10 | `R05` `F1` | **APROVADO HUMANAMENTE** — papel: **FALLBACK de disponibilidade** | **ESTÁTICO** | nenhum **no fragmento** — **MD-15′** é **política externa de autorização** e **NÃO é *binding* nem `ASSERTIVA` de `F1`** | **FE-3**, **FE-7**, **FE-10**, **FE-13**, **FE-14** | `F1` é usado quando **não existe confirmação segura**: ausência de fonte, falha de consulta ou resultado ambíguo. **A seleção do fallback pertence ao motor determinístico, fora de C** (**C-12**) |
+| B11 | `R06` | **APROVADO HUMANAMENTE** | **COMBINAÇÃO**: `RENDERIZADO` da duração mínima; `RENDERIZADO` da duração máxima; `ASSERTIVA` sobre os fatos estruturais de papel — **quem realiza** e **quem confirma** a visita; `ASSERTIVA` `EH_FALSO` sobre `bot_pode_confirmar`; tratamento **"responsável comercial"** estático | **MD-14** | **FE-5** | **MD-14 permanece OBRIGATÓRIO.** **`A1` resolve apenas COMO o papel é chamado**; ela **não substitui** a prova estrutural de quem realiza e de quem confirma a visita |
+| B12 | `R07` | **APROVADO HUMANAMENTE** | **COMBINAÇÃO**: `ASSERTIVA` `EH_FALSO` sobre `bot_pode_fechar`; `ASSERTIVA` `EH_VERDADEIRO` sobre atendimento humano obrigatório; tratamento do responsável **estático** | — | **FE-8** | **não altera poder do bot**: o **contrato continua humano** |
+| B13 | `R08` | **APROVADO HUMANAMENTE** | **ESTÁTICO** | — | **FE-4**, **FE-6**, **FE-9** | **mensagem padrão de handoff**. **Sincronização especializada obrigatória** |
+| B14 | `R20` | **APROVADO HUMANAMENTE** | **COMBINAÇÃO**: `ASSERTIVA` `EH_VERDADEIRO` sobre o fato atômico de **retenção integral da entrada**; handoff/tratamento **estáticos** | **MD-17** | — | **não mencionar percentual do contrato**. **MD-18 NÃO é necessário para `R20`** na redação aprovada. **`A3` está satisfeita** |
+| B15 | `R21` | **APROVADO HUMANAMENTE** | **COMBINAÇÃO**: `RENDERIZADO` da antecedência mínima; `ASSERTIVA` `EH_VERDADEIRO` sobre dependência de disponibilidade; `ASSERTIVA` `EH_VERDADEIRO` sobre atendimento humano obrigatório; tratamento do responsável **estático** | — | — | **`A4` autoriza confirmar DISPONIBILIDADE**; ela **não autoriza ALTERAÇÃO definitiva de data**. O **handoff de alteração permanece obrigatório** |
+| B16-A | `R05` `F2` | **APROVADO HUMANAMENTE** | `ASSERTIVA` de **origem `RUNTIME_AUTORITATIVO`** (**C-A2-RT**, **C-A2-V**) | — | **FE-3**, **FE-7**, **FE-10**, **FE-13**, **FE-14** | **consulta válida + disponível** |
+| B16-B | `R05` `F3` | **APROVADO HUMANAMENTE** | `ASSERTIVA` de **origem `RUNTIME_AUTORITATIVO`** (**C-A2-RT**, **C-A2-V**) | — | **FE-3**, **FE-7**, **FE-10**, **FE-13**, **FE-14** | **consulta válida + indisponível** |
 
 ##### C-A2-B16 — Decisão `B16`: `R05` permanece um único `Rxx`
 
@@ -1523,7 +1325,7 @@ identidade do `Rxx`**.
 
 ##### C-A2-RT — Origem explícita do referente
 
-**Refinamento posterior da leitura de C.** O modelo conceitual de **C-2** é **preservado**; o
+**Refinamento da leitura de C (`C-P`).** O modelo conceitual de **C-2** é **preservado**; o
 que segue fixa **como o referente de um *binding* é declarado** quando o fato deixa de ser
 estático e passa a ser **fato operacional de runtime autoritativo**.
 
@@ -1586,9 +1388,9 @@ Restrições da origem `RUNTIME_AUTORITATIVO`:
 
 ##### C-A2-NR — Refinamentos normativos
 
-**Refinamentos posteriores da LEITURA** de **P2**, **P8**, **F1**, **F3**, **C-5b** e da
-**definição geral de `ASSERTIVA`**. **Nenhum desses textos é reescrito**; todos continuam
-corretos como registro histórico (**C-A2-H2**).
+**Refinamentos da LEITURA** de **P2**, **P8**, **F1**, **F3**, **C-5b** e da **definição
+geral de `ASSERTIVA`**. **Nenhum desses textos é reescrito**: onde `C-A2` refina, ela
+prevalece (**`C-P`**).
 
 | # | Regra |
 |---|---|
@@ -1628,81 +1430,47 @@ corretos como registro histórico (**C-A2-H2**).
 | **MD-19** | **NOVO.** Finalidade: **atomizar, para `R12` `F1`** — **(1)** uso das áreas contratadas incluído; **(2)** governanta auxilia na recepção; **(3)** limpeza para entrega inicial incluída. **Não duplicar fontes narrativas autoritativas** (**C-A1-M3**) |
 | **MD-20** | **NOVO, porém MÍNIMO.** Finalidade **EXATA**: **fato atômico booleano** que permita **provar que a modalidade de PAGAMENTO INTEGRAL está disponível**. **NÃO adicionar automaticamente booleanos de "disponibilidade" para todas as modalidades apenas por simetria** — a **opção parcelada continua provada pelos seus próprios *bindings* estruturados** |
 
-**Todos os alvos `MD` continuam sujeitos a `C-A1-M4`** — auditoria read-only de consumidores
-em todo o repositório — **antes de qualquer alteração física** de `knowledge/casa77.yaml`.
-**Nenhum alvo é executado por esta entrega** (**C-A1-M5**).
+**Todos os alvos `MD` estão sujeitos a `C-A1-M4`** — auditoria read-only de consumidores em
+todo o repositório — como **pré-condição normativa** de qualquer alteração física de
+`knowledge/casa77.yaml`. A tabela **define os alvos e os seus contratos**; ela **não executa**
+alteração física alguma (**C-A1-M5**). O **estado de execução dos alvos** pertence a
+`docs/00-estado-atual.md`.
 
-##### C-A2-FE — Efeitos futuros `FE-1`–`FE-14`
+##### C-A2-FE — Invariantes de reconciliação `FE-1`–`FE-14`
 
-**Status geral: PLANEJADAS / NÃO APLICADAS.** **Nenhuma `FE` é aplicada por esta entrega.**
-Elas são **efeitos de reconciliação comportamental**, e a aplicação pertence à **Entrega 2**
-— exceto **`FE-11b`**, **RETIDA** atrás de **C-A1-M4**.
+Cada `FE` é um **requisito de consistência** entre a fonte relacionada e o conteúdo humano
+aprovado. Elas são **efeitos de reconciliação comportamental**, e o **estado de aplicação de
+cada uma pertence a `docs/00-estado-atual.md`**.
 
-| `FE` | Arquivo futuro | Enunciado | Entrega | Status |
-|---|---|---|---|---|
-| **FE-1** | `docs/03-regras-de-conversa.md` | **sincronizar** o bloco literal de comportamento diante de lacuna com **`R03`/`B8`** aprovado, **removendo emissão nominal** | 2 | **PLANEJADA / NÃO APLICADA** |
-| **FE-2** | `docs/03-regras-de-conversa.md` | **eliminar** o bloco textual emitível paralelo de "comportamento diante de insistência" como **resposta autônoma não catalogada**. O documento deve **instruir o fluxo** a usar **`R04`/`B9` + handoff**, **sem** manter segunda redação emitível fora de `knowledge/respostas-aprovadas.md` | 2 | **PLANEJADA / NÃO APLICADA** |
-| **FE-3** | `docs/03-regras-de-conversa.md` | **substituir** a proibição **incondicional** de confirmar disponibilidade/data por **regra condicional**: com **consulta autoritativa válida** e **decisão determinística**, a disponibilidade **pode ser comunicada**; **sem confirmação segura**, **fallback + handoff**. **Preservar** a proibição de **reserva, *hold*, visita, contrato** e demais atos humanos | 2 | **PLANEJADA / NÃO APLICADA** |
-| **FE-4** | `docs/04-handoff-humano.md` | **sincronizar** "Mensagem ao interessado" com **`R08`/`B13`**, usando o tratamento **não nominal "responsável comercial"** | 2 | **PLANEJADA / NÃO APLICADA** |
-| **FE-5** | `docs/04-handoff-humano.md` | **reconciliar** a seção **Visitas** para **não autorizar emissão nominal**. **Preservar**: visita realizada pelo **papel estrutural definido**; **confirmação de horário humana**; **o bot não confirma visita**. Usar **"responsável comercial"** | 2 | **PLANEJADA / NÃO APLICADA** |
-| **FE-6** | `docs/04-handoff-humano.md` | **reconciliar** "Regras após o handoff" para **remover instrução de reforço nominal** e usar **"responsável comercial"** quando a referência for **emitida ao lead**. Referências **puramente internas** podem permanecer nominais **se não forem fonte de emissão** | 2 | **PLANEJADA / NÃO APLICADA** |
-| **FE-7** | `docs/04-handoff-humano.md` | **reconciliar** o gatilho obrigatório que hoje **agrega** "confirmação de data, visita ou reserva". **Separar**: **DISPONIBILIDADE DE DATA** — pode ser confirmada com **decisão determinística** sobre **consulta autoritativa válida**; sem confirmação segura → **handoff**. **VISITA** — continua **confirmação humana obrigatória**. **RESERVA** — continua **humana / proibida ao bot** | 2 | **PLANEJADA / NÃO APLICADA** |
-| **FE-8** | `prompts/prompt-sistema-bot.md` | **reconciliar** **FUNÇÃO** e **REGRAS DE HANDOFF** para que referências **destinadas ao lead** usem **"responsável comercial"**, **sem emissão de nome próprio**. **Preservar** referências internas de identidade negativa quando **não** forem texto destinado ao lead | 2 | **PLANEJADA / NÃO APLICADA** |
-| **FE-9** | `prompts/prompt-sistema-bot.md` | **sincronizar** os blocos literais **duplicados** de `R03` e `R08` com **`B8`** e **`B13`** aprovados. **Não manter variante nominal concorrente** | 2 | **PLANEJADA / NÃO APLICADA** |
-| **FE-10** | `prompts/prompt-sistema-bot.md` | **reconciliar** **LIMITES DE ATUAÇÃO**, **REGRAS CONTRA INVENÇÃO** e **REGRAS DE HANDOFF** quanto à disponibilidade. Nova fronteira: o **LLM NÃO decide** disponibilidade; o resultado vem de **decisão determinística** sobre **consulta autoritativa**; com resultado válido, o bot **pode comunicar** disponibilidade; sem resultado válido, **fallback + handoff**; **reserva, *hold*, visita, contrato e alteração definitiva continuam proibidos ao bot** | 2 | **PLANEJADA / NÃO APLICADA** |
-| **FE-11a** | `knowledge/respostas-aprovadas.md` | **instrução interna de `R17`**. Regra futura: **NÃO emitir literalmente `eventos.observacao_nao_aceitos`** enquanto a narrativa puder **expor identificação nominal / proveniência interna**. Enquanto **não houver representação estrutural segura do motivo**, usar **`R03` + handoff** para pedido específico desse motivo. **`FE-11a` NÃO altera o YAML** | 2 | **PLANEJADA / NÃO APLICADA** |
-| **FE-11b** | `knowledge/casa77.yaml` | **base estruturada**: **reconciliar/atomizar** a narrativa para **eliminar o vetor nominal sem criar fonte factual paralela** (**C-A1-M3**) | **FORA da Entrega 2** | **RETIDA atrás de `C-A1-M4`** |
-| **FE-12** | `docs/02-fluxo-comercial.md` | **reconciliar §1 Abertura**: **preservar** que a **negociação final é humana**, **substituindo** identificação nominal emitida por **"responsável comercial"** | 2 | **PLANEJADA / NÃO APLICADA** |
-| **FE-13** | `docs/02-fluxo-comercial.md` | **reconciliar §5 Verificação de disponibilidade**: passar de ramo **exclusivamente negativo** para **dois caminhos** — **(A)** consulta autoritativa válida + decisão determinística → comunicar **`R05` `F2`** ou **`R05` `F3`**; **(B)** ausência/falha/ambiguidade → **`R05` `F1` + handoff**. **Não escolher provedor de calendário** | 2 | **PLANEJADA / NÃO APLICADA** |
-| **FE-14** | `docs/02-fluxo-comercial.md` | **reconciliar o diagrama textual**: substituir o caminho universal `disponibilidade (bloqueado) → R05` pela **bifurcação conceitual** — consulta válida → **`R05` `F2` / `R05` `F3`**; sem confirmação segura → **`R05` `F1` + handoff** | 2 | **PLANEJADA / NÃO APLICADA** |
-
-##### C-A2-N — Contagens
-
-**Estado físico, conteúdo aprovado e conteúdo aplicado são eixos distintos e não devem ser
-confundidos.**
-
-| # | Eixo | Valor |
+| `FE` | Fonte relacionada | Invariante |
 |---|---|---|
-| C-A2-N1 | **ESTADO FÍSICO ATUAL** — fragmentos emitíveis | **35** |
-| C-A2-N2 | **ESTADO FÍSICO ATUAL** — `Rxx` | **30** |
-| C-A2-N3 | **CONTEÚDO APROVADO** — novas unidades textuais aprovadas no lote: `B2`–`B15` **+** `R05` `F2` **+** `R05` `F3` | **16** |
-| C-A2-N4 | `B1` | **não é texto novo** — **não integra as 16** |
-| C-A2-N5 | **CONTEÚDO APLICADO nesta Entrega 1** | **0** |
-| C-A2-N6 | **APÓS a futura ENTREGA 2** — fragmentos | **37** |
-| C-A2-N7 | **APÓS a futura ENTREGA 2** — `Rxx` | **30** |
-| C-A2-N8 | **MATERIALIZAÇÃO DE C — ATUAL**: fragmentos estruturalmente materializados | **0** |
+| **FE-1** | `docs/03-regras-de-conversa.md` | **sincronizar** o bloco literal de comportamento diante de lacuna com **`R03`/`B8`** aprovado, **removendo emissão nominal** |
+| **FE-2** | `docs/03-regras-de-conversa.md` | **eliminar** o bloco textual emitível paralelo de "comportamento diante de insistência" como **resposta autônoma não catalogada**. O documento deve **instruir o fluxo** a usar **`R04`/`B9` + handoff**, **sem** manter segunda redação emitível fora de `knowledge/respostas-aprovadas.md` |
+| **FE-3** | `docs/03-regras-de-conversa.md` | **substituir** a proibição **incondicional** de confirmar disponibilidade/data por **regra condicional**: com **consulta autoritativa válida** e **decisão determinística**, a disponibilidade **pode ser comunicada**; **sem confirmação segura**, **fallback + handoff**. **Preservar** a proibição de **reserva, *hold*, visita, contrato** e demais atos humanos |
+| **FE-4** | `docs/04-handoff-humano.md` | **sincronizar** "Mensagem ao interessado" com **`R08`/`B13`**, usando o tratamento **não nominal "responsável comercial"** |
+| **FE-5** | `docs/04-handoff-humano.md` | **reconciliar** a seção **Visitas** para **não autorizar emissão nominal**. **Preservar**: visita realizada pelo **papel estrutural definido**; **confirmação de horário humana**; **o bot não confirma visita**. Usar **"responsável comercial"** |
+| **FE-6** | `docs/04-handoff-humano.md` | **reconciliar** "Regras após o handoff" para **remover instrução de reforço nominal** e usar **"responsável comercial"** quando a referência for **emitida ao lead**. Referências **puramente internas** podem permanecer nominais **se não forem fonte de emissão** |
+| **FE-7** | `docs/04-handoff-humano.md` | **reconciliar** o gatilho obrigatório que hoje **agrega** "confirmação de data, visita ou reserva". **Separar**: **DISPONIBILIDADE DE DATA** — pode ser confirmada com **decisão determinística** sobre **consulta autoritativa válida**; sem confirmação segura → **handoff**. **VISITA** — continua **confirmação humana obrigatória**. **RESERVA** — continua **humana / proibida ao bot** |
+| **FE-8** | `prompts/prompt-sistema-bot.md` | **reconciliar** **FUNÇÃO** e **REGRAS DE HANDOFF** para que referências **destinadas ao lead** usem **"responsável comercial"**, **sem emissão de nome próprio**. **Preservar** referências internas de identidade negativa quando **não** forem texto destinado ao lead |
+| **FE-9** | `prompts/prompt-sistema-bot.md` | **sincronizar** os blocos literais **duplicados** de `R03` e `R08` com **`B8`** e **`B13`** aprovados. **Não manter variante nominal concorrente** |
+| **FE-10** | `prompts/prompt-sistema-bot.md` | **reconciliar** **LIMITES DE ATUAÇÃO**, **REGRAS CONTRA INVENÇÃO** e **REGRAS DE HANDOFF** quanto à disponibilidade. Nova fronteira: o **LLM NÃO decide** disponibilidade; o resultado vem de **decisão determinística** sobre **consulta autoritativa**; com resultado válido, o bot **pode comunicar** disponibilidade; sem resultado válido, **fallback + handoff**; **reserva, *hold*, visita, contrato e alteração definitiva continuam proibidos ao bot** |
+| **FE-11a** | `knowledge/respostas-aprovadas.md` | **instrução interna de `R17`**. Regra futura: **NÃO emitir literalmente `eventos.observacao_nao_aceitos`** enquanto a narrativa puder **expor identificação nominal / proveniência interna**. Enquanto **não houver representação estrutural segura do motivo**, usar **`R03` + handoff** para pedido específico desse motivo. **`FE-11a` NÃO altera o YAML** |
+| **FE-11b** | `knowledge/casa77.yaml` | **base estruturada**: **reconciliar/atomizar** a narrativa para **eliminar o vetor nominal sem criar fonte factual paralela** (**C-A1-M3**). A alteração física exige **`C-A1-M4`** como **pré-condição normativa** |
+| **FE-12** | `docs/02-fluxo-comercial.md` | **reconciliar §1 Abertura**: **preservar** que a **negociação final é humana**, **substituindo** identificação nominal emitida por **"responsável comercial"** |
+| **FE-13** | `docs/02-fluxo-comercial.md` | **reconciliar §5 Verificação de disponibilidade**: passar de ramo **exclusivamente negativo** para **dois caminhos** — **(A)** consulta autoritativa válida + decisão determinística → comunicar **`R05` `F2`** ou **`R05` `F3`**; **(B)** ausência/falha/ambiguidade → **`R05` `F1` + handoff**. **Não escolher provedor de calendário** |
+| **FE-14** | `docs/02-fluxo-comercial.md` | **reconciliar o diagrama textual**: substituir o caminho universal `disponibilidade (bloqueado) → R05` pela **bifurcação conceitual** — consulta válida → **`R05` `F2` / `R05` `F3`**; sem confirmação segura → **`R05` `F1` + handoff** |
 
-A hipótese futura de **37/37** é **estritamente condicional** a **todas** as condições
-abaixo e **não é declarada como resultado alcançado**:
+##### C-A2-N — Gates de materialização
 
-| # | Condição |
+A materialização de `C` depende **cumulativamente** dos gates abaixo. O **estado de
+cumprimento** de cada gate pertence a `docs/00-estado-atual.md`, confrontado com a `main`.
+
+| # | Gate |
 |---|---|
 | C-A2-N9 | **aplicação do conteúdo** aprovado |
 | C-A2-N10 | **`C-A1-M4`** — auditoria read-only de consumidores |
 | C-A2-N11 | os **alvos `MD` necessários** |
 | C-A2-N12 | **validação `C-8` / `C-15` / `C-A1`** |
-
-**As contagens projetadas de `C-A1-N` continuam registro histórico** e **não são reescritas**
-(**C-A2-H1**, **C-A2-H2**).
-
-##### C-A2-E2 — Futura Entrega 2
-
-**Registro de próxima entrega futura. Nada disso é executado agora.** Arquivos
-**comportamentais** previstos:
-
-| # | Arquivo |
-|---|---|
-| C-A2-E2a | `knowledge/respostas-aprovadas.md` |
-| C-A2-E2b | `docs/02-fluxo-comercial.md` |
-| C-A2-E2c | `docs/03-regras-de-conversa.md` |
-| C-A2-E2d | `docs/04-handoff-humano.md` |
-| C-A2-E2e | `prompts/prompt-sistema-bot.md` |
-
-| # | Regra |
-|---|---|
-| C-A2-E2f | **`FE-11a` está INCLUÍDA** na Entrega 2. |
-| C-A2-E2g | **`FE-11b` fica FORA** da Entrega 2 — **RETIDA atrás de `C-A1-M4`**. |
-| C-A2-E2h | **ATENÇÃO**: a conclusão da futura Entrega 2 **deverá também atualizar `docs/00-estado-atual.md` na mesma entrega**, **ou** possuir **reconciliação documental imediatamente vinculada**. |
 
 ##### C-A2-X — O que C-A2 não altera
 
@@ -1719,25 +1487,13 @@ abaixo e **não é declarada como resultado alcançado**:
 | C-A2-X9 | cenários **`K-Nb-1`–`K-Nb-51`** |
 
 C-A2 **não cria** componente, responsabilidade, estado, evento, transição, ação, critério,
-enum, erro, cenário, condição de ciclo, motivo de `E09` nem subetapa. **A 3B.8 não existe.**
-**C continua ARBITRADA / NÃO MATERIALIZADA**, **S2-D8 continua ARBITRADA / NÃO
-MATERIALIZADA**, **`N-b-RES2` continua ABERTO** e o **`OrquestradorMotor` continua não
-implementado**.
+enum, erro, cenário, condição de ciclo, motivo de `E09` nem subetapa.
 
 #### Micro-arbitragem C-A3 — papel de `empresa.descricao` no contrato C
 
-Micro-arbitragem **exclusivamente documental**, **posterior** a **C**, a **C-A1** e a
-**C-A2**. Ela **classifica normativamente um único caminho** do YAML — **`empresa.descricao`**
-— para os fins do **contrato C**, e **não faz mais nada**. **Nenhum byte de
-`knowledge/casa77.yaml` é alterado por ela.**
-
-##### C-A3-H — Preservação histórica
-
-| # | Regra |
-|---|---|
-| C-A3-H1 | **C-1**–**C-14**, **todo o bloco C-A1** e **todo o bloco C-A2** continuam **registro histórico** e **não são reescritos**. |
-| C-A3-H2 | **Regra temporal**: o texto histórico continua **correto para o momento em que foi escrito**; **C-A3 é refinamento posterior da leitura futura**, e **nenhuma regra histórica é falsificada**. |
-| C-A3-H3 | **Nenhum marco funcional novo.** O **último commit funcional** permanece `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`. |
+`C-A3` refina exclusivamente o papel de **`empresa.descricao`** dentro do contrato `C`,
+segundo a precedência **`C-P`**. Ela **classifica normativamente um único caminho** do YAML e
+**não faz mais nada**. **Nenhum byte de `knowledge/casa77.yaml` é alterado por ela.**
 
 ##### C-A3-E — Escopo fechado
 
@@ -1791,14 +1547,13 @@ instruções internas: **fora da bijeção**, **sem status**, **sem *binding***,
 | C-A3-MD2 | **Depois de C-A3**, o requisito **`C-A1-M3(B)`** fica **documentalmente satisfeito** para `empresa.descricao`. |
 | C-A3-MD3 | Isso **remove exclusivamente o bloqueio normativo** identificado para a **futura** execução de `MD-7′`. **Nenhum outro bloqueio é removido.** |
 | C-A3-MD4 | **C-A3 NÃO executa `MD-7′`**, **NÃO cria `eventos.perfil_intimista`**, **NÃO remove `eventos.perfil_ideal`**, **NÃO executa `MD-6`** e **NÃO executa `MD-14`**. |
-| C-A3-MD5 | O contador de **`C-A2-N11`** permanece **13 de 16**, com **`MD-6`**, **`MD-7′`** e **`MD-14`** ainda pendentes. **`MD-6` está planejado e pronto, mas NÃO executado.** |
 
 ##### C-A3-FE — Relação com `FE-11a` e `FE-11b`
 
 | # | Regra |
 |---|---|
 | C-A3-FE1 | **`FE-11a` permanece intacta.** |
-| C-A3-FE2 | **`FE-11b` permanece NÃO APLICADA / RETIDA** atrás de **`C-A1-M4`**. |
+| C-A3-FE2 | A alteração física descrita por **`FE-11b`** exige **`C-A1-M4`** como **pré-condição normativa**. O estado de cumprimento do gate e de aplicação do efeito pertence a `docs/00-estado-atual.md`. |
 | C-A3-FE3 | C-A3 **não absorve, não substitui, não antecipa e não altera** `FE-11a` ou `FE-11b`. |
 | C-A3-FE4 | **`eventos.observacao_nao_aceitos` não é objeto de C-A3.** |
 
@@ -1806,40 +1561,22 @@ instruções internas: **fora da bijeção**, **sem status**, **sem *binding***,
 
 C-A3 **não cria**: status, enum, predicado, formato, *binding* físico, metadado YAML, *flag*
 YAML, componente, responsabilidade, estado, evento, transição, condição, erro, cenário,
-pendência operacional nem subetapa. **A 3B.8 não existe.**
-
-**Após esta arbitragem**: **C-A3 = ARBITRADA DOCUMENTALMENTE**; **`empresa.descricao` = NÃO
-AUTORITATIVA / NÃO CONSUMÍVEL para C**; **C continua ARBITRADA / NÃO MATERIALIZADA**;
-**`C-A2-N11` continua PENDENTE em 13/16**; **`C-A2-N12` continua PENDENTE**; **`FE-11b`
-continua RETIDA**; **`S2-D8` continua ARBITRADA / NÃO MATERIALIZADA**; **`N-b-RES2` continua
-ABERTO**; e o **`OrquestradorMotor` continua não implementado**.
+pendência operacional nem subetapa.
 
 #### Micro-arbitragem C-A4 — critério de cumprimento de `C-A2-N12` e convenções de validação
 
-**Estado: ARBITRADA DOCUMENTALMENTE.**
+`C-A4` define o **critério de cumprimento** de **`C-A2-N12`** e as **convenções de
+validação**. Ela **não executa o gate** e **não materializa `C`**: **não cria o índice**, **não
+cria *template* físico**, **não cria *binding* físico**, **não cria `ASSERTIVA` física**,
+**não altera `knowledge/**`**, **não implementa código** e **não altera testes**, nem
+materializa **R2** ou **S2-D8**. O **estado de cumprimento de `C-A2-N12`** pertence a
+`docs/00-estado-atual.md`.
 
-Micro-arbitragem **posterior** a **C**, **C-A1**, **C-A2** e **C-A3**, e **exclusivamente
-documental**. Ela **NÃO executa `C-A2-N12`**, **não cria o índice**, **não cria *template*
-físico**, **não cria *binding* físico**, **não cria `ASSERTIVA` física**, **não altera
-`knowledge/**`**, **não implementa código**, **não altera testes** e **não materializa**
-**C**, **R2** ou **S2-D8**. **Nenhum marco funcional novo é criado.**
-
-**`C-A2-N12` continua PENDENTE.**
-
-Ela fecha, para a **execução futura e read-only** de `C-A2-N12`: o **critério de
+Ela fecha, para a **execução read-only** de `C-A2-N12`: o **critério de
 cumprimento** do gate; o **vocabulário** dos resultados de validação; refinamentos
-posteriores de **`inteiro_agrupado`** e da **fronteira de `simbolo_moeda`**; a **derivação
+de **`inteiro_agrupado`** e da **fronteira de `simbolo_moeda`**; a **derivação
 conceitual de *bindings*** onde `C-A2-B` não prescreve; o tratamento de **`R05` `F2`/`F3`**;
 e a **proposição completa** como unidade de análise de `C-8`.
-
-##### C-A4-H — Preservação histórica
-
-| # | Regra |
-|---|---|
-| C-A4-H1 | **C-1**–**C-14**, **C-A1**, **C-A2** e **C-A3** permanecem **registro histórico** e **não são reescritos**. |
-| C-A4-H2 | **Regra temporal**: o texto histórico permanece **correto para o momento em que foi escrito**. **C-A4 é refinamento posterior da leitura futura**, e **nenhuma regra histórica é falsificada**. |
-| C-A4-H3 | **`C-A3-MD5`**, **inclusive a contagem histórica `13/16`**, permanece **intacta e correta à época**. A evolução até **16/16** é registrada por `docs/00-estado-atual.md` e pelas entregas posteriores. **C-A4 não reescreve `C-A3-MD5`.** |
-| C-A4-H4 | **Nenhum marco funcional novo.** O **último commit funcional** permanece `4c3db56e2a8d0de0b0f24d1f783c3be2387c5382`. |
 
 ##### C-A4-G — Critério de cumprimento de `C-A2-N12`
 
@@ -1875,7 +1612,7 @@ Vocabulário **fechado** dos resultados de validação:
 
 ##### C-A4-F1 — `inteiro_agrupado`: convenção fechada
 
-**Refinamento posterior de `C-6b` e `C-A1-F1`. Nenhum formato novo é criado.**
+**Refinamento de `C-6b` e `C-A1-F1` (`C-P`). Nenhum formato novo é criado.**
 
 | # | Regra |
 |---|---|
@@ -1940,10 +1677,10 @@ Vocabulário **fechado** dos resultados de validação:
 
 ##### C-A4-X — Não reescrita e não revogação
 
-**C-A4 NÃO REESCREVE NEM REVOGA os blocos anteriores.** **C-6**, **C-8**, **C-15**,
-**C-A1**, **C-A2** e **C-A3** permanecem **vigentes**. Os **ÚNICOS refinamentos
-posteriores** introduzidos por esta entrega são os **expressamente enumerados em C-A4**.
-**Nenhuma regra histórica é apagada, substituída ou retroativamente modificada.**
+**C-A4 NÃO REVOGA os blocos anteriores.** **C-6**, **C-8**, **C-15**, **C-A1**, **C-A2** e
+**C-A3** permanecem **vigentes**. Os **ÚNICOS refinamentos** introduzidos por `C-A4` são os
+**expressamente enumerados em C-A4**, e eles prevalecem sobre as camadas anteriores apenas na
+matéria que `C-A4` declara fechar (**`C-P`**).
 
 Preservados explicitamente: **`C-15d`**; **`C-A1-ST`**; **`C-A2-RT7`**; **`C-A2-N`**;
 **`C-A3`**; **`C-12`**; **`F4`** / **`F4-B`**; **`R2`**; **`S2-D8`**.
@@ -1951,34 +1688,16 @@ Preservados explicitamente: **`C-15d`**; **`C-A1-ST`**; **`C-A2-RT7`**; **`C-A2-
 **C-A4 não cria**: índice; *template* físico; *binding* físico; `ASSERTIVA` física; status;
 quarto status; formato novo; predicado novo; metadado YAML; *flag* YAML; componente;
 responsabilidade; estado; evento; transição; condição de ciclo; `E09`; erro; cenário; nem
-subetapa. **A 3B.8 não existe.**
-
-**Após esta arbitragem**: **C-A4 = ARBITRADA DOCUMENTALMENTE NA ENTREGA**; **`C-A2-N12`
-continua PENDENTE**; **C continua ARBITRADA / NÃO MATERIALIZADA**; **`R2` continua NÃO
-MATERIALIZADA**; **`S2-D8` continua ARBITRADA / NÃO MATERIALIZADA**; **`N-b-RES2` continua
-ABERTO**; e o **`OrquestradorMotor` continua não implementado**.
+subetapa.
 
 #### Micro-arbitragem C-A5 — identidade física do fragmento emitível
 
-**Estado: ARBITRADA DOCUMENTALMENTE.**
+`C-A5` refina o contrato `C` quanto à **identidade física do fragmento emitível**, segundo
+**`C-P`**. Ela **define a representação**; **não executa a sua aplicação física ao corpus**.
 
-**C-A5 ARBITRA A REPRESENTAÇÃO FUTURA; NÃO APLICA ESSA REPRESENTAÇÃO AO CORPUS ATUAL.**
-
-Micro-arbitragem **posterior** a **C**, **C-A1**, **C-A2**, **C-A3** e **C-A4**, e
-**exclusivamente documental**. Ela fecha a matéria que **C-A1** registrou como explicitamente
-**não decidida** — **identidade física do fragmento** — e **nenhuma outra**. Ela **não executa
-nada sobre o corpus**, **não cria o índice**, **não cria *template* físico**, **não cria
-*binding* físico**, **não cria `ASSERTIVA` física**, **não altera `knowledge/**`**, **não
-implementa código**, **não altera testes** e **não materializa** **C**, **R2** ou **S2-D8**.
-**Nenhum marco funcional novo é criado.**
-
-##### C-A5-H — Preservação histórica
-
-| # | Regra |
-|---|---|
-| C-A5-H1 | **C-1**–**C-15**, **C-A1**, **C-A2**, **C-A3** e **C-A4** permanecem **registro histórico** e **não são reescritos**. **C-A5 é refinamento posterior para leitura futura.** |
-| C-A5-H2 | C-A5 fecha **EXCLUSIVAMENTE** a matéria antes explicitamente não decidida: **identidade física do fragmento**. **Nenhuma outra lacuna é fechada.** |
-| C-A5-H3 | Entrega **exclusivamente documental**. **Não cria marco funcional.** **Não altera `src/`, `tests/` nem `knowledge/`.** |
+Ela fecha **exclusivamente** essa matéria, e **nenhuma outra**. Ela **não cria o índice**,
+**não cria *template* físico**, **não cria *binding* físico**, **não cria `ASSERTIVA`
+física**, **não altera `knowledge/**`** e **não materializa** **C**, **R2** ou **S2-D8**.
 
 ##### C-A5-U — Fronteira física futura
 
@@ -2016,11 +1735,11 @@ implementa código**, **não altera testes** e **não materializa** **C**, **R2*
 
 | # | Regra |
 |---|---|
-| C-A5-M1 | A **integração documental de C-A5 NÃO ativa** a nova representação física no corpus existente. A **ativação depende de entrega própria posterior** de materialização dos marcadores, **auditada e integrada**. |
+| C-A5-M1 | A **aplicação física** da representação definida por `C-A5` exige uma **entrega de materialização separada, auditada e integrada**. `C-A5`, por si, **não a ativa**. |
 | C-A5-M2 | **Somente após essa materialização** a representação marcada passa a ser **obrigatória**. |
-| C-A5-M3 | **Enquanto C-A5-M2 não valer**: `knowledge/respostas-aprovadas.md` permanece na **representação física atualmente aprovada**; os **37 fragmentos emitíveis documentados continuam reconhecidos**; a **ausência de marcador C-A5 NÃO é erro do corpus atual**; **nenhum bloco existente fica fail-closed** pela arbitragem C-A5; a **autoridade de status continua em `knowledge/respostas-aprovadas.md`** (**C-11**); e **C continua ARBITRADA / NÃO MATERIALIZADA**. |
-| C-A5-M4 | **C-A5 NÃO aplica identidade ao corpus**: **zero marcador inserido**; **zero `id` atribuído**; **zero tabela dos 37 produzida**; **zero tabela aprovada**; **zero caso individual decidido**. |
-| C-A5-M5 | A **futura aplicação exige**, **ANTES de qualquer edição do corpus**, **tabela completa e aprovada** — `Rxx` + **unidade física atual** → **`id` C-A5** — para **todas as unidades abrangidas**. **IDs de fragmento já comprometidos por documentação normativa anterior deverão ser preservados.** |
+| C-A5-M3 | **Enquanto `C-A5-M2` não valer**, a **representação marcada não é obrigatória**: `knowledge/respostas-aprovadas.md` permanece na **representação física aprovada**, as unidades emitíveis documentadas continuam **reconhecidas**, a **ausência de marcador `C-A5` não é erro do corpus**, **nenhum bloco existente fica fail-closed** por `C-A5`, e a **autoridade de status permanece no Markdown** (**`C-11`**). |
+| C-A5-M4 | **`C-A5` NÃO executa a aplicação física da identidade ao corpus**: ela **não insere marcador**, **não atribui `id`**, **não produz nem aprova a tabela de mapeamento** e **não decide caso individual**. |
+| C-A5-M5 | A **futura aplicação exige**, **ANTES de qualquer edição do corpus**, **tabela completa e aprovada** — `Rxx` + **unidade física atual** → **`id` C-A5** — para **todas as unidades abrangidas**. **IDs de fragmento já comprometidos por documentação normativa anterior deverão ser preservados.** Os **`id` de `R09/F1` e `R09/F2`** são os **declarados na tabela `C-A5-M5`**; `C-A5` **não deriva** esses `id` por posição ou conteúdo. |
 | C-A5-M6 | **Posição e ordem** podem servir **APENAS** como **localizador de evidência apresentado ao responsável humano**. Elas **jamais determinam o `id`**. |
 
 ##### C-A5-X — Falhas futuras e limites
@@ -2030,64 +1749,37 @@ implementa código**, **não altera testes** e **não materializa** **C**, **R2*
 | C-A5-X1 | **SOMENTE após C-A5-M2**, são **fail-closed**: **bloco destinado à emissão sem marcador válido**; **marcador órfão**; **marcador sem bloco imediatamente seguinte**; **marcador fora de `Rxx`**; **`id` fora da gramática**; **`id` repetido no mesmo `Rxx`**; e **`Rxx` sem unidade emitível quando C-2c a exige**. **Nenhum caso é resolvido por inferência.** |
 | C-A5-X2 | **C-A5 NÃO decide**: a **propagação do status do cabeçalho `Rxx` aos fragmentos**; nem o **mapeamento concreto de `PARCIAL`**. **Ambos continuam ABERTOS.** |
 | C-A5-X3 | **C-A5 NÃO decide**: **sintaxe de *placeholder***; **gramática de `caminho_yaml`**; **formato `hora`**; nem **C-7**. |
-| C-A5-X4 | **C-A5 NÃO**: cria índice; cria *template* físico; cria *binding* físico; cria `ASSERTIVA` física; implementa extrator; implementa *renderer*; executa a bijeção física; nem migra autoridade de status. **`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas.** |
-| C-A5-X5 | **C-A5 não cria**: componente; responsabilidade; condição; evento; estado; transição; ação; erro de runtime; cenário de runtime; status; formato; predicado; nem subetapa. **A 3B.8 continua inexistente.** |
-| C-A5-X6 | **Após a arbitragem**: **C continua ARBITRADA / NÃO MATERIALIZADA**; `knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**; **`R2` permanece como está**; **`S2-D8` permanece como está**; **`N-b-RES2` permanece ABERTO**; e o **`OrquestradorMotor` permanece NÃO IMPLEMENTADO**. |
+| C-A5-X4 | **C-A5 NÃO**: cria índice; cria *template* físico; cria *binding* físico; cria `ASSERTIVA` física; implementa extrator; implementa *renderer*; executa a bijeção física; nem migra autoridade de status. **`C-A5`, isoladamente, não satisfaz `C-A1-ST6`–`C-A1-ST10`.** |
+| C-A5-X5 | **C-A5 não cria**: componente; responsabilidade; condição; evento; estado; transição; ação; erro de runtime; cenário de runtime; status; formato; predicado; nem subetapa. |
 
-##### C-A5-E — Evidência estrutural read-only
+##### Escopo dos refinamentos de C-A5
 
-Estado **observado** do corpus na base desta arbitragem, medido de forma **estritamente
-read-only**, **sem alterar `knowledge/**`** e **sem reproduzir conteúdo**:
+**C-A5 NÃO REVOGA os blocos anteriores.** **C-2**, **C-11**, **C-15**, **C-A1**, **C-A2**,
+**C-A3** e **C-A4** permanecem **vigentes**. Os **ÚNICOS refinamentos** introduzidos por
+`C-A5` são os **expressamente enumerados em C-A5**, e eles prevalecem sobre as camadas
+anteriores exclusivamente na **identidade física do fragmento** (**`C-P`**).
 
-| # | Evidência |
-|---|---|
-| C-A5-E1 | **30** seções `Rxx`. |
-| C-A5-E2 | **37** blocos de citação contíguos, na definição de **C-A5-U1**. |
-| C-A5-E3 | **24** `Rxx` com **um** fragmento e **6** `Rxx` **multi-fragmento**. |
-| C-A5-E4 | **COMPATIBILIDADE ESTRUTURAL: 37/37** — as **37** unidades são **estruturalmente compatíveis** com a futura convenção C-A5. |
-| C-A5-E5 | **Zero comentários HTML existentes** no corpus e **zero marcador C-A5 aplicado**. |
-| C-A5-E6 | **MAPEAMENTO DE IDENTIDADE PARA APLICAÇÃO: NÃO PRODUZIDO / NÃO APROVADO.** **Compatibilidade estrutural NÃO é mapeamento de identidade.** |
-| C-A5-E7 | **IDs de fragmento já comprometidos** por documentação normativa anterior **deverão ser preservados** na futura aplicação (**C-A5-M5**). |
-| C-A5-E8 | **`R09` possui dois fragmentos físicos sem `id` C-A5 normativamente atribuído** e permanece **PENDÊNCIA DE MAPEAMENTO HUMANO**. **C-A5 não atribui esses IDs.** |
+#### Registro C-A5-M5 — mapeamento humano aprovado das 37 unidades
 
-##### C-A5-Z — Não reescrita e não revogação
-
-**C-A5 NÃO REESCREVE NEM REVOGA os blocos anteriores.** **C-2**, **C-11**, **C-15**,
-**C-A1**, **C-A2**, **C-A3** e **C-A4** permanecem **vigentes**. Os **ÚNICOS refinamentos
-posteriores** introduzidos por esta entrega são os **expressamente enumerados em C-A5**.
-**Nenhuma regra histórica é apagada, substituída ou retroativamente modificada** — em
-particular, o parágrafo de **C-A1** que registrava a **identidade física do fragmento** como
-**não decidida** permanece **correto para o momento em que foi escrito**.
-
-**Após esta arbitragem**: **C-A5 = ARBITRADA DOCUMENTALMENTE / NÃO MATERIALIZADA**; **C
-continua ARBITRADA / NÃO MATERIALIZADA**; **`R2` continua NÃO MATERIALIZADA**; **`S2-D8`
-continua ARBITRADA / NÃO MATERIALIZADA**; **`N-b-RES2` continua ABERTO**; e o
-**`OrquestradorMotor` continua não implementado**.
-
-#### Registro pós-C-A5-M5 — mapeamento humano aprovado das 37 unidades
-
-**Estado: APROVADO HUMANAMENTE / REGISTRADO DOCUMENTALMENTE / NÃO APLICADO AO CORPUS.**
-
-Registro **exclusivamente documental** e **posterior** a **C-A5**. Ele **não reescreve
-`C-A5`**, **não renumera seção alguma**, **não altera `knowledge/**`**, **não insere
-marcador**, **não implementa código** e **não cria marco funcional**. Ele **satisfaz o gate
-anterior à edição** — a tabela exigida por **`C-A5-M5`** — e **NÃO executa essa edição**.
+Registro **documental** do mapeamento de identidade exigido por **`C-A5-M5`** como **gate
+anterior à edição** do corpus. Ele **não reescreve `C-A5`**, **não renumera seção alguma**,
+**não altera `knowledge/**`**, **não insere marcador** e **NÃO executa essa edição**.
 
 **Aprovação humana explícita registrada:** o responsável aprovou o mapeamento de identidade
-das **37 unidades físicas atuais**, **incluindo `R23/F2` como a unidade de decoração**. Essa
+das **37 unidades físicas**, **incluindo `R23/F2` como a unidade de decoração**. Essa
 aprovação **não autoriza** aplicação de marcadores, edição do corpus, criação do índice real,
-extrator, *renderer*, *bindings* físicos, execução da bijeção, migração de autoridade de
-status nem a oitava microentrega funcional.
+extrator, *renderer*, *bindings* físicos, execução da bijeção nem migração de autoridade de
+status.
 
-**Corpus-base deste mapeamento:** `knowledge/respostas-aprovadas.md`, **blob
-`d9f275454cb9f091a824292560d983d25f08c14e`**. A tabela vale **para esse corpus-base**; se o
-corpus mudar antes da aplicação, o mapeamento precisa ser **reconferido**.
+**Corpus-base deste mapeamento:** `knowledge/respostas-aprovadas.md`. A tabela vale **para
+esse corpus-base**; se o corpus mudar antes da aplicação, o mapeamento precisa ser
+**reconferido**.
 
 **Base da atribuição — três categorias fechadas, e nenhuma delas é ordinal:**
 
 | Base | Significado |
 |---|---|
-| **PRESERVAÇÃO NORMATIVA** | o `id` já estava **comprometido por documentação normativa anterior** e é **preservado** por **`C-A5-M5`** / **`C-A5-E7`**. |
+| **PRESERVAÇÃO NORMATIVA** | o `id` já estava **comprometido por documentação normativa anterior** e é **preservado** por **`C-A5-M5`**. |
 | **DECISÃO HUMANA EXPLÍCITA** | não havia `id` comprometido; o `id` foi **declarado agora pelo responsável humano** no ato de aprovação de **`C-A5-M5`**. |
 | **CONFIRMAÇÃO HUMANA EXPLÍCITA** | o `id` já estava comprometido, mas **qual unidade física o portava não estava declarado**; o responsável humano **declarou o portador**. |
 
@@ -2160,8 +1852,8 @@ A **pendência identificada no inventário read-only A1** era: **qual unidade f�
 `R23 F2`**, a partir da **leitura conjunta de `MD-13` e `C-A2-B5`** — **`MD-13`** declara
 alvo `R23 F2` com escopo de modelagem que abrange **dois fatos**: o **motivo de fogos**, que
 reside na unidade já fixada como `R23/F1` por **`C-A2-B5`**, e a **regra de decoração**, que
-reside na outra unidade. **`C-A5-E8` permanece inalterada e refere-se exclusivamente à
-pendência de mapeamento de `R09`.**
+reside na outra unidade. **Os `id` de `R09/F1` e `R09/F2` são os declarados na tabela
+`C-A5-M5`**, e não são derivados por posição ou conteúdo.
 
 Decisão humana registrada: **`R23/F2` designa fisicamente a unidade de decoração.**
 
@@ -2169,47 +1861,41 @@ Reconciliação, **sem reescrever `MD-13` nem `C-A2-B5`**:
 
 | # | Leitura |
 |---|---|
-| 1 | **`C-A2-B5` permanece histórico e vigente**, e **preserva `R23/F1`**. |
-| 2 | **`MD-13` permanece histórico e vigente.** |
+| 1 | **`C-A2-B5` preserva `R23/F1`**. |
+| 2 | **`MD-13` permanece vigente como contrato de modelagem.** |
 | 3 | O **escopo de modelagem** de `MD-13` **pode envolver fatos relevantes a mais de um fragmento** — alvo de modelo **não é** designação de identidade física. |
-| 4 | A referência histórica de `MD-13` a `R23 F2` **NÃO desloca o motivo de fogos de `R23/F1`**. |
+| 4 | A referência de `MD-13` a `R23 F2` **NÃO desloca o motivo de fogos de `R23/F1`**. |
 | 5 | Para **IDENTIDADE FÍSICA C-A5**, **`R23/F2` = unidade de decoração**. |
 
-Isto é **clarificação posterior de mapeamento físico**. **`MD-13` NÃO é executada**, **nenhum
+Isto é **clarificação de mapeamento físico**. **`MD-13` NÃO é executada**, **nenhum
 conteúdo é alterado** e **nenhuma prosa é atomizada** por este registro.
 
-##### Estado após este registro
+##### Limites deste registro
 
-| # | Estado |
-|---|---|
-| 1 | **`C-A5-M5` = SATISFEITA DOCUMENTALMENTE** para o corpus-base `d9f275454cb9f091a824292560d983d25f08c14e`. |
-| 2 | **`C-A5-M2` CONTINUA NÃO ATIVA.** A representação marcada **ainda não é obrigatória**. |
-| 3 | **ZERO marcador aplicado.** `knowledge/respostas-aprovadas.md` **permanece inalterado**, e a **ausência de marcador continua NÃO sendo erro do corpus atual** (**`C-A5-M3`**). |
-| 4 | **`C-A5` continua NÃO MATERIALIZADA no corpus**; **C continua ARBITRADA / NÃO MATERIALIZADA**. |
-| 5 | `knowledge/indice-respostas-aprovadas.yaml` **continua INEXISTENTE**. |
-| 6 | A **bijeção física continua NÃO EXECUTADA**; **`C-A1-ST6`–`C-A1-ST10` continuam NÃO satisfeitas**. |
-| 7 | A **autoridade de status NÃO migrou** — `knowledge/respostas-aprovadas.md` continua a autoridade (**C-11**). |
-| 8 | **Nenhum marco funcional novo**; **nenhum teste foi executado** nesta entrega. |
-| 9 | Continuam **ABERTAS**: propagação de status ao fragmento; mapeamento concreto de `PARCIAL`; sintaxe de *placeholder*; gramática de `caminho_yaml`; formato `hora`; **C-7**. |
-| 10 | **A oitava microentrega funcional continua NÃO ESCOLHIDA e NÃO INICIADA**; **a 3B.8 continua INEXISTENTE**. |
+Este mapeamento **define identidade física**; ele **não executa materialização física do
+corpus**, **não migra autoridade de status** e **não substitui os gates de materialização**
+definidos neste documento. Enquanto **`C-A5-M2`** não valer, a representação marcada **não é
+obrigatória** (**`C-A5-M3`**), e a **autoridade de status** permanece em
+`knowledge/respostas-aprovadas.md` (**`C-11`**).
 
 ---
 
 #### Micro-arbitragem documental da gramática de caminho_yaml
 
-Micro-arbitragem **documental** e **posterior**. Ela fecha **uma única** matéria: **qual é a
+Refinamento que fecha, segundo **`C-P`**, **uma única** matéria: **qual é a
 gramática determinística de `caminho_yaml`**. Ela **não** reescreve, renumera ou substitui
 `C-1`–`C-15`, `C-A1`, `C-A2`, `C-A5`, `MT1`–`MT12`, `SP1`–`SP7`, `G2`/`GR1`–`GR7` ou
 `PM1`–`PM12`, **não** cria versão concorrente deles, **não** altera o vocabulário fechado de
 **`C-3`** e **não** cria identificador normativo novo: **`C-A6` NÃO EXISTE**, e **nenhuma
-subetapa, `C15`, `E15` ou `3B.8` é criada** — a **3B.8 continua inexistente**. Os rótulos
+subetapa é criada**. Os rótulos
 **`CY1`**–**`CY14`** abaixo são **locais deste bloco**, existem **somente** como rastreabilidade
 interna e **não são normativos fora desta micro-arbitragem**: não são etapa, subetapa, `Exx`,
 nem nomenclatura de `C`.
 
-**Nenhum parser é implementado aqui**; **nenhum resolver é implementado**; **nenhum módulo,
-função, assinatura, exceção, mensagem ou API é decidido**; **nenhum índice é criado**; **nenhum
-*binding* é materializado**; e **`knowledge/**` não é alterado**.
+Este bloco define somente o contrato; a implementação de módulo, função, assinatura, exceção
+e mensagem técnica pertence à fronteira executora correspondente.
+Este contrato **não cria índice**, **não materializa *binding*** e **não altera
+`knowledge/**`**.
 
 **A decisão adotada é a alternativa `A2`: `caminho_yaml` permanece semanticamente uma `str`,
 com CAMINHO ABSOLUTO SEM MARCADOR e CAMINHO RELATIVO EXPLICITAMENTE MARCADO POR `@`.**
@@ -2381,11 +2067,10 @@ resolução**. **Não existe gramática paralela.**
 
 ##### Relação com `E1` — nada é alterado
 
-**`src/casa77_sdr/response_index.py` continua INALTERADO.** `E1` valida a **estrutura básica** e
-aplica **parte** da proibição posicional (**`C-A1-S1`**); ele **NÃO fecha a gramática completa**.
-A futura materialização da gramática **poderá subsumir logicamente** parte dessas validações,
-mas **nesta entrega nada é removido, nada é alterado, nenhum teste é alterado e nenhuma
-responsabilidade é migrada**.
+`E1` valida a **estrutura básica** e aplica **parte** da proibição posicional
+(**`C-A1-S1`**); ele **NÃO fecha a gramática completa**. A materialização da gramática
+**pode subsumir logicamente** parte dessas validações; **esta micro-arbitragem não migra
+responsabilidade alguma**.
 
 ##### Categorias conceituais de *FAIL-CLOSED*
 
@@ -2417,33 +2102,21 @@ identificador, valor, preço, capacidade, horário, condição comercial ou qual
 | `bloco_exemplo.@campo_exemplo` | **inválida** | **`@` fora da posição inicial** (`CY5`) |
 | `bloco_exemplo.` | **inválida** | `.` final (`CY5`) |
 
-##### Evidência estrutural do *snapshot* atual — EVIDÊNCIA, NÃO NORMA
+**A gramática independe da distribuição estrutural do YAML.** Ela permanece válida qualquer
+que seja a distribuição de coleções, listas e identificadores de um `knowledge/casa77.yaml`
+aprovado, presente ou futuro.
 
-Fatos **estruturais e sanitizados** do `knowledge/casa77.yaml` vigente, registrados **sem
-qualquer valor, identificador real, preço, capacidade, horário ou condição comercial**: o YAML
-atual é **compatível** com esta gramática; existem **5** coleções de mapas, das quais **4**
-possuem **identificador estrutural utilizável** e **1 não possui**; existem **12** listas de
-escalares; e **nenhum *binding* aprovado atual exige `itera_sobre`** — os únicos usos de
-`itera_sobre` neste documento são as **regras** `C-2j`, `C-4g`, `C-A1-S2` e `C-A1-S3`, e
-**nenhum *binding* de `C-A2-B` o declara**.
+##### Limites desta micro-arbitragem
 
-**ESTE *SNAPSHOT* É EVIDÊNCIA DO ESTADO ATUAL E NÃO ALTERA NORMA.** A gramática permanece
-válida ainda que um futuro `knowledge/casa77.yaml` aprovado tenha outra distribuição estrutural.
-
-##### Estado após esta micro-arbitragem
-
-| # | Estado |
+| # | Limite |
 |---|---|
-| 1 | **Gramática de `caminho_yaml` = ARBITRADA DOCUMENTALMENTE / NÃO MATERIALIZADA.** |
-| 2 | **Índice físico** `knowledge/indice-respostas-aprovadas.yaml` = **INEXISTENTE**. |
-| 3 | **Parser da gramática = INEXISTENTE**; **resolver = INEXISTENTE**. |
-| 4 | **Sintaxe de *placeholder* = ABERTA.** |
-| 5 | **Formato `hora` = PENDÊNCIA SEPARADA**, não decidida aqui. |
-| 6 | **`C-7` = NÃO MATERIALIZADA**, e **não reaberta**. |
-| 7 | **`C-A1-ST6`–`C-A1-ST10` = NÃO satisfeitas.** |
-| 8 | **Autoridade de status NÃO migrada** — `knowledge/respostas-aprovadas.md` continua a autoridade (**`C-11`**). |
-| 9 | **`C` continua ARBITRADA / NÃO MATERIALIZADA**; **`C-A6` não existe**; **a 3B.8 continua INEXISTENTE**. |
-| 10 | **Zero código, zero teste e zero `knowledge/**`** foram alterados; **`src/casa77_sdr/response_index.py` continua inalterado**. |
+| 1 | Ela fecha **somente a gramática de `caminho_yaml`**, e **não a materializa**. |
+| 2 | Ela **não cria** o índice físico `knowledge/indice-respostas-aprovadas.yaml`. |
+| 3 | A **sintaxe de *placeholder*** permanece **ABERTA**. |
+| 4 | O **formato `hora`** é **matéria separada**, não decidida aqui (**`C-A1-F3`**, **`C-A1-F3a`**). |
+| 5 | **`C-7` não é reaberta** por ela. |
+| 6 | Ela **não satisfaz `C-A1-ST6`–`C-A1-ST10`** e **não migra a autoridade de status**, que permanece em `knowledge/respostas-aprovadas.md` (**`C-11`**). |
+| 7 | **`C-A6` não existe** e **nenhuma subetapa é criada**. |
 
 **ARBITRAR A GRAMÁTICA DE `caminho_yaml` NÃO É IMPLEMENTAR PARSER, NÃO É IMPLEMENTAR RESOLVER,
 NÃO É CRIAR ÍNDICE, NÃO É RESOLVER *PLACEHOLDER*, NÃO É MATERIALIZAR `C-7`, NÃO É MIGRAR
@@ -2493,17 +2166,17 @@ Justificativa, em ordem de peso:
 4. **As integrações futuras não travam a escolha.** A API oficial do WhatsApp e o Google
    Calendar são HTTPS e têm SDK nas duas linguagens.
 
-Sobre bibliotecas: nenhuma foi escolhida ou aprovada nesta etapa. Leitura de YAML, validação
-de schema e execução de testes exigirão dependências em qualquer das opções; a seleção
-pertence à Etapa 3B. Qualquer nome de biblioteca que apareça em discussão futura deste
-documento é exemplo ilustrativo, não decisão.
+Sobre bibliotecas: a **validação de schema** exige dependência em qualquer das opções e
+**continua sem escolha** — ela é a linha própria de §11. Qualquer nome de biblioteca que
+apareça em discussão futura deste documento, para uma escolha ainda aberta, é exemplo
+ilustrativo, não decisão.
 
 Ressalva honesta: **se a etapa 7 escolher uma rota não oficial de WhatsApp**, o adaptador de
 canal provavelmente será Node. Isso não invalida a decisão, porque o motor é independente de
 canal (P1): o adaptador conversa com o motor por um limite simples de processo. A escolha do
 canal continua adiada para a etapa 7.
 
-Nenhum framework web é escolhido nesta etapa — o MVP não precisa de um. O motor é uma função
+Nenhum framework web está escolhido — o MVP não precisa de um. O motor é uma função
 chamada por um adaptador; o adaptador HTTP só será necessário na etapa 7.
 
 ---
@@ -2551,6 +2224,25 @@ contrato da **saída da etapa 4** sem criar componente algum: o "produtor de int
 da etapa 4" é **fronteira funcional** dentro do **limite único de LLM** de §4.2 e §9
 (N-b-F1, N-b-F2), **não** um `Interpretador` determinístico e **não** um componente 15.
 
+#### 4.1.1 Colisão de nome — `RegistroAtendimento` (pendência `B`)
+
+O nome `RegistroAtendimento` designa hoje **dois referentes de natureza distinta**: nesta
+§4.1, um **componente de comportamento**, que registra dados e correções (`E02`–`E05`) e
+devolve dados atualizados mais a lista de correções; em `src/casa77_sdr/persistence.py`, uma
+**dataclass `frozen` de transporte**, opaca, que por contrato **não interpreta** estado,
+qualificação, dados, pendências nem motivos.
+
+A colisão é de **categoria** — comportamento × registro de dado —, não de campo nem de
+assinatura, e é agravada por esta §4.1 já designar `Persistencia` como o componente da
+persistência operacional (§7.3).
+
+**Pendência `B` — ABERTA.** Nenhum dos dois referentes é renomeado, unificado ou corrigido
+aqui, e nada é resolvido silenciosamente.
+
+**Onde se resolve:** arbitragem específica antes de implementar o componente
+`RegistroAtendimento` desta §4.1. Não afeta a persistência operacional já contratada em §7.3
+nem a fronteira de identidade de §7.1.
+
 ### 4.2 Somente LLM
 
 Permitido: interpretar intenção; extrair campos da mensagem; identificar perguntas; redigir
@@ -2594,7 +2286,7 @@ Regras:
 ### 4.4 Condições de ciclo consumidas pela `MaquinaEstados`
 
 Fronteira estrutural da máquina, arbitrada na S3. É **contrato conceitual**, não
-implementação: nenhum código é criado nesta etapa.
+implementação: ela não cria código.
 
 A máquina recebe as condições **já determinadas a montante** e nunca as calcula. Nenhum
 campo carrega dado pessoal (PII), texto de mensagem ou valor comercial.
@@ -2602,22 +2294,20 @@ campo carrega dado pessoal (PII), texto de mensagem ou valor comercial.
 | # | Condição | Forma | Produtor |
 |---|---|---|---|
 | 1 | `insumo_qualificacao_atualizado` | `bool \| None` (doc 06 §4.1) | etapa 6 do pipeline (§5) |
-| 2 | `pendencia_impeditiva` | `bool \| None` | **produtor conceitual: S2-D8, eixo A** (arbitragem S2-D8, abaixo; doc 06 §11). **Nenhum componente concreto é escolhido** e **nada está materializado** |
+| 2 | `pendencia_impeditiva` | `bool \| None` | **produtor conceitual: S2-D8, eixo A** (arbitragem S2-D8, abaixo; doc 06 §11). A **implementação concreta** pertence à composição do `OrquestradorMotor` |
 | 3 | `motivos_handoff` | conjunto/tupla de **identificadores textuais opacos** | `DetectorHandoff` (gatilhos 3–10, doc 06 §9) |
-| 4 | `resposta_aprovada_disponivel` | `bool \| None` | **produtor conceitual: S2-D8, eixo B** (arbitragem S2-D8, abaixo; doc 06 §11). **Nenhum componente concreto é escolhido** e **nada está materializado** |
+| 4 | `resposta_aprovada_disponivel` | `bool \| None` | **produtor conceitual: S2-D8, eixo B** (arbitragem S2-D8, abaixo; doc 06 §11). A **implementação concreta** pertence à composição do `OrquestradorMotor` |
 | 5 | `interesse_confirmar_disponibilidade` | `bool \| None` | **fronteira da etapa 4** (arbitragem N-b, §6.3): derivada da `Interpretacao` pela **função total** N-b-CD1–N-b-CD4, abaixo. Único produtor de `CondicoesCiclo` que N-b atribui |
 | 6 | `calendario_integrado` | `bool \| None` | configuração/integração avaliada a montante |
 | 7 | `identidade` | resultado estruturado do `ResolvedorIdentidade` (§7.1) | `ResolvedorIdentidade` (etapa 5) |
 | 8 | `motivo_encerramento` | motivo estruturado entre as **quatro** modalidades aprovadas de T35 (doc 06 §3) | **não atribuído — S3-D1** |
 
-Onde o produtor está pendente, ele **permanece pendente**: esta seção descreve a fronteira,
-não escolhe componente concreto. **Produtor conceitual não é componente concreto**: atribuir
-o **eixo A** e o **eixo B** de S2-D8 às condições **2** e **4** diz **quem responde a
-pergunta**, não **qual classe a implementa** — nenhuma implementação é autorizada por isso.
+As condições **2** e **4** têm **produtor conceitual** em **S2-D8**, mas **nenhum componente
+arquitetural novo é criado por isso**: atribuir o **eixo A** e o **eixo B** diz **quem responde
+a pergunta**, não **qual classe a implementa**. A condição **8** permanece **sem produtor
+atribuído** em **`S3-D1`**.
 
-**Condição 5 — função total** (arbitragem N-b, §6.3). Esta é a **única** linha da tabela acima
-alterada por N-b. As demais **sete** condições permanecem exatamente como estão, e as condições
-**2**, **4** e **8** continuam **NÃO ATRIBUÍDAS**.
+**Condição 5 — função total** (arbitragem N-b, §6.3).
 
 | # | Entrada | `interesse_confirmar_disponibilidade` |
 |---|---|---|
@@ -2629,31 +2319,28 @@ alterada por N-b. As demais **sete** condições permanecem exatamente como est�
 `True`/`False` significam **avaliado neste ciclo**; `None` significa **não avaliado neste
 ciclo**. `None` **não** é "falso implícito".
 
-**Nota temporal — arbitragem S2-D8, posterior.** As duas frases acima registram
-corretamente o estado **no momento de N-b** e continuam corretas como registro histórico.
-Depois delas, a arbitragem **S2-D8** (abaixo) atribui **produtor conceitual** às condições
-**2** e **4** — respectivamente o **eixo A** e o **eixo B** —, **sem escolher componente
-concreto** e **sem materializar nada**. A condição **8** (`motivo_encerramento`) continua
-**NÃO ATRIBUÍDA**: **S3-D1** permanece aberta. A tabela continua com **oito** condições —
-**nenhuma condição nova é criada**, e **nenhuma é removida**.
+**Precedência — S2-D8 sobre N-b quanto ao produtor das condições.** **S2-D8** (abaixo)
+atribui **produtor conceitual** às condições **2** e **4** — respectivamente o **eixo A** e o
+**eixo B** —, **sem escolher componente concreto**. A condição **8** (`motivo_encerramento`)
+permanece **NÃO ATRIBUÍDA**: **S3-D1** está aberta. A tabela tem **oito** condições —
+**nenhuma é criada, e nenhuma é removida**.
 
 ### 4.4.1 Arbitragem S2-D8 — detecção e classificação de pendências, e cobertura de resposta aprovada
 
-**Estado: ARBITRADA / NÃO MATERIALIZADA.** Entrega **exclusivamente documental**. Esta
-seção fecha o **contrato** de S2-D8 — detectar e classificar pendências e determinar a
-cobertura de resposta aprovada, **antes da etapa 7** (§5) — e **não o materializa**.
+**Contrato arbitrado.** Esta seção define a **detecção e a classificação de pendências** e a
+**cobertura de resposta aprovada**, **antes da etapa 7** (§5).
 
-| # | Continua verdadeiro |
+| # | Limite de escopo de S2-D8 |
 |---|---|
-| D8-E1a | **nenhum código é criado ou alterado**: `src/`, `tests/`, `knowledge/` e `prompts/` permanecem intactos |
-| D8-E1b | **§4.1 permanece com 14 componentes** e **§2 com nove responsabilidades** |
-| D8-E1c | esta **§4.4 permanece com oito condições**; **nenhuma condição nova** é criada |
-| D8-E1d | **nenhum estado, evento, transição, critério, ação, efeito paralelo, inércia ou pendência nova** é criado |
-| D8-E1e | **nenhuma subetapa é criada — a 3B.8 não existe** |
-| D8-E1f | **AJ2 continua NÃO MATERIALIZADA** (§6.3) e **C continua NÃO MATERIALIZADA** (§2.3) |
-| D8-E1g | **`N-b-RES2` continua ABERTO** (§5, §6.3) |
-| D8-E1h | o **`OrquestradorMotor` continua não implementado** |
-| D8-E1i | o **mapa de cobertura R2 não existe**; o índice `knowledge/indice-respostas-aprovadas.yaml` **não existe** |
+| D8-E1a | **não define** alteração de `src/`, `tests/`, `knowledge/` ou `prompts/` |
+| D8-E1b | **não altera** §4.1, que tem **14 componentes**, nem §2, que tem **nove responsabilidades** |
+| D8-E1c | **não altera** esta §4.4, que tem **oito condições**; **nenhuma condição nova** é criada |
+| D8-E1d | **não cria** estado, evento, transição, critério, ação, efeito paralelo, inércia nem pendência nova |
+| D8-E1e | **não cria subetapa** |
+| D8-E1f | **não altera nem substitui** os contratos **AJ2** (§6.3) e **C** (§2.3) |
+| D8-E1g | **não resolve `N-b-RES2`** (§5, §6.3) |
+| D8-E1h | **não define a implementação do `OrquestradorMotor`** |
+| D8-E1i | **não cria** a representação física do mapa de cobertura **R2** nem o índice físico de **C** |
 
 #### D8-0 — o que S2-D8 decide
 
@@ -2914,8 +2601,7 @@ Permanecem **abertas e inalteradas**: **`N-b-RES2`**; **S3-D1**; **E4**; **E1**;
 **`Q53`**/**`Q54`** (**AJ2-E4**); o **valor do limiar** e seu **mecanismo de carga**; o
 **destino do alerta operacional**; **S4**/**S5**; e o **`OrquestradorMotor`**. S2-D8 **não
 cria** o índice de C, **não cria** o mapa R2, **não cria** módulo, **não cria**
-`AssuntoComercial` em Python, **não escolhe** produtor LLM e **não cria** a **3B.8**, que
-**continua não existindo**.
+`AssuntoComercial` em Python, **não escolhe** produtor LLM e **não cria subetapa**.
 
 ### 4.5 Contrato das ações da `MaquinaEstados`
 
@@ -2983,7 +2669,7 @@ de S2.9 permanece:
 A máquina apenas **declara** as duas ações. Ela **não** entrega, **não** envia, **não**
 verifica sucesso, **não** reverte estado e **não** cria retentativa, fila, contador ou
 status de entrega (doc 06 §10). A representação concreta futura desse pré-requisito pode
-ser um **mapeamento estático do contrato** — não implementado nesta etapa.
+ser um **mapeamento estático do contrato**, ainda não implementado.
 
 ## 5. Pipeline
 
@@ -3002,13 +2688,13 @@ adivinhar.
 | 4 | Interpretar e extrair — **fronteira da etapa 4** (arbitragem N-b, §6.3) | mensagem normalizada | **`Interpretacao`**: as **oito** categorias de §6.3 preservadas, com **`IntencaoConversacional`** fechada em **11** códigos (partição A1/A2/B), confiança **binária** por item e `confianca_global` sempre presente. Derivadas **deterministicamente dentro da própria fronteira**: a **projeção estruturada** consumida pela etapa 5 (N-b-K1–N-b-K7) e a condição **`interesse_confirmar_disponibilidade`** de §4.4 (N-b-CD1–N-b-CD4). **A etapa 4 não emite `Exx`, `Txx`, `Rxx`, qualificação, violação, estado, pendência nem `motivo_encerramento`** (N-b-G2) | produtor indisponível → **nenhuma `Interpretacao`** e **nenhuma projeção**; a etapa 5 não executa e `interesse_confirmar_disponibilidade = None` (N-b-M1–N-b-M8, §7). **Erro de contrato** (E-Nb-1–E-Nb-19) **bloqueia na fronteira da etapa 4**, sem projeção e **nunca** convertido em `Identidade.AMBIGUA`. Confiança `BAIXA` **não é erro**: é **ausência para consumo estruturado**, com a **única exceção** de `pedido_de_humano` (N-b-PH3, N-b-PH4) |
 | 5 | **Resolver identidade do atendimento** | conjunto elegível fechado (3) + **conjunto H — `ids_em_atendimento_humano`** (3) + projeção estruturada da interpretação (4) + veredito do identificador já validado (§6.1.1) + **`id_atendimento_validado`** (3) — o **ID técnico opaco** do atendimento identificado, **obrigatório** quando o veredito é `ENCONTRADO` e **`None`** quando é `NAO_INFORMADO` (§6.1.1, §6.2; pré-condições **P-I1–P-I5** de §7.1) + `havia_estado_esperado` (§6.2) | **primeiro** `situacao_takeover` (§6.3); se `SEM_TAKEOVER`, um de **seis** resultados conceituais: `ATENDIMENTO_ATIVO`, `MESMA_SOLICITACAO` (T36), `NOVA_SOLICITACAO` (T37), `AMBIGUA`, `PRIMEIRO_CONTATO_COMPROVADO` (identidade `None`) e `SEM_CANDIDATO_ELEGIVEL` (identidade `None`) — sempre com `criterio` do vocabulário fechado de §7.1 | ambíguo → **não decidir**: pedir esclarecimento, sem herdar nem sobrescrever dado algum (§7.1, A1–A7); persistir o processamento pendente quando possível. `SEM_CANDIDATO_ELEGIVEL` → **encerra sem transição**; tratamento pelo orquestrador **bloqueado pela pendência E4**. `situacao_takeover != SEM_TAKEOVER` → **D0–D6 não executam** e a identidade **não é calculada** (R5, abaixo) |
 | 6 | Registrar dados e correções | campos extraídos + atendimento resolvido | dados atualizados + correções + **sinal de mutação efetiva de insumo da qualificação** (`insumo_qualificacao_atualizado`, doc 06 §4.1) | conflito entre mensagem e estado → §7; dado incerto nunca é gravado; identidade ambígua → nada é registrado no atendimento anterior |
-| 7 | Executar a ordem determinística do doc 06 §4 — **primeira decisão determinística do ciclo** | dados + eventos + avaliação comercial feita **a montante** contra o YAML (`RegrasComerciais`, `Qualificador`) + **todas as condições estruturadas de §4.4** já determinadas — `insumo_qualificacao_atualizado`, classificação de `E09`, `resposta_aprovada_disponivel`, `interesse_confirmar_disponibilidade`, `calendario_integrado`, `identidade`, `motivos_handoff` e `motivo_encerramento`. A `MaquinaEstados` recebe tudo já estruturado e **não lê o YAML** (doc 06 I23) | eventos confirmados, violações, motivos, qualificação recalculada e o **estado intermediário** resultante da **primeira chamada da `MaquinaEstados`** — caminho percorrido (uma ou mais `Txx`, doc 06 §4.2), ainda sujeito ao fechamento da etapa 12 | `E07`, `E08`, `E09` e `E18` são **recebidos/confirmados a partir das saídas determinísticas a montante**, não fabricados aqui; violação da precedência (ex.: `E07` sobre incompatibilidade) é erro de programa, não caso de negócio → bloquear envio. **O produtor concreto de `E09` não é definido nesta arquitetura — S2-D8 permanece aberta** (doc 06 §11) |
+| 7 | Executar a ordem determinística do doc 06 §4 — **primeira decisão determinística do ciclo** | dados + eventos + avaliação comercial feita **a montante** contra o YAML (`RegrasComerciais`, `Qualificador`) + **todas as condições estruturadas de §4.4** já determinadas — `insumo_qualificacao_atualizado`, classificação de `E09`, `resposta_aprovada_disponivel`, `interesse_confirmar_disponibilidade`, `calendario_integrado`, `identidade`, `motivos_handoff` e `motivo_encerramento`. A `MaquinaEstados` recebe tudo já estruturado e **não lê o YAML** (doc 06 I23) | eventos confirmados, violações, motivos, qualificação recalculada e o **estado intermediário** resultante da **primeira chamada da `MaquinaEstados`** — caminho percorrido (uma ou mais `Txx`, doc 06 §4.2), ainda sujeito ao fechamento da etapa 12 | `E07`, `E08`, `E09` e `E18` são **recebidos/confirmados a partir das saídas determinísticas a montante**, não fabricados aqui; violação da precedência (ex.: `E07` sobre incompatibilidade) é erro de programa, não caso de negócio → bloquear envio. A **classificação que fundamenta `E09`** pertence ao contrato **S2-D8** (§4.4.1); a **transformação dos sinais em eventos confirmados** deve respeitar **`N-b-RES2`** (doc 06 §11) |
 | 8 | Consultar YAML e respostas aprovadas | perguntas detectadas | valores de campo e códigos `R` correspondentes | campo `null`/`pendente` e ausência de resposta aprovada **já foram confirmados como `E09` na etapa 7** (gatilhos 1–2 do doc 04, doc 06 §9): aqui a pendência é **consultada e registrada**, nunca criada tardiamente. Esta etapa **não produz condição consumida pela etapa 7** |
 | 9 | Selecionar fatos permitidos — **conferindo cada `Rxx` comercial contra o YAML** (F3) | resultado de 7 e 8 | lista fechada de fatos, cada um com origem e conferência | divergência `Rxx` × YAML → o fato **não** entra na lista, registra-se erro de consistência da base e o dado divergente é bloqueado (F4); lista vazia com pergunta pendente → R03 + handoff. **Nenhum `E09` nasce nesta etapa** e **nenhuma condição de §4.4 é produzida aqui** |
 | 10 | Gerar rascunho | fatos autorizados + tom + estado | texto candidato | LLM indisponível ou lento → usar o texto aprovado literal (§7) |
 | 11 | Validar o rascunho | rascunho + fatos autorizados | aprovado ou bloqueado + motivo | qualquer valor, promessa ou termo fora da lista → bloqueio |
 | 12 | Bloquear ou substituir — e **fechar o ciclo determinístico** | resultado de 11 | texto final seguro + fechamento com `E15` e `E12` **pós-efeito** | substituir pelo texto aprovado literal; se não houver, R03 + handoff. Nunca reenviar ao LLM mais de uma vez. `E15` e `E12` só são confirmados **depois do efeito real** (doc 06 §2.2) e reentram na `MaquinaEstados` na ordem `E15` → `E12` (doc 06 §4.2): **no máximo duas chamadas adicionais** — uma para `E15`, uma para `E12` |
-| 13 | Persistir — **persistência operacional** (§7.3) | **estado final produzido pela última chamada determinística aplicável após o fechamento da etapa 12**: o resultado da **etapa 7** quando não houver `E15` nem `E12`; o resultado **pós-`E15`** quando só houver `E15`; o resultado **pós-`E12`** quando a cadeia completa existir | estado, dados, qualificação, pendências, motivos e chave de idempotência gravados — e o **`instante_ultima_transicao`** de §6.2 (N-a-T1–N-a-T8): gravado **sempre** com o **instante de referência do ciclo**, nunca com relógio vivo, e atualizado **somente** quando o caminho decidido no ciclo contém transição que **muda** o estado. **Materialização parcial**: o **transporte e a validação da representação** do campo já existem na persistência operacional, e a **decisão** de qual valor usar — com a **composição entre as 0–3 chamadas** do ciclo — também (notas de materialização em §6.2, M-T1–M-T6 e M-DT1–M-DT7); a **aplicação** dessa decisão e a **escrita** pelo contrato da persistência existem como **fronteira chamável** (M-AE1–M-AE7). Continua **NÃO integrada** **esta etapa** no pipeline — montagem completa do registro, decisão de se ela executa, escolha entre criar e gravar, geração de `id_atendimento`, idempotência e tratamento operacional de falha permanecem futuros — e **N-a-T3–N-a-T7 não estão operacionalmente concluídas** | falha de persistência → **bloquear a emissão** da resposta que depende da nova transição; preservar a mensagem para reprocessamento idempotente; alerta operacional (§7.2) |
+| 13 | Persistir — **persistência operacional** (§7.3) | **estado final produzido pela última chamada determinística aplicável após o fechamento da etapa 12**: o resultado da **etapa 7** quando não houver `E15` nem `E12`; o resultado **pós-`E15`** quando só houver `E15`; o resultado **pós-`E12`** quando a cadeia completa existir | estado, dados, qualificação, pendências, motivos e chave de idempotência gravados — e o **`instante_ultima_transicao`** de §6.2 (N-a-T1–N-a-T8): gravado **sempre** com o **instante de referência do ciclo**, nunca com relógio vivo, e atualizado **somente** quando o caminho decidido no ciclo contém transição que **muda** o estado. **Fronteiras**: o **transporte e a validação da representação** do campo pertencem à persistência operacional (§6.2, M-T1–M-T6); a **decisão** de qual valor usar, com a **composição entre as 0–3 chamadas** do ciclo, pertence a M-DT1–M-DT7; e a **aplicação** dessa decisão com a **escrita** pelo contrato da persistência é a fronteira chamável de M-AE1–M-AE7. **Fora dessas fronteiras**, e pertencente ao **chamador desta etapa** coordenado pelo `OrquestradorMotor` (D1): a montagem completa do registro, a decisão de se ela executa, a escolha entre criar e gravar, a geração de `id_atendimento`, a idempotência e o tratamento operacional de falha | falha de persistência → **bloquear a emissão** da resposta que depende da nova transição; preservar a mensagem para reprocessamento idempotente; alerta operacional (§7.2) |
 | 14 | Emitir resposta ou handoff | texto final + decisão **já gravada** | resposta ao interessado e/ou resumo para Douglas | **ordem de emissão obrigatória: 1. tentar a entrega do resumo; 2. somente após sucesso, emitir a mensagem de encaminhamento ao interessado** (doc 06 §10). Estado `atendimento_humano` → nada é emitido (I03); handoff não registrado → não afirmar que houve handoff (§7.2). **`deve responder = false` sempre que `situacao_takeover != SEM_TAKEOVER`** (R5, §6.5) |
 
 Regras do pipeline:
@@ -3210,12 +2896,9 @@ Disso decorrem combinações **válidas e distintas**:
 | `havia estado esperado?` = **não** + **zero** candidatos elegíveis | `PRIMEIRO_CONTATO_COMPROVADO` |
 | contexto **ausente** ou **corrompido** havendo estado esperado | **bloqueio na etapa 3** por **E5/S7** — a etapa 5 nem chega a ser executada |
 
-**N-a — política arbitrada e materializada.** A **política de elegibilidade e de recência**
-que produz esse conjunto está **arbitrada documentalmente** na subseção **N-a**, adiante, e
-sua **produção determinística de E** já possui **implementação pura** — ver a **nota de
-materialização** ao final da subseção. Ela é executada **dentro da etapa 3**, antes da
-etapa 5: o conjunto elegível continua sendo um contrato de entrada exigido do resolvedor,
-**nunca um cálculo dele**.
+**N-a — política arbitrada.** A política de elegibilidade e recência produz o conjunto
+elegível **E** dentro da **etapa 3**; o `ResolvedorIdentidade` **recebe E pronto** e **não
+calcula elegibilidade nem recência**.
 
 **N-a-F1 — fronteira parcial de N-a** (arbitragem R-I). Quando
 `veredito_identificador == ENCONTRADO`, o conjunto elegível produzido pela etapa 3 **deve
@@ -3226,10 +2909,9 @@ encontrar e validar não pode desaparecer do escopo que ela entrega. A obrigaç�
 Coerentemente, `ENCONTRADO` implica **`havia_estado_esperado = true`** (**N-I-3**, **P-I4**)
 — **sem implicação inversa**: `havia_estado_esperado = true` **não** implica `ENCONTRADO`.
 
-**N-a-F1 permanece intacta e prevalece sobre N-a.** O que estava aberto à época de R-I — a
-elegibilidade dos **demais** candidatos, a definição de recência, o marco temporal, o limiar,
-a composição do conjunto e a ordem de entrega — está **fechado pela arbitragem N-a**
-(subseção seguinte). Continuam **abertos**: o **valor numérico** do limiar, a **consulta
+**N-a-F1 permanece intacta e prevalece sobre N-a.** A elegibilidade dos **demais**
+candidatos, a definição de recência, o marco temporal, o limiar, a composição do conjunto e a
+ordem de entrega estão **fechados pela arbitragem N-a** (subseção seguinte). Continuam **abertos**: o **valor numérico** do limiar, a **consulta
 concreta** à persistência, a **unicidade geral** de `id_atendimento` entre candidatos não
 identificados e **E4** (§12).
 
@@ -3237,9 +2919,7 @@ identificados e **E4** (§12).
 
 **Natureza.** N-a é a **política determinística** que transforma os registros **já
 recuperados** da persistência no **conjunto elegível E** entregue ao `ResolvedorIdentidade`.
-É **contrato conceitual, não implementação**: nenhum arquivo de `src/` é criado ou alterado
-por esta arbitragem — em particular `persistence.py` permanece **intocado** — e **nenhum
-marco funcional novo é criado**.
+É **política interna da etapa 3**, **não componente arquitetural independente**.
 
 | # | Fronteira de N-a |
 |---|---|
@@ -3294,16 +2974,10 @@ marco funcional novo é criado**.
 | N-a-L5 | A validação ocorre **sempre**, **inclusive quando o ciclo não possui candidato `encerrado`**. Configuração inválida não fica latente esperando o primeiro encerrado aparecer. |
 | N-a-L6 | **Nenhum mecanismo concreto de carga é escolhido**: nem variável de ambiente, nem arquivo, nem framework, nem serviço. O **valor concreto permanece pendente de aprovação específica** (§12). |
 
-**Contrato do dado temporal.** O `RegistroAtendimento` da persistência operacional **já
-transporta** o marco — ver a **nota de materialização** após N-a-T8. As regras abaixo
-definem **o valor** e **o momento** da escrita. Delas, a **decisão pura** — *qual valor
-usar neste ciclo* — já possui materialização (**M-DT1–M-DT7**), e a **aplicação** dessa
-decisão sobre um `RegistroAtendimento` com a **escrita** pelo contrato da persistência
-existem como **fronteira chamável** (**M-AE1–M-AE7**). A **integração operacional no
-pipeline** — inclusive **decidir se a etapa 13 executa** e **escolher entre criar e
-gravar** — **permanece pendente** e pertence ao chamador da etapa 13. `src/casa77_sdr/persistence.py`
-**não foi alterado pela arbitragem N-a**: a materialização veio depois, em entrega
-funcional própria.
+**Contrato do dado temporal.** O `RegistroAtendimento` **transporta** o marco temporal. As
+regras abaixo definem **o valor** e **o momento** da escrita: **M-DT** decide o valor; **M-AE**
+aplica e escreve; a **decisão de executar a etapa 13**, a **escolha entre criar e gravar** e a
+**coordenação no pipeline** pertencem ao **`OrquestradorMotor`**.
 
 | # | Regra do `instante_ultima_transicao` |
 |---|---|
@@ -3316,22 +2990,17 @@ funcional própria.
 | N-a-T7 | **Múltiplas mudanças no mesmo ciclo**: um **único** instante basta — o `instante_de_referencia_do_ciclo`. Não se registra um marco por transição. |
 | N-a-T8 | **Representação**: instante **com fuso**, comparável como **instante absoluto**. Nenhum tipo Python, coluna, índice ou serialização é escolhido aqui; a persistência concreta permanece futura. |
 
-**Projeção de mudança de estado — contrato arbitrado e materialização em runtime.** As regras
-**N-a-T4** e **N-a-T5** exigem saber **se o caminho decidido no ciclo mudou o estado**, e
-proíbem derivar isso de `estado_inicial != estado_final`. Esta subseção **arbitra a
-origem dessa informação**. **A projeção foi materializada na `MaquinaEstados`**: o campo
-`transicoes_que_mudaram_estado` **existe em runtime**, é produzido **dentro** da máquina no
-instante da aplicação de cada `Txx` e é devolvido por `DecisaoMaquina`. **Toda a semântica
-normativa das regras 1–8 abaixo permanece exatamente como arbitrada** — nenhuma foi
-alterada pela materialização.
+**Projeção de mudança de estado — contrato e fronteira de runtime.** As regras **N-a-T4** e
+**N-a-T5** exigem saber **se o caminho decidido no ciclo mudou o estado**, e proíbem derivar
+isso de `estado_inicial != estado_final`. Esta subseção **arbitra a origem dessa informação**.
+A projeção é **fronteira de runtime da `MaquinaEstados`**: o campo
+`transicoes_que_mudaram_estado` é produzido **dentro** da máquina, no instante da aplicação de
+cada `Txx`, e devolvido por `DecisaoMaquina`.
 
-O que **esta** materialização, isoladamente, **não** faz: ela entrega **apenas a
-projeção** dentro da `MaquinaEstados`. A **composição entre as até três chamadas** do ciclo
-(regra 7) e a **decisão** de qual valor de `instante_ultima_transicao` usar foram
-materializadas **depois**, em entrega própria — ver **M-DT1–M-DT7** —, e a **aplicação**
-com a **escrita** do marco vieram depois ainda, como **fronteira chamável**
-(**M-AE1–M-AE7**). Continua **NÃO integrada** a **etapa 13** no pipeline, e o
-**`OrquestradorMotor` continua NÃO implementado**.
+**Ficam fora desta fronteira**: a **composição entre as até três chamadas** do ciclo (regra 7)
+e a **decisão** de qual valor de `instante_ultima_transicao` usar, que pertencem a
+**M-DT1–M-DT7**; a **aplicação** e a **escrita** do marco, que pertencem a **M-AE1–M-AE7**; e
+a **integração da etapa 13 ao pipeline**, que pertence ao **`OrquestradorMotor`**.
 
 | # | Regra da projeção `transicoes_que_mudaram_estado` |
 |---|---|
@@ -3344,8 +3013,11 @@ com a **escrita** do marco vieram depois ainda, como **fronteira chamável**
 | 7 | **Composição das até três chamadas** por ciclo (doc 06 §4.2, *Limite de chamadas*): **cada chamada produz sua própria projeção**. Houve mudança **no ciclo** se, e somente se, **ao menos uma das `DecisaoMaquina` efetivamente produzidas** tiver `transicoes_que_mudaram_estado` **não vazia**. É **proibido** concatenar caminhos e fazer *replay*, comparar apenas o estado inicial da primeira chamada com o estado final da última, ou **presumir que sempre existem três chamadas**. |
 | 8 | **Estado inicial igual ao final não implica ausência de mudança.** Um ciclo `encerrado` → reabertura → `encerrado` contém mudança real — é o fundamento de **N-a-T5** e o cenário **K-Na-17**. |
 
-**Fronteira entre criação, atualização e persistência.** Os três são distintos e **nenhum
-deles é implementado aqui**:
+**Fronteira entre criação, atualização e persistência.** A projeção
+`transicoes_que_mudaram_estado` é a **fronteira de runtime** definida pelas regras acima. A
+**composição das decisões**, a **escolha do marco** e a sua **aplicação/escrita** são
+distribuídas pelas fronteiras **M-DT** e **M-AE**. A **integração dessas fronteiras ao
+pipeline** pertence ao **`OrquestradorMotor`**. Os três casos abaixo são distintos:
 
 | # | Fronteira |
 |---|---|
@@ -3354,66 +3026,64 @@ deles é implementado aqui**:
 | 3 | **Transporte e persistência do marco** — continuam sendo o contrato já materializado em **M-T1–M-T6**. A persistência **não decide** quando o marco muda e **não consulta** esta projeção; quem decide e aplica é a fronteira de **M-DT1–M-DT7** e **M-AE1–M-AE7**, **sem alterar** `persistence.py`. |
 | 4 | **N-a-T6** e **N-a-T7 permanecem íntegros**: ciclo sem mudança **não atualiza**; ciclo encerrado antes da `MaquinaEstados` **não atualiza por essa via**; e **múltiplas mudanças no mesmo ciclo continuam usando um único `instante_de_referencia_do_ciclo`**. A **cardinalidade da tupla não significa um timestamp por transição**. |
 
-**Nota de materialização — posterior à arbitragem N-a.** As escolhas abaixo são **decisões
-técnicas da implementação**, tomadas **depois** do PR #31 e **não** originárias da
-arbitragem: **N-a-T8 permanece historicamente verdadeiro** — a arbitragem **não escolheu**
-tipo Python, coluna, índice nem serialização.
+**Contrato de implementação M-T — transporte do marco temporal.** As regras abaixo são
+**decisões técnicas da fronteira de persistência**, **não** decisões da arbitragem:
+**`N-a-T8` vale integralmente** — a arbitragem **não escolhe** tipo Python, coluna, índice nem
+serialização.
 
-| # | Materialização atual |
+| # | Contrato de implementação M-T |
 |---|---|
 | M-T1 | `RegistroAtendimento` transporta `instante_ultima_transicao` com representação concreta **`datetime \| None`**, default **`None`**. |
 | M-T2 | **`None` é válido no armazenamento.** A persistência não exige o marco; a exigência, quando um candidato `encerrado` precisa de recência, continua sendo **bloqueio da etapa 3** por **S9** — a validação estrutural da persistência **não substitui** a validação de integridade da etapa 3. |
 | M-T3 | Valor **não-`None`** exige **fuso efetivo** — `tzinfo` presente **e** `utcoffset()` não `None` —, que é o que torna o marco comparável como instante absoluto (N-a-T8). Violação é **erro de contrato do chamador** na fronteira de escrita. |
 | M-T4 | A persistência **transporta** o valor recebido: **não converte fuso**, não normaliza para UTC e não altera o instante. |
-| M-T5 | **Zero relógio vivo** e **zero preenchimento automático**: a persistência não cria o marco e **não decide** quando ele muda — essa fronteira permanece intacta. A **decisão** de qual valor usar e a **aplicação/escrita** foram materializadas **fora** da persistência (M-DT1–M-DT7, M-AE1–M-AE7), que **não é alterada por elas**; a **integração operacional no pipeline** permanece pendente e pertence ao chamador da etapa 13. |
-| M-T6 | **Nenhuma coluna, índice, serialização ou persistência não volátil foi escolhida.** A implementação continua sendo a em memória de §7.4 (B2, M1–M3). |
+| M-T5 | **Zero relógio vivo** e **zero preenchimento automático**: a persistência **não cria** o marco e **não decide** quando ele muda. **Fora desta fronteira**: a **decisão** de qual valor usar e a **aplicação/escrita**, que pertencem a **M-DT1–M-DT7** e **M-AE1–M-AE7** e **não alteram** a persistência; e a **integração ao pipeline**, que pertence ao **`OrquestradorMotor`**. |
+| M-T6 | **Nenhuma coluna, índice, serialização ou persistência não volátil é escolhida por esta fronteira.** A implementação volátil de referência é a de §7.4 (B2, M1–M3). |
 
-**Nota de materialização da política N-a/E — posterior à arbitragem.** A **produção
-determinística do conjunto elegível** deixou de ser apenas contrato: existe hoje como
-**função pura** em `src/casa77_sdr/eligibility.py`. Como M-T1–M-T6, estas são **decisões
-de implementação tomadas depois** do PR #31, **não** decisões originárias da arbitragem;
-**nenhuma regra normativa de N-a foi alterada**.
+**Contrato de implementação M-E — política N-a/E.** A **produção determinística do conjunto
+elegível** é implementada como **função pura** por `src/casa77_sdr/eligibility.py`. Como
+`M-T1`–`M-T6`, estas são **decisões de implementação**, **não** decisões da arbitragem;
+**nenhuma regra normativa de N-a é alterada por elas**.
 
-| # | Materialização de N-a/E |
+| # | Contrato de implementação M-E |
 |---|---|
 | M-E1 | **Não é componente arquitetural novo.** A tabela de §4.1 permanece com **14** componentes e a de §2 com **nove** responsabilidades (N-a-1, N-a-2). O módulo é **organização de código** para uma política **interna da etapa 3**. |
 | M-E2 | A função recebe os **registros já recuperados** e devolve **somente E** — `tuple[CandidatoAtendimento, ...]`. Ela **não recupera, não persiste** e **não faz I/O** (N-a-4, N-a-5). |
 | M-E3 | Materializa: validação do limiar (N-a-L1–L6), projeção (N-a-P1–P6), classificação dos oito estados (N-a-E1–E5), recência exclusiva de `encerrado` (N-a-R1–R6), **N-a-F1**, preservação de duplicatas não identificadas (N-a-D2) e ordem canônica (N-a-O1–O5). |
 | M-E4 | **Zero relógio vivo**, zero YAML, zero LLM, zero rede e zero conversão de fuso. Dadas as mesmas entradas, produz sempre a mesma tupla, e **não muta** os registros recebidos. |
-| M-E5 | As violações são **sinalizadas por exceção** — configuração temporal inválida (S10), marco temporal ausente (S9), contexto corrompido (S11) e identificado incoerente (N-I-2/P-I5). **O tratamento operacional do bloqueio não é implementado**: preservar a mensagem e emitir alerta (S4, S5) continuam sendo do `OrquestradorMotor`. |
-| M-E6 | **Permanecem fora** *desta política*: a **decisão**, a **aplicação** e a **escrita** do marco de **N-a-T3–N-a-T7** — materializadas **fora** daqui (M-DT1–M-DT7, M-AE1–M-AE7). Permanecem também fora desta política o **valor numérico do limiar**, o **mecanismo de carga** da configuração e o **`OrquestradorMotor`**. O **conjunto H**, `havia_estado_esperado`, a projeção **N-I** e a **montagem das projeções de identidade da etapa 3** foram materializados **depois**, em entrega funcional própria — ver **M-C1–M-C8** adiante. |
+| M-E5 | As violações são **sinalizadas por exceção** — configuração temporal inválida (S10), marco temporal ausente (S9), contexto corrompido (S11) e identificado incoerente (N-I-2/P-I5). O **tratamento operacional do bloqueio** fica **fora desta fronteira** e pertence ao `OrquestradorMotor`: preservar a mensagem e emitir alerta conforme **S4**/**S5**. |
+| M-E6 | **Ficam fora desta fronteira**: a **decisão**, a **aplicação** e a **escrita** do marco de **N-a-T3–N-a-T7**, que pertencem a **M-DT1–M-DT7** e **M-AE1–M-AE7**; o **valor numérico do limiar**; o **mecanismo de carga** da configuração; e o **`OrquestradorMotor`**. O **conjunto H**, `havia_estado_esperado`, a projeção **N-I** e a **montagem das projeções de identidade da etapa 3** pertencem a **M-C1–M-C8**. |
 
-**Nota de materialização da montagem das projeções de identidade da etapa 3 — posterior às
-anteriores.** A **produção das projeções que a etapa 3 entrega à etapa 5** deixou de ser
-apenas contrato: existe hoje em `src/casa77_sdr/context.py`. **Isto não é a etapa 3 inteira
-materializada**: o que existe é o *wiring* da **fronteira etapa 3 → identidade/etapa 5**. Como M-T1–M-T6 e M-E1–M-E6, estas são **decisões de
-implementação tomadas depois** do PR #31, **não** decisões originárias da arbitragem;
-**nenhuma regra normativa de §6.1.1, §6.2, N-a, H1–H6, N-I ou P-I foi alterada**.
+**Contrato de implementação M-C — montagem das projeções de identidade da etapa 3.** A
+**produção das projeções que a etapa 3 entrega à etapa 5** é implementada por
+`src/casa77_sdr/context.py`. Esta fronteira é o *wiring* da **fronteira etapa 3 →
+identidade/etapa 5**, **não** a etapa 3 inteira. Como `M-T1`–`M-T6` e `M-E1`–`M-E6`, estas são
+**decisões de implementação**, **não** decisões da arbitragem; **nenhuma regra normativa de
+§6.1.1, §6.2, N-a, H1–H6, N-I ou P-I é alterada por elas**.
 
-| # | Materialização da montagem das projeções de identidade da etapa 3 |
+| # | Contrato de implementação M-C |
 |---|---|
 | M-C1 | **Não é componente arquitetural novo.** A tabela de §4.1 permanece com **14** componentes e a de §2 com **nove** responsabilidades (N-a-1, N-a-2). O módulo é o ***wiring* da fronteira etapa 3 → identidade/etapa 5** — **não** a etapa 3 inteira —, que continua **coordenada pelo `OrquestradorMotor`** (D1). |
 | M-C2 | A montagem usa a **persistência operacional somente para leitura** — `recuperar_por_id` e `consultar_por_contato`. Ela **não cria**, **não grava**, **não marca chave de idempotência** e **não preserva pendente** (N6, S3). |
 | M-C3 | Executa a **precedência conceitual dos 14 passos** desta seção **no que toca a essa fronteira**. Em particular: o **limiar é validado antes de qualquer método da persistência** (N-a-L4, N-a-L5, S10); a ordem é **recuperar por ID → consultar contato → validar o identificador** — o bloqueio de **N5** **não** é antecipado para antes da consulta do contato; e o **passo 12 precede o passo 13** — as correspondências são verificadas sobre **E ainda não canonicalizado**, e a ordem canônica é aplicada **só depois**. |
 | M-C4 | **E continua delegado** à política N-a de `eligibility.py` (M-E1–M-E6): classificação, recência, **N-a-F1** e ordem canônica **não são reimplementadas**. A política expõe a **seleção de E** (passos 9/10) e a **canonicalização** (passo 13) como operações distintas e reutilizáveis, além da validação do limiar e da projeção integral dos registros; a API que produz E já canonicalizado permanece como conveniência equivalente à composição das duas. Cada regra continua existindo em **um único lugar**. |
 | M-C5 | **H permanece fora de N-a** (H1, H2): é construído por **filtro estrutural de estado** sobre a projeção **integral** do contexto recuperado, **antes e à parte** da filtragem N-a, e transporta **somente IDs opacos** (H3). |
-| M-C6 | **`havia_estado_esperado` e a projeção `id_atendimento_validado` (N-I-1) agora possuem produtor em código.** `havia_estado_esperado` é calculado sobre o **contexto recuperado**, **nunca sobre E**; o ID validado é projetado **somente** sob `ENCONTRADO`, e é `None` sob `NAO_INFORMADO`. As correspondências **H4/H5** e **N-I-1–N-I-3** são verificadas no **passo 12**, antes da entrega. |
-| M-C7 | As violações são **sinalizadas por exceção**: identificador não resolvido (**N5**, **N6**, **S3** — transporta **apenas o veredito fechado**, sem identificador, canal, contato, mensagem ou PII), conjunto **H** incoerente (**H4**, **H5**) e projeção do identificador incoerente (**N-I-4**). **O tratamento operacional do bloqueio não é implementado**: preservar a mensagem e emitir alerta (S4, S5) continuam sendo do `OrquestradorMotor`. |
-| M-C8 | **Permanecem fora** *desta montagem*: a **decisão**, a **aplicação** e a **escrita** do marco de **N-a-T3–N-a-T7** — materializadas **fora** daqui (M-DT1–M-DT7, M-AE1–M-AE7). Permanecem também fora desta montagem **N-b**, **E4**, **S2-D8**, **S3-D1**, o **tratamento operacional dos bloqueios** (S4, S5), o **destino do alerta operacional**, o **valor numérico do limiar**, o **mecanismo concreto de carga** da configuração, a **persistência não volátil** e o **`OrquestradorMotor`**. A montagem **não chama** o `ResolvedorIdentidade`, **não chama** a `MaquinaEstados`, **não qualifica**, **não interpreta mensagem** e **não decide resposta**: **a etapa 3 não está inteiramente materializada** e a **integração completa do pipeline continua não iniciada**. |
+| M-C6 | **`M-C6` produz `havia_estado_esperado` e a projeção `id_atendimento_validado` (N-I-1) conforme as regras abaixo.** `havia_estado_esperado` é calculado sobre o **contexto recuperado**, **nunca sobre E**; o ID validado é projetado **somente** sob `ENCONTRADO`, e é `None` sob `NAO_INFORMADO`. As correspondências **H4/H5** e **N-I-1–N-I-3** são verificadas no **passo 12**, antes da entrega. |
+| M-C7 | As violações são **sinalizadas por exceção**: identificador não resolvido (**N5**, **N6**, **S3** — transporta **apenas o veredito fechado**, sem identificador, canal, contato, mensagem ou PII), conjunto **H** incoerente (**H4**, **H5**) e projeção do identificador incoerente (**N-I-4**). O **tratamento operacional do bloqueio** fica **fora desta fronteira** e pertence ao `OrquestradorMotor`: preservar a mensagem e emitir alerta conforme **S4**/**S5**. |
+| M-C8 | **Ficam fora desta fronteira**: a **decisão**, a **aplicação** e a **escrita** do marco de **N-a-T3–N-a-T7**, que pertencem a **M-DT1–M-DT7** e **M-AE1–M-AE7**; **N-b**; **E4**; **S2-D8**; **S3-D1**; o **tratamento operacional dos bloqueios** (S4, S5); o **destino do alerta operacional**; o **valor numérico do limiar**; o **mecanismo concreto de carga** da configuração; a **persistência não volátil**; e o **`OrquestradorMotor`**. A montagem **não chama** o `ResolvedorIdentidade`, **não chama** a `MaquinaEstados`, **não qualifica**, **não interpreta mensagem** e **não decide resposta**: a **coordenação integral da etapa 3** pertence ao **`OrquestradorMotor`** (D1). |
 
-**Nota de materialização da decisão do marco temporal — posterior às anteriores.** A
+**Materialização da decisão do marco temporal.** A
 **decisão determinística** exigida por **N-a-T3–N-a-T7** — *qual valor de
-`instante_ultima_transicao` usar neste ciclo* — deixou de ser apenas contrato: existe hoje
-como **função pura** em `src/casa77_sdr/transition_marker.py`. Como M-T1–M-T6, M-E1–M-E6 e
-M-C1–M-C8, estas são **decisões de implementação**, **não** regras novas: **nenhuma regra
-normativa de N-a-T1–N-a-T8 foi alterada**.
+`instante_ultima_transicao` usar neste ciclo* — é implementada como **função pura** por
+`src/casa77_sdr/transition_marker.py`. Como M-T1–M-T6, M-E1–M-E6 e M-C1–M-C8, estas são
+**decisões de implementação**, **não** regras novas: **nenhuma regra normativa de
+N-a-T1–N-a-T8 é alterada por elas**.
 
-**A distinção é normativa e não pode ser colapsada:** o que existe é a **DECISÃO**; a
-**APLICAÇÃO** e a **escrita** foram materializadas **depois**, como fronteira chamável
-(**M-AE1–M-AE7**); o que **continua pendente** é a **integração operacional no pipeline**
-pelo chamador da etapa 13.
+**A distinção é normativa e não pode ser colapsada:** **M-DT decide**; **M-AE aplica e
+escreve** (**M-AE1–M-AE7**); a **decisão de executar a etapa 13** e a **coordenação dessas
+fronteiras** pertencem ao **`OrquestradorMotor`**.
 
-| # | Materialização da decisão do marco |
+| # | Contrato de implementação M-DT |
 |---|---|
 | M-DT1 | **Não é componente arquitetural novo.** A tabela de §4.1 permanece com **14** componentes e a de §2 com **nove** responsabilidades. O módulo é organização de código para uma **decisão pura**. |
 | M-DT2 | A função recebe **quatro argumentos nomeados e obrigatórios** — se o ciclo cria atendimento, o `instante_de_referencia_do_ciclo`, o marco atual e as decisões efetivamente produzidas — e devolve **somente** `datetime \| None`. **Não recebe persistência**, não monta `RegistroAtendimento` e **não decide se a etapa 13 executa**. |
@@ -3421,27 +3091,23 @@ pelo chamador da etapa 13.
 | M-DT4 | **Composição das até três chamadas** conforme a regra 7: a decisão observa **exclusivamente** `transicoes_que_mudaram_estado` de cada `DecisaoMaquina`. **Zero** *replay*, **zero** concatenação de caminhos, **zero** acesso à estrutura interna de regras da máquina, **zero** comparação entre estado inicial e final e **zero** classificação estática de T35. Nenhum outro campo de `DecisaoMaquina` é lido. Mais de três decisões é erro de contrato. |
 | M-DT5 | **Zero relógio vivo** e **zero aritmética temporal**: o valor devolvido é sempre **o mesmo objeto** recebido — o instante do ciclo ou o marco atual —, sem conversão de fuso, `astimezone` ou substituição de `tzinfo` (N-a-T2). A validação de **fuso efetivo** **não é duplicada**: continua nas fronteiras já existentes (`recebida_em` na normalização e M-T3 na persistência). |
 | M-DT6 | **Zero persistência, zero I/O, zero rede, zero YAML e zero LLM.** O módulo **não importa** `persistence`, `context`, `eligibility` nem `identity`, e **não é exportado** na superfície pública do pacote. |
-| M-DT7 | **Este módulo decide, não aplica nem escreve**: a **aplicação** sobre o `RegistroAtendimento` e a **escrita** via `criar`/`gravar` foram materializadas **depois**, fora daqui, como fronteira chamável (**M-AE1–M-AE7**). **Permanecem NÃO integradas**: a **decisão de se a etapa 13 executa**, a **criação operacional** do atendimento, a **integração do pipeline** e o **`OrquestradorMotor`**. **Nenhuma persistência não volátil foi criada.** Portanto **N-a-T3–N-a-T7 NÃO estão operacionalmente concluídas**. |
+| M-DT7 | **Este módulo decide, não aplica nem escreve.** A **aplicação** sobre `RegistroAtendimento` e a **escrita** via `criar`/`gravar` pertencem a **M-AE1–M-AE7**. A **decisão de executar a etapa 13**, a **criação operacional** do atendimento, a **escolha entre criar e gravar** e a **coordenação no pipeline** pertencem ao **`OrquestradorMotor`**. A **persistência não volátil** fica **fora desta fronteira**. |
 
-**Nota de materialização da aplicação e escrita do marco — posterior às anteriores.** A
-**aplicação** da decisão sobre um `RegistroAtendimento` e a **escrita** pelo contrato
-existente da persistência deixaram de ser apenas contrato: existem hoje como **fronteira
-chamável** em `src/casa77_sdr/transition_marker_write.py`. Como as notas anteriores, são
-**decisões de implementação**, **não** regras novas: **nenhuma regra normativa de
-N-a-T1–N-a-T8, nem as regras 1–8 da projeção, foi alterada**.
+**Contrato de implementação M-AE — aplicação e escrita do marco.** A **aplicação** da
+decisão sobre um `RegistroAtendimento` e a **escrita** pelo contrato da persistência são
+implementadas como **fronteira chamável** por `src/casa77_sdr/transition_marker_write.py`.
+Como as anteriores, são **decisões de implementação**, **não** regras novas: **nenhuma regra
+normativa de N-a-T1–N-a-T8, nem as regras 1–8 da projeção, é alterada por elas**.
 
-**A mecânica de decisão, aplicação e escrita do marco está materializada como fronteira
-chamável, mas sua integração operacional no pipeline permanece pendente.**
-
-| # | Materialização da aplicação e escrita |
+| # | Contrato de implementação M-AE |
 |---|---|
 | M-AE1 | **Não é componente arquitetural novo.** A tabela de §4.1 permanece com **14** componentes e a de §2 com **nove** responsabilidades. O módulo é organização de código para uma fronteira mínima. |
 | M-AE2 | Existem **duas funções explícitas** — uma que **cria** e outra que **grava**. A distinção **criar × gravar** é **recebida pronta** pela função escolhida: a fronteira **não deriva** a operação de nada, e **não decide** qual delas o pipeline deve usar. |
 | M-AE3 | A decisão do marco é **integralmente delegada** a `decidir_instante_ultima_transicao(...)` (M-DT1–M-DT7). O módulo **não lê** `transicoes_que_mudaram_estado`, **não lê** `caminho` nem qualquer outro campo de `DecisaoMaquina`, **não compara** estado inicial com final e **não faz *replay***. A regra de decisão **não é duplicada**. |
 | M-AE4 | Recebe o `RegistroAtendimento` **pronto** e altera **exclusivamente** `instante_ultima_transicao`, por `dataclasses.replace`. **Não monta** estado, dados, qualificação, pendências, motivos nem identificador, **não muta** o registro recebido e devolve **exatamente** o registro submetido à persistência. |
-| M-AE5 | Escreve pelo **contrato existente** `PersistenciaOperacional.criar`/`gravar`. **`persistence.py` permanece inalterado** e continua sendo a única fronteira que valida a representação do marco (M-T3). |
+| M-AE5 | `PersistenciaOperacional.criar`/`gravar` é a **fronteira de escrita**, e `persistence.py` concentra a **validação da representação do marco** (M-T3). |
 | M-AE6 | **Exceções propagam intactas** — `FalhaDePersistencia`, `ValueError` de identificador já existente ou inexistente, de vínculo canal × contato divergente e de marco sem fuso efetivo, além dos erros da própria decisão. **Zero `try`/`except`**: preservar a mensagem, emitir alerta e decidir o que o motor faz com a falha (S4, S5, Q2/Q4/Q5/Q8) e o **destino do alerta** permanecem **fora**. |
-| M-AE7 | **Permanecem NÃO implementados/integrados**: a **montagem completa** do registro; a **decisão de se a etapa 13 executa**; a **escolha entre criar e gravar** no pipeline; a **geração de `id_atendimento`**; a **criação operacional** do atendimento; a **marcação de idempotência**; a **preservação de pendente**; o **tratamento operacional de falha**; o **`OrquestradorMotor`**; e o **pipeline completo**. A **etapa 13 continua não integrada**. |
+| M-AE7 | **Fora desta fronteira**, e pertencentes ao **chamador da etapa 13** coordenado pelo **`OrquestradorMotor`** (D1): a **montagem completa** do registro; a **decisão de se a etapa 13 executa**; a **escolha entre criar e gravar**; a **geração de `id_atendimento`**; a **criação operacional** do atendimento; a **marcação de idempotência**; a **preservação de pendente**; e o **tratamento operacional de falha**. Esta fronteira **decide e escreve o marco**, e **nada além disso**. |
 
 **Marco temporal ausente.** Se um candidato `encerrado` precisar de recência e o
 `instante_ultima_transicao` estiver **ausente**, isso é **erro de integridade do contexto da
@@ -3562,8 +3228,8 @@ prevalece.** **T36 e T37 são preservados sem exceção ad hoc** — o identific
 continua trazendo o encerrado antigo para o escopo quando o contato o informa, e a cascata
 continua decidindo mesma × nova × ambígua exatamente como em §7.1.
 
-**Cenários de conformidade — K-Na.** Registro **documental**; **nenhum teste é criado ou
-alterado** por esta arbitragem, e `docs/08` permanece intocado:
+**Cenários de conformidade K-Na.** Os casos abaixo especificam **resultados normativos** da
+política N-a:
 
 | # | Cenário | Resultado normativo |
 |---|---|---|
@@ -3888,7 +3554,7 @@ legítima** — esta última é o que alimenta `trechos_ambiguos`.
 | # | Registro |
 |---|---|
 | N-b-RES1 | **A etapa 4 não emite `Exx`** (N-b-G2, E-Nb-19). |
-| N-b-RES2 | A **transformação posterior** dos sinais interpretados em **eventos confirmados** **ainda não possui produtor concreto**. Isso é **residual explícito de integração**. |
+| N-b-RES2 | A **transformação posterior** dos sinais interpretados em **eventos confirmados** **não possui produtor concreto**. Isso é **residual explícito de integração**. |
 | N-b-RES3 | O residual **não** é componente, **não** é linha de pendência nova e **não** é atribuído ao `OrquestradorMotor`, ao `DetectorHandoff` nem ao `Qualificador`. Se futuramente revelar decisão própria, exigirá **arbitragem específica**. |
 
 **PII e texto.** No **runtime** da `Interpretacao`, `nome`, `contato`, textos de pergunta,
@@ -3902,17 +3568,14 @@ PII**, somente exemplos **genéricos ou fictícios**.
 
 #### AJ1 — micro-arbitragem de representação e canonicalização de N-b (arbitragem AJ1)
 
-Micro-arbitragem **exclusivamente documental**. Fecha a **representação e a canonicalização
-determinística** da `Interpretacao` **antes** de qualquer materialização em código.
-
-**AJ1 não reabre N-b**, **não implementa N-b**, **não cria componente**, **não cria
-subetapa** e **não cria exceção pública nova**. Nenhum arquivo de `src/`, `tests/`,
-`knowledge/` ou `prompts/` é criado ou alterado. **§4.1 permanece com 14 componentes** e §2
-com **nove** responsabilidades. `IntencaoConversacional` continua com **exatamente 11**
-valores; a lista de erros de contrato continua com **exatamente 19** códigos `E-Nb`; §8.2
-continuava, **à época de AJ1**, com **40** cenários `K-Nb` — fronteira depois **estendida para
-51** pela micro-arbitragem **AJ2**, posterior. Nenhuma intenção nova, nenhum erro novo,
-nenhum cenário novo **por AJ1**. **A 3B.8 não existe** e **não é criada aqui**.
+**AJ1 define a representação e a canonicalização determinística de `Interpretacao`.** Ela
+**não reabre N-b**, **não cria componente** e **não altera** os vocabulários e fronteiras que
+declara preservar: **§4.1 permanece com 14 componentes** e §2 com **nove** responsabilidades;
+`IntencaoConversacional` permanece com **exatamente 11** valores; a lista de erros de contrato
+permanece com **exatamente 19** códigos `E-Nb`; e a fronteira de cenários de §8.2 é
+**`K-Nb-1`–`K-Nb-51`**, estendida por **AJ2**, que prevalece sobre AJ1 nessa fronteira.
+Nenhuma intenção nova, nenhum erro novo, nenhum cenário novo **por AJ1**, e **nenhuma
+exceção pública nova**. **AJ1 não cria subetapa.**
 
 **Decisão normativa central — o que o produtor não determinístico entrega.**
 
@@ -4006,11 +3669,8 @@ pura**; **não cria ciclo** (D7); **não lê YAML**; e **não avalia regra comer
 | AJ1-F1 | Importar `FormatoEvento` **não** significa produzir `Qualificacao` e **não** viola `E-Nb-19`. |
 | AJ1-F2 | O enum **não é movido**, **não é redeclarado** e **nenhum** `shared/domain/types` é criado. |
 
-**Futura materialização — não autorizada por esta micro-arbitragem.** Após AJ1 integrada e
-reconciliada, a candidata funcional poderá ter **lista fechada**: **criar**
-`src/casa77_sdr/interpretation.py` e `tests/test_interpretation.py`; **alterar**
-`docs/07-arquitetura-motor-respostas.md` **somente** para registrar a materialização.
-**Nada disso é autorizado aqui**: AJ1 é documental e **N-b permanece NÃO IMPLEMENTADA**.
+**Fronteira de AJ1.** AJ1 fecha **exclusivamente** a **representação e a canonicalização
+determinística** de N-b.
 
 **Fora do escopo de AJ1.** `N-b-RES1`–`N-b-RES3` permanecem **inalteradas**: `N-b-RES1`
 preserva a **proibição de a etapa 4 emitir `Exx`**; `N-b-RES2` permanece como **residual
@@ -4024,37 +3684,35 @@ de **persistência**; o **limiar**; **S4**/**S5**; e o **destino do alerta**. **
 modelo, SDK, API, biblioteca, formato de transporte e JSON Schema continuam não escolhidos**
 (N-b-F3).
 
-**Nota de materialização — fronteira determinística de N-b (M-NB1–M-NB9).** Registro
-**factual** da entrega funcional que materializou a **parte determinística** do contrato
-N-b/AJ1 em `src/casa77_sdr/interpretation.py`, com testes em
-`tests/test_interpretation.py`. **Esta nota não reabre a arbitragem, não altera o contrato,
-não cria componente, não cria pendência, não altera nenhum código `E-Nb` ou cenário `K-Nb`
-e não cria subetapa.** §4.1 permanece com **14** componentes e §2 com **nove**
-responsabilidades.
+**Contrato de implementação M-NB — fronteira determinística de N-b.** A **parte
+determinística** do contrato N-b/AJ1 é implementada por `src/casa77_sdr/interpretation.py`,
+com os cenários correspondentes em `tests/test_interpretation.py`. Este contrato **não reabre
+a arbitragem, não altera o contrato, não cria componente, não cria pendência, não altera
+nenhum código `E-Nb` ou cenário `K-Nb` e não cria subetapa.** §4.1 permanece com **14**
+componentes e §2 com **nove** responsabilidades.
 
-| # | Materialização |
+| # | Contrato de implementação M-NB |
 |---|---|
 | M-NB1 | **Superfície pública fechada**, com **três** produtores: `canonicalizar_interpretacao(...)` — valida a entrada recebida e devolve a `Interpretacao` **canônica** ou um erro de contrato; `projetar_para_identidade(...)` — deriva a `ProjecaoInterpretacao`; e `decidir_interesse_confirmar_disponibilidade(...)` — produz a **condição 5**. Nenhum outro produtor público existe, e **nada é exportado em `__init__.py`**. |
 | M-NB2 | **`A1` não é entrada semântica** (AJ1-1): a estrutura de entrada **não possui slot de códigos `A1`**. A **presença** dos seis códigos é derivada do payload autoritativo (N-b-X2, N-b-X4) e a **confiança** é **calculada** por **N-b-X3**, sendo apenas **armazenada** na `Interpretacao` canônica para auditabilidade (AJ1-A1b, AJ1-A1c). |
 | M-NB3 | A entrada da fronteira é uma representação **pré-canônica mínima** que carrega **somente** o que o produtor não determinístico entrega (AJ1-2) mais o **slot autônomo** fechado nos cinco códigos **A2/B** (AJ1-3). Ela **não é uma segunda `Interpretacao`** e **nenhum formato de transporte é escolhido** (N-b-F3). |
-| M-NB4 | **Erros recebíveis** implementados na fronteira: `E-Nb-1`, `E-Nb-2`, `E-Nb-3`, `E-Nb-4`, `E-Nb-5`, `E-Nb-6` **no ramo de intenção autônoma**, `E-Nb-7`, `E-Nb-8`, `E-Nb-9`, `E-Nb-10`, `E-Nb-17` e `E-Nb-18`. A **precedência AJ1** vale: código `A1` no slot autônomo **com** confiança declarada → **`E-Nb-3`**; **sem** confiança → **`E-Nb-5`**. **Nenhuma exceção pública nova** foi criada, e as duas famílias são **distintas**: **tipo runtime incompatível** levanta **`TypeError`**, sem código; **violação de contrato `E-Nb`** levanta **`ValueError`** com o respectivo código no início da mensagem. Assim, **ausência** de confiança onde ela é exigida é `E-Nb-1` — e `confianca_global` ausente é `E-Nb-4` —, enquanto uma confiança de **tipo errado** é `TypeError`. `E-Nb-6` significa **somente código repetido**: a **ordem canônica** de `intencoes_detectadas` é **produzida** deterministicamente, mas **não é exigida** de quem consome, porque ela existe apenas para auditabilidade e não estabelece precedência semântica (AJ1-A1e). |
+| M-NB4 | **Erros recebíveis** tratados pela fronteira: `E-Nb-1`, `E-Nb-2`, `E-Nb-3`, `E-Nb-4`, `E-Nb-5`, `E-Nb-6` **no ramo de intenção autônoma**, `E-Nb-7`, `E-Nb-8`, `E-Nb-9`, `E-Nb-10`, `E-Nb-17` e `E-Nb-18`. A **precedência AJ1** vale: código `A1` no slot autônomo **com** confiança declarada → **`E-Nb-3`**; **sem** confiança → **`E-Nb-5`**. A **superfície pública não adiciona exceção**, e as duas famílias são **distintas**: **tipo runtime incompatível** levanta **`TypeError`**, sem código; **violação de contrato `E-Nb`** levanta **`ValueError`** com o respectivo código no início da mensagem. Assim, **ausência** de confiança onde ela é exigida é `E-Nb-1` — e `confianca_global` ausente é `E-Nb-4` —, enquanto uma confiança de **tipo errado** é `TypeError`. `E-Nb-6` significa **somente código repetido**: a **ordem canônica** de `intencoes_detectadas` é **produzida** deterministicamente, mas **não é exigida** de quem consome, porque ela existe apenas para auditabilidade e não estabelece precedência semântica (AJ1-A1e). |
 | M-NB5 | **Invariantes internos** — `E-Nb-6` no ramo `A1` e `E-Nb-11`–`E-Nb-16` — são verificados como **pós-condições** da canonicalização e provados como **propriedade**, não por entrada externa fabricada. **`K-Nb-18` é estrutural**: para toda `Interpretacao` canônica, a confiança `A1` **corresponde a N-b-X3** (AJ1-13a, AJ1-13b). **Nenhuma confiança `A1` independente é aceita** (AJ1-13c). |
-| M-NB6 | **Projeção total** para a `ProjecaoInterpretacao` **já existente**, que permanece com **sete** campos (N-b-K1–N-b-K8). A derivação **não aplica C3** — transporta valor e confiança inclusive `BAIXA`. **Nenhuma PII e nenhum texto conversacional atravessam**: `convidados`, `formato`, `nome`, `contato`, `correcoes`, `perguntas_comerciais`, `pedido_de_humano`, `trechos_ambiguos` e `confianca_global` ficam retidos no runtime da `Interpretacao`. |
-| M-NB7 | **Condição 5 materializada** como **função total** (N-b-CD1–N-b-CD4), inclusive `None` **sem `Interpretacao`**. O produtor **já estava conceitualmente atribuído** por N-b: esta entrega apenas o **materializa**. É a **única** condição de §4.4 produzida; as condições **2**, **4** e **8** continuam **NÃO ATRIBUÍDAS**. |
-| M-NB8 | **`FormatoEvento` reutilizado por import** de `src/casa77_sdr/qualification.py`, que **permanece inalterado** — o enum **não foi movido nem redeclarado** e **nenhum** `shared/domain/types` foi criado (AJ1-F1, AJ1-F2). O módulo é **puro e determinístico**: zero I/O, rede, relógio, persistência, YAML, LLM, fornecedor, SDK, API, cache ou fila; não muta as entradas. **`E-Nb-19` é provado estruturalmente** — superfície pública, tipos de retorno, campos das estruturas, produtores públicos e condição 5 como única condição —, com o fechamento de imports como **evidência complementar**. |
-| M-NB9 | **O que continua FORA.** O **produtor não determinístico / LLM da etapa 4 NÃO foi implementado** — não existe adaptador, fornecedor, modelo, SDK, API, JSON Schema, prompt novo nem interpretação de texto livre. **`N-b-RES2` continua ABERTO**: a transformação posterior dos sinais interpretados em **eventos confirmados** segue **sem produtor concreto**, e a etapa 4 **continua proibida de emitir `Exx`** (`N-b-RES1`), com `N-b-RES3` preservado. **A etapa 4 não está operacionalmente integrada**: nada chama esta fronteira no pipeline. O **`OrquestradorMotor` continua não implementado**. **Nenhuma subetapa foi criada — a 3B.8 não existe.** |
+| M-NB6 | **Projeção total** para a `ProjecaoInterpretacao`, que tem **sete** campos (N-b-K1–N-b-K8). A derivação **não aplica C3** — transporta valor e confiança inclusive `BAIXA`. **Nenhuma PII e nenhum texto conversacional atravessam**: `convidados`, `formato`, `nome`, `contato`, `correcoes`, `perguntas_comerciais`, `pedido_de_humano`, `trechos_ambiguos` e `confianca_global` ficam retidos no runtime da `Interpretacao`. |
+| M-NB7 | **Condição 5 é produzida** como **função total** (N-b-CD1–N-b-CD4), inclusive `None` **sem `Interpretacao`**. O seu produtor conceitual é atribuído por N-b. É a **única** condição de §4.4 produzida por esta fronteira; as condições **2** e **4** têm produtor conceitual em **S2-D8** e a **8** permanece sem produtor atribuído (**`S3-D1`**). |
+| M-NB8 | **`FormatoEvento` é reutilizado por import** de `src/casa77_sdr/qualification.py` e **não é redeclarado**; **nenhum** `shared/domain/types` é criado (AJ1-F1, AJ1-F2). O módulo é **puro e determinístico**: zero I/O, rede, relógio, persistência, YAML, LLM, fornecedor, SDK, API, cache ou fila; não muta as entradas. **`E-Nb-19` é provado estruturalmente** — superfície pública, tipos de retorno, campos das estruturas, produtores públicos e condição 5 como única condição —, com o fechamento de imports como **evidência complementar**. |
+| M-NB9 | **Fora desta fronteira.** O **produtor não determinístico / LLM da etapa 4** pertence ao **limite único de LLM** de §4.2 e §9 — adaptador, fornecedor, modelo, SDK, API, JSON Schema, *prompt* e interpretação de texto livre **não vivem aqui**. A transformação dos sinais interpretados em **eventos confirmados** pertence a **`N-b-RES2`**, que permanece **ABERTO**; a etapa 4 é **proibida de emitir `Exx`** (`N-b-RES1`), com `N-b-RES3` preservado. A **integração operacional** da etapa 4 pertence ao **`OrquestradorMotor`** (D1). **Nenhuma subetapa é criada.** |
 
 #### AJ2 — origem semântica do assunto de `PerguntaComercial` (arbitragem AJ2)
 
-Micro-arbitragem **exclusivamente documental**. **AJ2 ESTENDE FORMALMENTE N-b**: o contrato
-vigente da etapa 4 **muda documentalmente** a partir daqui, e a **implementação atual ainda
-NÃO materializa esse delta**.
+**AJ2 estende formalmente N-b.** O contrato da etapa 4 passa a incluir a **origem semântica
+do assunto** de `PerguntaComercial`, conforme as regras abaixo, segundo a precedência
+**`C-P`**.
 
-**Estado: ARBITRADA / NÃO MATERIALIZADA.** Nenhum tipo Python é criado ou alterado; nenhum
-arquivo de `src/`, `tests/`, `knowledge/` ou `prompts/` é tocado. **§4.1 permanece com 14
-componentes** e §2 com **nove** responsabilidades. `IntencaoConversacional` continua com
-**exatamente 11** valores, a lista de erros continua **`E-Nb-1`–`E-Nb-19`** e a
-`ProjecaoInterpretacao` continua com **sete** campos. **A 3B.8 não existe.**
+**§4.1 permanece com 14 componentes** e §2 com **nove** responsabilidades.
+`IntencaoConversacional` permanece com **exatamente 11** valores, a lista de erros permanece
+**`E-Nb-1`–`E-Nb-19`** e a `ProjecaoInterpretacao` permanece com **sete** campos. **AJ2 não
+cria subetapa.**
 
 **O problema que AJ2 fecha.** Hoje a etapa 4 entrega a consulta comercial **apenas como
 texto livre**. Qualquer consumidor futuro — o produtor de **S2-D8**, o `SeletorFatos` —
@@ -4246,15 +3904,14 @@ transição. Ele é, por construção, incapaz de violar `E-Nb-19`.
 |---|---|
 | AJ2-C1 | **C não produz `AssuntoComercial`.** |
 | AJ2-C2 | `AssuntoComercial` **nasce na etapa 4**, na fronteira do produtor semântico. |
-| AJ2-C3 | **AJ2 não materializa C.** C permanece **ARBITRADA / NÃO MATERIALIZADA** (§2.3). |
+| AJ2-C3 | **AJ2 não altera C**, que permanece **ARBITRADA** e cujo contrato é §2.3. |
 | AJ2-C4 | **S2-D8 decidirá futuramente** qualquer mapeamento `assunto` → `Rxx` ou `assunto` → fragmento. |
 
-**Nota temporal sobre C-14f.** **C preservou `K-Nb-1`–`K-Nb-40` quando arbitrada**; **AJ2,
-posterior, estende a fronteira para `K-Nb-1`–`K-Nb-51`**. As **11** `IntencaoConversacional`
-e os erros **`E-Nb-1`–`E-Nb-19`** que C preservou **continuam os mesmos**. A história de C
-**não é reescrita**: C-14f descreve corretamente o estado **no momento da arbitragem C**.
+**Precedência sobre `C-14f`.** Na **fronteira de cenários**, **AJ2 prevalece**: ela é
+**`K-Nb-1`–`K-Nb-51`** (**`C-P`**). As **11** `IntencaoConversacional` e os erros
+**`E-Nb-1`–`E-Nb-19`** preservados por `C-14f` **continuam os mesmos**.
 
-**S2-D8 continua ABERTA.** AJ2 **não arbitra** `assunto` → `Rxx`, `assunto` → fragmento,
+**S2-D8 é ARBITRADA.** AJ2 **não arbitra** `assunto` → `Rxx`, `assunto` → fragmento,
 `E09`, `pendencia_impeditiva`, `resposta_aprovada_disponivel`, composição ou deduplicação
 operacional, nem o **produtor** de S2-D8. AJ2 **apenas fornece o sinal semântico estruturado
 que faltava** ao futuro consumidor.
@@ -4286,87 +3943,37 @@ micro-arbitragem**:
 Nenhum cenário `K-Nb` novo exige membro em `Identidade`, critério em `CriterioIdentidade`,
 valor em `VeredictoIdentificador`, campo em `ProjecaoInterpretacao` ou componente em §4.1.
 
-##### Impacto FUTURO em `tests/` — registro factual, sem alteração
+**Fora do escopo de AJ2.** AJ2 **não decide** **S2-D8**, **S3-D1**, **E4**, **B**, **C**,
+**`N-b-RES2`**, o `DetectorHandoff`, o `SeletorFatos`, o `ValidadorResposta`, o
+`ValidadorConsistenciaBase`, o **limiar**, **S4**/**S5** nem o **destino do alerta**. A
+**coordenação dessas fronteiras** pertence aos contratos correspondentes. `R10`, `R13`, `R17`
+e `R20` permanecem **não decididos** (C-9), e `Q53`/`Q54` permanecem **não classificados**
+(AJ2-E4). **AJ2 não cria subetapa.**
 
-**Nenhum arquivo de `tests/` é alterado por AJ2.** Registro do estado **verificado
-mecanicamente** em `tests/test_interpretation.py` na base desta arbitragem:
+##### Contrato de implementação M-AJ2 — delta AJ2 na fronteira determinística
 
-| # | Medida verificada |
+O **delta AJ2** é implementado na **fronteira determinística** por
+`src/casa77_sdr/interpretation.py`, com os cenários correspondentes em
+`tests/test_interpretation.py`. Este contrato **não reabre AJ2, não altera o contrato, não cria
+componente, não cria pendência, não cria código `E-Nb` novo, não cria cenário `K-Nb` novo e não
+cria subetapa.** §4.1 permanece com **14** componentes e §2 com **nove** responsabilidades.
+
+| # | Contrato de implementação M-AJ2 |
 |---|---|
-| AJ2-T1 | **2098** linhas |
-| AJ2-T2 | **132** funções `test_*` |
-| AJ2-T3 | **14** funções constroem `PerguntaComercial` — **13** testes **+ 1** auxiliar (`_combinacoes_para_propriedade`) |
-| AJ2-T4 | **2** testes adicionais exigem edição **sem** construir `PerguntaComercial`, porque suas **asserções passam a ser falsas**: `test_pergunta_comercial_tem_dois_campos`, que fixa a lista de campos da estrutura, e `test_superficie_publica_e_exatamente_a_declarada`, que fixa a superfície pública do módulo |
-| AJ2-T5 | **EXIGEM EDIÇÃO DIRETA: 16 funções — 15 testes + 1 auxiliar.** Composição: os **13** testes construtores de AJ2-T3, mais os **2** testes de asserção de AJ2-T4, mais o **1** auxiliar |
-| AJ2-T6 | **AFETADOS INDIRETAMENTE, sem edição própria: 3 testes** — `test_k_nb_18_confianca_a1_sempre_corresponde_a_n_b_x3`, `test_pos_condicoes_valem_para_toda_interpretacao_canonica` e `test_intencao_detectada_sempre_tem_confianca_nao_nula` —, que dependem de `_combinacoes_para_propriedade`. **Conjunto disjunto** do de AJ2-T5 |
-| AJ2-T7 | **Total amplo de funções impactadas: 19 — 18 testes + 1 auxiliar** (união de AJ2-T5 e AJ2-T6). **"Exige edição" e "afetado indiretamente" não se misturam**: as duas métricas são registradas separadamente |
-
-**A quantidade de funções NOVAS de pytest não é estimada**: a parametrização é **decisão
-futura de materialização**, não desta arbitragem.
-
-##### AJ2 × implementação vigente — o delta NÃO está materializado
-
-Distinção obrigatória, para que **M-NB** não seja lido como se o código já tivesse `assunto`:
-
-| | **CONTRATO — após AJ2** | **IMPLEMENTAÇÃO — PR #55, anterior a AJ2** |
-|---|---|---|
-| `PerguntaComercial` | `texto`, `confianca`, **`assunto`** | `texto`, `confianca` |
-| `AssuntoComercial` | vocabulário fechado de **54** valores | **não existe** |
-| `E-Nb-5` | inclui `assunto` ausente e fora do vocabulário | não cobre `assunto` |
-| cenários | `K-Nb-1`–`K-Nb-51` | `K-Nb-1`–`K-Nb-40` |
-
-| # | Registro |
-|---|---|
-| AJ2-M1 | **O PR #55 permanece historicamente correto**: ele materializou fielmente o contrato **vigente à época**. |
-| AJ2-M2 | **AJ2 ESTENDE o contrato depois dele.** |
-| AJ2-M3 | **AJ2 ainda NÃO está materializada.** |
-| AJ2-M4 | **`M-NB1`–`M-NB9` descrevem a implementação vigente do PR #55**, e **não** são reescritas por AJ2. |
-| AJ2-M5 | O **delta AJ2** — `assunto` em `PerguntaComercial`, o enum `AssuntoComercial`, a ampliação de `E-Nb-5` e os cenários `K-Nb-41`–`K-Nb-51` — está **pendente de materialização futura**, **não autorizada** por esta micro-arbitragem. |
-
-**Fora do escopo de AJ2.** Permanecem **abertas e inalteradas**: **S2-D8**; **S3-D1**;
-**E4**; **B**; **C** — arbitrada e **não materializada** (§2.3); `N-b-RES2`; o
-`DetectorHandoff`; o `SeletorFatos`; o `ValidadorResposta`; o `ValidadorConsistenciaBase`; o
-`OrquestradorMotor`; a integração da **etapa 13**; a escolha de **persistência**; o
-**limiar**; **S4**/**S5**; e o **destino do alerta**. As condições **2**, **4** e **8** de
-§4.4 continuam **NÃO ATRIBUÍDAS**. `R10`, `R13`, `R17` e `R20` continuam **não decididos**
-(C-9), e `Q53`/`Q54` continuam **não classificados** (AJ2-E4). **Nenhuma subetapa foi criada
-— a 3B.8 não existe.**
-
-##### Nota de materialização — delta AJ2 na fronteira determinística (M-AJ2-1–M-AJ2-9)
-
-Registro **factual** da entrega funcional **posterior** que materializou o **delta AJ2** em
-`src/casa77_sdr/interpretation.py`, com testes em `tests/test_interpretation.py`. **Esta nota
-não reabre a arbitragem AJ2, não altera o contrato, não cria componente, não cria pendência,
-não cria código `E-Nb` novo, não cria cenário `K-Nb` novo e não cria subetapa.** §4.1
-permanece com **14** componentes e §2 com **nove** responsabilidades.
-
-**`AJ2-M1`–`AJ2-M5` e `M-NB1`–`M-NB9` permanecem literais**, como registro histórico: eles
-descrevem corretamente o estado **à época da arbitragem AJ2** e a **implementação do
-PR #55**, que de fato **não possuía `assunto`**. O que muda a partir desta entrega é
-**somente** o estado de **MATERIALIZAÇÃO** do delta — `AJ2-M3` e `AJ2-M5` passam a ser lidos
-como registro **daquele momento**, e não como estado corrente. **Pela mesma razão temporal**,
-as afirmações de arbitragens **anteriores** de que "AJ2 continua NÃO MATERIALIZADA" — em
-particular **`D8-E1f`** (§4.4.1) e a nota de escopo de S2-D8 em §6.3 — continuam corretas
-**como registro do momento em que foram escritas**, e **não são reescritas**: elas descrevem
-o que aquelas arbitragens preservaram, não o estado corrente da implementação. **Nada nelas é
-reaberto por esta nota.**
-
-| # | Materialização |
-|---|---|
-| M-AJ2-1 | **`AssuntoComercial` materializado** como vocabulário fechado de **exatamente 54** valores — **53 específicos + `ASSUNTO_NAO_CLASSIFICADO`** —, na **ordem documental** de §6.3, **sem alias** e **sem 55º membro**. Ele entra no `__all__` **do módulo** e **continua fora do `__init__.py` do pacote**: **M-NB1 é preservado** — nada da fronteira é exportado pelo pacote. |
-| M-AJ2-2 | **`PerguntaComercial` passa a ter três campos** — `texto`, `confianca` e `assunto` —, nesta ordem. O `assunto` é `AssuntoComercial \| None`, **sem valor padrão** — coerente com os dois campos já existentes —, **sem confiança própria** e **sem campo auxiliar**: nenhum `id`, posição, *offset*, ocorrência, contador, `Rxx` ou fragmento foi criado (N-b-Q7, N-b-Q11). `assunto = None` representa **ausência recebida**, para que **AJ2-X1** seja verificável na fronteira. |
-| M-AJ2-3 | **`E-Nb-5` ampliado**, conforme já arbitrado: `assunto` **ausente** → `E-Nb-5` (**AJ2-X1**, `K-Nb-43`); `assunto` **fora do vocabulário** → `E-Nb-5` (**AJ2-X2**, `K-Nb-42`); `ASSUNTO_NAO_CLASSIFICADO` → **válido** (**AJ2-N1**, `K-Nb-45`). **Tipo runtime incompatível** continua `TypeError` **sem código**, pela política vigente de **M-NB4** (`K-Nb-44`). **A lista permanece `E-Nb-1`–`E-Nb-19`** — **nenhum vigésimo código** — e **nenhuma exceção pública nova** foi criada. |
-| M-AJ2-4 | **Precedência histórica preservada.** A validação de `assunto` é executada **depois** de todas as validações e pós-condições **N-b/AJ1** preexistentes. Quando uma entrada viola simultaneamente uma regra antiga e a regra AJ2, **a antiga prevalece**: `E-Nb-10` para texto ausente/vazio/em branco, `E-Nb-2` para confiança sem valor, `E-Nb-1` para valor sem confiança, `E-Nb-4` para `confianca_global` ausente, `E-Nb-8`/`E-Nb-18` nas suas hipóteses e `TypeError` para texto ou confiança de tipo incompatível. **Nenhuma sequência de validação anterior foi alterada.** |
+| M-AJ2-1 | **`AssuntoComercial` é** vocabulário fechado de **exatamente 54** valores — **53 específicos + `ASSUNTO_NAO_CLASSIFICADO`** —, na **ordem documental** de §6.3, **sem alias** e **sem 55º membro**. Ele pertence ao `__all__` **do módulo** e fica **fora do `__init__.py` do pacote**: **M-NB1 é preservado** — nada da fronteira é exportado pelo pacote. |
+| M-AJ2-2 | **`PerguntaComercial` tem três campos** — `texto`, `confianca` e `assunto` —, nesta ordem. O `assunto` é `AssuntoComercial \| None`, **sem valor padrão** — coerente com os dois campos já existentes —, **sem confiança própria** e **sem campo auxiliar**: nenhum `id`, posição, *offset*, ocorrência, contador, `Rxx` ou fragmento existe nela (N-b-Q7, N-b-Q11). `assunto = None` representa **ausência recebida**, para que **AJ2-X1** seja verificável na fronteira. |
+| M-AJ2-3 | **`E-Nb-5` cobre** `assunto` ausente e fora do vocabulário: `assunto` **ausente** → `E-Nb-5` (**AJ2-X1**, `K-Nb-43`); `assunto` **fora do vocabulário** → `E-Nb-5` (**AJ2-X2**, `K-Nb-42`); `ASSUNTO_NAO_CLASSIFICADO` → **válido** (**AJ2-N1**, `K-Nb-45`). **Tipo runtime incompatível** é `TypeError` **sem código**, pela política de **M-NB4** (`K-Nb-44`). **A lista permanece `E-Nb-1`–`E-Nb-19`** — **nenhum vigésimo código** — e a **superfície pública não adiciona exceção**. |
+| M-AJ2-4 | **Precedência de validação.** A validação de `assunto` é executada **depois** de todas as validações e pós-condições **N-b/AJ1** preexistentes. Quando uma entrada viola simultaneamente uma regra antiga e a regra AJ2, **a antiga prevalece**: `E-Nb-10` para texto ausente/vazio/em branco, `E-Nb-2` para confiança sem valor, `E-Nb-1` para valor sem confiança, `E-Nb-4` para `confianca_global` ausente, `E-Nb-8`/`E-Nb-18` nas suas hipóteses e `TypeError` para texto ou confiança de tipo incompatível. **A sequência de validação anterior permanece intacta.** |
 | M-AJ2-5 | **Os dois caminhos rejeitam contrato inválido**, por **uma única** função privada compartilhada — **sem superfície pública nova**: a canonicalização da entrada recebida e a **validação de canonicidade** já exigida dos consumidores públicos. Uma `Interpretacao` construída diretamente com `assunto` inválido **não atravessa** e **nenhuma projeção ou condição é derivada** dela. **Fail-closed**: erro de contrato **bloqueia na fronteira**. |
-| M-AJ2-6 | **Fronteira preservada.** A `ProjecaoInterpretacao` continua com **sete** campos e o `assunto` **não atravessa** para ela (N-b-Q12, N-b-K8); `IntencaoConversacional` continua com **11** valores; a **condição 5** continua a **única** condição de §4.4 produzida por este módulo — e a única **materializada** em código; as condições **2** e **4** possuem **produtor conceitual** atribuído por **S2-D8** (§4.4.1, eixos **A** e **B**) e continuam **NÃO MATERIALIZADAS** — **AJ2 não as materializa** e **S2-D8 permanece ARBITRADA / NÃO MATERIALIZADA**; a condição **8** continua **NÃO ATRIBUÍDA** (**S3-D1**); e o `assunto` **não participa de N-b-X3**: a agregação de `PERGUNTA_COMERCIAL` continua dependendo **somente** das confianças. O `assunto` **não referencia `Rxx`**, **não seleciona fragmento** e **não produz `Exx`**. |
-| M-AJ2-7 | **Cenários `K-Nb-41`–`K-Nb-51` cobertos** por testes, mais **provas estruturais**: contagem e ordem documental dos **54** valores, os **três** campos de `PerguntaComercial`, ausência do assunto na projeção, ausência de vigésimo `E-Nb`, ausência de exceção pública nova, presença no `__all__` do módulo, ausência no `__init__.py` do pacote e não participação em **N-b-X3**. **`K-Nb-1`–`K-Nb-40` não mudam de semântica**: os testes antigos foram adaptados **apenas** para fornecer o terceiro campo. |
-| M-AJ2-8 | **Preservação textual e duplicatas.** O `texto` continua **literal** — sem `strip`, normalização, resumo ou paráfrase (N-b-Q9) — e **duplicatas exatas continuam permitidas** (N-b-Q11). **Exatamente um assunto por item** (N-b-Q8) — regra **exigida e validada** aqui. **N-b-Q8 é preservado integralmente**, mas **a segmentação semântica NÃO é materializada por esta entrega**: a consulta composta precisa chegar **já segmentada pelo futuro produtor semântico** em múltiplas `PerguntaComercial`, uma por assunto. A fronteira determinística **recebe, valida e preserva** itens **já segmentados** e **não interpreta nem divide texto livre**. |
-| M-AJ2-9 | **O que continua FORA.** O **produtor não determinístico / LLM da etapa 4 NÃO foi implementado** — nenhum fornecedor, modelo, SDK, API, JSON Schema, prompt novo ou interpretação de texto livre. **`N-b-RES2` continua ABERTO** e a etapa 4 continua **proibida de emitir `Exx`** (`N-b-RES1`, `N-b-RES3`). **A etapa 4 não está operacionalmente integrada.** **C continua ARBITRADA / NÃO MATERIALIZADA** (§2.3) e **S2-D8 continua ARBITRADA / NÃO MATERIALIZADA** (§4.4.1): **nenhum mapeamento `assunto` → `Rxx` ou `assunto` → fragmento existe**, o índice `knowledge/indice-respostas-aprovadas.yaml` **não existe** e o **mapa de cobertura R2 não existe**. O **`OrquestradorMotor` continua não implementado**. **Nenhuma subetapa foi criada — a 3B.8 não existe.** |
+| M-AJ2-6 | **Fronteira preservada.** A `ProjecaoInterpretacao` continua com **sete** campos e o `assunto` **não atravessa** para ela (N-b-Q12, N-b-K8); `IntencaoConversacional` continua com **11** valores; a **condição 5** continua a **única** condição de §4.4 produzida por esta fronteira; as condições **2** e **4** possuem **produtor conceitual** atribuído por **S2-D8** (§4.4.1, eixos **A** e **B**) e **ficam fora desta fronteira**; a condição **8** permanece **NÃO ATRIBUÍDA** (**S3-D1**); e o `assunto` **não participa de N-b-X3**: a agregação de `PERGUNTA_COMERCIAL` continua dependendo **somente** das confianças. O `assunto` **não referencia `Rxx`**, **não seleciona fragmento** e **não produz `Exx`**. |
+| M-AJ2-7 | **Cenários `K-Nb-41`–`K-Nb-51` cobertos** por testes, mais **provas estruturais**: contagem e ordem documental dos **54** valores, os **três** campos de `PerguntaComercial`, ausência do assunto na projeção, ausência de vigésimo `E-Nb`, ausência de exceção pública nova, presença no `__all__` do módulo, ausência no `__init__.py` do pacote e não participação em **N-b-X3**. **`K-Nb-1`–`K-Nb-40` não mudam de semântica**: exigem **apenas** que o terceiro campo seja fornecido. |
+| M-AJ2-8 | **Preservação textual e duplicatas.** O `texto` continua **literal** — sem `strip`, normalização, resumo ou paráfrase (N-b-Q9) — e **duplicatas exatas continuam permitidas** (N-b-Q11). **Exatamente um assunto por item** (N-b-Q8) — regra **exigida e validada** aqui. **N-b-Q8 é preservado integralmente**, e a **segmentação semântica pertence ao produtor não determinístico**: a consulta composta chega **já segmentada** em múltiplas `PerguntaComercial`, uma por assunto. A fronteira determinística **recebe, valida e preserva** itens **já segmentados** e **não interpreta nem divide texto livre**. |
+| M-AJ2-9 | **Fora desta fronteira.** O **produtor não determinístico / LLM da etapa 4** pertence ao **limite único de LLM** de §4.2 e §9 — nenhum fornecedor, modelo, SDK, API, JSON Schema, *prompt* ou interpretação de texto livre vive aqui. `N-b-RES2` permanece **ABERTO** e a etapa 4 é **proibida de emitir `Exx`** (`N-b-RES1`, `N-b-RES3`). O **consumo** do `assunto` pertence a **S2-D8** (§4.4.1) e o mapeamento `assunto` → `Rxx` ou → fragmento pertence ao contrato **C** (§2.3): **nenhum dos dois é decidido aqui**. A **integração operacional** pertence ao **`OrquestradorMotor`** (D1). |
 
-##### Nota de escopo posterior — arbitragem S2-D8
+##### Compatibilidade S2-D8 × N-b
 
-Registro **exclusivamente documental**, **fora de AJ2** e **fora de N-b**: nenhuma regra
-desta §6.3 é alterada, **AJ2 continua NÃO MATERIALIZADA** e **N-b não é reaberta**.
+Estas notas ficam **fora de AJ2** e **fora de N-b**: nenhuma regra desta §6.3 é alterada e
+**N-b não é reaberta**.
 
 | # | Nota |
 |---|---|
@@ -4427,9 +4034,8 @@ ponderado. **Nenhum threshold numérico novo é criado**: a confiança já é bi
 
 #### `SituacaoTakeover` — contrato conceitual (arbitragem R5)
 
-Contrato **exclusivamente documental**; nenhum arquivo de `src/` é criado por esta
-arbitragem. Seja **`H`** o conjunto dos atendimentos recuperados para o contato/canal cujo
-estado é **`atendimento_humano`**. **Origem formal** (arbitragem R-H): H é produzido pela
+**Contrato conceitual.** Seja **`H`** o conjunto dos atendimentos recuperados para o
+contato/canal cujo estado é **`atendimento_humano`**. **Origem formal** (arbitragem R-H): H é produzido pela
 **etapa 3** e entregue ao resolvedor como **`ids_em_atendimento_humano: tuple[str, ...]`**
 — entrada **separada** do conjunto elegível e **fora** da política N-a; as regras **H1–H6**
 que o governam estão em **§6.2**.
@@ -4563,7 +4169,7 @@ um terceiro ter recebido.
 | L6 | Exceções são **sanitizadas antes de persistir**: remover credenciais, cabeçalhos e conteúdo pessoal do rastreamento antes de gravar. |
 | L7 | **Política de retenção será definida antes da produção** (etapa 10). Até lá, o volume de log fica no mínimo necessário. |
 
-Nenhuma ferramenta de observabilidade é escolhida nesta etapa.
+Nenhuma ferramenta de observabilidade está escolhida.
 
 ---
 
@@ -5161,7 +4767,7 @@ Regra obrigatória sobre o repositório em memória:
 | `OrquestradorMotor` | executa as **14 etapas na ordem**, com **recuperação de contexto (3) antes da interpretação (4) e ambas antes da resolução de identidade (5)**; **estado enviado pelo adaptador é ignorado ou rejeitado** (E3); não emite antes de persistir (Q1); **termina o ciclo sem transição** nos **quatro** casos normativos — contexto inválido, `Identidade.AMBIGUA`, `SEM_CANDIDATO_ELEGIVEL` enquanto **E4** estiver aberta, e `situacao_takeover == HUMANO_MULTIPLO` (§5); e **distingue `HUMANO_UNICO`**, que **não** encerra sem transição — segue para a `MaquinaEstados` com `estado = atendimento_humano` e `identidade = None`, resolvendo por **T33** com zero emissão automática |
 | `ResolvedorIdentidade` | a **cascata D0–D6 é determinística** — mesmas entradas, mesma decisão, sem relógio, sem I/O e sem LLM; **alvo único** quando a cascata resolve, com `identidade` derivada do estado do alvo; **ambiguidade segura** — `AMBIGUA` sempre com alvo `None` e **sem herdar dado algum** (A1, A6); **primeiro contato** distinguido por `havia estado esperado?` = não; **`SEM_CANDIDATO_ELEGIVEL`** produzido quando há histórico conhecido e zero candidatos elegíveis, **sem virar primeiro contato, sem virar `NOVO` e sem transição**; **o identificador apenas restringe o escopo** (N7) e nunca decide sozinho; **contexto inválido nunca é entrada normal** (S7) — é erro de contrato ou pré-condição bloqueada na etapa 3; **precedência de takeover** (R5-P0): com `situacao_takeover != SEM_TAKEOVER` a cascata **não executa**, `identidade` é `None` e nenhuma `AMBIGUA` é produzida; **o conjunto H é entrada separada** — `SituacaoTakeover` é derivada de `ids_em_atendimento_humano`, **nunca** de um filtro sobre os candidatos elegíveis, e o alvo de `HUMANO_UNICO` vem **direto de H** (§6.2, H1–H6) |
 | `RegrasComerciais` | tipo não aceito, data bloqueada e excesso de convidados produzem violação com motivo (I04) |
-| `MaquinaEstados` | as **41 transições** do doc 06 §3; a **ordem de avaliação** das famílias C0–C11 (§4.2), com o **caminho percorrido** auditável e **estado final único**; a **projeção `transicoes_que_mudaram_estado`** (§6.2), **materializada em runtime** — subsequência ordenada de `caminho`, classificada contra o estado intermediário do instante da aplicação; o **fechamento** `E15` → `E12` pós-efeito, o teto de **três chamadas por ciclo** e a ausência de loop; os efeitos paralelos P1–P6 (§4.3) e as inércias N1–N4 (§4.4); evento não coberto por transição, efeito paralelo ou inércia é **erro de contrato** (§4.5); a máquina **não lê o YAML** e **não fabrica eventos** |
+| `MaquinaEstados` | as **41 transições** do doc 06 §3; a **ordem de avaliação** das famílias C0–C11 (§4.2), com o **caminho percorrido** auditável e **estado final único**; a **projeção `transicoes_que_mudaram_estado`** (§6.2) — subsequência ordenada de `caminho`, classificada contra o estado intermediário do instante da aplicação; o **fechamento** `E15` → `E12` pós-efeito, o teto de **três chamadas por ciclo** e a ausência de loop; os efeitos paralelos P1–P6 (§4.3) e as inércias N1–N4 (§4.4); evento não coberto por transição, efeito paralelo ou inércia é **erro de contrato** (§4.5); a máquina **não lê o YAML** e **não fabrica eventos** |
 | `Qualificador` | os cinco resultados oficiais, a faixa entre capacidade sentada e coquetel, e I09 (ausência de dado nunca é incompatibilidade); recebe pendências impeditivas já classificadas e **não as detecta** |
 | `DetectorHandoff` | os **gatilhos 3–10** do doc 04, cada um com o motivo correto (partição do doc 06 §9); não recebe `Qualificacao` e não reemite os gatilhos 1–2 nem 11–12 |
 | `SeletorFatos` | nada fora do YAML e das respostas aprovadas entra na lista; campo pendente vira R03; **`Rxx` divergente do YAML não é selecionado** e produz erro de consistência da base (F4) |
@@ -5339,28 +4945,28 @@ acrescenta **onze** cenários conceituais sobre o **`assunto`** de `PerguntaCome
 projeção. A lista completa dos novos cenários está em §6.3, na seção de AJ2; a fronteira
 passa a ser **`K-Nb-1`–`K-Nb-51`**. Dos 40 anteriores, **34 permanecem literais**, **6
 exigirão adaptação de representação** numa futura materialização, **0 mudam de sentido** e
-**0 são substituídos**. **Nenhum teste Python é criado por AJ2.**
+**0 são substituídos**. A **parametrização em pytest não faz parte deste contrato**.
 
 **Classificação e alcance de `K-Nb-18`, `K-Nb-34` e `K-Nb-39`** (micro-arbitragem **AJ1**,
-§6.3). Os **40** cenários `K-Nb` **existentes à época de AJ1** permanecem **os mesmos**, com o
-**mesmo resultado esperado**: AJ1 esclarece **como cada um se prova**, não **o que ele
-afirma**. Nenhum cenário é acrescentado, removido, renumerado ou reescrito **por AJ1** — os
-cenários `K-Nb-41`–`K-Nb-51` são **acrescentados depois**, pela micro-arbitragem **AJ2**.
+§6.3). AJ1 esclarece **como cada cenário se prova**, não **o que ele afirma**: nenhum cenário
+é acrescentado, removido, renumerado ou reescrito **por AJ1**. Os cenários
+`K-Nb-41`–`K-Nb-51` vêm de **AJ2**.
 
 | Cenário | Classificação AJ1 | Alcance da prova |
 |---|---|---|
 | `K-Nb-18` | **estrutural** da canonicalização — `E-Nb-13` é **invariante / program error** (AJ1-13a) | Provado por **pós-condição / propriedade**: para **toda** `Interpretacao` canônica, a **confiança A1 == resultado de N-b-X3** (AJ1-13b). **Não se exige** prova por exceção levantada a partir de entrada externa: nenhuma confiança **A1** independente é aceita do produtor (AJ1-13c) |
 | `K-Nb-34` | **recebível / runtime** — permanece exatamente como está | Cobre **dois** casos, ambos resolvidos em **`E-Nb-3`**: (a) **confiança declarada em `trecho_ambiguo`** (N-b-T5); e (b) **tentativa de apresentar código A1 com confiança no slot de intenções autônomas** (AJ1, caso A). **Nenhuma precedência de `E-Nb-13` sobre `E-Nb-3`** é criada, e **nenhum código novo** — de erro ou de cenário — é introduzido |
-| `K-Nb-39` | **parcialmente local, parcialmente futuro** | **Localmente** verificável na futura fronteira: **sem `Interpretacao`**, `interesse_confirmar_disponibilidade = None` (N-b-CD4); **ausência de `Interpretacao` ≠ `Interpretacao` válida sem sinais** (N-b-G8); e a `ProjecaoInterpretacao` **exige `Interpretacao` canônica válida** (N-b-M2). **Permanecem futuros**, dependentes de orquestração: a etapa 5 **não executar**; a `MaquinaEstados` **não ser chamada**; **nada ser gravado**; os **alertas**; e a **coordenação do modo degradado** (N-b-M3, N-b-M8) |
+| `K-Nb-39` | **parte determinística / responsabilidade de orquestração** | **Parte determinística** — invariantes da fronteira da etapa 4: **sem `Interpretacao`**, `interesse_confirmar_disponibilidade = None` (N-b-CD4); **ausência de `Interpretacao` ≠ `Interpretacao` válida sem sinais** (N-b-G8); e a `ProjecaoInterpretacao` **exige `Interpretacao` canônica válida** (N-b-M2). **Responsabilidade do `OrquestradorMotor`**: a etapa 5 **não executar**; a `MaquinaEstados` **não ser chamada**; **nada ser gravado**; os **alertas**; e a **coordenação do modo degradado** (N-b-M3, N-b-M8) |
 
-Consequência de método: **não** se deve afirmar cobertura das propriedades **futuras** de
-`K-Nb-39` a partir de um teste isolado da fronteira da etapa 4. Elas pertencem à
-**orquestração**, que **não existe** (§12, itens 10, 11, 15 e 18).
+Consequência de método: **não** se deve afirmar cobertura dessas propriedades de `K-Nb-39` a
+partir de um teste isolado da fronteira da etapa 4. Elas pertencem à **coordenação do
+`OrquestradorMotor`** e **não são provadas por teste isolado** daquela fronteira (§12, itens
+10, 11, 15 e 18).
 
 **Cenários conceituais de S2-D8 — família própria `D8-K*`** (arbitragem S2-D8, §4.4.1).
 **Namespace próprio**: os cenários de N-b **continuam `K-Nb-1`–`K-Nb-51`** e **nenhum deles
-é alterado, renumerado ou substituído**. **Nenhum teste Python é criado** por esta
-arbitragem — a parametrização é decisão futura de materialização.
+é alterado, renumerado ou substituído**. A **parametrização em pytest não faz parte deste
+contrato**: os `D8-K*` são **requisitos conceituais de cenário**.
 
 Convenções desta família: "coberto" significa **respondível** por **R2-5**; "descoberto"
 significa **grupo sem alternativa emitível agora** (**D8-F1**–**D8-F6**); e toda leitura de
@@ -5401,11 +5007,10 @@ estado de origem coincide com o estado INTERMEDIÁRIO vigente** no instante da a
 | D8-K29 | **Modo sem `Interpretacao`** | **S2-D8 NÃO é alcançada** (D8-S1): a etapa 5 não executa, as etapas 6 e 7 também não, as condições **2** e **4** permanecem **não avaliadas / `None`**, **nada é gravado** (N-b-M5) e **nenhum alerta novo** é criado (N-b-M3). **Este cenário não usa as tabelas D8-T2 e D8-T4** |
 | D8-K30 | **Q1** — requisito **estrutural** do carregador ausente, `null` ou de tipo inválido | **o motor não inicia** (§7). **Não é pendência de S2-D8**, **não é `E09`**, **não é `pendencia_impeditiva`** e **não é caso de ciclo** (Q1-a, Q1-b). **`Q2` não é autorizada** (Q1-e) |
 
-**Alcance da prova.** Estes cenários são **conceituais**. Enquanto o mapa **R2**, o índice de
-C e o produtor de S2-D8 **não existirem**, nenhum deles é verificável em código, e **nenhuma
-cobertura de teste pode ser alegada** a partir desta seção. Os cenários que envolvem famílias
-e efeitos paralelos do doc 06 — **D8-K23**–**D8-K27** — descrevem o **runtime já existente**
-da `MaquinaEstados` e **não pedem alteração alguma** nela.
+**Alcance da prova.** Estes cenários são **conceituais**. A sua automatização depende das
+respectivas fronteiras de **R2**, **C**, **S2-D8** e do **`OrquestradorMotor`**. Os cenários
+**D8-K23**–**D8-K27** **reutilizam o contrato da `MaquinaEstados`** e **não exigem alteração
+desse contrato**.
 
 ### 8.3 Testáveis somente com LLM real (poucos, manuais)
 
@@ -5427,8 +5032,6 @@ Testar **não** é uma etapa final. A etapa 9 consolida; ela não é a primeira 
 
 Consequência: cada etapa da 3B em diante fecha com dois artefatos — o código e a saída dos
 seus testes.
-
-Nenhum teste é criado ou executado nesta etapa documental.
 
 ---
 
@@ -5463,9 +5066,7 @@ Fronteira de Qualificação, arbitrada: o `Qualificador` é componente do motor 
 sua **implementação pertence à Etapa 3B**, não a uma etapa autônoma de roadmap. Dentro do
 passo 1 acima, ele **precede a `MaquinaEstados`**: a máquina consome a classificação e as
 condições produzidas pelas regras de qualificação (doc 06 §1.2, T08, T09, T13, T21) e não
-pode duplicar essa lógica comercial. O `Qualificador` foi **implementado na Etapa 3B.5** e a
-`MaquinaEstados` foi **implementada na Etapa 3B.6**. A precedência entre os dois foi
-respeitada na ordem de entrega e **permanece válida como regra de arquitetura**; a
+pode duplicar essa lógica comercial. Essa precedência é **regra de arquitetura**; a
 arbitragem **S1** não é reaberta.
 
 O que os passos 1 a 3 entregam, com precisão:
@@ -5479,7 +5080,7 @@ O que os passos 1 a 3 entregam, com precisão:
 
 O modo literal permanece disponível para sempre, como fallback de indisponibilidade (§7).
 
-Fornecedor e modelo não são escolhidos nesta etapa. O adaptador de `src/llm/` deve isolar
+Fornecedor e modelo não estão escolhidos. O adaptador de `src/llm/` deve isolar
 essa escolha atrás de um limite único.
 
 **Fronteira do produtor de interpretação da etapa 4** (arbitragem N-b, §6.3). O **limite único**
@@ -5495,7 +5096,7 @@ decisão independente do LLM** (N-b-F5).
 
 ## 10. Estrutura futura sugerida
 
-Estrutura mínima. **Nenhuma pasta foi criada.**
+**Estrutura conceitual sugerida.** Esta seção define organização arquitetural e **não afirma estado físico de diretórios**.
 
 ```text
 src/
@@ -5533,18 +5134,29 @@ Os dados continuam em `knowledge/` na raiz do repositório. `src/knowledge/` é 
 adaptador de leitura — a duplicação de nome é intencional e a distinção é obrigatória.
 
 O ponto de entrada do motor é uma única chamada ao `OrquestradorMotor`
-(`mensagem de entrada → decisão de saída`), sem servidor no MVP. Não há pasta de canal ainda:
-o adaptador de WhatsApp é etapa 7 e será quem **chama** o motor, nunca o contrário (D6).
+(`mensagem de entrada → decisão de saída`), sem servidor no MVP. O **adaptador de canal**
+pertence à **etapa 7** e **chama** o motor; o motor **nunca chama o adaptador** (**D6**).
 
 ---
 
-## 11. Fora do escopo desta etapa
+## 11. Limites arquiteturais
 
-Não foi criado, escolhido nem instalado: código, testes, `package.json`,
-`requirements.txt`, biblioteca de leitura de YAML, biblioteca de schema, ferramenta de
-observabilidade, banco, arquivo ou qualquer armazenamento não volátil, API, framework web,
-hospedagem, provedor de IA, modelo, integração de WhatsApp, integração de calendário. Nenhum
-commit e nenhum push. A Etapa 3B não foi iniciada.
+Os itens abaixo permanecem **escolhas ou dependências arquiteturais ainda abertas**. Nenhuma
+escolha futura é automática.
+
+| Limite | Onde se decide |
+|---|---|
+| biblioteca de schema | decisão técnica futura quando necessária (§3) |
+| framework web e adaptador HTTP | etapa 7 (§3, §10) |
+| rota de WhatsApp — oficial × não oficial — e adaptador de canal | etapa 7 (§12, item 1) |
+| integração de calendário | etapa 6 |
+| armazenamento **não volátil** — banco, arquivo ou equivalente | decisão específica e explícita antes de qualquer uso real (§7.4; §12, item 2a) |
+| hospedagem | etapa futura |
+| provedor de IA e modelo | §9 — isolados atrás do limite único de `src/llm/` |
+| ferramenta de observabilidade e política de retenção de log | §6.6; etapa 10 (§12, item 9) |
+
+O ponto de entrada do motor permanece uma **única chamada** ao `OrquestradorMotor` (§10): o
+adaptador **chama** o motor, nunca o contrário (**D6**).
 
 ---
 
@@ -5553,80 +5165,36 @@ commit e nenhum push. A Etapa 3B não foi iniciada.
 | # | Risco / pendência | Impacto | Onde se resolve |
 |---|---|---|---|
 | 1 | Rota de WhatsApp indefinida (oficial × não oficial) | pode exigir adaptador em outra linguagem | etapa 7 |
-| 2 | Persistência **operacional** — contrato e implementação em memória | necessário para testar o pipeline ponta a ponta; em memória não sustenta operação real (M2, M3) | **Etapa 3B** |
+| 2 | Persistência **operacional** — contrato e implementação volátil em memória | O contrato é `PersistenciaOperacional` e a implementação volátil é `PersistenciaEmMemoria` (`src/casa77_sdr/persistence.py`). **A implementação volátil não sustenta operação real** (M2, M3): ela não sobrevive ao processo. **ARBITRADA** | **resolvido** — §7.3, §7.4. A persistência **não volátil** é o item 2a |
 | 2a | Persistência **operacional não volátil** — armazenamento mínimo para uso real | sem ela, nenhuma resposta pode ser emitida em canal real (M3). Nenhuma tecnologia escolhida | **decisão específica e explícita antes de qualquer uso real** — não é decisão da 3B nem da etapa 8 |
 | 2b | **Registro comercial de leads** — destino definitivo, histórico, relatórios, exportação | não bloqueia a 3B; não pode ser usado como justificativa para emitir sem gravar estado (§7.3) | etapa 8 |
-| 3 | Critério técnico de "mesmo evento × nova solicitação" (T36/T37) | **ARBITRADO** nesta entrega (arbitragem R3): cascata determinística **D0–D6**, comparação exclusivamente nominal e vocabulário fechado de 12 critérios, materializados em §7.1 e refletidos em doc 06 §3. **À época daquela arbitragem, nenhum código foi criado** e a implementação ainda não estava autorizada. **Estado atual**: o `ResolvedorIdentidade` foi **implementado depois**, na **3B.7**, e está **integrado à `main`** pelo **PR #29** — commit funcional `25ab2726e15daeb7710bc0bcce9cfe7e092ce9f4`, merge `568919f5976361fa236e46a67909366e52ee85c3` (`src/casa77_sdr/identity.py`). O item **não bloqueia** nem a especificação nem a implementação do `ResolvedorIdentidade` | **resolvido** — §7.1; **implementado** na 3B.7 |
-| 3a | Destino do alerta operacional não definido | S5, Q5 e F4 exigem um canal separado da conversa; hoje não existe | etapa 5 / etapa 8 |
+| 3 | Critério técnico de "mesmo evento × nova solicitação" (T36/T37) | **ARBITRADO** (arbitragem R3): cascata determinística **D0–D6**, comparação exclusivamente nominal e vocabulário fechado de 12 critérios (§7.1; doc 06 §3). **Não bloqueia** o `ResolvedorIdentidade` | **resolvido** — §7.1 |
+| 3a | Destino do alerta operacional não definido | S5, Q5 e F4 exigem um canal separado da conversa; o **destino operacional ainda não está especificado**. **ABERTA** | etapa 5 / etapa 8 |
 | 3b | Janela temporal da chave composta de idempotência (§4.3) | curta demais duplica resposta; longa demais engole repetição humana legítima | Etapa 3B, com medição |
-| 3c | Divergência `Rxx` × YAML depende de mapear cada `Rxx` ao campo que ele cita | mapeamento incompleto deixa divergência passar sem detecção. O **contrato** desse mapeamento está **arbitrado** em §2.3 (pendência **C**, item 19) e **ainda não foi materializado** | Etapa 3B, sobre o contrato de §2.3 |
+| 3c | Divergência `Rxx` × YAML depende de mapear cada `Rxx` ao campo que ele cita | mapeamento incompleto deixa divergência passar sem detecção. O **contrato** desse mapeamento é **C** (§2.3, item 19) | Etapa 3B, sobre o contrato de §2.3 |
 | 4 | `R01` e `R15` ainda em **AGUARDA APROVAÇÃO** | saudação e encerramento sem texto aprovado | Douglas Bianchi |
 | 5 | Canal de entrega do resumo e SLA indefinidos; **confirmação física de entrega do resumo** | etapa 14 do pipeline fica sem destino. `encaminhado_humano` afirma handoff **registrado**, nunca recebimento confirmado (doc 06 §10) — a confirmação física permanece futura | etapa 5 |
 | 6 | Comportamento fora do horário de atendimento indefinido | resposta fora de horário não especificada | Douglas Bianchi |
 | 7 | Precisão do validador de resposta | validador fraco deixa passar valor inventado; forte demais bloqueia texto correto | Etapa 3B, com os casos de `tests/perguntas-criticas.md` |
 | 8 | Custo por conversa não medido | sem parâmetro de custo do LLM | etapa 9 |
 | 9 | Política de retenção de log não definida (L7) | dado pessoal guardado sem prazo | antes da produção, etapa 10 |
-| 10 | **S2-D8** — contrato de detecção e classificação de pendências: detectar campo `null`/`pendente` relevante e ausência de resposta aprovada, classificar impeditiva × acessória, fornecer os identificadores técnicos ao `Qualificador`, confirmar `E09` e fornecer a condição estruturada `resposta_aprovada_disponivel` | **ARBITRADA / NÃO MATERIALIZADA** (§4.4.1; doc 06 §11). **CONTRATO: ARBITRADO** — **dois eixos** (**A**, de qualificação, e **B**, de resposta); **Q1** como decisão do MVP; regra impeditiva **IMP-1**–**IMP-4** com o invariante `pendencia_impeditiva == True` ⇒ `INDEFINIDO`; **ordem conceitual determinística** anterior à etapa 7 (§5); mapa **R2** de **grupos de cobertura** (conjunção entre grupos, disjunção dentro do grupo); **fragmento emitível** e **regra de lacuna real**; **Classe I** × **Classe II**; **exatamente dois** motivos de `E09` — `CAMPO_INDISPONIVEL` e `SEM_RESPOSTA_APROVADA_EMITIVEL`; semântica de `pendencias_resposta`; e a **reconciliação normativa limitada F4-B** de §2.2. **MATERIALIZAÇÃO: NÃO EXISTE** — **nenhum módulo, nenhum mapa R2, nenhum arquivo de `src/`, `tests/`, `knowledge/` ou `prompts/`**, e **nenhum componente concreto escolhido**: não é o `CarregadorYaml`, não é o `ValidadorYaml`, não é o `SeletorFatos` e não é o `Qualificador`. **As condições 2 e 4 de §4.4 passam a ter PRODUTOR CONCEITUAL** — os eixos **A** e **B** —; a **condição 8** continua **NÃO ATRIBUÍDA** (**S3-D1**). **Continua não bloqueando** a `MaquinaEstados`, que recebe `E09` pronto; **continua bloqueando** o `OrquestradorMotor` e a integração completa. Onde este documento diz que "S2-D8 permanece ABERTA" — em particular `C-E8` e `C-12` de §2.3, que **permanecem literais e inalteradas** — a leitura correta passa a ser **aberta quanto à MATERIALIZAÇÃO** | **materializar** o contrato de §4.4.1, depois de **AJ2** e de **C**, e **só então** integrar ao pipeline (doc 06 §11) |
+| 10 | **S2-D8** — contrato de detecção e classificação de pendências: detectar campo `null`/`pendente` relevante e ausência de resposta aprovada, classificar impeditiva × acessória, fornecer os identificadores técnicos ao `Qualificador`, confirmar `E09` e fornecer a condição estruturada `resposta_aprovada_disponivel` | **ARBITRADA** (§4.4.1; doc 06 §11). Contrato fechado: **dois eixos** (**A**, de qualificação, e **B**, de resposta); **Q1** como decisão do MVP; regra impeditiva **IMP-1**–**IMP-4** com o invariante `pendencia_impeditiva == True` ⇒ `INDEFINIDO`; **ordem conceitual determinística** anterior à etapa 7 (§5); mapa **R2** de **grupos de cobertura**; **fragmento emitível** e **regra de lacuna real**; **Classe I** × **Classe II**; **exatamente dois** motivos de `E09` — `CAMPO_INDISPONIVEL` e `SEM_RESPOSTA_APROVADA_EMITIVEL`; semântica de `pendencias_resposta`; e a reconciliação **F4-B** de §2.2. As condições **2** e **4** de §4.4 têm **produtor conceitual** — os eixos **A** e **B**; a **condição 8** permanece **NÃO ATRIBUÍDA** (**S3-D1**). A `MaquinaEstados` **não depende** dela: recebe `E09` pronto | **contrato resolvido** — §4.4.1. O **artefato físico** — módulo e mapa **R2** — é requisito do `OrquestradorMotor`, depois de **AJ2** e de **C** (doc 06 §11) |
 
-| 11 | **N-a** — política de **elegibilidade e recência** que produz o conjunto elegível da etapa 3 | **ARBITRADA DOCUMENTALMENTE** (arbitragem N-a, §6.2): classificação **fechada dos oito estados**; recência aplicável **exclusivamente** a `encerrado`; `instante_ultima_transicao` como **único** marco temporal do MVP — **quando inicializado ou atualizado, recebe o `instante_de_referencia_do_ciclo` daquele ciclo**, **nunca** o relógio vivo; atualização decidida pelo **caminho de transições**; limiar como **configuração operacional validada explicitamente**; projeção do registro em `CandidatoAtendimento`; composição de E; duplicatas; **ordem canônica** só para auditabilidade; e a precedência conceitual da etapa 3 — materializados em §5, §6.2 e §7.1, com **N-a-F1**, **N-I**, **P-I**, **R5-P0**, **H1–H6** e **D0–D6** preservados. **Não é implementação**: a **arbitragem N-a** não alterou `persistence.py` e o `OrquestradorMotor` **continua não autorizado**. **Materializações posteriores**, em entregas funcionais próprias: (a) o **transporte e a validação da representação** de `instante_ultima_transicao` na persistência operacional (§6.2, M-T1–M-T6); e (b) a **produção determinística de E** — projeção, classificação dos oito estados, recência de `encerrado`, N-a-F1, duplicatas e ordem canônica — como função pura em `src/casa77_sdr/eligibility.py` (§6.2, M-E1–M-E6); e (c) a **montagem determinística das projeções de identidade da etapa 3** — leitura da persistência, validação do identificador, projeção do contexto, conjunto **H**, `havia_estado_esperado` e projeção **N-I** — em `src/casa77_sdr/context.py` (§6.2, M-C1–M-C8), que cobre a **fronteira etapa 3 → identidade/etapa 5** e **não** a etapa 3 inteira. **A integração N-a continua PARCIAL**: a **decisão determinística** exigida por **N-a-T3–N-a-T7** foi materializada em `src/casa77_sdr/transition_marker.py` (§6.2, M-DT1–M-DT7), e a **aplicação** dessa decisão com a **escrita** pelo contrato da persistência existe como **fronteira chamável** em `src/casa77_sdr/transition_marker_write.py` (§6.2, M-AE1–M-AE7). Ainda assim, **N-a-T3–N-a-T7 NÃO estão operacionalmente concluídas** — a **integração da etapa 13 no pipeline** permanece pendente, assim como o **tratamento operacional dos bloqueios** (S4, S5), o **destino do alerta** e o **`OrquestradorMotor`**. A **projeção `transicoes_que_mudaram_estado`** (§6.2) foi **ARBITRADA** e depois **materializada em runtime** na `MaquinaEstados`. Isso **não** encerra o item: a **decisão pura** e a **composição decisória entre as 0–3 chamadas** do ciclo estão materializadas em **M-DT1–M-DT7**, mas continuam **NÃO implementadas/integradas** a **montagem completa** do `RegistroAtendimento`, a **decisão de se a etapa 13 executa**, a **escolha entre criar e gravar** no pipeline, a **geração de `id_atendimento`**, a **criação operacional** do atendimento, a **marcação de idempotência**, a **preservação de pendente**, o **tratamento operacional de falha** e a **integração da etapa 13**; o **valor numérico do limiar** e o **mecanismo de carga** continuam pendentes no **item 18**, a **E4** continua **distinta e aberta** no **item 15**, e o **`OrquestradorMotor` continua fora** | **especificação resolvida** — §6.2. **Aquela arbitragem não autorizou implementação alguma** — o PR #31 foi entrega documental e, à época, N-a não existia em código. O **valor numérico do limiar** e o **mecanismo concreto de carga** da configuração são o **item 18**. **E4** é pendência **distinta e ainda aberta**, no **item 15**, e **não é resolvida aqui** |
-| 12 | **N-b** — contrato global da **interpretação** da etapa 4: quem produz a projeção estruturada de §6.3 (`intencao_identidade`, referências, confianças binárias) e com que garantias | **ARBITRADA DOCUMENTALMENTE / NÃO IMPLEMENTADA** (arbitragem N-b, §6.3): o contrato da **`Interpretacao`** está **fechado** — as **oito** categorias de §6.3 preservadas; **`IntencaoConversacional`** com **exatamente 11** códigos na partição **A1 (6 derivados) / A2 (2 autônomos) / B (3 autônomos)**; consistência cruzada **N-b-X1–N-b-X6** sobre os **seis pares de representação dupla**; regras de confiança **N-b-G6/G6b/G6c**; lista fechada de erros **E-Nb-1–E-Nb-19**; modo degradado **N-b-M1–N-b-M8**; fronteira do produtor **N-b-F1–N-b-F5**; e cenários **K-Nb-1–K-Nb-40** (§8.2). **Produtor atribuído**: o "produtor de interpretação da etapa 4" é **fronteira funcional** do limite único de LLM (§4.2, §9), **não componente novo** — §4.1 permanece com **14** componentes. Passam a ter produtor a **derivação para a projeção da etapa 5** (**N-b-K1–N-b-K7**) e a **condição 5** de §4.4 (**N-b-CD1–N-b-CD4**); **à época de N-b** as condições **2**, **4** e **8** continuavam **não atribuídas** — depois, **S2-D8** (item 10) atribuiu **produtor conceitual** às condições **2** e **4**, que continuam **NÃO MATERIALIZADAS**, e a condição **8** continua **NÃO ATRIBUÍDA** (**S3-D1**). **Residual explícito**: a etapa 4 **não emite `Exx`**, e a transformação posterior dos sinais interpretados em eventos confirmados **continua sem produtor concreto** (**N-b-RES1–N-b-RES3**) — **sem identificador de pendência novo**. **Nenhum código, tipo Python, JSON Schema, biblioteca, fornecedor, modelo, SDK, API ou formato de transporte foi criado ou escolhido**. **Micro-arbitragem AJ1** (§6.3, §8.2): fecha a **representação/canonicalização determinística** de N-b — **`A1` não é entrada semântica** do produtor não determinístico, presença **derivada** e confiança **calculada** por **N-b-X3**, **precedência `E-Nb-3` × `E-Nb-5`** no slot autônomo, **classificação AJ1** dos 19 erros em recebíveis × invariantes internos × invariante estrutural, **alcance de prova** de `K-Nb-18`, `K-Nb-34` e `K-Nb-39`, estratégia estrutural de `E-Nb-19`, preservação da **condição 5** e reutilização por **import** de `FormatoEvento`. **AJ1 não reabre N-b, não a implementa, não cria componente e não cria subetapa**. **Materialização posterior, em entrega funcional própria**: a **parte determinística** do contrato — canonicalização da `Interpretacao`, derivação dos seis códigos **A1** com confiança calculada por **N-b-X3**, projeção total para a `ProjecaoInterpretacao` de **sete** campos e a **condição 5** como função total — existe em código em `src/casa77_sdr/interpretation.py` (§6.3, **M-NB1–M-NB9**). **A implementação de N-b permanece PARCIAL**: o **produtor não determinístico / LLM da etapa 4 NÃO foi implementado**, **`N-b-RES2` continua aberto**, a **etapa 4 não está operacionalmente integrada** ao pipeline e o **`OrquestradorMotor` continua fora**. **Extensão posterior por AJ2** (item 20, §6.3): o contrato de `PerguntaComercial` foi **estendido documentalmente** para incluir o **`assunto`** (`AssuntoComercial`, 54 valores), com `E-Nb-5` ampliado e cenários até `K-Nb-51`. **Esse delta foi materializado depois**, em entrega funcional própria, na **fronteira determinística** (**M-AJ2-1**–**M-AJ2-9**); **`M-NB1`–`M-NB9` continuam descrevendo a implementação do PR #55, anterior a AJ2**, e **não** são reescritas. | **especificação resolvida**; a **fronteira determinística** está **materializada** — **M-NB1–M-NB9** para o contrato anterior a AJ2 e **M-AJ2-1–M-AJ2-9** para o **delta AJ2**; o **produtor não determinístico** e a **integração** permanecem futuros, junto do `OrquestradorMotor` |
-| 13 | **E1** — distinção entre as entidades **conversa × atendimento × lead** | atravessa identidade, persistência e registro de leads; hoje o motor opera com "atendimento" como unidade única | modelo de dados |
-| 14 | **E3** — **evento novo declarado durante atendimento ativo** | hoje o resultado é **conservador**: `AMBIGUA` / `AMBIGUIDADE_DIVERGENCIA_EM_ATENDIMENTO_ATIVO` (D3). **Nenhuma transição nova foi aprovada** para abrir atendimento paralelo | arbitragem específica |
-| 15 | **E4** — tratamento de **`SEM_CANDIDATO_ELEGIVEL`** pelo `OrquestradorMotor` | o resultado existe e é auditável, mas **o que o orquestrador faz com ele não está decidido**. Enquanto aberta, o resultado **encerra o ciclo sem transição** e **não autoriza avanço de integração** (doc 06 §4.5, G7) | arbitragem específica, antes do `OrquestradorMotor` |
-| 16 | **Retorno do controle ao bot** — não existe hoje **transição inversa de T31** que devolva o canal ao atendimento automático sem passar por `E14`/T34 | uma vez em `atendimento_humano`, a saída documentada é o encerramento (T34) ou o encerramento por T32 a partir de `encaminhado_humano`. **Nenhum evento ou transição é criado por esta arbitragem** | arbitragem futura — **não bloqueia** a materialização R5 |
-| 17 | **Duplicatas gerais de `id_atendimento` entre candidatos não identificados** | a arbitragem R-I exige unicidade **apenas do ID identificado** e **apenas** com `veredito_identificador == ENCONTRADO` (**P-I5**). **Não foi decidido** — e **não é decidido nesta entrega** — se IDs duplicados entre candidatos **não identificados** constituem erro geral de contrato. **Nenhuma regra global de unicidade foi adicionada** | arbitragem específica futura — **não bloqueia** nenhuma entrega já autorizada |
-| 18 | **Valor numérico do limiar temporal de recência** e **mecanismo concreto de carga** da configuração (§6.2, N-a-L6) | **A política determinística já é executável**: `eligibility.py` e `context.py` **recebem o limiar como argumento explícito** e o validam (N-a-L1–N-a-L6, M-E3, M-C3). O que continua faltando é a **configuração operacional concreta** — sem ela **não há como carregar o limiar no pipeline**, e portanto continuam bloqueadas a **integração operacional de N-a** e o **`OrquestradorMotor`**. A calibragem permanece a mesma questão de sempre: curto demais descarta `encerrado` que **T36** deveria reabrir; longo demais devolve histórico antigo à cascata. **Nenhum número é definido** e **nenhuma tecnologia, variável de ambiente, arquivo ou serviço é escolhido** — nem por esta entrega nem pelas materializações posteriores. **Não é dado comercial** — não entra em `knowledge/casa77.yaml` | aprovação específica de Douglas Bianchi + decisão operacional, **antes do `OrquestradorMotor`** |
-| 19 | **C** — contrato estruturado, legível por máquina, ligando cada `Rxx` aos campos de `knowledge/casa77.yaml`, e o artefato que o materializa | **ARBITRADA / NÃO MATERIALIZADA** (§2.3). **CONTRATO: ARBITRADO** — está **fechado** — artefato aprovado `knowledge/indice-respostas-aprovadas.yaml`, modelo `Rxx` → **fragmentos emitíveis**, status fechado `APROVADO`/`AGUARDA_APROVACAO`/`BLOQUEADO` sem valor padrão, *bindings* **`RENDERIZADO`** e **`ASSERTIVA`** (`EH_VERDADEIRO`/`EH_FALSO`), regra **consistency-only** para `ASSERTIVA` sobre campo relacionado a handoff, formatos de **apresentação pura** sem dependência oculta, bloqueio de **transformação semântica**, tratamento de `null`/`pendente`, fontes autoritativas em transição e a separação **C × S2-D8**. **MATERIALIZAÇÃO: NÃO EXISTE** — o **índice não foi criado**, `knowledge/respostas-aprovadas.md` **não foi convertido nem alterado**, **nenhum status foi removido do Markdown**, e `ValidadorConsistenciaBase`, `SeletorFatos` e `ValidadorResposta` continuam **não implementados**. **Nenhum componente, estado, evento, transição, condição, critério, pendência ou subetapa foi criado** — a **3B.8 não existe**. Os conflitos `R10`, `R20`, `R13` e `R17` ficam **registrados e não decididos** (C-9). **Refinamento posterior — micro-arbitragem C-A1** (§2.3): fecha o contrato de **materialização** — equivalência de *template* **C-15**, refinamentos de **C-6**, convenção do formato `lista`, proibição de **seleção posicional**, unidade de bijeção, canonicalização e migração de status, prioridade de modelagem, alvos **MD** e a matriz **G1–G14** —, **sem criar o índice** e **sem alterar o YAML**. **C-1–C-14 permanecem registro histórico.** **C continua ARBITRADA / NÃO MATERIALIZADA**, e **C-A2** fica **ABERTA** como arbitragem residual dos fatos (**A1**–**A4**) e do conteúdo (**B1**–**B6**) humanos | **contrato resolvido** — §2.3, **refinado por C-A1**. A **materialização** — criar o índice, converter o Markdown em *templates* e auditar a bijeção — permanece **futura e não autorizada por esta arbitragem**, antes de `ValidadorConsistenciaBase` e, em cascata, `SeletorFatos` e `ValidadorResposta` |
-| 20 | **AJ2** — **origem semântica do assunto** de `PerguntaComercial`: de onde vem, e com que garantias, a informação de **sobre o que** o interessado consultou | **ARBITRADA / MATERIALIZADA na fronteira determinística** (§6.3, **M-AJ2-1**–**M-AJ2-9**). **AJ2 ESTENDE FORMALMENTE N-b**: `PerguntaComercial` passa conceitualmente de **dois** para **três** campos — `texto`, `confianca` e **`assunto`** obrigatório, do enum fechado **`AssuntoComercial`** de **54** valores (53 específicos + `ASSUNTO_NAO_CLASSIFICADO`), **sem confiança própria**; **um assunto por item**, com **segmentação** de consulta composta; **preservação textual** sem normalizar, resumir ou parafrasear; **duplicatas permitidas**; e o `assunto` **não atravessa** para a projeção, **não referencia `Rxx`** e **não produz condição** de §4.4 (**N-b-Q7**–**N-b-Q12**). `E-Nb-5` é **ampliado** para `assunto` ausente ou fora do vocabulário, e a lista permanece **`E-Nb-1`–`E-Nb-19`** — **sem nenhum código novo**. Cenários passam de `K-Nb-1`–`K-Nb-40` para **`K-Nb-1`–`K-Nb-51`**. **À época da arbitragem a implementação NÃO acompanhava**: o **PR #55 permanece historicamente correto** e **`M-NB1`–`M-NB9` continuam descrevendo aquela implementação**, que **não possuía `assunto`** (AJ2-M1–AJ2-M5). **O delta foi materializado depois**, em **entrega funcional própria** — `AssuntoComercial` com **54** valores, o terceiro campo de `PerguntaComercial`, a ampliação de `E-Nb-5` e os cenários `K-Nb-41`–`K-Nb-51` — em `src/casa77_sdr/interpretation.py` e `tests/test_interpretation.py` (**M-AJ2-1**–**M-AJ2-9**). **Nenhum componente, estado, evento, transição, condição, critério, pendência ou subetapa foi criado** — a **3B.8 não existe**. **`Q53`/`Q54` continuam não classificados** | **contrato resolvido** — §6.3 — e **delta materializado** na **fronteira determinística** (M-AJ2-1–M-AJ2-9). Continuam **futuros**: o **produtor não determinístico / LLM**, a **integração operacional da etapa 4** e o `OrquestradorMotor`. O **consumo** do assunto pertence a **S2-D8** (item 10), que continua **ARBITRADA / NÃO MATERIALIZADA** |
+| 11 | **N-a** — política de **elegibilidade e recência** que produz o conjunto elegível da etapa 3 | **ARBITRADA** (§6.2): classificação **fechada dos oito estados**; recência aplicável **exclusivamente** a `encerrado`; `instante_ultima_transicao` como **único** marco temporal do MVP — **quando inicializado ou atualizado, recebe o `instante_de_referencia_do_ciclo` daquele ciclo**, **nunca** o relógio vivo; atualização decidida pelo **caminho de transições**; limiar como **configuração operacional validada explicitamente**; projeção do registro em `CandidatoAtendimento`; composição de E; duplicatas; **ordem canônica** só para auditabilidade; e a precedência conceitual da etapa 3 — com **N-a-F1**, **N-I**, **P-I**, **R5-P0**, **H1–H6** e **D0–D6** preservados | **contrato resolvido** — §6.2. As fronteiras de implementação são **M-T**, **M-E**, **M-C**, **M-DT** e **M-AE**; a **coordenação delas no pipeline** pertence ao `OrquestradorMotor`. O **limiar** é o item 18; **E4** é o item 15 |
 
-**AJ1 — micro-arbitragem documental fechada** (§6.3, §8.2). AJ1 é **exclusivamente
-documental** e está **fechada**: ela **não** cria pendência nova, **não** resolve pendência
-alguma da tabela acima e **não** altera nenhuma linha dela além da nota registrada no
-**item 12**. Em particular, permanecem **abertas e inalteradas**: **S2-D8** (item 10),
-**E4** (item 15), **S3-D1**, **E1** (item 13), **E3** (item 14), **B**, **C** — esta **arbitrada documentalmente depois**, em §2.3, e **NÃO MATERIALIZADA** (item 19) —, o **valor do
-limiar** e seu **mecanismo de carga** (item 18), o **destino do alerta operacional**
-(item 3a) e o **`OrquestradorMotor`**.
+| 12 | **N-b** — contrato global da **interpretação** da etapa 4: quem produz a projeção estruturada de §6.3 e com que garantias | **ARBITRADA** (§6.3): contrato da **`Interpretacao`** fechado — as **oito** categorias de §6.3; **`IntencaoConversacional`** com **exatamente 11** códigos na partição **A1 (6 derivados) / A2 (2 autônomos) / B (3 autônomos)**; consistência cruzada **N-b-X1–N-b-X6**; regras de confiança **N-b-G6/G6b/G6c**; lista fechada de erros **E-Nb-1–E-Nb-19**; modo degradado **N-b-M1–N-b-M8**; fronteira do produtor **N-b-F1–N-b-F5**; e cenários **K-Nb-1–K-Nb-51** (§8.2), fronteira estendida por **AJ2** (item 20). **Produtor atribuído**: o produtor de interpretação da etapa 4 é **fronteira funcional** do limite único de LLM (§4.2, §9), **não componente novo** — §4.1 permanece com **14** componentes. **AJ1** (§6.3, §8.2) fecha a **representação e a canonicalização determinística** de N-b. **Residual de contrato**: a etapa 4 **não emite `Exx`**, e a transformação dos sinais interpretados em **eventos confirmados** permanece **sem produtor atribuído** — **`N-b-RES2` ABERTO** (**N-b-RES1**–**N-b-RES3**) | **contrato resolvido** — §6.3. A **fronteira determinística** é **M-NB1–M-NB9** e **M-AJ2-1–M-AJ2-9**; o **produtor não determinístico / LLM** pertence a §4.2 e §9, e a **integração da etapa 4** ao `OrquestradorMotor`. **`N-b-RES2`** exige arbitragem própria |
 
-**Nota da arbitragem S2-D8 sobre `N-b-RES2`** (§4.4.1, D8-N1–D8-N2). **`N-b-RES2` continua
-ABERTO** e **não é resolvido** por S2-D8. A arbitragem **não confirma `E06`**, **não cria
-produtor de evento** e **não cria identificador de pendência novo**: ela apenas registra a
-**pré-condição de coerência de integração** — um futuro produtor de `E06` não pode entregar
-à `MaquinaEstados` a combinação `E06` confirmado **+** zero `PerguntaComercial` efetiva
-**+** `resposta_aprovada_disponivel = False` **+** ausência de `E09` nos estados cuja
-resposta é **condicionada** (T10, T17, T28). **A responsabilidade permanece integralmente em
-`N-b-RES2`.** **S2-D8 também não materializa AJ2 e não materializa C**: ambas continuam
-**ARBITRADAS / NÃO MATERIALIZADAS** (§6.3, §2.3), e **a 3B.8 continua não existindo**.
+| 13 | **E1** — distinção entre as entidades **conversa × atendimento × lead** | o contrato do motor trata **atendimento** como unidade única; a fronteira entre as três entidades **não está arbitrada**. Atravessa identidade, persistência e registro de leads. **NÃO ARBITRADA** | modelo de dados |
+| 14 | **E3** — **evento novo declarado durante atendimento ativo** | o contrato vigente é **conservador**: `AMBIGUA` / `AMBIGUIDADE_DIVERGENCIA_EM_ATENDIMENTO_ATIVO` (**D3**, §7.1). Se cabe abrir atendimento paralelo **não está arbitrado**, e **nenhuma transição** existe para isso. **ABERTA** | arbitragem específica |
+| 15 | **E4** — tratamento de **`SEM_CANDIDATO_ELEGIVEL`** pelo `OrquestradorMotor` | o resultado é auditável, mas **o que o orquestrador faz com ele não está arbitrado**. Enquanto aberta, o contrato manda **encerrar o ciclo sem transição** e **não autoriza avanço de integração** (doc 06 §4.5, G7). **ABERTA** | arbitragem específica, antes do `OrquestradorMotor` |
+| 16 | **Retorno do controle ao bot** | **nenhuma transição inversa de T31** está especificada para devolver o canal ao atendimento automático sem passar por `E14`/T34. A partir de `atendimento_humano`, a saída especificada é o encerramento (T34); a partir de `encaminhado_humano`, T32. **ABERTA** | arbitragem futura — **não bloqueia** R5 |
+| 17 | **Duplicatas gerais de `id_atendimento` entre candidatos não identificados** | a arbitragem R-I exige unicidade **apenas do ID identificado** e **apenas** com `veredito_identificador == ENCONTRADO` (**P-I5**). **Não está decidido** se IDs duplicados entre candidatos **não identificados** constituem erro geral de contrato. **Nenhuma regra global de unicidade foi adicionada** | arbitragem específica futura — **não bloqueia** nenhuma entrega já autorizada |
+| 18 | **Valor numérico do limiar temporal de recência** e **mecanismo concreto de carga** da configuração (§6.2, N-a-L6) | o limiar é **argumento explícito e validado** das fronteiras que o consomem (N-a-L1–N-a-L6, M-E3, M-C3). **Nenhum número é definido** e **nenhuma tecnologia, variável de ambiente, arquivo ou serviço é escolhido**. Risco de calibração: curto demais descarta `encerrado` que **T36** deveria reabrir; longo demais devolve histórico antigo à cascata. **Não é dado comercial** — não entra em `knowledge/casa77.yaml`. **ABERTA** | aprovação específica de Douglas Bianchi + decisão operacional, **antes do `OrquestradorMotor`** |
+| 19 | **C** — contrato estruturado, legível por máquina, ligando cada `Rxx` aos campos de `knowledge/casa77.yaml`, e o artefato que o materializa | **ARBITRADA** (§2.3). Contrato fechado: artefato aprovado `knowledge/indice-respostas-aprovadas.yaml`, modelo `Rxx` → **fragmentos emitíveis**, status fechado `APROVADO`/`AGUARDA_APROVACAO`/`BLOQUEADO` sem valor padrão, *bindings* **`RENDERIZADO`** e **`ASSERTIVA`** (`EH_VERDADEIRO`/`EH_FALSO`), regra **consistency-only** para `ASSERTIVA` sobre campo relacionado a handoff, formatos de **apresentação pura** sem dependência oculta, bloqueio de **transformação semântica**, tratamento de `null`/`pendente`, fontes autoritativas em transição e a separação **C × S2-D8**. As camadas são lidas por **`C-P`**: **`C-1`–`C-15`**, depois **`C-A1`**–**`C-A5`**. Os conflitos `R10`, `R20`, `R13` e `R17` permanecem **registrados e não arbitrados** (**C-9**) | **contrato resolvido** — §2.3. O **artefato físico** — o índice, os *templates* e a bijeção auditada — é **requisito** de `ValidadorConsistenciaBase` e, em cascata, de `SeletorFatos` e `ValidadorResposta` |
 
-**Nota temporal do item 19 — micro-arbitragem C-A2, posterior** (§2.3, bloco
-"Micro-arbitragem C-A2"). A célula do **item 19** acima registra corretamente o estado **à
-época de C-A1**, quando **C-A2** estava **ABERTA** e enumerava os fatos `A1`–`A4` e o
-conteúdo `B1`–`B6`. Ela **permanece correta como registro histórico** e **não é reescrita**.
-Depois dela, **C-A2** passa a **ARBITRADA DOCUMENTALMENTE**: os fatos **`A1`–`A4` ficam
-FECHADOS**; o **conteúdo humano** é registrado como **APROVADO HUMANAMENTE / AINDA NÃO
-APLICADO** e **estendido de `B1`–`B6` para `B1`–`B16`** — com **`B16` dividido** em `R05`
-`F2` e `R05` `F3`, e **`R05` permanecendo um único `Rxx`**; o *binding* passa a declarar
-**`origem` OBRIGATÓRIA e sem valor padrão**, do vocabulário fechado **`YAML`** /
-**`RUNTIME_AUTORITATIVO`**, com **ausência = FAIL-CLOSED**; o vocabulário runtime fica
-fechado em `consulta_calendario_valida` e `data_disponivel`, **somente por `ASSERTIVA`**; a
-tabela de alvos passa a **`MD-1`–`MD-20`**, com **`MD-1` SUPERADO**, **`MD-3`** e **`MD-16`
-REMOVIDOS**, **`MD-18` GENERALIZADO** e **`MD-19`/`MD-20` NOVOS** — **`MD-20` mínimo** —; e
-ficam enumerados os efeitos futuros **`FE-1`–`FE-14`**, com **`FE-11` dividida** em
-**`FE-11a`** e **`FE-11b`**. **Nada disso é aplicado**: **C continua ARBITRADA / NÃO
-MATERIALIZADA**, **S2-D8 continua ARBITRADA / NÃO MATERIALIZADA**, **`N-b-RES2` continua
-ABERTO**, o **`OrquestradorMotor` continua não implementado**, o corpus físico continua com
-**35 fragmentos emitíveis** e **30 `Rxx`**, **nenhum marco funcional novo** é criado e **a
-3B.8 continua não existindo**. **C-A2 não cria condição de ciclo, motivo de `E09`, evento,
-estado nem subetapa**, e **não altera `C-12`**, que **permanece literal**.
+| 20 | **AJ2** — **origem semântica do assunto** de `PerguntaComercial`: de onde vem, e com que garantias, a informação de **sobre o que** o interessado consultou | **ARBITRADA** (§6.3). **AJ2 estende formalmente N-b**: `PerguntaComercial` tem **três** campos — `texto`, `confianca` e **`assunto`** obrigatório, do enum fechado **`AssuntoComercial`** de **54** valores (53 específicos + `ASSUNTO_NAO_CLASSIFICADO`), **sem confiança própria**; **um assunto por item**, com **segmentação** de consulta composta; **preservação textual** sem normalizar, resumir ou parafrasear; **duplicatas permitidas**; e o `assunto` **não atravessa** para a projeção, **não referencia `Rxx`** e **não produz condição** de §4.4 (**N-b-Q7**–**N-b-Q12**). `E-Nb-5` cobre `assunto` ausente ou fora do vocabulário, e a lista permanece **`E-Nb-1`–`E-Nb-19`**. Cenários: **`K-Nb-1`–`K-Nb-51`**. **`Q53`/`Q54` permanecem não classificados** | **contrato resolvido** — §6.3. Fronteiras relacionadas: **N-b** (item 12), de que AJ2 é extensão, e **S2-D8** (item 10), a quem pertence o **consumo** do assunto |
+| 21 | **B** — **colisão de nome `RegistroAtendimento`**: componente de comportamento de §4.1 × dataclass `frozen` de transporte da persistência operacional | **ABERTA** (§4.1.1). Colisão de **categoria**, não de campo nem de assinatura. **Nenhum referente é renomeado ou unificado**, e nada é resolvido silenciosamente. **Não afeta** a persistência operacional de §7.3 nem a fronteira de identidade de §7.1 | arbitragem específica **antes de implementar** o componente `RegistroAtendimento` de §4.1 — §4.1.1 |
 
-**N-b permanece NÃO IMPLEMENTADA.** AJ1 fecha a **representação e a canonicalização** que
-antecedem a materialização — não a materialização. Continua verdadeiro, sem atenuação:
-**não existe produtor concreto de `Interpretacao` em código**, **a etapa 4 não é funcional**,
-**nenhum arquivo de `src/` ou `tests/` foi criado ou alterado** por AJ1, **`§4.1` permanece
-com 14 componentes**, **§2 permanece com nove responsabilidades**, **`IntencaoConversacional`
-permanece com 11 valores**, os **erros permanecem `E-Nb-1`–`E-Nb-19`** e os **cenários
-permanecem `K-Nb-1`–`K-Nb-40` à época de AJ1** — fronteira depois **estendida para
-`K-Nb-1`–`K-Nb-51`** pela micro-arbitragem **AJ2**, posterior (item 20). **Nenhuma subetapa
-foi criada, escolhida ou autorizada — a 3B.8 não existe.**
 
 **Silêncio sob takeover não é decisão comercial nova** (arbitragem R5). Enquanto o canal
 está sob controle humano, o silêncio automático é **consequência do contrato já existente**,
@@ -5646,26 +5214,11 @@ resolução de identidade não produza um referente que contorne o silêncio já
 **E1** permanece aberta para eventual refinamento futuro da fronteira conversa × atendimento
 × lead.
 
-Nenhuma dessas pendências bloqueia especificamente a 3B.6 / `MaquinaEstados`, que já está
-implementada e integrada. **S2-D8** e **E4** bloqueiam o `OrquestradorMotor` e a
-integração completa. **N-b deixou de bloquear como especificação** — está **arbitrada
-documentalmente** (item 12, §6.3): o contrato da `Interpretacao`, a derivação para a projeção
-da etapa 5 e a condição 5 de §4.4 estão fechados. Ela **continua bloqueando como
-implementação**: **nenhum produtor concreto de `Interpretacao` existe em código**, e a
-transformação de sinais interpretados em `Exx` segue como **residual explícito**
-(N-b-RES1–N-b-RES3). **N-a deixou de bloquear como especificação** — está **arbitrada
-documentalmente** — e deixou de existir apenas no papel: sua **materialização é parcial e
-já existe em código**, pelas entregas funcionais posteriores do **transporte e validação do
-marco temporal** (M-T1–M-T6), da **produção determinística de E** (M-E1–M-E6) e da
-**montagem das projeções de identidade da etapa 3** (M-C1–M-C8). **A integração N-a
-continua PARCIAL**: a **decisão** do marco temporal, a **composição decisória entre as 0–3
-chamadas** do ciclo (M-DT1–M-DT7) e a **aplicação com escrita** como fronteira chamável
-(M-AE1–M-AE7) já existem em código, mas a **integração operacional no pipeline** pela
-**etapa 13** permanece pendente — **N-a-T3–N-a-T7 não estão operacionalmente
-concluídas** —, assim como o **valor do limiar temporal** e
-seu **mecanismo de carga** (item 18), o **tratamento operacional dos bloqueios** (S4, S5) e o
-**destino do alerta operacional**. **A etapa 3 não está inteiramente implementada**, a
-**integração completa do pipeline não foi iniciada** e o **`OrquestradorMotor` continua não
-implementado**. **E1** e **E3** permanecem abertas sem bloquear a especificação já arbitrada;
-as demais mantêm os bloqueios indicados na própria tabela.
-**Nenhuma delas é resolvida por esta entrega.**
+**Grafo de dependências.** O **`OrquestradorMotor`** depende de **S2-D8** (item 10), de
+**E4** (item 15), do **produtor não determinístico de `Interpretacao`** de **N-b** (item 12),
+da **configuração do limiar** de **N-a** (item 18), do **tratamento operacional dos bloqueios**
+(S4, S5) e do **destino do alerta** (item 3a). A **`MaquinaEstados` não depende** de nenhuma
+dessas pendências para o seu contrato já definido: ela recebe eventos confirmados e condições
+já estruturadas. **E1** (item 13), **E3** (item 14), **B** (item 21), **S2-D5** e **S2-D7**
+(doc 06 §12) são fronteiras abertas que **não condicionam** a especificação já arbitrada; as
+demais mantêm as dependências indicadas na própria tabela.
