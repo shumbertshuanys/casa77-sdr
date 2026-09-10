@@ -648,11 +648,13 @@ formato `hora`; **C-7**; extração do **rótulo de status**; índice físico; *
 | C-A1-F2 | `simbolo_moeda` | opera sobre uma **tabela fechada** de códigos monetários suportados pelo MVP. A entrada é **somente** o código **explicitamente recebido por *binding*** (C-6c). **Código não suportado → FALHA.** **Nunca inferir moeda** e **nunca ler outro campo implicitamente**. A tabela pertence ao **contrato/implementação do formato**, **não ao índice**. |
 | C-A1-F3 | `hora` | **dois padrões fechados**: `HH:MM` — representação **geral** — e `Hh` — permitido **somente quando os minutos são `00`**. Minutos diferentes de `00` com `Hh` → **FALHA**. **Sem fuso, sem cálculo e sem arredondamento.** |
 | C-A1-F3a | `hora` — **regra mecânica de escolha** | Dentro dos **dois padrões já fechados por `C-A1-F3`**, e **sobre o valor de hora já resolvido**: minutos **`00`** → **`Hh`**; minutos **diferentes de `00`** → **`HH:MM`**. A regra é **total** e **determinística** — para todo valor admissível existe exatamente uma representação. Apresentação **pura** (`C-6`, `C-8`): **não calcula, não arredonda, não converte fuso, não consulta locale e não lê campo adicional**. **`C-A1-F3` permanece literal**: os dois padrões continuam sendo os únicos admissíveis, e **`Hh` continua proibido** com minutos diferentes de `00`. **Nenhum horário concreto é fixado por esta regra** — a escolha depende exclusivamente do valor recebido. |
+| C-A1-F3b | `hora` — dígitos | Em `HH:MM`, `HH` e `MM` têm exatamente dois dígitos ASCII, com zero à esquerda. Em `Hh`, `H` é a hora sem zero à esquerda — um dígito de `0` a `9`, dois de `10` a `23`. Fecha somente a quantidade de dígitos; nenhum horário concreto é fixado. |
 
-**`C-A1-F3a` fecha a lacuna normativa; não materializa o formato.** `formatar_hora` não existe
-em `src/casa77_sdr/response_format.py`, cuja nota sobre a ausência da regra mecânica permanece
-temporariamente defasada até a futura entrega funcional que materializar o formato. Essa
-entrega ainda não foi eleita. `C` não é materializada por esta arbitragem.
+**`C-A1-F3a` e `C-A1-F3b` fecham a matéria normativa do formato `hora`; por si sós, não
+materializam `C`.** Os dois padrões de `C-A1-F3` continuam sendo os únicos admissíveis, a
+escolha entre eles continua determinada pelo minuto recebido e a contagem de dígitos de cada
+um está fechada. Nenhum horário concreto é fixado aqui, e nenhum índice, *placeholder* ou
+consumidor é criado por esta arbitragem.
 
 ##### C-A1-L — Convenção final do formato `lista`
 
