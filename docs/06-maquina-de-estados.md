@@ -927,3 +927,41 @@ ABERTO**, **não implementa o `OrquestradorMotor`**, **não cria o índice
 `knowledge/indice-respostas-aprovadas.yaml`**, **não cria o mapa de grupos de cobertura**,
 **não resolve** `S3-D1`, `E4`, `E1`, `E3`, `B`, `S2-D5` nem `S2-D7`, e **não cria a 3B.8**,
 que **continua não existindo**.
+
+---
+
+## 12. Lacunas abertas da máquina de estados
+
+Lacunas ainda não arbitradas. **Nenhuma é resolvida aqui**, e nenhuma transição, evento,
+estado, precedência, efeito paralelo ou inércia é criado por esta seção.
+
+### `S2-D5` — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16`
+
+A partir desse estado, §3 documenta **somente** `T25` (`E16` → `pronto_para_handoff`) e `T26`
+(`E18` → `pronto_para_handoff`). Uma mensagem **conversacional comum** do interessado não tem
+transição documentada e, por §4.5 — que **não admite fallback genérico** —, seria erro de
+contrato.
+
+**Não está decidido** se o caso exige transição própria ou se permanece, definitivamente,
+erro de contrato.
+
+O estado é hoje **inalcançável** por **`I17`** (§1.1, §8), enquanto a integração de calendário
+estiver pendente: a lacuna é real, mas não atingível em execução.
+
+**Onde se resolve:** **etapa 6**, com a integração de calendário — que é o que torna o estado
+alcançável e o caso exigível. **Não bloqueia** a `MaquinaEstados`.
+
+### `S2-D7` — `E13` recebido de estado diferente de `encaminhado_humano`
+
+`E13` é **evento operacional** e chega em **ciclo próprio, isolado** do ciclo de uma mensagem
+do interessado (§2.2, `I22`). Ele possui **uma única** transição documentada: **`T31`**, de
+`encaminhado_humano` (§3).
+
+Recebido de qualquer outro estado de origem, `E13` cai em **`TransicaoInexistente`** por §4.5.
+**Não está decidido** se esse é o comportamento final correto ou se falta transição.
+
+Hoje **não existe produtor nem interface operacional** capaz de emitir `E13` por outro
+caminho.
+
+**Onde se resolve:** **etapa 5**, com o canal operacional de handoff. **Não bloqueia** a
+`MaquinaEstados`.
