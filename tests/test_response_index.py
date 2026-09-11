@@ -18,6 +18,7 @@ import pytest
 import yaml
 
 from casa77_sdr.response_index import IndiceInvalido, validar_indice
+from casa77_sdr.response_placeholder import PlaceholderInvalido
 from casa77_sdr.response_yaml_path import CaminhoYamlInvalido
 from casa77_sdr.response_yaml_path_context import CaminhoYamlContextoInvalido
 
@@ -1335,7 +1336,10 @@ def test_logica_legada_de_caminho_foi_removida(legado: str) -> None:
 
 
 def test_captura_de_excecao_e_estreita() -> None:
-    """Só as duas exceções nominais de `CY13` são interceptadas."""
+    """Só as exceções nominais das fronteiras compostas são interceptadas.
+
+    São as duas de `CY13` e a de `PH` — nada além delas, e nunca `except` nu.
+    """
     arvore = ast.parse(MODULO.read_text(encoding="utf-8"))
     capturados: set[str] = set()
     for no in ast.walk(arvore):
@@ -1344,7 +1348,11 @@ def test_captura_de_excecao_e_estreita() -> None:
             assert isinstance(no.type, ast.Name)
             capturados.add(no.type.id)
 
-    assert capturados == {"_CaminhoYamlInvalido", "_CaminhoYamlContextoInvalido"}
+    assert capturados == {
+        "_CaminhoYamlInvalido",
+        "_CaminhoYamlContextoInvalido",
+        "_PlaceholderInvalido",
+    }
 
 
 def test_toda_traducao_encadeia_a_causa() -> None:
@@ -1445,3 +1453,228 @@ def test_validacao_nao_altera_a_estrutura_recebida() -> None:
 
     assert validar_indice(corpo) is None
     assert corpo == copia
+
+
+# ---------------------------------------------------------------------------
+# Composição E1 → PH
+#
+# Estes testes provam a INTEGRAÇÃO, não a gramática: a bateria completa de
+# `PH4` vive em `tests/test_response_placeholder.py`, sua única autoridade.
+
+
+def test_renderizado_canonico_continua_valido() -> None:
+    """O par nome/*placeholder* canônico atravessa a composição."""
+    corpo = _com_binding(
+        binding_renderizado(
+            nome="quantidade_exemplo", placeholder="{{quantidade_exemplo}}"
+        )
+    )
+
+    assert validar_indice(corpo) is None
+
+
+@pytest.mark.parametrize(
+    "nome",
+    ["A", "_a", "a_", "a__b", "1a", "a-b", "a.b", "a b", "á", "a٣"],
+)
+def test_nome_renderizado_fora_de_ph4(nome: str) -> None:
+    """`PH4` passa a valer em E1 para `RENDERIZADO`, por delegação."""
+    binding = binding_renderizado(nome=nome, placeholder="{{" + nome + "}}")
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(_com_binding(binding))
+
+    assert categoria_de(erro) == "valor_invalido"
+    assert localizador_de(erro).endswith(".nome")
+
+
+def test_nome_renderizado_subclasse_de_str() -> None:
+    """Tipo exato antes da delegação: a subclasse não entra na fronteira `PH`."""
+
+    class _StrDerivada(str):
+        pass
+
+    nome = _StrDerivada("quantidade_exemplo")
+    binding = binding_renderizado(
+        nome=nome, placeholder="{{quantidade_exemplo}}"
+    )
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(_com_binding(binding))
+
+    assert categoria_de(erro) == "tipo_invalido"
+    assert localizador_de(erro).endswith(".nome")
+
+
+def test_placeholder_de_outro_nome() -> None:
+    """`PH3b`: o campo explícito precisa derivar do nome deste *binding*."""
+    binding = binding_renderizado(
+        nome="quantidade_exemplo", placeholder="{{outro_nome}}"
+    )
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(_com_binding(binding))
+
+    assert categoria_de(erro) == "valor_invalido"
+    assert localizador_de(erro).endswith(".placeholder")
+
+
+@pytest.mark.parametrize(
+    "placeholder",
+    [
+        "{quantidade_exemplo}",
+        "{{ quantidade_exemplo }}",
+        "{{quantidade_exemplo}",
+        "quantidade_exemplo",
+        "{{QUANTIDADE_EXEMPLO}}",
+        "{{quantidade_exemplo}}}",
+        " {{quantidade_exemplo}}",
+        "{{quantidade_exemplo}} ",
+    ],
+)
+def test_placeholder_em_forma_nao_canonica(placeholder: str) -> None:
+    """E1 não sabe *por que* não é canônico: sabe que difere do derivado."""
+    binding = binding_renderizado(placeholder=placeholder)
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(_com_binding(binding))
+
+    assert categoria_de(erro) == "valor_invalido"
+    assert localizador_de(erro).endswith(".placeholder")
+
+
+def test_assertiva_com_nome_fora_de_ph4_continua_valida() -> None:
+    """`PH4` alcança somente `RENDERIZADO`; `C-5` permanece inalterada."""
+    corpo = _com_binding(binding_assertiva(nome="Condicao-Livre"))
+
+    assert validar_indice(corpo) is None
+
+
+@pytest.mark.parametrize("nome", ["Condicao-Livre", "A", "_a", "a__b", "1a"])
+def test_assertiva_nao_e_julgada_por_ph4(nome: str) -> None:
+    assert validar_indice(_com_binding(binding_assertiva(nome=nome))) is None
+
+
+def test_excecao_de_ph_nao_atravessa_a_api_publica() -> None:
+    """`PlaceholderInvalido` é traduzida, e a causa técnica é encadeada."""
+    binding = binding_renderizado(nome="Nome-Invalido", placeholder="{{x}}")
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(_com_binding(binding))
+
+    assert not isinstance(erro.value, PlaceholderInvalido)
+    assert isinstance(erro.value.__cause__, PlaceholderInvalido)
+
+
+def test_modulo_importa_a_fronteira_de_placeholder() -> None:
+    """E1 compõe `PH` — a única autoridade da gramática de nome e forma."""
+    importados = _importados_do_modulo()
+
+    assert "casa77_sdr.response_placeholder" in importados
+    assert "derivar_placeholder" in importados
+    assert "PlaceholderInvalido" in importados
+
+
+def test_modulo_nao_chama_o_decompositor_de_template() -> None:
+    """E1 não possui *template*, e não finge possuir."""
+    assert "decompor_template" not in _importados_do_modulo()
+    assert "decompor_template" not in _identificadores_do_modulo()
+
+
+def test_nome_renderizado_nao_executa_hash_de_subclasse() -> None:
+    """O gate de tipo exato precede a unicidade, que usa `set`.
+
+    Se a recusa dependesse de `nome in nomes_vistos`, o `__hash__` redefinido
+    executaria antes — e a entrada controlaria o fluxo de E1.
+    """
+
+    class _NomeComHashExplosivo(str):
+        def __hash__(self) -> int:
+            raise AssertionError("nao_deveria_executar")
+
+    binding = binding_renderizado(
+        nome=_NomeComHashExplosivo("quantidade_exemplo"),
+        placeholder="{{quantidade_exemplo}}",
+    )
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(_com_binding(binding))
+
+    assert categoria_de(erro) == "tipo_invalido"
+    assert localizador_de(erro).endswith(".nome")
+
+
+def test_placeholder_nao_controla_a_propria_comparacao() -> None:
+    """A comparação usa a semântica base de `str`, não o operador do objeto.
+
+    A subclasse tenta afirmar que `{{outro_nome}}` é igual ao canônico, e
+    explodir se for comparada por desigualdade. Nenhuma das duas coisas pode
+    influenciar E1.
+    """
+
+    class _PlaceholderMentiroso(str):
+        def __eq__(self, outro: object) -> bool:
+            return True
+
+        def __ne__(self, outro: object) -> bool:
+            raise AssertionError("nao_deveria_executar")
+
+        def __hash__(self) -> int:
+            return 0
+
+    binding = binding_renderizado(
+        nome="quantidade_exemplo",
+        placeholder=_PlaceholderMentiroso("{{outro_nome}}"),
+    )
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(_com_binding(binding))
+
+    assert categoria_de(erro) == "valor_invalido"
+    assert localizador_de(erro).endswith(".placeholder")
+
+
+def test_nome_renderizado_nao_executa_len_de_subclasse() -> None:
+    """O teste de vazio usa `str.__len__`, não o `__len__` do objeto.
+
+    O conteúdo é válido e não vazio: a recusa vem do gate de tipo exato de
+    `RENDERIZADO`, e o `__len__` redefinido nunca chega a executar.
+    """
+
+    class _NomeComLenExplosivo(str):
+        def __len__(self) -> int:
+            raise AssertionError("nao_deveria_executar")
+
+    binding = binding_renderizado(
+        nome=_NomeComLenExplosivo("quantidade_exemplo"),
+        placeholder="{{quantidade_exemplo}}",
+    )
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(_com_binding(binding))
+
+    assert categoria_de(erro) == "tipo_invalido"
+    assert localizador_de(erro).endswith(".nome")
+
+
+def test_placeholder_nao_executa_len_de_subclasse() -> None:
+    """O teste de vazio do *placeholder* também usa a semântica base.
+
+    O conteúdo é não vazio e não canônico: a recusa vem da comparação literal,
+    e o `__len__` redefinido nunca chega a executar.
+    """
+
+    class _PlaceholderComLenExplosivo(str):
+        def __len__(self) -> int:
+            raise AssertionError("nao_deveria_executar")
+
+    binding = binding_renderizado(
+        nome="quantidade_exemplo",
+        placeholder=_PlaceholderComLenExplosivo("{{outro_nome}}"),
+    )
+
+    with pytest.raises(IndiceInvalido) as erro:
+        validar_indice(_com_binding(binding))
+
+    assert categoria_de(erro) == "valor_invalido"
+    assert localizador_de(erro).endswith(".placeholder")
