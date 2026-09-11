@@ -11,8 +11,10 @@ I/O, de *locale* e de dependência interna — são provadas sobre a **AST**,
 seguindo o precedente de `test_response_index.py`, `test_response_index_load.py`
 e `test_response_equivalence.py`.
 
-O formato `hora` **não é exercitado**: ele não existe nesta fronteira, e há
-teste explícito de que continua inexistente.
+O formato `hora` é exercitado sobre o **domínio canônico inteiro** — os 1440
+valores `HH:MM` gerados programaticamente —, e também esses são sintéticos:
+nenhum deles vem de horário de funcionamento, de janela de visita ou de
+qualquer campo de `knowledge/**`.
 """
 
 from __future__ import annotations
@@ -26,12 +28,18 @@ import pytest
 
 from casa77_sdr.response_format import (
     FormatoInaplicavel,
+    formatar_hora,
     formatar_inteiro,
     formatar_inteiro_agrupado,
     formatar_lista,
     formatar_simbolo_moeda,
     formatar_texto,
 )
+
+# C-A1-F3b: domínio canônico completo, montado aqui e não lido de lugar algum.
+HORAS_CANONICAS = [
+    f"{hora:02d}:{minuto:02d}" for hora in range(24) for minuto in range(60)
+]
 
 RAIZ = Path(__file__).resolve().parents[1]
 MODULO = RAIZ / "src" / "casa77_sdr" / "response_format.py"
@@ -753,6 +761,8 @@ def test_vocabulario_de_categorias_e_fechado() -> None:
 
     for chamada in (
         lambda: formatar_inteiro("7"),  # type: ignore[arg-type]
+        lambda: formatar_hora(None),  # type: ignore[arg-type]
+        lambda: formatar_hora("24:00"),
         lambda: formatar_simbolo_moeda("USD"),
         lambda: formatar_lista([]),
         lambda: formatar_lista(["alfa", 7]),  # type: ignore[list-item]
@@ -770,6 +780,7 @@ def test_vocabulario_de_localizadores_e_fechado() -> None:
     for chamada in (
         lambda: formatar_inteiro(None),  # type: ignore[arg-type]
         lambda: formatar_texto(None),  # type: ignore[arg-type]
+        lambda: formatar_hora("24:00"),
         lambda: formatar_simbolo_moeda("USD"),
         lambda: formatar_lista([]),
         lambda: formatar_lista(["alfa", 7]),  # type: ignore[list-item]
@@ -787,6 +798,7 @@ def test_vocabulario_de_localizadores_e_fechado() -> None:
         lambda: formatar_inteiro(SENTINELA),
         lambda: formatar_inteiro_agrupado(SENTINELA),
         lambda: formatar_simbolo_moeda(SENTINELA),
+        lambda: formatar_hora(SENTINELA),
         lambda: formatar_texto(object()),
         lambda: formatar_lista(SENTINELA),
         lambda: formatar_lista([SENTINELA, 7]),
@@ -870,15 +882,16 @@ def test_all_exato() -> None:
         "formatar_inteiro",
         "formatar_inteiro_agrupado",
         "formatar_simbolo_moeda",
+        "formatar_hora",
         "formatar_texto",
         "formatar_lista",
     ]
 
 
-def test_all_tem_seis_nomes() -> None:
+def test_all_tem_sete_nomes() -> None:
     from casa77_sdr import response_format
 
-    assert len(response_format.__all__) == 6
+    assert len(response_format.__all__) == 7
 
 
 @pytest.mark.parametrize(
@@ -887,6 +900,7 @@ def test_all_tem_seis_nomes() -> None:
         (formatar_inteiro, "valor"),
         (formatar_inteiro_agrupado, "valor"),
         (formatar_simbolo_moeda, "codigo"),
+        (formatar_hora, "valor"),
         (formatar_texto, "valor"),
         (formatar_lista, "itens"),
     ],
@@ -904,6 +918,7 @@ def test_assinatura_tem_um_parametro_sem_default(funcao: object, parametro: str)
         formatar_inteiro,
         formatar_inteiro_agrupado,
         formatar_simbolo_moeda,
+        formatar_hora,
         formatar_texto,
         formatar_lista,
     ],
@@ -926,38 +941,307 @@ def test_init_nao_exporta_os_formatadores() -> None:
         "formatar_inteiro",
         "formatar_inteiro_agrupado",
         "formatar_simbolo_moeda",
+        "formatar_hora",
         "formatar_texto",
         "formatar_lista",
     ):
         assert nome not in codigo
 
 
-# 9. `hora` não existe nesta fronteira
+# 9. `hora`
 
 
-def test_formato_hora_nao_foi_implementado() -> None:
-    """C-6d fica fora: a escolha entre `HH:MM` e `Hh` não está arbitrada."""
-    from casa77_sdr import response_format
+@pytest.mark.parametrize(
+    ("valor", "esperado"),
+    [
+        ("00:00", "0h"),
+        ("01:00", "1h"),
+        ("09:00", "9h"),
+        ("10:00", "10h"),
+        ("23:00", "23h"),
+    ],
+)
+def test_minuto_redondo_vira_hora_com_sufixo(valor: str, esperado: str) -> None:
+    """C-A1-F3a escolhe `Hh`; C-A1-F3b tira o zero à esquerda da hora."""
+    assert formatar_hora(valor) == esperado
 
-    assert not hasattr(response_format, "formatar_hora")
-    assert "formatar_hora" not in response_format.__all__
+
+def test_hora_zero_nao_ganha_zero_a_esquerda() -> None:
+    """C-A1-F3b: a hora zero é `0h`, e não `00h`."""
+    assert formatar_hora("00:00") == "0h"
+    assert formatar_hora("00:00") != "00h"
 
 
-def test_modulo_nao_tem_helper_de_hora() -> None:
-    nomes = {
-        no.name
-        for no in ast.walk(arvore_do_modulo())
-        if isinstance(no, (ast.FunctionDef, ast.ClassDef))
+def test_hora_de_um_digito_nao_ganha_zero_a_esquerda() -> None:
+    for valor, esperado in (("01:00", "1h"), ("05:00", "5h"), ("09:00", "9h")):
+        assert formatar_hora(valor) == esperado
+
+
+def test_hora_de_dois_digitos_mantem_os_dois() -> None:
+    for valor, esperado in (("10:00", "10h"), ("19:00", "19h"), ("23:00", "23h")):
+        assert formatar_hora(valor) == esperado
+
+
+@pytest.mark.parametrize("valor", ["00:01", "09:05", "13:10", "13:30", "23:59"])
+def test_minuto_nao_redondo_preserva_o_canonico(valor: str) -> None:
+    assert formatar_hora(valor) == valor
+
+
+def test_zero_a_esquerda_e_preservado_no_ramo_canonico() -> None:
+    """C-A1-F3b: em `HH:MM` os dois dígitos permanecem, hora e minuto."""
+    assert formatar_hora("00:01") == "00:01"
+    assert formatar_hora("09:05") == "09:05"
+
+
+def test_hora_devolve_str() -> None:
+    assert isinstance(formatar_hora("00:00"), str)
+    assert isinstance(formatar_hora("13:30"), str)
+
+
+# 9.1 Domínio canônico completo — os 1440 valores
+
+
+def test_dominio_canonico_tem_1440_valores() -> None:
+    assert len(HORAS_CANONICAS) == 24 * 60 == 1440
+    assert len(set(HORAS_CANONICAS)) == 1440
+
+
+def test_dominio_canonico_e_integralmente_aceito() -> None:
+    for valor in HORAS_CANONICAS:
+        assert isinstance(formatar_hora(valor), str)
+
+
+def test_exatamente_24_valores_entram_no_ramo_com_sufixo() -> None:
+    no_sufixo = [
+        valor for valor in HORAS_CANONICAS if formatar_hora(valor).endswith("h")
+    ]
+
+    assert len(no_sufixo) == 24
+    assert {formatar_hora(valor) for valor in no_sufixo} == {
+        f"{hora}h" for hora in range(24)
     }
 
-    for proibido in ("formatar_hora", "_formatar_hora", "_hora", "_minutos"):
-        assert proibido not in nomes
+
+def test_todos_os_demais_preservam_o_canonico() -> None:
+    for valor in HORAS_CANONICAS:
+        if valor[3:] != "00":
+            assert formatar_hora(valor) == valor
 
 
-def test_modulo_nao_declara_padrao_de_hora() -> None:
+def test_o_dominio_canonico_nao_colide() -> None:
+    """A regra é total e injetiva: 1440 entradas, 1440 saídas distintas."""
+    saidas = [formatar_hora(valor) for valor in HORAS_CANONICAS]
+
+    assert len(set(saidas)) == 1440
+
+
+def test_os_dois_ramos_nao_se_misturam() -> None:
+    com_sufixo = {formatar_hora(v) for v in HORAS_CANONICAS if v[3:] == "00"}
+    canonicos = {formatar_hora(v) for v in HORAS_CANONICAS if v[3:] != "00"}
+
+    assert com_sufixo & canonicos == set()
+    assert len(com_sufixo) == 24
+    assert len(canonicos) == 1416
+
+
+# 9.2 Fail-closed: nada é normalizado nem reparado
+
+
+HORAS_INVALIDAS = [
+    "9:30",
+    "13h",
+    "13h30",
+    "1330",
+    "13.30",
+    "13-30",
+    "24:00",
+    "25:00",
+    "99:99",
+    "13:60",
+    "13:99",
+    "-1:00",
+    "13:0",
+    "013:00",
+    "13:000",
+    "",
+    ":",
+    "13:",
+    ":30",
+    " 13:30",
+    "13:30 ",
+    "\t13:30",
+    "13:30\n",
+    "13 30",
+    "13:30:00",
+    "13:30:00.000",
+    "13:30Z",
+    "13:30+00:00",
+    "1\uff13:30",
+    "\u0661\u0663:\u0663\u0660",
+    "13\uff1a30",
+    "13\u02d030",
+    "pendente",
+    "null",
+    "None",
+    "meio-dia",
+]
+
+
+@pytest.mark.parametrize("valor", HORAS_INVALIDAS)
+def test_hora_fora_da_forma_canonica_e_recusada(valor: str) -> None:
+    with pytest.raises(FormatoInaplicavel) as erro:
+        formatar_hora(valor)
+
+    assert categoria_de(erro) == "valor_invalido"
+    assert localizador_de(erro) == "valor"
+
+
+def test_hora_invalida_nao_e_reparada() -> None:
+    """`9:30` não vira `09:30`, e `1330` não vira `13:30`: ambos falham."""
+    for valor in ("9:30", "1330"):
+        with pytest.raises(FormatoInaplicavel):
+            formatar_hora(valor)
+
+
+def test_borda_de_hora_e_de_minuto() -> None:
+    assert formatar_hora("23:59") == "23:59"
+    assert formatar_hora("23:00") == "23h"
+    with pytest.raises(FormatoInaplicavel):
+        formatar_hora("24:00")
+    with pytest.raises(FormatoInaplicavel):
+        formatar_hora("23:60")
+
+
+# 9.3 Tipos: zero coerção
+
+
+class HoraSintetica:
+    """Objeto temporal sintético: parece hora, e mesmo assim é recusado."""
+
+    hour = 13
+    minute = 30
+
+    def __str__(self) -> str:
+        return "13:30"
+
+
+@pytest.mark.parametrize("valor", NAO_TEXTOS)
+def test_hora_recusa_nao_str(valor: object) -> None:
+    with pytest.raises(FormatoInaplicavel) as erro:
+        formatar_hora(valor)  # type: ignore[arg-type]
+
+    assert categoria_de(erro) == "tipo_invalido"
+    assert localizador_de(erro) == "valor"
+
+
+def test_hora_recusa_objeto_temporal_sintetico() -> None:
+    """Não há `str(valor)`: o que não é `str` não é convertido."""
+    with pytest.raises(FormatoInaplicavel) as erro:
+        formatar_hora(HoraSintetica())  # type: ignore[arg-type]
+
+    assert str(erro.value) == "tipo_invalido: valor"
+
+
+@pytest.mark.parametrize("valor", [True, False, 0, 1330, 13.30, b"13:30"])
+def test_hora_recusa_tipo_numerico_ou_bytes(valor: object) -> None:
+    with pytest.raises(FormatoInaplicavel) as erro:
+        formatar_hora(valor)  # type: ignore[arg-type]
+
+    assert categoria_de(erro) == "tipo_invalido"
+
+
+# 9.4 Segurança da exceção de `hora`
+
+
+def test_mensagem_de_hora_invalida_e_exata() -> None:
+    with pytest.raises(FormatoInaplicavel) as erro:
+        formatar_hora("24:00")
+
+    assert str(erro.value) == "valor_invalido: valor"
+
+
+def test_mensagem_de_hora_de_tipo_invalido_e_exata() -> None:
+    with pytest.raises(FormatoInaplicavel) as erro:
+        formatar_hora(None)  # type: ignore[arg-type]
+
+    assert str(erro.value) == "tipo_invalido: valor"
+
+
+@pytest.mark.parametrize("valor", ["24:00", "13:60", "99:99", "1330"])
+def test_mensagem_de_hora_nao_ecoa_digito_nem_posicao(valor: str) -> None:
+    with pytest.raises(FormatoInaplicavel) as erro:
+        formatar_hora(valor)
+
+    mensagem = str(erro.value)
+
+    assert not any(caractere.isdigit() for caractere in mensagem)
+    assert valor not in mensagem
+    assert "posicao" not in mensagem and "posição" not in mensagem
+
+
+def test_mensagem_de_hora_nao_ecoa_texto_recebido() -> None:
+    with pytest.raises(FormatoInaplicavel) as erro:
+        formatar_hora(SENTINELA)
+
+    assert SENTINELA not in str(erro.value)
+
+
+def test_excecao_de_hora_sem_cause_nem_contexto() -> None:
+    with pytest.raises(FormatoInaplicavel) as erro:
+        formatar_hora("24:00")
+
+    assert erro.value.__cause__ is None
+    assert erro.value.__context__ is None
+
+
+# 9.5 Pureza específica de `hora`
+
+
+def test_hora_nao_delega_a_padrao_temporal() -> None:
+    """A forma canônica é verificada aqui, e não por biblioteca de data/hora."""
     codigo = MODULO.read_text(encoding="utf-8")
 
-    for proibido in ('"HH:MM"', "'HH:MM'", '"Hh"', "'Hh'", '"%H'):
+    for proibido in ("%H", "%M", "strftime", "strptime", "fromisoformat", "isoformat"):
+        assert proibido not in codigo
+
+
+def test_hora_nao_converte_nem_particiona() -> None:
+    """`int` sobrevive na anotação de `formatar_inteiro`; chamada, nenhuma."""
+    chamados: set[str] = set()
+    for no in ast.walk(arvore_do_modulo()):
+        if isinstance(no, ast.Call):
+            if isinstance(no.func, ast.Name):
+                chamados.add(no.func.id)
+            elif isinstance(no.func, ast.Attribute):
+                chamados.add(no.func.attr)
+
+    proibidos = {
+        "int",
+        "float",
+        "ord",
+        "chr",
+        "isdigit",
+        "isdecimal",
+        "isnumeric",
+        "split",
+        "rsplit",
+        "partition",
+        "strip",
+        "lstrip",
+        "rstrip",
+    }
+
+    assert chamados & proibidos == set()
+
+    temporais = {"datetime", "date", "time", "timezone", "tzinfo"}
+    assert temporais & identificadores_do_codigo() == set()
+
+
+def test_hora_nao_consulta_fonte_externa() -> None:
+    """Nenhum fuso, nenhum relógio, nenhum campo adicional."""
+    codigo = MODULO.read_text(encoding="utf-8")
+
+    for proibido in ("now(", "utcnow", "timezone", "tzinfo", "astimezone", "monotonic"):
         assert proibido not in codigo
 
 
@@ -1126,7 +1410,7 @@ def test_modulo_tem_uma_unica_classe_publica() -> None:
     assert classes == ["FormatoInaplicavel"]
 
 
-def test_modulo_expoe_exatamente_as_cinco_funcoes_publicas() -> None:
+def test_modulo_expoe_exatamente_as_seis_funcoes_publicas() -> None:
     publicas = [
         no.name
         for no in ast.walk(arvore_do_modulo())
@@ -1137,6 +1421,7 @@ def test_modulo_expoe_exatamente_as_cinco_funcoes_publicas() -> None:
         "formatar_inteiro",
         "formatar_inteiro_agrupado",
         "formatar_simbolo_moeda",
+        "formatar_hora",
         "formatar_texto",
         "formatar_lista",
     ]

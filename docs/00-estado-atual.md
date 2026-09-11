@@ -31,11 +31,12 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-**PR #137** — commit funcional `3b8c59d33c59120701c52073bfd5984c76cea9fc`.
+Commit funcional `8d8ba299977d24d3e92936d7fe3f6fc1169ed6fe`.
 
-Integração das **linhas 1 e 2 de `CY13` a `E1`** (`src/casa77_sdr/response_index.py`), que
-deixou de manter autoridade própria sobre `caminho_yaml` e passou a delegar. A **linha 3**
-permanece materializada como **fronteira isolada**, não integrada a `E1`.
+Materialização de **`formatar_hora`** (`src/casa77_sdr/response_format.py`), sexto e último
+formato do vocabulário de **`C-6`**, sob os contratos **`C-6d`**, **`C-A1-F3`**, **`C-A1-F3a`**
+e **`C-A1-F3b`**. Permanece **fronteira isolada**: não integrada a índice, *renderer* nem
+consumidor.
 
 ---
 
@@ -45,7 +46,7 @@ permanece materializada como **fronteira isolada**, não integrada a `E1`.
 execução desta atualização:
 
 - Python **3.14.5**;
-- **`5262 passed`**, sob **`-W error`**;
+- **`5442 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings.
 
 CI configurada em GitHub Actions, em `.github/workflows/ci.yml`, com Python **3.13** e **3.14**.
@@ -69,9 +70,9 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   - **linha 3** — resolver factual (`src/casa77_sdr/response_yaml_resolve.py`): materializada
     como **fronteira isolada**, **não integrada** a `E1`. `E1` não recebe raiz factual e não lê
     `knowledge/casa77.yaml`.
-- Formato **`hora`**: regra mecânica **arbitrada** (`docs/07` §2.3, `C-A1-F3a`), mas
-  **materialização funcional ausente** — `formatar_hora` ainda não existe em
-  `src/casa77_sdr/response_format.py`.
+- Formato **`hora`**: regra mecânica **arbitrada** (`C-A1-F3a`), contagem de dígitos fechada
+  (`C-A1-F3b`) e **`formatar_hora` materializado** em `src/casa77_sdr/response_format.py`,
+  como **fronteira isolada**. **`C` continua NÃO materializada integralmente.**
 - **`C-7`** ainda **não materializada** e não reaberta.
 - **Sintaxe física de *placeholder*** continua **aberta**.
 - **`C-A1-ST6`–`C-A1-ST10`** continuam **não satisfeitas** integralmente.
@@ -139,5 +140,5 @@ eventos confirmados e condições já estruturadas.
 
 ## 7. Próxima ação
 
-A migração de governança v2 continua sob o próximo mandato do GPT. Nenhuma nova microentrega
-funcional de `C` é eleita por esta entrega.
+A migração de governança v2 está **concluída** com o piloto funcional desta entrega. A
+próxima microentrega funcional do bloco `C` será eleita por novo mandato do GPT.

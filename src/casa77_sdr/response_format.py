@@ -1,15 +1,16 @@
 """Formatadores determinísticos dos formatos de apresentação pura de `C-6`.
 
-Este módulo materializa **cinco** dos formatos do vocabulário fechado de `C-6`:
-`inteiro` (C-6a), `inteiro_agrupado` (C-6b), `simbolo_moeda` (C-6c), `texto`
-(C-6e) e `lista` (C-6f). Cada um é uma função **pura**: recebe um valor já
-resolvido, devolve a sua **representação de apresentação** e nada mais.
+Este módulo materializa os **seis** formatos do vocabulário fechado de `C-6`:
+`inteiro` (C-6a), `inteiro_agrupado` (C-6b), `simbolo_moeda` (C-6c), `hora`
+(C-6d), `texto` (C-6e) e `lista` (C-6f). Cada um é uma função **pura**: recebe
+um valor já resolvido, devolve a sua **representação de apresentação** e nada
+mais.
 
-O formato `hora` (C-6d) **NÃO é implementado aqui**. `C-A1-F3` fixa dois padrões
-fechados — `HH:MM` e `Hh`, este último somente com minutos `00` —, mas **não
-existe regra arbitrada** que escolha mecanicamente entre eles a partir do valor.
-Escolher seria arbitrar, e arbitrar não é formatar: o formato fica **fora desta
-fronteira** até que a lacuna seja fechada.
+O formato `hora` tem **dois padrões fechados** (C-A1-F3) e a escolha entre eles
+é **mecânica** (C-A1-F3a): minutos `00` produzem `Hh`, e minutos diferentes de
+`00` preservam `HH:MM`. A contagem de dígitos de cada padrão é fechada por
+`C-A1-F3b`: em `HH:MM`, hora e minuto têm **dois** dígitos ASCII; em `Hh`, a
+hora vai **sem zero à esquerda**.
 
 **Apresentação pura, sem dependência oculta** (C-6, C-8). Nenhum formatador
 calcula, arredonda, resume, parafraseia, recorta, infere, consulta *locale*,
@@ -37,6 +38,7 @@ __all__ = [
     "formatar_inteiro",
     "formatar_inteiro_agrupado",
     "formatar_simbolo_moeda",
+    "formatar_hora",
     "formatar_texto",
     "formatar_lista",
 ]
@@ -77,6 +79,20 @@ _CONJUNCAO = " e "
 # C-A1-F2 / C-A4-F2d: tabela fechada, do tamanho exato do contrato atual, e
 # **nao ampliada** aqui. Pertence a implementacao do formato, nunca ao indice.
 _SIMBOLO_POR_CODIGO = {"BRL": "R$"}
+
+# C-A1-F3, C-A1-F3a e C-A1-F3b: forma canonica da entrada e os dois padroes de
+# saida. Sao constantes de apresentacao - nenhuma delas e horario real.
+_DIGITOS_ASCII = "0123456789"
+_LARGURA_CANONICA = 5
+_POSICAO_DO_SEPARADOR = 2
+_FATIA_DA_HORA = slice(0, 2)
+_FATIA_DO_MINUTO = slice(3, 5)
+_SEPARADOR_DE_HORA = ":"
+_MAIOR_HORA = "23"
+_MAIOR_MINUTO = "59"
+_MINUTO_REDONDO = "00"
+_ZERO_A_ESQUERDA = "0"
+_SUFIXO_DE_HORA = "h"
 
 
 def formatar_inteiro(valor: int) -> str:
@@ -135,6 +151,42 @@ def formatar_simbolo_moeda(codigo: str) -> str:
         raise _inaplicavel(_VALOR_INVALIDO, _CODIGO)
 
     return _SIMBOLO_POR_CODIGO[codigo]
+
+
+def formatar_hora(valor: str) -> str:
+    """A hora recebida, em um dos **dois** padrões fechados (C-6d, C-A1-F3).
+
+    Aceita **somente** a `str` canônica `HH:MM` — cinco caracteres, dígitos
+    ASCII, `HH` de `00` a `23`, `MM` de `00` a `59`, `:` na terceira posição e
+    zero à esquerda obrigatório. Nada é normalizado, reparado, completado ou
+    coagido: o que chega fora dessa forma **falha**.
+
+    A escolha do padrão é mecânica e total (C-A1-F3a): minutos `00` produzem
+    `Hh` — a hora **sem zero à esquerda**, seguida de `h` (C-A1-F3b) —, e
+    qualquer outro minuto devolve a `str` canônica **inalterada**. Não há
+    cálculo, arredondamento, conversão de fuso, *locale* nem leitura de campo
+    adicional.
+    """
+    if not isinstance(valor, str):
+        raise _inaplicavel(_TIPO_INVALIDO, _VALOR)
+    if len(valor) != _LARGURA_CANONICA:
+        raise _inaplicavel(_VALOR_INVALIDO, _VALOR)
+    if valor[_POSICAO_DO_SEPARADOR] != _SEPARADOR_DE_HORA:
+        raise _inaplicavel(_VALOR_INVALIDO, _VALOR)
+
+    hora = valor[_FATIA_DA_HORA]
+    minutos = valor[_FATIA_DO_MINUTO]
+    for digito in hora + minutos:
+        if digito not in _DIGITOS_ASCII:
+            raise _inaplicavel(_VALOR_INVALIDO, _VALOR)
+    if hora > _MAIOR_HORA or minutos > _MAIOR_MINUTO:
+        raise _inaplicavel(_VALOR_INVALIDO, _VALOR)
+
+    if minutos != _MINUTO_REDONDO:
+        return valor
+    if hora[0] == _ZERO_A_ESQUERDA:
+        return hora[1] + _SUFIXO_DE_HORA
+    return hora + _SUFIXO_DE_HORA
 
 
 def formatar_texto(valor: str) -> str:
