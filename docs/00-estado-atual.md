@@ -31,18 +31,18 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-Commit funcional `79de85dcea0f7cad9c00d4fff050de97dd494271`.
+Commit funcional `8ec54f825b9bca16090a7738908299631c5ddcfa`.
 
-Arbitragem e materialização da **sintaxe física canônica de *placeholder***
-(`src/casa77_sdr/response_placeholder.py`). A forma canônica é **`{{nome}}`**;
-`binding.placeholder` **continua explícito e obrigatório**. `derivar_placeholder()` valida o
-nome do *binding* `RENDERIZADO` e produz a representação canônica; `decompor_template()` valida
-o *template*, decompõe-no em literais e nomes e confere a correspondência com os nomes dos
-*bindings*. Um mesmo *binding* pode abastecer **múltiplas ocorrências** do mesmo *placeholder*.
-**Zero normalização**, e falha é ***fail-closed***.
+**Integração da gramática canônica de *placeholder* ao validador estrutural `E1`**
+(`src/casa77_sdr/response_index.py`). O nome de *binding* `RENDERIZADO` passa a ser validado
+pela gramática de *placeholder*, por delegação a `derivar_placeholder()` — `E1` **não** mantém
+gramática paralela. `binding.placeholder` permanece **explícito e obrigatório** e precisa ser
+**literalmente igual** ao valor derivado do nome. `PlaceholderInvalido` **não atravessa a API
+pública** de `E1`: é traduzida para `IndiceInvalido`, com a causa técnica encadeada.
 
-Permanece **fronteira isolada**: **ainda não integrada ao `E1`**, e não cria *renderer* nem
-índice físico. **Não materializa `C` integralmente.**
+`ASSERTIVA` permanece **fora** dessa gramática, sob o contrato vigente. `E1` **não possui
+*template*** e por isso **não chama `decompor_template()`**. **Não materializa `C`
+integralmente.**
 
 ---
 
@@ -52,7 +52,7 @@ Permanece **fronteira isolada**: **ainda não integrada ao `E1`**, e não cria *
 execução desta atualização:
 
 - Python **3.14.5**;
-- **`5734 passed`**, sob **`-W error`**;
+- **`5768 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings.
 
 CI configurada em GitHub Actions, em `.github/workflows/ci.yml`, com Python **3.13** e **3.14**.
@@ -85,11 +85,14 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   necessário**, e a **consequência sobre fragmento que se pretende `APROVADO`**, permanecem
   dependentes de **consumidor futuro**. Portanto **`C-7` não está materializada end-to-end** e
   **`C` continua NÃO materializada integralmente**. O contrato de `C-7` não foi reaberto.
-- **Sintaxe física de *placeholder***: **arbitrada e materializada isoladamente**. A forma
-  canônica é **`{{nome}}`**; `binding.placeholder` permanece **explícito** e deve corresponder
-  **mecanicamente** ao nome do *binding* `RENDERIZADO`. A fronteira
-  `src/casa77_sdr/response_placeholder.py` deriva e decompõe essa representação. **A integração
-  ao `E1` permanece pendente.**
+- **Sintaxe física de *placeholder***: **arbitrada**, com a forma canônica **`{{nome}}`**, e a
+  fronteira `src/casa77_sdr/response_placeholder.py` **materializada**. A **integração
+  estrutural ao `E1` está materializada**: `E1` exige essa gramática para o **nome** de
+  *binding* `RENDERIZADO` e exige **correspondência literal** entre `binding.placeholder` e o
+  *placeholder* derivado do nome, sem manter gramática paralela. `ASSERTIVA` **não** recebe essa
+  gramática. A integração prova **canonicidade de nome e do campo explícito**, e **não** prova
+  ocorrência nem cardinalidade no *template*: `E1` não recebe *template*, e
+  `decompor_template()` **ainda não tem consumidor**.
 - **`C-A1-ST6`–`C-A1-ST10`** continuam **não satisfeitas** integralmente.
 
 Existem fronteiras determinísticas já materializadas em torno de `C` — validador estrutural,
@@ -155,6 +158,5 @@ eventos confirmados e condições já estruturadas.
 
 ## 7. Próxima ação
 
-Próxima ação eleita, **ainda não iniciada**: integrar a gramática canônica de *placeholder* ao
-validador estrutural **`E1`**, exigindo a gramática de nome para *bindings* `RENDERIZADO` e
-**igualdade literal** entre `binding.placeholder` e `derivar_placeholder(binding.nome)`.
+A integração estrutural da gramática de *placeholder* ao **`E1`** está **concluída** nesta
+entrega. A próxima microentrega funcional do bloco `C` será eleita por novo mandato do GPT.
