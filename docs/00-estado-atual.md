@@ -31,12 +31,16 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-Commit funcional `8d8ba299977d24d3e92936d7fe3f6fc1169ed6fe`.
+Commit funcional `5a2991ede55fc1d24cb387a1c28afd58dc0cec15`.
 
-Materialização de **`formatar_hora`** (`src/casa77_sdr/response_format.py`), sexto e último
-formato do vocabulário de **`C-6`**, sob os contratos **`C-6d`**, **`C-A1-F3`**, **`C-A1-F3a`**
-e **`C-A1-F3b`**. Permanece **fronteira isolada**: não integrada a índice, *renderer* nem
-consumidor.
+Materialização da **fronteira determinística de reconhecimento e recusa do valor terminal de
+`C-7`** (`src/casa77_sdr/response_null_pending.py`). A fronteira recebe o **valor terminal já
+resolvido** pelo chamador e recusa exatamente duas formas: `null` e o `dict` **exato** cuja
+chave literal `status` tem por valor a `str` **exata** `pendente`. Todos os demais valores são
+devolvidos **por identidade**, sem cópia, normalização, coerção ou juízo adicional.
+
+Permanece **fronteira isolada**: não integrada a *binding*, índice, *renderer*, consumidor nem
+`S2-D8`. **Não significa materialização end-to-end de `C-7`, nem materialização de `C`.**
 
 ---
 
@@ -46,7 +50,7 @@ consumidor.
 execução desta atualização:
 
 - Python **3.14.5**;
-- **`5442 passed`**, sob **`-W error`**;
+- **`5578 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings.
 
 CI configurada em GitHub Actions, em `.github/workflows/ci.yml`, com Python **3.13** e **3.14**.
@@ -73,7 +77,12 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
 - Formato **`hora`**: regra mecânica **arbitrada** (`C-A1-F3a`), contagem de dígitos fechada
   (`C-A1-F3b`) e **`formatar_hora` materializado** em `src/casa77_sdr/response_format.py`,
   como **fronteira isolada**. **`C` continua NÃO materializada integralmente.**
-- **`C-7`** ainda **não materializada** e não reaberta.
+- **`C-7`**: a **fronteira determinística de valor** está materializada **isoladamente** em
+  `src/casa77_sdr/response_null_pending.py` — recebe terminal já resolvido e recusa `null` ou
+  a estrutura canônica com `status: pendente`. A **aplicação dessa regra a *binding*
+  necessário**, e a **consequência sobre fragmento que se pretende `APROVADO`**, permanecem
+  dependentes de **consumidor futuro**. Portanto **`C-7` não está materializada end-to-end** e
+  **`C` continua NÃO materializada integralmente**. O contrato de `C-7` não foi reaberto.
 - **Sintaxe física de *placeholder*** continua **aberta**.
 - **`C-A1-ST6`–`C-A1-ST10`** continuam **não satisfeitas** integralmente.
 
@@ -140,5 +149,5 @@ eventos confirmados e condições já estruturadas.
 
 ## 7. Próxima ação
 
-A migração de governança v2 está **concluída** com o piloto funcional desta entrega. A
-próxima microentrega funcional do bloco `C` será eleita por novo mandato do GPT.
+A migração de governança v2 está **concluída**. A próxima microentrega funcional do bloco `C`
+será eleita por novo mandato do GPT.
