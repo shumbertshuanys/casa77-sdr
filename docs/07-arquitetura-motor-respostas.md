@@ -2124,6 +2124,167 @@ aprovado, presente ou futuro.
 NÃO É CRIAR ÍNDICE, NÃO É RESOLVER *PLACEHOLDER*, NÃO É MATERIALIZAR `C-7`, NÃO É MIGRAR
 AUTORIDADE E NÃO É MATERIALIZAR `C`.**
 
+#### Micro-arbitragem documental da sintaxe física de *placeholder*
+
+Refinamento que fecha, segundo **`C-P`**, **uma única** matéria: **qual é a sintaxe física
+determinística do *placeholder* no *template* de um fragmento emitível**. Ela **não**
+reescreve, renumera ou substitui `C-1`–`C-15`, `C-A1`–`C-A5`, `CY1`–`CY14`, `GR1`–`GR7`,
+`MT1`–`MT12` ou `SP1`–`SP7`, **não** cria versão concorrente deles e **não** cria identificador
+normativo novo: os rótulos **`PH1`**–**`PH12`** abaixo são **locais deste bloco**, existem só
+para referência interna e **não** são etapa, subetapa, `Exx` nem nomenclatura normativa de `C`.
+**`C-A6` não existe.** Este bloco define somente o contrato; a implementação de módulo, função,
+assinatura, exceção e mensagem técnica pertence à fronteira executora correspondente.
+
+##### `PH1` — objeto arbitrado
+
+A gramática rege **os *placeholders* físicos presentes no *template* de um fragmento
+emitível**, e **somente** isso.
+
+Ela **NÃO** rege: **`caminho_yaml`** (`CY1`–`CY14`); **formato** (`C-6`); **predicado**
+(`C-5g`, `C-5h`); **valor factual**; ***renderer***; nem **equivalência** (`C-15`).
+
+##### `PH2` — forma canônica
+
+Um *placeholder* é **exatamente**:
+
+```text
+{{nome}}
+```
+
+Isto é, a concatenação literal `"{{" + binding.nome + "}}"`. **Nenhum conteúdo adicional
+entre os delimitadores** — sem espaço, sem filtro, sem formato, sem caminho, sem
+qualificador, sem comentário.
+
+##### `PH3` — o campo `placeholder` permanece explícito
+
+| # | Regra |
+|---|---|
+| `PH3a` | O campo **`binding.placeholder`** **permanece OBRIGATÓRIO** para `RENDERIZADO`, exatamente como **`C-4c`** já exige. Ele **não** é removido do índice. |
+| `PH3b` | O seu valor canônico é **obrigatoriamente** `derivar_placeholder(binding.nome)` — ou seja, `binding.placeholder == "{{" + binding.nome + "}}"`, por **comparação literal**. |
+| `PH3c` | `binding.nome` é o **nome lógico**; `binding.placeholder` é a **representação física correspondente**. A correspondência obrigatória entre os dois **impede divergência** entre nome e representação. |
+| `PH3d` | Isto **NÃO altera `C-4c`**: é o fechamento da representação física que `C-4c` já pressupunha. |
+
+##### `PH4` — gramática do nome de *binding* `RENDERIZADO`
+
+**Somente** para *bindings* `RENDERIZADO`:
+
+```text
+nome   ::= letra ( letra | digito )* ( "_" ( letra | digito )+ )*
+letra  ::= a-z ASCII
+digito ::= 0-9 ASCII
+```
+
+Consequências, todas literais: **não vazio**; **primeiro caractere em `a-z`**; **somente
+`a-z`, `0-9` e `_`**; **`_` apenas interno**; **sem `_` inicial**; **sem `_` final**; **sem
+`__`**; **sem maiúscula**; **sem Unicode não ASCII**; **sem espaço**; **sem tab nem LF**; e
+**sem** `.`, `-`, `{`, `}`, `@`, `[`, `]`, `/`, `=` ou aspas.
+
+**Nenhum limite artificial de tamanho é criado.**
+
+Esta gramática **NÃO se estende** ao nome de `ASSERTIVA`.
+
+##### `PH5` — as chaves são reservadas
+
+No MVP, **`{` e `}` são reservados à sintaxe de *placeholder***. Fora de um *placeholder*
+canônico, **`{` é inválido** e **`}` é inválido**.
+
+**Não existe *escaping*.** **Nenhuma intenção é inferida.**
+
+Se auditoria futura do corpus encontrar **chave literal legítima** em texto aprovado, a
+conversão **daquele fragmento** **BLOQUEIA** e a matéria **volta ao GPT** — nunca se resolve
+por tolerância local.
+
+##### `PH6` — *parsing* literal
+
+Varredura da **esquerda para a direita**. Ao encontrar `{`: **exigir** um segundo `{`;
+**extrair** o conteúdo; **exigir** `}}`; **validar** o conteúdo por **`PH4`**.
+
+Qualquer **envelope incompleto ou divergente** é ***FAIL-CLOSED***. São inválidos, entre
+outros:
+
+```text
+{        }        {x}        {{x        x}}        {{}}
+{{ x }}  {{X}}    {{x-y}}    {{{x}}}    {{x}}}
+```
+
+**Não há normalização e não há correção.**
+
+##### `PH7` — cardinalidade
+
+Para **cada** *binding* `RENDERIZADO` do fragmento, contadas as ocorrências do **seu**
+*placeholder* no *template*:
+
+| # | Ocorrências | Veredito |
+|---|---|---|
+| `PH7a` | **zero** | **FALHA** |
+| `PH7b` | **uma** | **válida** |
+| `PH7c` | **duas ou mais** | **válidas** |
+
+**O mesmo *binding* abastece TODAS as ocorrências do mesmo *placeholder*.** É **PROIBIDO**
+criar *bindings* artificiais adicionais apenas porque o mesmo fato é citado mais de uma vez no
+*template*. **`C-4a` continua exigindo nome de *binding* único no fragmento.**
+
+##### `PH8` — *placeholder* sem *binding*
+
+Todo *placeholder* canônico presente no *template* deve corresponder a **exatamente um** nome
+de *binding* `RENDERIZADO` recebido pelo consumidor. *Placeholder* sem *binding*
+correspondente é ***FAIL-CLOSED***.
+
+Um nome que pertença **apenas** a uma `ASSERTIVA` **não** satisfaz essa regra, porque
+**`C-5d`** proíbe *placeholder* para `ASSERTIVA`.
+
+##### `PH9` — normalização: nenhuma
+
+**Proibidos**: `strip`, `lstrip`, `rstrip`, `lower`, `upper`, `casefold`, **NFC**, **NFD**,
+coerção, tolerância de *whitespace* e correspondência aproximada.
+
+**NFC continua pertencendo exclusivamente à equivalência de `C-15b`**, e **não** é reaberta
+aqui.
+
+##### `PH10` — decomposição
+
+A fronteira executora recebe o **`template`** e a **tupla dos nomes** dos *bindings*
+`RENDERIZADO` **do mesmo fragmento**. O sucesso produz uma sequência **alternada**:
+
+```text
+literal, nome, literal, nome, ..., literal
+```
+
+| # | Regra |
+|---|---|
+| `PH10a` | Os **nomes aparecem na ordem física de ocorrência no *template***, nunca na ordem da tupla de entrada. |
+| `PH10b` | Um nome **pode aparecer mais de uma vez** na decomposição (`PH7c`). |
+| `PH10c` | **Todos** os nomes fornecidos devem aparecer **pelo menos uma vez** (`PH7a`). |
+| `PH10d` | **Nenhum** nome desconhecido pode aparecer (`PH8`). |
+| `PH10e` | **Literais podem ser vazios** — inclusive nas extremidades e entre *placeholders* adjacentes. |
+
+##### `PH11` — o *renderer* futuro
+
+O futuro *renderer* consumirá a decomposição e fará **uma única passada** sobre ela.
+
+**Valores formatados NÃO são reinterpretados como *template***. Portanto, se um valor factual
+formatado contiver algo semelhante a `{{x}}`, isso **permanece texto factual literal** — e
+**não** vira *placeholder*.
+
+**O *renderer* não é implementado aqui.**
+
+##### `PH12` — limites desta micro-arbitragem
+
+| # | Limite |
+|---|---|
+| 1 | Ela **não cria** o índice físico `knowledge/indice-respostas-aprovadas.yaml`. |
+| 2 | Ela **não cria** *renderer*. |
+| 3 | Ela **não altera** `knowledge/**` e **não converte** `Rxx` reais. |
+| 4 | Ela **não integra** `E1` e **não altera** `src/casa77_sdr/response_index.py`. |
+| 5 | Ela **não resolve** *binding* factual, **não aplica `C-7`**, **não executa formato** e **não executa `C-15`**. |
+| 6 | Ela **não resolve `S2-D8`**. |
+| 7 | Ela **não satisfaz `C-A1-ST6`–`C-A1-ST10`** e **não migra a autoridade de status**, que permanece em `knowledge/respostas-aprovadas.md` (**`C-11`**). |
+| 8 | **`C-A6` não existe** e **nenhuma subetapa é criada**. |
+
+**ARBITRAR A SINTAXE FÍSICA DE *PLACEHOLDER* NÃO É CRIAR ÍNDICE, NÃO É IMPLEMENTAR RENDERER,
+NÃO É RESOLVER BINDING, NÃO É INTEGRAR `E1`, NÃO É MIGRAR AUTORIDADE E NÃO É MATERIALIZAR
+`C`.**
+
 ---
 
 ## 3. Comparação técnica — Opção A × Opção B
