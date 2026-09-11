@@ -10,9 +10,9 @@ de Douglas Bianchi | **BLOQUEADO** = campo pendente no YAML, usar R03.
 ## R01 — Saudação — AGUARDA APROVAÇÃO
 
 <!-- fragmento: F1 -->
-> Oi! Aqui é o atendimento da Casa 77, espaço para eventos no Morro do Moreno, em Vila
-> Velha. Posso te passar as informações de locação. Me conta: que tipo de evento você está
-> planejando?
+> Oi! Aqui é o atendimento da Casa 77, espaço para eventos no
+> {{localidade_morro_do_moreno}}, em {{cidade}}. Posso te passar as informações de locação.
+> Me conta: que tipo de evento você está planejando?
 
 ## R02 — Identificação como bot — APROVADO
 
@@ -66,9 +66,10 @@ reservar, segurar nem bloquear a data.
 Origem: `processo_comercial.visitas.bot_pode_confirmar: false`.
 
 <!-- fragmento: F1 -->
-> A visita é feita com o responsável comercial e leva de 30 a 40 minutos. A confirmação do
-> horário também é feita pelo responsável comercial. Vou registrar seu interesse e
-> encaminhar para confirmação dos detalhes.
+> A visita é feita com o responsável comercial e leva de {{duracao_visita_minima_minutos}} a
+> {{duracao_visita_maxima_minutos}} minutos. A confirmação do horário também é feita pelo
+> responsável comercial. Vou registrar seu interesse e encaminhar para confirmação dos
+> detalhes.
 
 ## R07 — Fechamento de contrato — APROVADO
 
@@ -90,14 +91,16 @@ informa o valor sem qualificar antes.
 Até 80 convidados:
 
 <!-- fragmento: F1 -->
-> A locação para até 80 convidados é R$ 15.000, com 5 horas de evento. Hora adicional
-> R$ 3.000.
+> A locação para até {{limite_convidados}} convidados é {{moeda}} {{valor_pacote}}, com
+> {{duracao_pacote_horas}} horas de evento. Hora adicional {{moeda}}
+> {{valor_hora_adicional}}.
 
 Até 100 convidados:
 
 <!-- fragmento: F2 -->
-> A locação para até 100 convidados é R$ 18.000, com 5 horas de evento. Hora adicional
-> R$ 3.600.
+> A locação para até {{limite_convidados}} convidados é {{moeda}} {{valor_pacote}}, com
+> {{duracao_pacote_horas}} horas de evento. Hora adicional {{moeda}}
+> {{valor_hora_adicional}}.
 
 Sem saber o número de convidados, apresentar os dois pacotes. Não somar, não estimar, não
 compor pacote novo. O valor é o mesmo em qualquer dia da semana e em qualquer época do ano
@@ -106,40 +109,41 @@ compor pacote novo. O valor é o mesmo em qualquer dia da semana e em qualquer �
 ## R10 — Capacidade — APROVADO
 
 <!-- fragmento: F1 -->
-> A casa recebe até 80 convidados sentados e até 100 no formato coquetel. Não há quantidade
-> mínima.
+> A casa recebe até {{convidados_sentados}} convidados sentados e até
+> {{convidados_formato_coquetel}} no formato coquetel. Não há quantidade mínima.
 
 ## R11 — Horários — APROVADO
 
 <!-- fragmento: F1 -->
-> O evento tem 5 horas de duração e precisa terminar até as 23h. É possível contratar hora
-> adicional, mas o limite das 23h vale de qualquer forma.
+> O evento tem {{duracao_evento_horas}} horas de duração e precisa terminar até as
+> {{horario_limite}}. É possível contratar hora adicional, mas o limite das
+> {{horario_limite}} vale de qualquer forma.
 
 Montagem e desmontagem:
 
 <!-- fragmento: F2 -->
-> A montagem pode começar até 24 horas antes do evento e a desmontagem vai até um dia útil
-> depois.
+> A montagem pode começar até {{montagem_antecedencia_horas}} horas antes do evento e a
+> desmontagem vai até um dia útil depois.
 
 ## R12 — O que está incluso — APROVADO
 
 <!-- fragmento: F1 -->
-> Estão inclusos: o uso das áreas contratadas, o mobiliário da casa, 3 seguranças na parte
-> externa, 1 governanta, que também auxilia na recepção, e a limpeza de entrega da casa.
+> Estão inclusos: o uso das áreas contratadas, o mobiliário da casa, {{segurancas_externos}}
+> seguranças na parte externa, {{governantas}} governanta, que também auxilia na recepção, e
+> a limpeza de entrega da casa.
 
 Não incluso:
 
 <!-- fragmento: F2 -->
-> Não entram na locação: buffet, decoração, iluminação cênica, sonorização, DJ, gerador,
-> cerimonialista, bebidas, limpeza durante o evento, toldos e estacionamento.
+> Não entram na locação: {{itens_nao_incluidos}}.
 
 ## R13 — Endereço — APROVADO
 
 Origem: `localizacao.pode_informar_endereco_antes_qualificacao: true`.
 
 <!-- fragmento: F1 -->
-> A Casa 77 fica na Rua Magnólia de Aguiar, 77, Morro do Moreno, Praia da Costa, Vila
-> Velha/ES.
+> A Casa 77 fica na {{logradouro}}, {{numero}}, {{localidade_morro_do_moreno}},
+> {{localidade_praia_da_costa}}, {{cidade}}/{{estado}}.
 
 Link do Google Maps: **BLOQUEADO** (`google_maps_url: null`) → R03.
 
@@ -157,8 +161,7 @@ Link do Google Maps: **BLOQUEADO** (`google_maps_url: null`) → R03.
 ## R16 — Tipo de evento aceito — APROVADO
 
 <!-- fragmento: F1 -->
-> Recebemos casamento, noivado, bodas e evento corporativo. O perfil da casa é de evento
-> intimista.
+> Recebemos {{tipos_de_evento_aceitos}}. O perfil da casa é de evento intimista.
 
 ## R17 — Tipo de evento não aceito — APROVADO
 
@@ -179,13 +182,15 @@ emitível acima cobre a recusa e não depende de motivo.
 ## R18 — Datas bloqueadas — APROVADO
 
 <!-- fragmento: F1 -->
-> Não fazemos eventos nestas datas: Carnaval, Natal e Ano Novo.
+> Não fazemos eventos nestas datas: {{datas_nao_aceitas}}.
 
 ## R19 — Pagamento — APROVADO
 
 <!-- fragmento: F1 -->
-> O pagamento pode ser integral ou em 2 parcelas: 50% na assinatura do contrato e 50% com
-> vencimento 30 dias antes do evento. Não há caução.
+> O pagamento pode ser integral ou em {{parcelas_opcao_parcelada}} parcelas:
+> {{percentual_primeira_parcela}}% na assinatura do contrato e
+> {{percentual_segunda_parcela}}% com vencimento {{dias_antes_evento_segunda_parcela}} dias
+> antes do evento. Não há caução.
 
 Pedido de parcelamento diferente → R04.
 
@@ -202,23 +207,21 @@ Sempre acompanhado de handoff.
 ## R21 — Alteração de data — APROVADO com handoff obrigatório
 
 <!-- fragmento: F1 -->
-> A alteração de data precisa de no mínimo 90 dias de antecedência e depende de
-> disponibilidade. Quem confirma é o responsável comercial.
+> A alteração de data precisa de no mínimo {{antecedencia_minima_dias}} dias de antecedência
+> e depende de disponibilidade. Quem confirma é o responsável comercial.
 
 ## R22 — Chuva / área coberta — APROVADO
 
 <!-- fragmento: F1 -->
-> Cerca de 80% do espaço é coberto, e a cerimônia e a recepção acontecem no mesmo local. A
-> casa comporta a instalação de toldos, mas a contratação e a responsabilidade pelos toldos
-> são do contratante.
+> Cerca de {{percentual_coberto}}% do espaço é coberto, e a cerimônia e a recepção acontecem
+> no mesmo local. A casa comporta a instalação de toldos, mas a contratação e a
+> responsabilidade pelos toldos são do contratante.
 
 ## R23 — Restrições da casa — APROVADO
 
 <!-- fragmento: F1 -->
-> Não é permitido: drogas ilícitas, uso da piscina, uso da parte inferior da casa,
-> quantidade de pessoas superior ao contratado, fogos de artifício, animais e danos ou
-> intervenções na estrutura da casa. Fogos de artifício são proibidos por lei por se tratar
-> de área ambiental.
+> Não é permitido: {{itens_proibidos}}. Fogos de artifício são proibidos por lei por se
+> tratar de área ambiental.
 
 Decoração:
 
@@ -236,10 +239,15 @@ Pedir a lista de buffets recomendados → R03 + handoff (lista nominal não est�
 ## R25 — Cozinha e estrutura técnica — APROVADO
 
 <!-- fragmento: F1 -->
-> A cozinha é equipada com os seguintes itens, com a quantidade entre parênteses: freezer
-> horizontal (1), geladeira duplex (2), cervejeira (1), fogão industrial (1), fogão
-> convencional (2), forno elétrico (2), micro-ondas (1), churrasqueira (1), bancada de apoio
-> (2) e área de cozinha externa (1). A rede elétrica tem 110 V e 220 V.
+> A cozinha é equipada com os seguintes itens, com a quantidade entre parênteses:
+> {{item_freezer_horizontal}} ({{quantidade_freezer_horizontal}}), {{item_geladeira_duplex}}
+> ({{quantidade_geladeira_duplex}}), {{item_cervejeira}} ({{quantidade_cervejeira}}),
+> {{item_fogao_industrial}} ({{quantidade_fogao_industrial}}), {{item_fogao_convencional}}
+> ({{quantidade_fogao_convencional}}), {{item_forno_eletrico}}
+> ({{quantidade_forno_eletrico}}), {{item_micro_ondas}} ({{quantidade_micro_ondas}}),
+> {{item_churrasqueira}} ({{quantidade_churrasqueira}}), {{item_bancada_de_apoio}}
+> ({{quantidade_bancada_de_apoio}}) e {{item_area_de_cozinha_externa}}
+> ({{quantidade_area_de_cozinha_externa}}). A rede elétrica tem {{tensoes_rede_eletrica}}.
 
 <!-- fragmento: F2 -->
 > Som e iluminação cênica não estão inclusos e ficam por conta do contratante. Gerador
@@ -253,7 +261,8 @@ Pedir a lista de buffets recomendados → R03 + handoff (lista nominal não est�
 ## R27 — Banheiros — APROVADO
 
 <!-- fragmento: F1 -->
-> São 4 banheiros, sendo 2 masculinos e 2 femininos.
+> São {{total_banheiros}} banheiros, sendo {{banheiros_masculinos}} masculinos e
+> {{banheiros_femininos}} femininos.
 
 ## R28 — Suíte da noiva — PARCIAL
 
@@ -269,7 +278,7 @@ Valor: **BLOQUEADO** (`suite_noiva.valor: null`) → R03 + handoff.
 ## R29 — Validade da proposta — APROVADO
 
 <!-- fragmento: F1 -->
-> A proposta tem validade de 15 dias.
+> A proposta tem validade de {{validade_proposta_dias}} dias.
 
 ## R30 — Espaço infantil / piscina — APROVADO
 
