@@ -31,18 +31,17 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-Commit funcional `8ec54f825b9bca16090a7738908299631c5ddcfa`.
+Commit funcional `de9b3579044d4bd1a22e629f67bec70b1de9bab5`.
 
-**Integração da gramática canônica de *placeholder* ao validador estrutural `E1`**
-(`src/casa77_sdr/response_index.py`). O nome de *binding* `RENDERIZADO` passa a ser validado
-pela gramática de *placeholder*, por delegação a `derivar_placeholder()` — `E1` **não** mantém
-gramática paralela. `binding.placeholder` permanece **explícito e obrigatório** e precisa ser
-**literalmente igual** ao valor derivado do nome. `PlaceholderInvalido` **não atravessa a API
-pública** de `E1`: é traduzida para `IndiceInvalido`, com a causa técnica encadeada.
+**Materialização física do índice estruturado de respostas aprovadas e dos *templates* do
+corpus.** `knowledge/indice-respostas-aprovadas.yaml` **agora existe**, com **30 `Rxx`**, **37
+fragmentos emitíveis** e **118 *bindings***. No Markdown aprovado, **19 fragmentos** passaram a
+usar *placeholders* canônicos e **18 permanecem estáticos**.
 
-`ASSERTIVA` permanece **fora** dessa gramática, sob o contrato vigente. `E1` **não possui
-*template*** e por isso **não chama `decompor_template()`**. **Não materializa `C`
-integralmente.**
+`tests/test_indice_respostas_aprovadas_corpus.py` materializa a prova permanente de integração
+do corpus, sobre os artefatos reais e usando exclusivamente as fronteiras já existentes.
+
+**Zero *renderer* de produção** e **zero consumidor operacional novo**.
 
 ---
 
@@ -52,7 +51,7 @@ integralmente.**
 execução desta atualização:
 
 - Python **3.14.5**;
-- **`5768 passed`**, sob **`-W error`**;
+- **`5789 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings.
 
 CI configurada em GitHub Actions, em `.github/workflows/ci.yml`, com Python **3.13** e **3.14**.
@@ -63,10 +62,15 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
 ## 4. Estado essencial da capacidade corrente — `C`
 
 - **Contrato de `C`: ARBITRADO** (`docs/07` §2.3; registrado em `docs/07` §12, item 19).
-- **`C` ainda NÃO está materializada integralmente.**
-- O índice físico `knowledge/indice-respostas-aprovadas.yaml` **não existe**.
-- A **autoridade de status ainda não migrou** para o índice: continua em
-  `knowledge/respostas-aprovadas.md` (`C-11`).
+- **A materialização física do índice e dos *templates* do corpus está concluída.** A
+  **integração com consumidores operacionais** e a **eventual migração da autoridade de
+  status** permanecem **separadas e pendentes**.
+- O índice físico `knowledge/indice-respostas-aprovadas.yaml` está **materializado e
+  estruturalmente validado**: **30 `Rxx`**, **37 fragmentos**, **118 *bindings***. Ele guarda
+  **referentes**, nunca valor resolvido (`C-1h`–`C-1m`, `C-15e`).
+- A **autoridade de status NÃO migrou** para o índice: continua em
+  `knowledge/respostas-aprovadas.md` (`C-11`), com rótulos e `status-fragmento` preservados. A
+  transição de autoridade depende de **entrega separada**, auditada e autorizada.
 - `CY13`:
   - **linha 1** — parser da gramática de `caminho_yaml`
     (`src/casa77_sdr/response_yaml_path.py`): materializada e integrada a `E1`
@@ -81,19 +85,30 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   como **fronteira isolada**. **`C` continua NÃO materializada integralmente.**
 - **`C-7`**: a **fronteira determinística de valor** está materializada **isoladamente** em
   `src/casa77_sdr/response_null_pending.py` — recebe terminal já resolvido e recusa `null` ou
-  a estrutura canônica com `status: pendente`. A **aplicação dessa regra a *binding*
-  necessário**, e a **consequência sobre fragmento que se pretende `APROVADO`**, permanecem
-  dependentes de **consumidor futuro**. Portanto **`C-7` não está materializada end-to-end** e
-  **`C` continua NÃO materializada integralmente**. O contrato de `C-7` não foi reaberto.
+  a estrutura canônica com `status: pendente`. Na **validação do corpus materializado**, os
+  **114 *bindings* de origem YAML** são resolvidos e passam por `C-7`, e **nenhum** resolve para
+  `null` nem para `status: pendente`. Isso **não cria consumidor operacional de runtime**:
+  **não há integração end-to-end** de `C-7` no ciclo de atendimento. O contrato de `C-7` não foi
+  reaberto.
 - **Sintaxe física de *placeholder***: **arbitrada**, com a forma canônica **`{{nome}}`**, e a
   fronteira `src/casa77_sdr/response_placeholder.py` **materializada**. A **integração
   estrutural ao `E1` está materializada**: `E1` exige essa gramática para o **nome** de
   *binding* `RENDERIZADO` e exige **correspondência literal** entre `binding.placeholder` e o
   *placeholder* derivado do nome, sem manter gramática paralela. `ASSERTIVA` **não** recebe essa
-  gramática. A integração prova **canonicidade de nome e do campo explícito**, e **não** prova
-  ocorrência nem cardinalidade no *template*: `E1` não recebe *template*, e
-  `decompor_template()` **ainda não tem consumidor**.
-- **`C-A1-ST6`–`C-A1-ST10`** continuam **não satisfeitas** integralmente.
+  gramática. O Markdown aprovado **agora possui *templates* físicos em 19 fragmentos**; os
+  outros **18 permanecem sem `RENDERIZADO`**. `decompor_template()` é **exercitado pelo teste de
+  integração do corpus**, onde **`PH7` e `PH8` foram comprovadas sobre o corpus físico**.
+  **Nenhum *renderer* de produção existe.**
+- **`C-A1-ST6`–`C-A1-ST10`**, sobre o corpus materializado:
+  - **`ST6`** — **comprovada**: o índice físico carrega e `E1` o valida estruturalmente;
+  - **`ST7`** — **comprovada**: bijeção integral **37/37** entre índice e Markdown;
+  - **`ST8`** — **comprovada**: status **37/37** resolvidos e coincidentes, por ocorrência
+    física;
+  - **`ST9`** — **comprovada**: *bindings* e `ASSERTIVA` do corpus materializado validados
+    contra `knowledge/casa77.yaml`;
+  - **`ST10`** — equivalência **`C-15`** verificada para os **19 *templates***; os **18
+    fragmentos estáticos** são **N/A**. **A migração da autoridade de status NÃO foi
+    realizada** e depende de entrega separada.
 
 Existem fronteiras determinísticas já materializadas em torno de `C` — validador estrutural,
 carregador *fail-closed*, comparador de equivalência, formatadores, avaliador de `ASSERTIVA`,
@@ -108,7 +123,7 @@ todas recebem insumos prontos e nenhuma resolve *binding*, lê o índice ou cons
 | Pendência | Situação atual | Impacto / bloqueio | Fonte |
 |---|---|---|---|
 | **B** — colisão conceitual de nome `RegistroAtendimento` | aberta; nenhum referente renomeado ou unificado | bloqueia implementar o componente `RegistroAtendimento` | `docs/07` §4.1.1, §12 item 21 |
-| **C** — índice estruturado `Rxx` × YAML | contrato arbitrado / não materializado | requisito de `ValidadorConsistenciaBase` e, em cascata, de `SeletorFatos` e `ValidadorResposta`; **também pré-requisito da materialização de S2-D8**, e por isso bloqueia **indiretamente** o `OrquestradorMotor` e a integração completa enquanto essa dependência não estiver satisfeita | `docs/07` §2.3, §12 itens 19 e 10 |
+| **C** — índice estruturado `Rxx` × YAML | índice físico e *templates* **materializados e validados**; **integração dos consumidores operacionais** e **eventual migração da autoridade de status** ainda pendentes | a **ausência física do índice deixou de ser o bloqueio**; `ValidadorConsistenciaBase`, `SeletorFatos`, `ValidadorResposta` e **S2-D8** continuam **não materializados**, e por isso o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos | `docs/07` §2.3, §12 itens 19 e 10 |
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
 | **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado / não materializado; nenhum módulo nem mapa `R2` | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §4.4.1, §12 item 10; `docs/06` §11 |
@@ -135,8 +150,9 @@ Pendências comerciais e lacunas da base **não são replicadas aqui**:
 Bloqueiam o `OrquestradorMotor` e o pipeline completo:
 
 - **S2-D8** — materialização do produtor de pendências e de cobertura;
-- **C** — materialização do índice e dos artefatos necessários à cascata de validação e como
-  pré-requisito de **S2-D8**;
+- **C** — índice físico e *templates* **já materializados**; falta **conectar as capacidades
+  dependentes** — `ValidadorConsistenciaBase`, `SeletorFatos` e `ValidadorResposta` —, das quais
+  **S2-D8** também depende;
 - **S3-D1** — produtor de `motivo_encerramento` ainda não atribuído; impede completar a
   **condição 8 de `CondicoesCiclo`** e os fluxos que dependem dela;
 - **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL`;
@@ -158,5 +174,5 @@ eventos confirmados e condições já estruturadas.
 
 ## 7. Próxima ação
 
-A integração estrutural da gramática de *placeholder* ao **`E1`** está **concluída** nesta
-entrega. A próxima microentrega funcional do bloco `C` será eleita por novo mandato do GPT.
+A **materialização física do índice e dos *templates* de `C`** está **concluída**. A próxima
+microentrega funcional será eleita por **novo mandato do GPT**, após a integração desta entrega.
