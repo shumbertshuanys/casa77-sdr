@@ -875,12 +875,28 @@ def test_falha_repetida_devolve_a_mesma_mensagem():
 
 
 # ---------------------------------------------------------------------------
-# L. O indice real continua inexistente
+# L. O indice real existe e projeta o dominio canonico
 # ---------------------------------------------------------------------------
 
 
-def test_o_indice_real_continua_inexistente():
-    assert not (RAIZ / "knowledge" / "indice-respostas-aprovadas.yaml").exists()
+def test_o_indice_real_existe_e_projeta_o_dominio_canonico():
+    """Verificação mínima sobre o artefato real, no escopo desta fronteira.
+
+    Esta fronteira **deriva o domínio de identidades** do índice, e é só isso
+    que se confere aqui: o índice físico existe e a sua projeção produz tokens
+    `<Rxx>/<id>` únicos. A prova integral do corpus vive em
+    `tests/test_indice_respostas_aprovadas_corpus.py`.
+    """
+    import yaml
+
+    caminho = RAIZ / "knowledge" / "indice-respostas-aprovadas.yaml"
+    assert caminho.exists()
+
+    dados = yaml.safe_load(caminho.read_text(encoding="utf-8"))
+    tokens = derivar_tokens_do_indice(dados)
+
+    assert tokens
+    assert len(set(tokens)) == len(tokens)
 
 
 def test_a_forma_do_dominio_e_compativel_com_o_lado_do_markdown():

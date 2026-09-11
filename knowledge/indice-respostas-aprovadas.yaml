@@ -1,0 +1,863 @@
+# knowledge/indice-respostas-aprovadas.yaml
+# Indice estruturado de respostas aprovadas (docs/07 §2.3, contrato C).
+# Contem SOMENTE identificadores, status, bindings, caminhos, predicados e
+# formatos (C-1a–C-1g). NUNCA contem valor comercial, texto de resposta,
+# snapshot, versao congelada ou hash de valor (C-1h–C-1m, C-15e).
+# Texto/template: knowledge/respostas-aprovadas.md (C-11).
+# Valores: knowledge/casa77.yaml (F1, P8).
+# Autoridade de status: permanece em knowledge/respostas-aprovadas.md ate
+# C-A1-ST6–C-A1-ST10 integralmente satisfeitas (C-11, SP6, PM8).
+
+respostas:
+  - id: R01
+    fragmentos:
+      - id: F1
+        status: AGUARDA_APROVACAO
+        bindings:
+          - nome: localidade_morro_do_moreno
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: localizacao.localidades[id=morro_do_moreno].nome
+            placeholder: "{{localidade_morro_do_moreno}}"
+            formato: texto
+          - nome: cidade
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: localizacao.cidade
+            placeholder: "{{cidade}}"
+            formato: texto
+
+  - id: R02
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings: []
+
+  - id: R03
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings: []
+
+  - id: R04
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: desconto_autorizado_bot
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: precos.desconto_autorizado_bot
+            predicado: EH_FALSO
+          - nome: desconto_a_vista
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: precos.desconto_a_vista
+            predicado: EH_FALSO
+
+  - id: R05
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings: []
+      - id: F2
+        status: APROVADO
+        bindings:
+          - nome: consulta_calendario_valida
+            mecanismo: ASSERTIVA
+            origem: RUNTIME_AUTORITATIVO
+            fato_runtime: consulta_calendario_valida
+            predicado: EH_VERDADEIRO
+          - nome: data_disponivel
+            mecanismo: ASSERTIVA
+            origem: RUNTIME_AUTORITATIVO
+            fato_runtime: data_disponivel
+            predicado: EH_VERDADEIRO
+      - id: F3
+        status: APROVADO
+        bindings:
+          - nome: consulta_calendario_valida
+            mecanismo: ASSERTIVA
+            origem: RUNTIME_AUTORITATIVO
+            fato_runtime: consulta_calendario_valida
+            predicado: EH_VERDADEIRO
+          - nome: data_disponivel
+            mecanismo: ASSERTIVA
+            origem: RUNTIME_AUTORITATIVO
+            fato_runtime: data_disponivel
+            predicado: EH_FALSO
+
+  - id: R06
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: duracao_visita_minima_minutos
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: processo_comercial.visitas.duracao_estimada_minutos.minimo
+            placeholder: "{{duracao_visita_minima_minutos}}"
+            formato: inteiro
+          - nome: duracao_visita_maxima_minutos
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: processo_comercial.visitas.duracao_estimada_minutos.maximo
+            placeholder: "{{duracao_visita_maxima_minutos}}"
+            formato: inteiro
+          - nome: visita_realizada_pelo_responsavel_comercial
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: processo_comercial.visitas.realizada_pelo_responsavel_comercial
+            predicado: EH_VERDADEIRO
+          - nome: confirmacao_horario_pelo_responsavel_comercial
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: processo_comercial.visitas.confirmacao_horario_pelo_responsavel_comercial
+            predicado: EH_VERDADEIRO
+          - nome: bot_pode_confirmar_visita
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: processo_comercial.visitas.bot_pode_confirmar
+            predicado: EH_FALSO
+
+  - id: R07
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: bot_pode_fechar
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: processo_comercial.contratacao.bot_pode_fechar
+            predicado: EH_FALSO
+          - nome: contratacao_atendimento_humano_obrigatorio
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: processo_comercial.contratacao.atendimento_humano_obrigatorio
+            predicado: EH_VERDADEIRO
+
+  - id: R08
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings: []
+
+  - id: R09
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: moeda
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: precos.moeda
+            placeholder: "{{moeda}}"
+            formato: simbolo_moeda
+          - nome: limite_convidados
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: precos.pacotes[codigo=ATE_80].limite_convidados
+            placeholder: "{{limite_convidados}}"
+            formato: inteiro
+          - nome: valor_pacote
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: precos.pacotes[codigo=ATE_80].valor
+            placeholder: "{{valor_pacote}}"
+            formato: inteiro_agrupado
+          - nome: duracao_pacote_horas
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: precos.pacotes[codigo=ATE_80].duracao_horas
+            placeholder: "{{duracao_pacote_horas}}"
+            formato: inteiro
+          - nome: valor_hora_adicional
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: precos.pacotes[codigo=ATE_80].hora_adicional
+            placeholder: "{{valor_hora_adicional}}"
+            formato: inteiro_agrupado
+      - id: F2
+        status: APROVADO
+        bindings:
+          - nome: moeda
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: precos.moeda
+            placeholder: "{{moeda}}"
+            formato: simbolo_moeda
+          - nome: limite_convidados
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: precos.pacotes[codigo=ATE_100].limite_convidados
+            placeholder: "{{limite_convidados}}"
+            formato: inteiro
+          - nome: valor_pacote
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: precos.pacotes[codigo=ATE_100].valor
+            placeholder: "{{valor_pacote}}"
+            formato: inteiro_agrupado
+          - nome: duracao_pacote_horas
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: precos.pacotes[codigo=ATE_100].duracao_horas
+            placeholder: "{{duracao_pacote_horas}}"
+            formato: inteiro
+          - nome: valor_hora_adicional
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: precos.pacotes[codigo=ATE_100].hora_adicional
+            placeholder: "{{valor_hora_adicional}}"
+            formato: inteiro_agrupado
+
+  - id: R10
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: convidados_sentados
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: capacidade.convidados_sentados
+            placeholder: "{{convidados_sentados}}"
+            formato: inteiro
+          - nome: convidados_formato_coquetel
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: capacidade.formato_coquetel
+            placeholder: "{{convidados_formato_coquetel}}"
+            formato: inteiro
+          - nome: existe_minimo_convidados
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: capacidade.existe_minimo_convidados
+            predicado: EH_FALSO
+
+  - id: R11
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: duracao_evento_horas
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: horarios.duracao_padrao_evento_horas
+            placeholder: "{{duracao_evento_horas}}"
+            formato: inteiro
+          - nome: horario_limite
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: horarios.horario_limite
+            placeholder: "{{horario_limite}}"
+            formato: hora
+          - nome: hora_adicional_disponivel
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: horarios.hora_adicional_disponivel
+            predicado: EH_VERDADEIRO
+      - id: F2
+        status: APROVADO
+        bindings:
+          - nome: montagem_antecedencia_horas
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: montagem_desmontagem.montagem_antecedencia_maxima_evento_horas
+            placeholder: "{{montagem_antecedencia_horas}}"
+            formato: inteiro
+          - nome: desmontagem_ate_um_dia_util
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: montagem_desmontagem.desmontagem_ate_um_dia_util_apos_evento
+            predicado: EH_VERDADEIRO
+
+  - id: R12
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: uso_das_areas_contratadas_incluido
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: locacao_padrao.uso_das_areas_contratadas_incluido
+            predicado: EH_VERDADEIRO
+          - nome: mobiliario_incluido
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: mobiliario.incluido
+            predicado: EH_VERDADEIRO
+          - nome: segurancas_externos
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: equipe_incluida.segurancas_externos
+            placeholder: "{{segurancas_externos}}"
+            formato: inteiro
+          - nome: governantas
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: equipe_incluida.governanta
+            placeholder: "{{governantas}}"
+            formato: inteiro
+          - nome: governanta_auxilia_recepcao
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: equipe_incluida.governanta_auxilia_recepcao
+            predicado: EH_VERDADEIRO
+          - nome: limpeza_entrega_inicial_incluida
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: locacao_padrao.limpeza_entrega_inicial_incluida
+            predicado: EH_VERDADEIRO
+      - id: F2
+        status: APROVADO
+        bindings:
+          - nome: itens_nao_incluidos
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: nao_incluido
+            placeholder: "{{itens_nao_incluidos}}"
+            formato: lista
+
+  - id: R13
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: logradouro
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: localizacao.logradouro
+            placeholder: "{{logradouro}}"
+            formato: texto
+          - nome: numero
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: localizacao.numero
+            placeholder: "{{numero}}"
+            formato: texto
+          - nome: localidade_morro_do_moreno
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: localizacao.localidades[id=morro_do_moreno].nome
+            placeholder: "{{localidade_morro_do_moreno}}"
+            formato: texto
+          - nome: localidade_praia_da_costa
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: localizacao.localidades[id=praia_da_costa].nome
+            placeholder: "{{localidade_praia_da_costa}}"
+            formato: texto
+          - nome: cidade
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: localizacao.cidade
+            placeholder: "{{cidade}}"
+            formato: texto
+          - nome: estado
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: localizacao.estado
+            placeholder: "{{estado}}"
+            formato: texto
+
+  - id: R14
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: estacionamento_proprio_disponivel
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.estacionamento.disponivel
+            predicado: EH_FALSO
+          - nome: vagas_na_rua_limitadas
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.estacionamento.vagas_na_rua_limitadas
+            predicado: EH_VERDADEIRO
+          - nome: orientacao_transporte_por_aplicativo
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.estacionamento.orientacao_transporte.transporte_por_aplicativo
+            predicado: EH_VERDADEIRO
+          - nome: orientacao_taxi
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.estacionamento.orientacao_transporte.taxi
+            predicado: EH_VERDADEIRO
+
+  - id: R15
+    fragmentos:
+      - id: F1
+        status: AGUARDA_APROVACAO
+        bindings: []
+
+  - id: R16
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: tipos_de_evento_aceitos
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: eventos.aceitos
+            placeholder: "{{tipos_de_evento_aceitos}}"
+            formato: lista
+          - nome: perfil_intimista
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: eventos.perfil_intimista
+            predicado: EH_VERDADEIRO
+
+  - id: R17
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: perfil_intimista
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: eventos.perfil_intimista
+            predicado: EH_VERDADEIRO
+
+  - id: R18
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: datas_nao_aceitas
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: eventos.datas_nao_aceitas
+            placeholder: "{{datas_nao_aceitas}}"
+            formato: lista
+
+  - id: R19
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: pagamento_integral_disponivel
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: pagamento.integral_disponivel
+            predicado: EH_VERDADEIRO
+          - nome: parcelas_opcao_parcelada
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: pagamento.opcoes[id=parcelado].parcelas
+            placeholder: "{{parcelas_opcao_parcelada}}"
+            formato: inteiro
+          - nome: percentual_primeira_parcela
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: pagamento.opcoes[id=parcelado].primeira_parcela.percentual
+            placeholder: "{{percentual_primeira_parcela}}"
+            formato: inteiro
+          - nome: primeira_parcela_vence_na_assinatura
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: pagamento.opcoes[id=parcelado].primeira_parcela.vence_na_assinatura_do_contrato
+            predicado: EH_VERDADEIRO
+          - nome: percentual_segunda_parcela
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: pagamento.opcoes[id=parcelado].segunda_parcela.percentual
+            placeholder: "{{percentual_segunda_parcela}}"
+            formato: inteiro
+          - nome: dias_antes_evento_segunda_parcela
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: pagamento.opcoes[id=parcelado].segunda_parcela.antecedencia_evento_dias
+            placeholder: "{{dias_antes_evento_segunda_parcela}}"
+            formato: inteiro
+          - nome: caucao
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: pagamento.caucao
+            predicado: EH_FALSO
+
+  - id: R20
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: retencao_entrada_integral
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: cancelamento.retencao_entrada_integral
+            predicado: EH_VERDADEIRO
+
+  - id: R21
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: antecedencia_minima_dias
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: alteracao_data.antecedencia_minima_dias
+            placeholder: "{{antecedencia_minima_dias}}"
+            formato: inteiro
+          - nome: alteracao_depende_disponibilidade
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: alteracao_data.depende_disponibilidade
+            predicado: EH_VERDADEIRO
+          - nome: alteracao_atendimento_humano_obrigatorio
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: alteracao_data.atendimento_humano_obrigatorio
+            predicado: EH_VERDADEIRO
+
+  - id: R22
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: percentual_coberto
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.percentual_coberto
+            placeholder: "{{percentual_coberto}}"
+            formato: inteiro
+          - nome: percentual_coberto_aproximado
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.percentual_coberto_aproximado
+            predicado: EH_VERDADEIRO
+          - nome: cerimonia_e_recepcao_mesmo_local
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.cerimonia_e_recepcao_mesmo_local
+            predicado: EH_VERDADEIRO
+          - nome: toldos_permite_instalacao
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.plano_chuva.toldos.permite_instalacao
+            predicado: EH_VERDADEIRO
+          - nome: toldos_contratacao_do_contratante
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.plano_chuva.toldos.contratacao_por_conta_do_contratante
+            predicado: EH_VERDADEIRO
+          - nome: toldos_responsabilidade_do_contratante
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.plano_chuva.toldos.responsabilidade_do_contratante
+            predicado: EH_VERDADEIRO
+
+  - id: R23
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: itens_proibidos
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: restricoes.proibido
+            placeholder: "{{itens_proibidos}}"
+            formato: lista
+          - nome: fogos_proibicao_legal_por_area_ambiental
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: restricoes.fogos_proibicao_legal_por_area_ambiental
+            predicado: EH_VERDADEIRO
+      - id: F2
+        status: APROVADO
+        bindings:
+          - nome: decoracao_permitida
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: restricoes.decoracao_permitida
+            predicado: EH_VERDADEIRO
+          - nome: decoracao_nao_pode_alterar_estrutura
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: restricoes.decoracao_nao_pode_alterar_estrutura
+            predicado: EH_VERDADEIRO
+
+  - id: R24
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: permite_fornecedor_proprio
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: fornecedores.permite_fornecedor_proprio
+            predicado: EH_VERDADEIRO
+          - nome: recomenda_buffets
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: fornecedores.recomenda_buffets
+            predicado: EH_VERDADEIRO
+          - nome: buffet_com_experiencia_previa_no_espaco
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: fornecedores.perfil_buffet_recomendado.experiencia_previa_no_espaco
+            predicado: EH_VERDADEIRO
+          - nome: buffet_conhece_estrutura_da_casa
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: fornecedores.perfil_buffet_recomendado.conhece_estrutura_da_casa
+            predicado: EH_VERDADEIRO
+
+  - id: R25
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: cozinha_disponivel
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.disponivel
+            predicado: EH_VERDADEIRO
+          - nome: item_freezer_horizontal
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=freezer_horizontal].item
+            placeholder: "{{item_freezer_horizontal}}"
+            formato: texto
+          - nome: quantidade_freezer_horizontal
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=freezer_horizontal].quantidade
+            placeholder: "{{quantidade_freezer_horizontal}}"
+            formato: inteiro
+          - nome: item_geladeira_duplex
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=geladeira_duplex].item
+            placeholder: "{{item_geladeira_duplex}}"
+            formato: texto
+          - nome: quantidade_geladeira_duplex
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=geladeira_duplex].quantidade
+            placeholder: "{{quantidade_geladeira_duplex}}"
+            formato: inteiro
+          - nome: item_cervejeira
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=cervejeira].item
+            placeholder: "{{item_cervejeira}}"
+            formato: texto
+          - nome: quantidade_cervejeira
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=cervejeira].quantidade
+            placeholder: "{{quantidade_cervejeira}}"
+            formato: inteiro
+          - nome: item_fogao_industrial
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=fogao_industrial].item
+            placeholder: "{{item_fogao_industrial}}"
+            formato: texto
+          - nome: quantidade_fogao_industrial
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=fogao_industrial].quantidade
+            placeholder: "{{quantidade_fogao_industrial}}"
+            formato: inteiro
+          - nome: item_fogao_convencional
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=fogao_convencional].item
+            placeholder: "{{item_fogao_convencional}}"
+            formato: texto
+          - nome: quantidade_fogao_convencional
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=fogao_convencional].quantidade
+            placeholder: "{{quantidade_fogao_convencional}}"
+            formato: inteiro
+          - nome: item_forno_eletrico
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=forno_eletrico].item
+            placeholder: "{{item_forno_eletrico}}"
+            formato: texto
+          - nome: quantidade_forno_eletrico
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=forno_eletrico].quantidade
+            placeholder: "{{quantidade_forno_eletrico}}"
+            formato: inteiro
+          - nome: item_micro_ondas
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=micro_ondas].item
+            placeholder: "{{item_micro_ondas}}"
+            formato: texto
+          - nome: quantidade_micro_ondas
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=micro_ondas].quantidade
+            placeholder: "{{quantidade_micro_ondas}}"
+            formato: inteiro
+          - nome: item_churrasqueira
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=churrasqueira].item
+            placeholder: "{{item_churrasqueira}}"
+            formato: texto
+          - nome: quantidade_churrasqueira
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=churrasqueira].quantidade
+            placeholder: "{{quantidade_churrasqueira}}"
+            formato: inteiro
+          - nome: item_bancada_de_apoio
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=bancada_de_apoio].item
+            placeholder: "{{item_bancada_de_apoio}}"
+            formato: texto
+          - nome: quantidade_bancada_de_apoio
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=bancada_de_apoio].quantidade
+            placeholder: "{{quantidade_bancada_de_apoio}}"
+            formato: inteiro
+          - nome: item_area_de_cozinha_externa
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=area_de_cozinha_externa].item
+            placeholder: "{{item_area_de_cozinha_externa}}"
+            formato: texto
+          - nome: quantidade_area_de_cozinha_externa
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.cozinha.equipamentos[id=area_de_cozinha_externa].quantidade
+            placeholder: "{{quantidade_area_de_cozinha_externa}}"
+            formato: inteiro
+          - nome: tensoes_rede_eletrica
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.som.rede_eletrica
+            placeholder: "{{tensoes_rede_eletrica}}"
+            formato: lista
+      - id: F2
+        status: APROVADO
+        bindings:
+          - nome: som_incluido
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.som.incluido
+            predicado: EH_FALSO
+          - nome: som_responsabilidade_do_contratante
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.som.responsabilidade_do_contratante
+            predicado: EH_VERDADEIRO
+          - nome: iluminacao_cenica_incluida
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.iluminacao.iluminacao_cenica_incluida
+            predicado: EH_FALSO
+          - nome: iluminacao_cenica_responsabilidade_do_contratante
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.iluminacao.adicional_ou_cenica.responsabilidade_do_contratante
+            predicado: EH_VERDADEIRO
+          - nome: gerador_incluido
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.gerador.incluido
+            predicado: EH_FALSO
+          - nome: gerador_permite_instalacao
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.gerador.permite_instalacao
+            predicado: EH_VERDADEIRO
+
+  - id: R26
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: acessibilidade
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.acessibilidade
+            predicado: EH_VERDADEIRO
+
+  - id: R27
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: total_banheiros
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.banheiros.total
+            placeholder: "{{total_banheiros}}"
+            formato: inteiro
+          - nome: banheiros_masculinos
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.banheiros.masculinos
+            placeholder: "{{banheiros_masculinos}}"
+            formato: inteiro
+          - nome: banheiros_femininos
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: estrutura.banheiros.femininos
+            placeholder: "{{banheiros_femininos}}"
+            formato: inteiro
+
+  - id: R28
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: suite_noiva_disponivel
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.suite_noiva.disponivel
+            predicado: EH_VERDADEIRO
+          - nome: suite_noiva_sala_de_convivencia
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.suite_noiva.componentes.sala_de_convivencia
+            predicado: EH_VERDADEIRO
+          - nome: suite_noiva_banheiro_exclusivo
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.suite_noiva.componentes.banheiro_exclusivo
+            predicado: EH_VERDADEIRO
+          - nome: suite_noiva_incluida_no_preco_padrao
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.suite_noiva.incluida_no_preco_padrao
+            predicado: EH_FALSO
+
+  - id: R29
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: validade_proposta_dias
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: proposta.validade_dias
+            placeholder: "{{validade_proposta_dias}}"
+            formato: inteiro
+
+  - id: R30
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: espaco_infantil_disponivel
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.espaco_infantil.disponivel
+            predicado: EH_FALSO
+          - nome: piscina_disponivel_para_eventos
+            mecanismo: ASSERTIVA
+            origem: YAML
+            caminho_yaml: estrutura.piscina.disponivel_para_eventos
+            predicado: EH_FALSO

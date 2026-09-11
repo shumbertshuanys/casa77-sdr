@@ -708,12 +708,30 @@ def test_nao_ha_estado_entre_chamadas():
 
 
 # ---------------------------------------------------------------------------
-# I. O indice fisico continua inexistente
+# I. O indice fisico existe e corresponde ao corpus
 # ---------------------------------------------------------------------------
 
 
-def test_o_indice_fisico_continua_inexistente():
-    assert not (RAIZ / "knowledge" / "indice-respostas-aprovadas.yaml").exists()
+def test_o_indice_fisico_existe_e_corresponde_ao_corpus():
+    """Verificação mínima sobre os artefatos reais, no escopo desta fronteira.
+
+    Esta fronteira julga **correspondência de identidades**, e é só isso que se
+    confere aqui: o índice físico existe e denota exatamente as mesmas
+    identidades canônicas que o Markdown aprovado. A prova integral do corpus —
+    carga, bijeção, status, referentes, formatos e *placeholders* — vive em
+    `tests/test_indice_respostas_aprovadas_corpus.py`.
+    """
+    import yaml
+
+    caminho = RAIZ / "knowledge" / "indice-respostas-aprovadas.yaml"
+    assert caminho.exists()
+
+    dados = yaml.safe_load(caminho.read_text(encoding="utf-8"))
+    texto = (RAIZ / "knowledge" / "respostas-aprovadas.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert validar_correspondencia_canonica(dados, texto) is None
 
 
 def test_o_sucesso_nao_prova_proveniencia():
