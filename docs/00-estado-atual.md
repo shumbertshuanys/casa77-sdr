@@ -104,8 +104,12 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   - **`ST7`** — **comprovada**: bijeção integral **37/37** entre índice e Markdown;
   - **`ST8`** — **comprovada**: status **37/37** resolvidos e coincidentes, por ocorrência
     física;
-  - **`ST9`** — **comprovada**: *bindings* e `ASSERTIVA` do corpus materializado validados
-    contra `knowledge/casa77.yaml`;
+  - **`ST9`** — **comprovada no corpus materializado**, em dois regimes distintos: os **114
+    *bindings* de origem `YAML`** foram **resolvidos e validados contra
+    `knowledge/casa77.yaml`**, incluindo `C-7`, formatos e `ASSERTIVA` aplicáveis; os **4
+    *bindings* `RUNTIME_AUTORITATIVO`** foram validados **apenas** quanto à representação
+    estrutural, ao referente e ao predicado, **sem afirmar verdade operacional** — esta depende
+    da consulta autoritativa do ciclo, fora do corpus versionado;
   - **`ST10`** — equivalência **`C-15`** verificada para os **19 *templates***; os **18
     fragmentos estáticos** são **N/A**. **A migração da autoridade de status NÃO foi
     realizada** e depende de entrega separada.
