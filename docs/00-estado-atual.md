@@ -31,16 +31,18 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-Commit funcional `5a2991ede55fc1d24cb387a1c28afd58dc0cec15`.
+Commit funcional `79de85dcea0f7cad9c00d4fff050de97dd494271`.
 
-Materialização da **fronteira determinística de reconhecimento e recusa do valor terminal de
-`C-7`** (`src/casa77_sdr/response_null_pending.py`). A fronteira recebe o **valor terminal já
-resolvido** pelo chamador e recusa exatamente duas formas: `null` e o `dict` **exato** cuja
-chave literal `status` tem por valor a `str` **exata** `pendente`. Todos os demais valores são
-devolvidos **por identidade**, sem cópia, normalização, coerção ou juízo adicional.
+Arbitragem e materialização da **sintaxe física canônica de *placeholder***
+(`src/casa77_sdr/response_placeholder.py`). A forma canônica é **`{{nome}}`**;
+`binding.placeholder` **continua explícito e obrigatório**. `derivar_placeholder()` valida o
+nome do *binding* `RENDERIZADO` e produz a representação canônica; `decompor_template()` valida
+o *template*, decompõe-no em literais e nomes e confere a correspondência com os nomes dos
+*bindings*. Um mesmo *binding* pode abastecer **múltiplas ocorrências** do mesmo *placeholder*.
+**Zero normalização**, e falha é ***fail-closed***.
 
-Permanece **fronteira isolada**: não integrada a *binding*, índice, *renderer*, consumidor nem
-`S2-D8`. **Não significa materialização end-to-end de `C-7`, nem materialização de `C`.**
+Permanece **fronteira isolada**: **ainda não integrada ao `E1`**, e não cria *renderer* nem
+índice físico. **Não materializa `C` integralmente.**
 
 ---
 
@@ -50,7 +52,7 @@ Permanece **fronteira isolada**: não integrada a *binding*, índice, *renderer*
 execução desta atualização:
 
 - Python **3.14.5**;
-- **`5578 passed`**, sob **`-W error`**;
+- **`5734 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings.
 
 CI configurada em GitHub Actions, em `.github/workflows/ci.yml`, com Python **3.13** e **3.14**.
@@ -83,7 +85,11 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   necessário**, e a **consequência sobre fragmento que se pretende `APROVADO`**, permanecem
   dependentes de **consumidor futuro**. Portanto **`C-7` não está materializada end-to-end** e
   **`C` continua NÃO materializada integralmente**. O contrato de `C-7` não foi reaberto.
-- **Sintaxe física de *placeholder*** continua **aberta**.
+- **Sintaxe física de *placeholder***: **arbitrada e materializada isoladamente**. A forma
+  canônica é **`{{nome}}`**; `binding.placeholder` permanece **explícito** e deve corresponder
+  **mecanicamente** ao nome do *binding* `RENDERIZADO`. A fronteira
+  `src/casa77_sdr/response_placeholder.py` deriva e decompõe essa representação. **A integração
+  ao `E1` permanece pendente.**
 - **`C-A1-ST6`–`C-A1-ST10`** continuam **não satisfeitas** integralmente.
 
 Existem fronteiras determinísticas já materializadas em torno de `C` — validador estrutural,
@@ -149,5 +155,6 @@ eventos confirmados e condições já estruturadas.
 
 ## 7. Próxima ação
 
-A migração de governança v2 está **concluída**. A próxima microentrega funcional do bloco `C`
-será eleita por novo mandato do GPT.
+Próxima ação eleita, **ainda não iniciada**: integrar a gramática canônica de *placeholder* ao
+validador estrutural **`E1`**, exigindo a gramática de nome para *bindings* `RENDERIZADO` e
+**igualdade literal** entre `binding.placeholder` e `derivar_placeholder(binding.nome)`.
