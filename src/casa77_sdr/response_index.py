@@ -34,6 +34,30 @@ encadeada em `__cause__`. A tradução é fechada: falha **gramatical** vira
 combinação entre um caminho relativo e um fragmento que não declara
 `itera_sobre`.
 
+**O *placeholder* e o nome de `RENDERIZADO` também são COMPOSTOS.** A gramática
+do nome de *binding* `RENDERIZADO` e a forma física canônica `{{nome}}`
+pertencem exclusivamente à fronteira `PH`, em `casa77_sdr.response_placeholder`.
+E1 **não** mantém gramática paralela: ele **não** conta chaves, **não** extrai o
+conteúdo entre os delimitadores, **não** normaliza e **não** compara
+aproximadamente. Ele exige o **tipo exato** `type(nome) is str`, delega a
+`derivar_placeholder`, **reutiliza** o valor canônico devolvido e compara o campo
+explícito `binding.placeholder` com ele por **igualdade literal**. O campo
+continua **obrigatório** (`C-4c`): a composição não o remove, apenas fecha qual é
+o seu único valor admissível.
+
+`PH4` alcança **somente** `RENDERIZADO`. Um nome de `ASSERTIVA` continua sujeito
+**apenas** ao contrato vigente de `C-5` — presente, textual, não vazio e único no
+fragmento —, e **não** é julgado pela gramática de *placeholder*.
+
+**E1 não possui *template*, e não finge possuir.** Ele **não** importa e **não**
+chama `decompor_template`: verificar a ocorrência física do *placeholder* dentro
+de um texto exige o *template* do fragmento, que o índice não carrega. Essa
+verificação pertence a consumidor futuro.
+
+**A exceção de `PH` não atravessa a fronteira pública de E1.** Assim como nas
+linhas de `CY13`, `PlaceholderInvalido` é traduzida para `IndiceInvalido` com
+categoria `valor_invalido`, e a causa técnica fica encadeada em `__cause__`.
+
 A categoria `selecao_posicional` **deixou de ser produzida por E1**, e isso é
 **deliberado**: `C-A1-S1` continua valendo, mas agora por consequência da
 gramática canônica — `[0]` não tem forma de seletor e chave exclusivamente
@@ -61,6 +85,10 @@ from typing import Any
 
 from casa77_sdr.response_yaml_path import (
     CaminhoYamlInvalido as _CaminhoYamlInvalido,
+)
+from casa77_sdr.response_placeholder import (
+    PlaceholderInvalido as _PlaceholderInvalido,
+    derivar_placeholder as _derivar_placeholder,
 )
 from casa77_sdr.response_yaml_path_context import (
     CaminhoYamlContextoInvalido as _CaminhoYamlContextoInvalido,
@@ -224,18 +252,34 @@ def _validar_binding(
     nome = binding["nome"]
     if not isinstance(nome, str):
         raise _erro(_TIPO_INVALIDO, f"{onde}.nome")
-    if not nome:
+    # `str.__len__` em vez de `not nome`: o teste de vazio roda **antes** do
+    # gate de tipo exato de `RENDERIZADO`, e `not` despacharia o `__len__` do
+    # objeto recebido. A semântica e a precedência não mudam.
+    if str.__len__(nome) == 0:
         raise _erro(_VALOR_INVALIDO, f"{onde}.nome")
-    # C-4a / C-5a: nome único no fragmento.
-    if nome in nomes_vistos:
-        raise _erro(_DUPLICIDADE, f"{onde}.nome")
-    nomes_vistos.add(nome)
 
     mecanismo = binding["mecanismo"]
     if not isinstance(mecanismo, str):
         raise _erro(_TIPO_INVALIDO, f"{onde}.mecanismo")
     if mecanismo not in _MECANISMOS:
         raise _erro(_VALOR_INVALIDO, f"{onde}.mecanismo")
+
+    # `PH4` só alcança `RENDERIZADO`; `ASSERTIVA` permanece com `C-5`.
+    #
+    # O gate de **tipo exato** precede deliberadamente a unicidade. `nomes_vistos`
+    # é um `set`, e tanto `in` quanto `add` despachariam `__hash__` e `__eq__` do
+    # objeto recebido: uma subclasse de `str` conseguiria **executar código** —
+    # e até levantar exceção própria — antes de E1 recusá-la. Exigir o tipo
+    # exato primeiro fecha essa janela, ao custo de inverter a precedência
+    # apenas entre duas violações **simultâneas** de nome e de mecanismo.
+    placeholder_esperado = None
+    if mecanismo == "RENDERIZADO":
+        placeholder_esperado = _exigir_nome_renderizado(nome, onde)
+
+    # C-4a / C-5a: nome único no fragmento.
+    if nome in nomes_vistos:
+        raise _erro(_DUPLICIDADE, f"{onde}.nome")
+    nomes_vistos.add(nome)
 
     # C-A2-RT3 / C-A2-RT4: `origem` é obrigatória e nunca é presumida `YAML`.
     origem = binding["origem"]
@@ -247,7 +291,7 @@ def _validar_binding(
     _validar_referente(
         binding, onde, origem, mecanismo, fragmento_itera=fragmento_itera
     )
-    _validar_mecanismo(binding, onde, mecanismo)
+    _validar_mecanismo(binding, onde, mecanismo, placeholder_esperado)
 
 
 def _validar_referente(
@@ -289,8 +333,17 @@ def _validar_referente(
 
 
 def _validar_mecanismo(
-    binding: dict[str, Any], onde: str, mecanismo: str
+    binding: dict[str, Any],
+    onde: str,
+    mecanismo: str,
+    placeholder_esperado: str | None,
 ) -> None:
+    """Aplica as regras específicas do mecanismo do *binding*.
+
+    `placeholder_esperado` é o valor canônico já produzido pela fronteira `PH`
+    para `RENDERIZADO`, e é `None` para `ASSERTIVA` — que **não** tem
+    *placeholder* (`C-5d`) e **não** é alcançada por `PH4`.
+    """
     if mecanismo == "RENDERIZADO":
         # C-4c e C-4d: *placeholder* e formato fechado são obrigatórios.
         if "predicado" in binding:
@@ -303,7 +356,9 @@ def _validar_mecanismo(
         placeholder = binding["placeholder"]
         if not isinstance(placeholder, str):
             raise _erro(_TIPO_INVALIDO, f"{onde}.placeholder")
-        if not placeholder:
+        # Mesma razão do nome: `not placeholder` despacharia o `__len__` da
+        # subclasse antes da comparação segura logo abaixo.
+        if str.__len__(placeholder) == 0:
             raise _erro(_VALOR_INVALIDO, f"{onde}.placeholder")
 
         formato = binding["formato"]
@@ -311,6 +366,16 @@ def _validar_mecanismo(
             raise _erro(_TIPO_INVALIDO, f"{onde}.formato")
         if formato not in _FORMATOS:
             raise _erro(_VALOR_INVALIDO, f"{onde}.formato")
+
+        # `PH3b`: o campo explícito precisa ser **literalmente** a derivação do
+        # nome. A comparação usa a implementação **base** de `str`, e não o
+        # operador do objeto recebido: `!=` despacharia `__ne__`/`__eq__` de uma
+        # subclasse, deixando a própria entrada decidir se é canônica. O
+        # resultado é conferido contra `True` porque `str.__eq__` devolve
+        # `NotImplemented` — e não `False` — quando o outro lado não é `str`.
+        # Continua sem *parser* local, sem normalização e sem coerção.
+        if str.__eq__(placeholder, placeholder_esperado) is not True:
+            raise _erro(_VALOR_INVALIDO, f"{onde}.placeholder")
         return
 
     # C-5d, C-5e e C-5c: `ASSERTIVA` não tem *placeholder* nem formato, e o
@@ -390,6 +455,33 @@ def _exigir_caminho_de_binding(
         raise _erro(_VALOR_INVALIDO, onde) from exc
     except _CaminhoYamlContextoInvalido as exc:
         raise _erro(_COMBINACAO_INVALIDA, onde) from exc
+
+
+def _exigir_nome_renderizado(nome: str, onde: str) -> str:
+    """Delega o nome de `RENDERIZADO` à fronteira `PH` e devolve o canônico.
+
+    O tipo é exigido como `str` **exata** **antes** da delegação. A validação
+    genérica de nome, que precede esta, usa `isinstance` e portanto aceita
+    subclasse de `str`; aqui a subclasse é recusada como `tipo_invalido`, para
+    **não executar** `__eq__`, `__hash__` ou `__iter__` redefinidos dentro da
+    fronteira `PH` e para preservar a disciplina de tipo exato dela.
+
+    O `try` é **estreito de propósito**: envolve somente a chamada e captura
+    **somente** a exceção nominal de `PH`. Como o tipo já foi exigido, uma
+    `PlaceholderInvalido` que chegue aqui só pode ser `valor_invalido: nome` —
+    ou seja, violação de `PH4` —, e E1 **não** interpreta a mensagem, **não**
+    reproduz a gramática e **não** mantém autoridade paralela sobre ela.
+
+    Devolve o *placeholder* canônico, que é **reutilizado** adiante: a fronteira
+    **não** é chamada duas vezes para o mesmo *binding*.
+    """
+    if type(nome) is not str:
+        raise _erro(_TIPO_INVALIDO, f"{onde}.nome")
+
+    try:
+        return _derivar_placeholder(nome)
+    except _PlaceholderInvalido as exc:
+        raise _erro(_VALOR_INVALIDO, f"{onde}.nome") from exc
 
 
 def _exigir_mapeamento(valor: object, onde: str) -> None:
