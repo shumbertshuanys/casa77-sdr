@@ -90,9 +90,10 @@ seções `Rxx` sejam globalmente únicas, e **não** afirma coisa alguma sobre
 índice, bijeção física, *bindings*, `ASSERTIVA`, *placeholder*, `caminho_yaml`,
 `hora`, `C-7`, equivalência `C-15` ou migração de autoridade. **`C-A1-ST8` NÃO é
 declarada satisfeita**: ela exige o status de todos os fragmentos **do corpus**,
-o que continua dependendo de execução e auditoria próprias sobre os insumos
-canônicos. A autoridade de status continua no Markdown aprovado (`C-11`) e **`C`
-continua ARBITRADA / NÃO MATERIALIZADA**.
+o que depende de execução e auditoria próprias sobre os insumos canônicos. A
+autoridade de status é externa a esta fronteira, que não a decide nem a migra
+(`C-11`); e ela, isoladamente, não materializa `C` nem prova a integração
+completa de `C`.
 """
 
 from __future__ import annotations
@@ -166,7 +167,7 @@ def compor_status_dos_fragmentos(texto: str) -> tuple[tuple[str, str], ...]:
 
     **COMPOR STATUS NÃO É MATERIALIZAR `C`** e **NÃO satisfaz `C-A1-ST8`**: o
     sucesso afirma somente o que o texto recebido diz, e a autoridade de status
-    continua no Markdown aprovado (`C-11`).
+    é externa a esta fronteira (`C-11`).
     """
     # **1. Particao fisica.** A associacao roda `C12`, que por sua vez roda `C8`
     # como o seu proprio portao: quando esta linha retorna, estrutura `C-A5` e

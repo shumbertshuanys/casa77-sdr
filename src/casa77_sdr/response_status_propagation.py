@@ -73,8 +73,8 @@ declaração de status no Markdown (`C-2d`), **não** altera o Markdown, **não*
 cria índice, **não** cria fragmento, **não** altera identidade, **não** extrai
 rótulo, **não** resolve `PARCIAL`, **não** executa a bijeção física, **não**
 satisfaz `C-A1-ST6`–`C-A1-ST10` e **não** migra a autoridade de status — a
-autoridade de status **continua onde está** (`C-11`). `C` continua **ARBITRADA /
-NÃO MATERIALIZADA**.
+autoridade de status é **externa a esta fronteira** (`C-11`). Ela, isoladamente,
+não materializa `C` nem prova a integração completa de `C`.
 """
 
 from __future__ import annotations

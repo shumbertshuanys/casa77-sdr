@@ -82,10 +82,10 @@ a `{{x}}` permanece **texto factual literal**.
 
 **DECOMPOR NÃO É MATERIALIZAR `C`** (`PH12`). Esta fronteira não cria índice,
 não cria *renderer*, não altera `knowledge/**`, não converte `Rxx` reais, não
-integra `E1` — `src/casa77_sdr/response_index.py` continua **INALTERADO** —, não
-resolve *binding* factual, não aplica `C-7`, não executa formato, não executa
-`C-15`, não resolve `S2-D8`, não satisfaz `C-A1-ST6`–`C-A1-ST10` e não migra a
-autoridade de status.
+executa nem prova, isoladamente, a integração estrutural da gramática de
+*placeholder* a `E1`, não resolve *binding* factual, não aplica `C-7`, não
+executa formato, não executa `C-15`, não resolve `S2-D8`, não satisfaz
+`C-A1-ST6`–`C-A1-ST10` e não migra a autoridade de status.
 """
 
 from __future__ import annotations

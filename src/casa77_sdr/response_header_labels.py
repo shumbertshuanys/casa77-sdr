@@ -95,8 +95,9 @@ seções `Rxx` sejam fisicamente únicas, nem afirma coisa alguma sobre status
 canônico, propagação `SP1`–`SP7`, mapeamento de `PARCIAL`, índice, bijeção
 física, *bindings*, *placeholder*, `caminho_yaml`, `hora`, `C-7`, equivalência
 `C-15`, migração de autoridade de status ou `C-A1-ST6`–`C-A1-ST10`. A
-autoridade de status continua no Markdown aprovado (`C-11`) e **`C` continua
-ARBITRADA / NÃO MATERIALIZADA**.
+autoridade de status é externa a esta fronteira, que não a decide nem a migra
+(`C-11`); e ela, isoladamente, não materializa `C` nem prova a integração
+completa de `C`.
 """
 
 from __future__ import annotations

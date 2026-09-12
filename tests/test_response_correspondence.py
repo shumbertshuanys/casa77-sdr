@@ -656,13 +656,20 @@ def test_a_docstring_declara_as_garantias_negativas():
     docstring = _sem_quebras(ast.get_docstring(ARVORE_PRODUCAO) or "")
     for exigido in (
         "NÃO É EXECUTAR A BIJEÇÃO FÍSICA E NÃO É MATERIALIZAR",
-        "continua INEXISTENTE",
+        "**não** afirma que `indice` seja o índice oficial",
+        "que o índice físico exista",
+        "isoladamente, não materializa `C` nem prova a integração completa de `C`",
         "C-A1-ST6",
         "validar_indice",
         "C-A5-I5",
         "C-A5-T5",
     ):
         assert exigido in docstring
+
+    # A docstring declara um **limite atemporal da fronteira**, nunca o estado
+    # corrente do indice fisico: fixar a frase historica aqui reintroduziria
+    # snapshot de estado dentro do codigo.
+    assert "continua INEXISTENTE" not in docstring
 
 
 def test_a_docstring_da_funcao_declara_as_garantias_negativas():
@@ -676,10 +683,14 @@ def test_a_docstring_da_funcao_declara_as_garantias_negativas():
     docstring = _sem_quebras(ast.get_docstring(funcoes[0]) or "")
     for exigido in (
         "NÃO É EXECUTAR A BIJEÇÃO FÍSICA E NÃO É MATERIALIZAR",
-        "continua INEXISTENTE",
+        "nada sobre a origem deles, sobre a existência do índice físico",
         "C-A1-ST6",
     ):
         assert exigido in docstring
+
+    # O sucesso nao afirma a existencia do indice fisico; a docstring nao
+    # declara que ele seja inexistente.
+    assert "continua INEXISTENTE" not in docstring
 
 
 # ---------------------------------------------------------------------------
