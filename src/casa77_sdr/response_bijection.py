@@ -50,8 +50,9 @@ acumulado (P5). A mensagem carrega **categoria e localizador**, nunca o token
 recebido, o conteúdo, o `repr`, o tipo concreto, um índice numérico, um tamanho
 ou uma cardinalidade. As entradas **não são alteradas**.
 
-**VERIFICAR A RELAÇÃO NÃO É MATERIALIZAR `C`.** O índice continua inexistente,
-nenhum fragmento real é validado e nenhum consumidor é integrado.
+**VERIFICAR A RELAÇÃO NÃO É MATERIALIZAR `C`.** Esta fronteira não cria, não
+carrega nem prova a existência do índice oficial, não valida fragmento real e
+não integra consumidor algum.
 """
 
 from __future__ import annotations

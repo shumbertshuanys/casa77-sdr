@@ -96,11 +96,12 @@ canonicalidade. Ele **não** diz se a `str` veio de `caminho_yaml` ou de
 `itera_sobre`; se o fragmento possui `itera_sobre`; se um caminho relativo é
 contextualmente permitido; se a chave existe no YAML; se o seletor tem *match*;
 se o caminho resolve; se o terminal é `null`; se existe `status: pendente`; se
-existe índice físico; nem se o corpus é oficial. **A validação estrutural do
-índice e o resolver de `CY13` continuam NÃO IMPLEMENTADOS**, `C-7` continua **NÃO
-MATERIALIZADA**, `knowledge/indice-respostas-aprovadas.yaml` continua
-**INEXISTENTE**, a autoridade de status continua no Markdown aprovado (`C-11`) e
-**`C` continua ARBITRADA / NÃO MATERIALIZADA**.
+existe índice físico; nem se o corpus é oficial. **Esta fronteira não executa
+nem substitui a validação estrutural do índice nem o resolver de `CY13`**, não
+aplica nem substitui `C-7`, não cria nem prova a existência de
+`knowledge/indice-respostas-aprovadas.yaml`, não decide nem migra a autoridade
+de status — externa a ela (`C-11`) — e, isoladamente, não materializa `C` nem
+prova a integração completa de `C`.
 """
 
 from __future__ import annotations

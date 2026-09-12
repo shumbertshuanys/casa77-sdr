@@ -65,12 +65,12 @@ forma — absoluta ou relativa — é admissível na posição declarada. Ele **
 lê o YAML factual, **não** abre `knowledge/**`, **não** verifica existência de
 chave, **não** executa seletor, **não** conta *matches*, **não** confere se
 `itera_sobre` termina em coleção, **não** percorre o índice, **não** substitui
-`validar_indice` e **não** conhece fato comercial algum. Esta fronteira **ainda
-não está integrada a `E1`**: `src/casa77_sdr/response_index.py` **não** a
-consome. A **linha 3 de `CY13` — o resolver — continua NÃO IMPLEMENTADA**, `C-7`
-continua **NÃO MATERIALIZADA**, `knowledge/indice-respostas-aprovadas.yaml`
-continua **INEXISTENTE**, a autoridade de status continua no Markdown aprovado
-(`C-11`) e **`C` continua ARBITRADA / NÃO MATERIALIZADA**.
+`validar_indice` e **não** conhece fato comercial algum. Esta fronteira **não
+executa nem prova a sua própria integração a `E1`**, **não executa nem substitui
+a linha 3 de `CY13` — o resolver**, não aplica nem substitui `C-7`, não cria nem
+prova a existência de `knowledge/indice-respostas-aprovadas.yaml`, não decide
+nem migra a autoridade de status — externa a ela (`C-11`) — e, isoladamente,
+não materializa `C` nem prova a integração completa de `C`.
 """
 
 from __future__ import annotations
@@ -187,7 +187,7 @@ def validar_itera_sobre(
     **VALIDAR O CONTEXTO NÃO É RESOLVER.** O sucesso afirma **somente** que a
     forma é absoluta — nada sobre a coleção existir, ser de fato uma coleção,
     estar vazia ou terminar em mapa, escalar ou `null`. Esse juízo pertence ao
-    resolver, que continua **NÃO IMPLEMENTADO**.
+    resolver, que esta fronteira **não executa nem substitui**.
     """
     resultado = _analisar_caminho_yaml(caminho)
 

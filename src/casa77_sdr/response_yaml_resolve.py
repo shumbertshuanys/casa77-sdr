@@ -100,10 +100,11 @@ que a decomposição recebida percorre a estrutura recebida e alcança um valor.
 Ele **não** diz que a estrutura é o corpus oficial; **não** conhece `Rxx`,
 fragmento emitível, *binding* físico, *placeholder*, formato ou `ASSERTIVA`;
 **não** formata valor; **não** aplica `C-7`; e **não** integra coisa alguma a
-`E1` — `src/casa77_sdr/response_index.py` **não consome** esta fronteira e
-**continua INALTERADO**. `knowledge/indice-respostas-aprovadas.yaml` continua
-**INEXISTENTE**, a autoridade de status continua no Markdown aprovado (`C-11`) e
-**`C` continua ARBITRADA / NÃO MATERIALIZADA**.
+`E1` — a integração desta fronteira a `src/casa77_sdr/response_index.py` não é
+executada nem provada aqui. Esta fronteira não cria nem prova a existência de
+`knowledge/indice-respostas-aprovadas.yaml`, não decide nem migra a autoridade
+de status — externa a ela (`C-11`) — e, isoladamente, não materializa `C` nem
+prova a integração completa de `C`.
 """
 
 from __future__ import annotations

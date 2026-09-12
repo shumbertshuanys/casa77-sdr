@@ -73,15 +73,15 @@ novos de `C`.
 
 **DERIVAR O DOMÍNIO NÃO É MATERIALIZAR `C`.** Um retorno bem-sucedido significa
 **somente** que foi possível derivar um domínio canônico de identidades a partir
-da projeção lida. Ele **não** prova que o índice real exista — ele **continua
-INEXISTENTE** —, que a estrutura recebida seja o índice oficial, que ela seja
-integralmente válida (isso é de `validar_indice`), que `C-A1-ST6` esteja
-satisfeita, que a bijeção física tenha sido executada, que `C-A1-ST7` esteja
-satisfeita, nem que a autoridade de status tenha migrado
-(`C-A1-ST6`–`C-A1-ST10` continuam **NÃO satisfeitas**). Esta fronteira produz
-**apenas o produtor de um domínio**: ela **não** cria a relação de
-correspondência, **não** chama `validar_bijecao` e **não** executa a bijeção.
-`C` continua **ARBITRADA / NÃO MATERIALIZADA**.
+da projeção lida. Ele **não** prova que o índice real exista, que a estrutura
+recebida seja o índice oficial, que ela seja integralmente válida (isso é de
+`validar_indice`), que `C-A1-ST6` esteja satisfeita, que a bijeção física tenha
+sido executada, que `C-A1-ST7` esteja satisfeita, nem que a autoridade de status
+tenha migrado — o sucesso desta fronteira, isoladamente, não prova
+`C-A1-ST6`–`C-A1-ST10`. Esta fronteira produz **apenas o produtor de um
+domínio**: ela **não** cria a relação de correspondência, **não** chama
+`validar_bijecao` e **não** executa a bijeção. Ela, isoladamente, não
+materializa `C` nem prova a integração completa de `C`.
 """
 
 from __future__ import annotations
@@ -145,7 +145,7 @@ def derivar_tokens_do_indice(indice: object) -> tuple[str, ...]:
     A tupla vem na **ordem das listas recebidas** — `respostas` e, dentro de
     cada uma, `fragmentos` — e contém **exatamente um** token por fragmento.
     `{"respostas": []}` devolve `tuple()`; isso **não** afirma que o índice real
-    esteja vazio, incompleto ou completo — ele **continua INEXISTENTE**.
+    esteja vazio, incompleto ou completo, nem que ele exista.
 
     A **projeção mínima** lida, e nada além dela, é: a raiz é mapeamento; existe
     `respostas`; `respostas` é lista; cada resposta é mapeamento; existe `id`;

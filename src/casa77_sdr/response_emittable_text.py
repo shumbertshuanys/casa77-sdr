@@ -84,9 +84,10 @@ texto seja o corpus oficial, que o corpus esteja completo ou aprovado, que as
 seções `Rxx` sejam fisicamente únicas, nem afirma coisa alguma sobre status,
 propagação de status, `PARCIAL`, índice real, *bindings*, `ASSERTIVA`,
 equivalência `C-15`, bijeção física, migração de autoridade de status ou
-`C-A1-ST6`–`C-A1-ST10`. O índice continua inexistente, a autoridade de status
-continua em `knowledge/respostas-aprovadas.md` (`C-11`) e **`C` continua
-ARBITRADA / NÃO MATERIALIZADA**.
+`C-A1-ST6`–`C-A1-ST10`. Esta fronteira não cria, não carrega nem prova a
+existência do índice oficial; a autoridade de status lhe é externa e é
+determinada por `C-11` e pelo estado corrente aprovado; e ela, isoladamente,
+não materializa `C` nem prova a integração completa de `C`.
 """
 
 from __future__ import annotations

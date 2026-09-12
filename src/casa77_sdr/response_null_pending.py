@@ -69,9 +69,10 @@ fragmento, status do fragmento, candidatura ou aprovação; **não** decide
 `pendencia_impeditiva`, handoff nem condição de ciclo; e **não** implementa
 `S2-D8` (`C-12`). A consequência de `C-7` sobre um *binding* necessário a um
 fragmento que se pretende `APROVADO` — o bloqueio do fragmento — pertence
-**integralmente a consumidor futuro**. O índice físico continua **inexistente**,
-nenhum fragmento real é avaliado, nenhum consumidor é integrado e **`C`
-continua ARBITRADA / NÃO MATERIALIZADA**.
+**integralmente a consumidor futuro**. Esta fronteira não cria, não carrega nem
+prova a existência do índice físico oficial, não avalia fragmento real, não
+integra consumidor algum e, isoladamente, não materializa `C` nem prova a
+integração completa de `C`.
 """
 
 from __future__ import annotations

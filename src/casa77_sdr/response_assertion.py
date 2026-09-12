@@ -37,8 +37,9 @@ Falha é **fail-closed** e imediata: a primeira violação encerra, e nada é
 acumulado (P5). A mensagem carrega **categoria e localizador**, nunca o predicado
 recebido, o valor recebido, o tipo concreto ou qualquer conteúdo.
 
-**AVALIAR NÃO É MATERIALIZAR `C`.** O índice continua inexistente, nenhum
-fragmento real é validado e nenhum consumidor é integrado.
+**AVALIAR NÃO É MATERIALIZAR `C`.** Esta fronteira não cria, não carrega nem
+prova a existência do índice oficial, não valida fragmento real e não integra
+consumidor algum.
 """
 
 from __future__ import annotations

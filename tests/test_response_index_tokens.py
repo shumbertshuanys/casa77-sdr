@@ -810,12 +810,16 @@ def test_a_docstring_declara_os_limites():
     for exigido in (
         "DERIVAR O DOMÍNIO NÃO É MATERIALIZAR",
         "NÃO substitui `validar_indice`",
+        "**não** prova que o índice real exista",
         "C-A1-ST6",
         "C-A5-I3",
         "C-A5-T5",
-        "INEXISTENTE",
     ):
         assert exigido in docstring
+
+    # A fronteira **nao prova** a existencia do indice real; ela tampouco
+    # declara que o indice seja inexistente.
+    assert "INEXISTENTE" not in docstring
 
 
 # ---------------------------------------------------------------------------

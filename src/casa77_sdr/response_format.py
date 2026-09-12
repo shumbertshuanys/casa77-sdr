@@ -25,8 +25,9 @@ Falha é **fail-closed** e imediata: a primeira violação levanta
 `FormatoInaplicavel`, e nada é acumulado. O que **não** é formatável não é
 "quase formatado" — é recusado.
 
-**FORMATAR NÃO É MATERIALIZAR `C`.** O índice continua inexistente, nenhum
-fragmento real é renderizado e nenhum consumidor é integrado.
+**FORMATAR NÃO É MATERIALIZAR `C`.** Esta fronteira não cria, não carrega nem
+prova a existência do índice oficial, não renderiza fragmento real e não
+integra consumidor algum.
 """
 
 from __future__ import annotations

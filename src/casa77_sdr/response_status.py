@@ -52,10 +52,9 @@ que a origem do rótulo esteja correta, que algo seja emitível, que o índice r
 exista ou seja válido, que o Markdown tenha sido integralmente extraído, que a
 bijeção física tenha ocorrido, nem que **`C-A1-ST6`**, **`C-A1-ST7`**,
 **`C-A1-ST8`**, **`C-A1-ST9`** ou **`C-A1-ST10`** estejam satisfeitas. **A
-autoridade de status não migra aqui**: enquanto as cinco condições de
-`C-A1-ST6`–`C-A1-ST10` não valerem integralmente,
-`knowledge/respostas-aprovadas.md` **continua a autoridade de status** (`C-11`),
-e o status **não é removido do Markdown**. Nada aqui prova equivalência `C-15`,
+autoridade de status não migra aqui**: esta fronteira não decide nem migra a
+autoridade de status, que lhe é externa e é determinada por `C-11` e pelo
+estado corrente aprovado; e o status **não é removido do Markdown** por ela. Nada aqui prova equivalência `C-15`,
 validade de *bindings* ou aprovação humana; e **cobertura estrutural não é
 emissibilidade** (`C-A4-G8`).
 """
@@ -145,8 +144,8 @@ def canonicalizar_status(rotulo: str) -> str:
     a correspondência exata com uma linha arbitrada — nada sobre fragmento,
     emissibilidade, índice real, bijeção física, `C-A1-ST6`–`C-A1-ST10`,
     equivalência `C-15`, *bindings* ou aprovação humana. **A autoridade de
-    status não migra**: `knowledge/respostas-aprovadas.md` continua a autoridade
-    (`C-11`).
+    status não migra aqui**: ela é externa a esta fronteira e é determinada por
+    `C-11` e pelo estado corrente aprovado.
     """
     if type(rotulo) is not str:
         raise _nao_canonicalizavel(_TIPO_INVALIDO)

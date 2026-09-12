@@ -44,15 +44,15 @@ cache**, **zero estado mutável de módulo**. Os insumos **não são alterados**
 MATERIALIZAR `C`.** Um retorno bem-sucedido afirma **somente** que os **dois
 insumos fornecidos** produziram domínios de identidade cuja relação canônica é
 **bijetiva entre eles**. Ele **não** afirma que `indice` seja o índice oficial,
-que `texto_markdown` seja o corpus oficial, que o índice físico exista — ele
-**continua INEXISTENTE** —, que o corpus esteja completo ou aprovado, que o
-índice seja **integralmente válido** (isso é de `validar_indice`, que este
-módulo **não** chama e **não** substitui), que a **bijeção física 37/37** do
-corpus real tenha sido executada, que `C-A1-ST6`–`C-A1-ST10` estejam satisfeitas
-ou que a autoridade de status tenha migrado. **A proveniência correta dos dois
-insumos é pré-condição do chamador** e não é verificável nesta fronteira sem
-transformá-la em carregador — que ela deliberadamente não é. `C` continua
-**ARBITRADA / NÃO MATERIALIZADA**.
+que `texto_markdown` seja o corpus oficial, que o índice físico exista, que o
+corpus esteja completo ou aprovado, que o índice seja **integralmente válido**
+(isso é de `validar_indice`, que este módulo **não** chama e **não** substitui),
+que a **bijeção física 37/37** do corpus real tenha sido executada, que
+`C-A1-ST6`–`C-A1-ST10` estejam satisfeitas ou que a autoridade de status tenha
+migrado. **A proveniência correta dos dois insumos é pré-condição do chamador**
+e não é verificável nesta fronteira sem transformá-la em carregador — que ela
+deliberadamente não é. Esta fronteira, isoladamente, não materializa `C` nem
+prova a integração completa de `C`.
 """
 
 from __future__ import annotations
@@ -103,10 +103,10 @@ def validar_correspondencia_canonica(
     **COMPOR E VALIDAR EM MEMÓRIA NÃO É EXECUTAR A BIJEÇÃO FÍSICA E NÃO É
     MATERIALIZAR `C`.** O sucesso afirma **somente** a bijetividade entre os
     domínios dos **dois insumos fornecidos** — nada sobre a origem deles, sobre
-    a existência do índice físico (que **continua INEXISTENTE**), sobre a
-    completude ou a aprovação do corpus, sobre a validade integral do índice por
-    `validar_indice`, sobre a execução da bijeção física 37/37, sobre
-    `C-A1-ST6`–`C-A1-ST10` ou sobre a migração da autoridade de status.
+    a existência do índice físico, sobre a completude ou a aprovação do corpus,
+    sobre a validade integral do índice por `validar_indice`, sobre a execução
+    da bijeção física 37/37, sobre `C-A1-ST6`–`C-A1-ST10` ou sobre a migração
+    da autoridade de status.
     """
     dominio_indice = derivar_tokens_do_indice(indice)
     dominio_markdown = ler_unidades_marcadas(texto_markdown)
