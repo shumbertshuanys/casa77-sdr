@@ -2,8 +2,17 @@
 
 Textos que o bot pode usar. Todo valor citado vem de `knowledge/casa77.yaml` v1.1.
 
-Status: **APROVADO** = pode usar | **AGUARDA APROVAÇÃO** = texto rascunhado, falta validação
-de Douglas Bianchi | **BLOQUEADO** = campo pendente no YAML, usar R03.
+**Autoridade de status.** A autoridade canônica de status por fragmento é
+`knowledge/indice-respostas-aprovadas.yaml` (`C-11`). Os rótulos de status mantidos neste
+arquivo — no cabeçalho `Rxx` e em `status-fragmento` — são **auxiliares de leitura humana
+e de reconciliação**. Em divergência, este Markdown **não** sobrescreve o índice.
+
+Significado dos rótulos, apenas para leitura humana: **APROVADO** = status canônico
+`APROVADO` | **AGUARDA APROVAÇÃO** = status canônico `AGUARDA_APROVACAO`, texto ainda
+pendente de validação humana | **BLOQUEADO** = status canônico `BLOQUEADO`.
+
+Esses rótulos **não** decidem seleção, emissão, `E09`, R03 nem handoff: essas decisões
+pertencem às demais validações e a `S2-D8`.
 
 ---
 

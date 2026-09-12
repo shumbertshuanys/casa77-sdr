@@ -16,11 +16,16 @@ quantidade ou frase aprovada é reproduzido. As asserções são **estruturais**
 contagens, coincidência de domínios, aplicabilidade de formato, veracidade de
 predicado — e nunca comparam conteúdo factual contra literal esperado.
 
-**O que ela NÃO afirma.** Não migra a autoridade de status, que continua no
-Markdown (`C-11`); não constrói *renderer* de produção; não decide candidatura,
-cobertura, `E09`, `pendencia_impeditiva`, handoff nem condição de ciclo
-(`C-12`); e, para os *bindings* `RUNTIME_AUTORITATIVO`, **não afirma verdade
-operacional** — ver `test_st9_runtime_nao_afirma_verdade_operacional`.
+**Autoridade de status.** Sob `C-11`, a autoridade de status por fragmento é
+`knowledge/indice-respostas-aprovadas.yaml`. `knowledge/respostas-aprovadas.md`
+permanece como **representação física de reconciliação**, nunca como autoridade:
+a conferência aqui corre na direção **índice → Markdown**.
+
+**O que ela NÃO afirma.** Não constrói *renderer* de produção; não cria *lookup*
+de status nem consumidor operacional; não decide candidatura, cobertura, `E09`,
+`pendencia_impeditiva`, handoff nem condição de ciclo (`C-12`); e, para os
+*bindings* `RUNTIME_AUTORITATIVO`, **não afirma verdade operacional** — ver
+`test_st9_runtime_nao_afirma_verdade_operacional`.
 """
 
 from __future__ import annotations
@@ -220,25 +225,50 @@ def test_st7_correspondencia_canonica(
 # ST8 — status do índice × status composto do Markdown
 
 
-def test_st8_status_coincide_por_ocorrencia(
+def test_st8_markdown_reconcilia_com_status_autoritativo_do_indice(
     indice: dict[str, Any], markdown: str
 ) -> None:
     """37/37, por ocorrência física e na ordem do documento.
 
-    A autoridade continua no Markdown (`C-11`): o índice é conferido **contra**
-    ele, e não o contrário.
+    A direção é **índice → Markdown** (`C-11`): o índice é o **esperado
+    autoritativo** e o Markdown é o **conferido**. Esta comparação **NÃO** torna
+    o Markdown autoridade — ela prova apenas que a representação humana de
+    reconciliação não divergiu da autoridade.
     """
-    do_markdown = compor_status_dos_fragmentos(markdown)
-    do_indice = {token: f["status"] for token, f in _fragmentos(indice)}
+    autoritativo = {token: f["status"] for token, f in _fragmentos(indice)}
+    fisico_no_markdown = compor_status_dos_fragmentos(markdown)
 
-    assert len(do_markdown) == TOTAL_FRAGMENTOS
-    assert len(do_indice) == TOTAL_FRAGMENTOS
+    assert len(autoritativo) == TOTAL_FRAGMENTOS
+    assert len(fisico_no_markdown) == TOTAL_FRAGMENTOS
+
+    # A bijeção dos domínios já é de `ST7`; aqui ela é apenas a pré-condição
+    # que torna a conferência por token total dos dois lados.
+    assert {token for token, _ in fisico_no_markdown} == set(autoritativo)
 
     divergentes = [
-        token for token, status in do_markdown if do_indice[token] != status
+        token
+        for token, status_fisico in fisico_no_markdown
+        if status_fisico != autoritativo[token]
     ]
 
     assert divergentes == []
+
+
+def test_r28_f1_tem_status_autoritativo_aprovado_no_indice(
+    indice: dict[str, Any],
+) -> None:
+    """`R28/F1` é `APROVADO` **no índice**, sem passar pelo Markdown.
+
+    O status esperado é lido **diretamente da autoridade** (`C-11`): nada aqui
+    consulta o rótulo `PARCIAL` do cabeçalho de `R28`, a declaração
+    `status-fragmento` ou a propagação `SP1`–`SP7`. Isso demonstra que `PARCIAL`
+    permanece rótulo humano agregado do Markdown e **não** é um quarto status
+    autoritativo.
+    """
+    autoritativo = {token: f["status"] for token, f in _fragmentos(indice)}
+
+    assert autoritativo["R28/F1"] == "APROVADO"
+    assert "PARCIAL" not in set(autoritativo.values())
 
 
 # ---------------------------------------------------------------------------
@@ -407,8 +437,16 @@ def test_ph8_fragmento_sem_renderizado_nao_tem_placeholder(
 # Invariantes negativas — o que esta materialização NÃO fez
 
 
-def test_autoridade_de_status_continua_no_markdown(markdown: str) -> None:
-    """`C-11`: o Markdown continua carregando rótulo e `status-fragmento`."""
+def test_markdown_preserva_rotulos_de_status_para_reconciliacao(
+    markdown: str,
+) -> None:
+    """O Markdown preserva a representação física dos rótulos de status.
+
+    Isso é **representação de reconciliação**, nunca autoridade: sob `C-11` a
+    autoridade de status é `knowledge/indice-respostas-aprovadas.yaml`. Prova-se
+    apenas que os cabeçalhos `Rxx` e a declaração `status-fragmento` exigida pelo
+    contrato `PM` continuam fisicamente presentes.
+    """
     assert "## R" in markdown
     assert "status-fragmento" in markdown
 

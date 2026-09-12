@@ -5,8 +5,11 @@
 # snapshot, versao congelada ou hash de valor (C-1h–C-1m, C-15e).
 # Texto/template: knowledge/respostas-aprovadas.md (C-11).
 # Valores: knowledge/casa77.yaml (F1, P8).
-# Autoridade de status: permanece em knowledge/respostas-aprovadas.md ate
-# C-A1-ST6–C-A1-ST10 integralmente satisfeitas (C-11, SP6, PM8).
+# Autoridade de status: knowledge/indice-respostas-aprovadas.yaml (C-11),
+# apos C-A1-ST6–C-A1-ST10 integralmente satisfeitas (SP6, PM8).
+# Rotulos de cabecalho e status-fragmento mantidos em
+# knowledge/respostas-aprovadas.md sao somente representacao humana /
+# reconciliacao e NAO sobrescrevem este indice.
 
 respostas:
   - id: R01

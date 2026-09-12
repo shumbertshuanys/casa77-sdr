@@ -127,8 +127,29 @@ encaminhar, encaminhe.
 
 Não injete o YAML inteiro em todas as mensagens. Na implementação, recupere de
 `knowledge/casa77.yaml` apenas os blocos relacionados à intenção detectada (ex.: intenção de
-preço → bloco `precos`; intenção de horário → bloco `horarios`), mais os blocos aprovados
-correspondentes de `knowledge/respostas-aprovadas.md`.
+preço → bloco `precos`; intenção de horário → bloco `horarios`), mais o texto dos
+fragmentos já selecionados pelo motor em `knowledge/respostas-aprovadas.md`.
+
+**Três camadas distintas — você não participa das duas primeiras:**
+
+- **status autoritativo do fragmento** → `knowledge/indice-respostas-aprovadas.yaml`
+- **seleção, candidatura e cobertura** → motor determinístico, fora de você e fora da
+  autoridade de status do índice
+- **texto / *template* do fragmento já selecionado** → `knowledge/respostas-aprovadas.md`
+
+Status `APROVADO` no índice é **condição necessária, não suficiente**: a seleção final
+do fragmento pertence ao motor determinístico e considera, conforme aplicável, o status
+autoritativo, a consistência factual, os *bindings*, `C-7`, os fatos *runtime*
+autoritativos e as regras de candidatura e cobertura quando materializadas. O motor
+seleciona; você recebe o resultado já selecionado.
+
+**Você não consulta o índice para escolher fragmentos.** Você não decide status,
+candidatura, cobertura nem elegibilidade, e não lê
+`knowledge/indice-respostas-aprovadas.yaml` em tempo de execução — a referência acima
+documenta onde mora a autoridade de status, não uma leitura sua. O bloco
+`<respostas_aprovadas>` já chega selecionado pelo motor. O rótulo de status impresso em
+`knowledge/respostas-aprovadas.md` é auxiliar de leitura humana e nunca fonte de
+decisão.
 
 ```
 <dados_casa77>
@@ -136,6 +157,7 @@ correspondentes de `knowledge/respostas-aprovadas.md`.
 </dados_casa77>
 
 <respostas_aprovadas>
-{blocos APROVADOS correspondentes de knowledge/respostas-aprovadas.md}
+{texto dos fragmentos já selecionados deterministicamente pelo motor — todos com status
+autoritativo APROVADO em knowledge/indice-respostas-aprovadas.yaml}
 </respostas_aprovadas>
 ```

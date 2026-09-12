@@ -22,8 +22,11 @@ exclusivamente em `knowledge/casa77.yaml`.
 - Etapa macro: **Etapa 3 — Motor de respostas — em execução**.
 - Última subetapa numerada concluída: **3B.7** (`ResolvedorIdentidade`,
   `src/casa77_sdr/identity.py`).
-- O trabalho corrente está no **bloco de materialização de `C`**, composto por microentregas
-  funcionais **sem numeração de subetapa**. **Não existe subetapa `3B.8`.**
+- O trabalho corrente está no **bloco de `C`**, composto por microentregas funcionais **sem
+  numeração de subetapa**. **Não existe subetapa `3B.8`.** A **materialização física do
+  índice e dos *templates*** e a **migração da autoridade de status** estão **concluídas**;
+  o bloco passa à **integração dos consumidores operacionais dependentes**, cujo primeiro
+  candidato é `ValidadorConsistenciaBase`. `C` **não** está integralmente operacional.
 - Etapa 4 permanece **absorvida pela Etapa 3B**; etapas 5 a 10 permanecem futuras
   (`docs/05-roadmap.md`).
 
@@ -31,17 +34,20 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-Commit funcional `de9b3579044d4bd1a22e629f67bec70b1de9bab5`.
+Commit funcional `7054f93e7308fa925861b37416c5c3360480ffda`.
 
-**Materialização física do índice estruturado de respostas aprovadas e dos *templates* do
-corpus.** `knowledge/indice-respostas-aprovadas.yaml` **agora existe**, com **30 `Rxx`**, **37
-fragmentos emitíveis** e **118 *bindings***. No Markdown aprovado, **19 fragmentos** passaram a
-usar *placeholders* canônicos e **18 permanecem estáticos**.
+**Migração da autoridade canônica de status por fragmento** de
+`knowledge/respostas-aprovadas.md` para `knowledge/indice-respostas-aprovadas.yaml`
+(`C-11`), após `C-A1-ST6`–`C-A1-ST10` comprovadas. Os rótulos físicos do Markdown —
+cabeçalho `Rxx` e `status-fragmento` — **permanecem**, apenas para **leitura humana e
+reconciliação**.
 
-`tests/test_indice_respostas_aprovadas_corpus.py` materializa a prova permanente de integração
-do corpus, sobre os artefatos reais e usando exclusivamente as fronteiras já existentes.
+Permanecem fatos vigentes: **30 `Rxx`**, **37 fragmentos emitíveis**, **118 *bindings***,
+**19 *templates*** e **18 fragmentos estáticos**. **Zero texto/*template* emitível
+alterado** e **zero mudança semântica do índice**.
 
-**Zero *renderer* de produção** e **zero consumidor operacional novo**.
+**Zero *renderer* de produção**, **zero *lookup* operacional novo** e **zero consumidor
+operacional novo**.
 
 ---
 
@@ -51,7 +57,7 @@ do corpus, sobre os artefatos reais e usando exclusivamente as fronteiras já ex
 execução desta atualização:
 
 - Python **3.14.5**;
-- **`5789 passed`**, sob **`-W error`**;
+- **`5790 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings.
 
 CI configurada em GitHub Actions, em `.github/workflows/ci.yml`, com Python **3.13** e **3.14**.
@@ -63,14 +69,22 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
 
 - **Contrato de `C`: ARBITRADO** (`docs/07` §2.3; registrado em `docs/07` §12, item 19).
 - **A materialização física do índice e dos *templates* do corpus está concluída.** A
-  **integração com consumidores operacionais** e a **eventual migração da autoridade de
-  status** permanecem **separadas e pendentes**.
+  **integração com consumidores operacionais** permanece **separada e pendente**.
 - O índice físico `knowledge/indice-respostas-aprovadas.yaml` está **materializado e
   estruturalmente validado**: **30 `Rxx`**, **37 fragmentos**, **118 *bindings***. Ele guarda
   **referentes**, nunca valor resolvido (`C-1h`–`C-1m`, `C-15e`).
-- A **autoridade de status NÃO migrou** para o índice: continua em
-  `knowledge/respostas-aprovadas.md` (`C-11`), com rótulos e `status-fragmento` preservados. A
-  transição de autoridade depende de **entrega separada**, auditada e autorizada.
+- A **autoridade canônica de status por fragmento MIGROU** para
+  `knowledge/indice-respostas-aprovadas.yaml`, conforme `C-11`, após
+  `C-A1-ST6`–`C-A1-ST10` comprovadas. Os rótulos de cabeçalho `Rxx` e `status-fragmento`
+  **permanecem fisicamente** em `knowledge/respostas-aprovadas.md` **somente para leitura
+  humana e reconciliação**: não sobrescrevem o índice.
+- **Status não equivale a emissibilidade.** `APROVADO` é condição **necessária, não
+  suficiente**: **seleção**, **candidatura** e **cobertura** permanecem **fora da autoridade
+  de status de `C`** (`C-12`; `S2-D8`). **Nenhum *lookup* operacional** e **nenhum consumidor
+  operacional** foram criados.
+- **Vocabulário canônico de status fechado**: `APROVADO`, `AGUARDA_APROVACAO`, `BLOQUEADO`.
+  **`PARCIAL` não é quarto status** — é rótulo humano agregado do Markdown; no índice,
+  `R28/F1` é **`APROVADO`**, provado diretamente na autoridade.
 - `CY13`:
   - **linha 1** — parser da gramática de `caminho_yaml`
     (`src/casa77_sdr/response_yaml_path.py`): materializada e integrada a `E1`
@@ -111,8 +125,7 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
     estrutural, ao referente e ao predicado, **sem afirmar verdade operacional** — esta depende
     da consulta autoritativa do ciclo, fora do corpus versionado;
   - **`ST10`** — equivalência **`C-15`** verificada para os **19 *templates***; os **18
-    fragmentos estáticos** são **N/A**. **A migração da autoridade de status NÃO foi
-    realizada** e depende de entrega separada.
+    fragmentos estáticos** são **N/A**.
 
 Existem fronteiras determinísticas já materializadas em torno de `C` — validador estrutural,
 carregador *fail-closed*, comparador de equivalência, formatadores, avaliador de `ASSERTIVA`,
@@ -127,7 +140,7 @@ todas recebem insumos prontos e nenhuma resolve *binding*, lê o índice ou cons
 | Pendência | Situação atual | Impacto / bloqueio | Fonte |
 |---|---|---|---|
 | **B** — colisão conceitual de nome `RegistroAtendimento` | aberta; nenhum referente renomeado ou unificado | bloqueia implementar o componente `RegistroAtendimento` | `docs/07` §4.1.1, §12 item 21 |
-| **C** — índice estruturado `Rxx` × YAML | índice físico e *templates* **materializados e validados**; **integração dos consumidores operacionais** e **eventual migração da autoridade de status** ainda pendentes | a **ausência física do índice deixou de ser o bloqueio**; `ValidadorConsistenciaBase`, `SeletorFatos`, `ValidadorResposta` e **S2-D8** continuam **não materializados**, e por isso o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos | `docs/07` §2.3, §12 itens 19 e 10 |
+| **C** — índice estruturado `Rxx` × YAML | índice físico, *templates* e **migração da autoridade de status** concluídos; **integração dos consumidores operacionais** permanece pendente | a **ausência física do índice deixou de ser o bloqueio**; `ValidadorConsistenciaBase`, `SeletorFatos`, `ValidadorResposta` e **S2-D8** continuam **não materializados**, e por isso o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos | `docs/07` §2.3, §12 itens 19 e 10 |
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
 | **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado / não materializado; nenhum módulo nem mapa `R2` | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §4.4.1, §12 item 10; `docs/06` §11 |
@@ -154,9 +167,9 @@ Pendências comerciais e lacunas da base **não são replicadas aqui**:
 Bloqueiam o `OrquestradorMotor` e o pipeline completo:
 
 - **S2-D8** — materialização do produtor de pendências e de cobertura;
-- **C** — índice físico e *templates* **já materializados**; falta **conectar as capacidades
-  dependentes** — `ValidadorConsistenciaBase`, `SeletorFatos` e `ValidadorResposta` —, das quais
-  **S2-D8** também depende;
+- **C** — índice físico, *templates* e **autoridade de status** **já concluídos**; o bloqueio
+  restante é **conectar as capacidades dependentes** — `ValidadorConsistenciaBase`,
+  `SeletorFatos` e `ValidadorResposta` —, das quais **S2-D8** também depende;
 - **S3-D1** — produtor de `motivo_encerramento` ainda não atribuído; impede completar a
   **condição 8 de `CondicoesCiclo`** e os fluxos que dependem dela;
 - **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL`;
@@ -178,5 +191,8 @@ eventos confirmados e condições já estruturadas.
 
 ## 7. Próxima ação
 
-A **materialização física do índice e dos *templates* de `C`** está **concluída**. A próxima
-microentrega funcional será eleita por **novo mandato do GPT**, após a integração desta entrega.
+**Materializar o primeiro consumidor operacional de `C`: `ValidadorConsistenciaBase`.**
+
+Essa entrega deverá **consumir o índice autoritativo**, **introduzir o primeiro *lookup*
+real de status** quando necessário e **preservar a separação `C` × `S2-D8`**. Ela será
+aberta por **novo mandato do GPT** e **não** foi iniciada.
