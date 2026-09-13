@@ -25,10 +25,10 @@ exclusivamente em `knowledge/casa77.yaml`.
 - O trabalho corrente está no **bloco de `C`**, composto por microentregas funcionais **sem
   numeração de subetapa**. **Não existe subetapa `3B.8`.** Estão **concluídas** a
   **materialização física do índice e dos *templates***, a **migração da autoridade de
-  status**, o **primeiro *lookup* operacional de status** e a materialização do
-  **`ValidadorConsistenciaBase`**, primeiro consumidor operacional de `C`. O bloco segue na
-  **integração dos demais consumidores dependentes**. `C` **não** está integralmente
-  operacional.
+  status**, o **primeiro *lookup* operacional de status**, o **`ValidadorConsistenciaBase`**
+  — primeiro consumidor operacional de `C` — e o **`SeletorFatos`**, **segundo consumidor
+  operacional de `C`**. O bloco segue na **integração dos consumidores dependentes ainda
+  ausentes**. `C` **não** está integralmente operacional.
 - Etapa 4 permanece **absorvida pela Etapa 3B**; etapas 5 a 10 permanecem futuras
   (`docs/05-roadmap.md`).
 
@@ -36,17 +36,21 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-Commit funcional `f75f96a1bf76a8dc4785784088fe4660c5443ae7`.
+Commit funcional `d0375169a3077de37ba7b68de0081c59b9c7fe52`.
 
-**Primeiro *lookup* operacional de status sobre o índice canônico** e **primeiro consumidor
-operacional de `C`: o `ValidadorConsistenciaBase`**. Ele confere, de forma determinística,
-cada *binding* de origem `YAML` do corpus contra a base factual recebida já carregada, e
-**separa estruturalmente** três espécies que não se misturam: **divergência de
-consistência**, **referente indisponível por `C-7`** e **base não avaliável**, esta última
-propagada como exceção, sem resultado parcial.
+**`SeletorFatos` materializado** em `src/casa77_sdr/fact_selection.py`, com a função pública
+`materializar_fatos_autorizados`. Ele recebe **apenas tokens de fragmentos já autorizados a
+montante** e **não decide** candidatura, status, consistência, emissibilidade, cobertura ou
+alternativa.
 
-Os *bindings* `RUNTIME_AUTORITATIVO` são apenas **registrados**: nenhuma verdade operacional
-é afirmada nesta fronteira. **Zero *renderer***. **Zero decisão de cobertura ou de S2-D8.**
+Para esses fragmentos, ele materializa os *bindings* `RENDERIZADO` contra a base factual
+**já carregada** — aplicando `C-7` e o **formatador declarado** —, e produz **somente o valor
+formatado**, com proveniência. O **texto canônico autorizado** é transportado **em separado**
+e **literalmente**. Um fragmento **estático** produz **zero fatos e um texto autorizado**, e
+isso é sucesso normal.
+
+`ASSERTIVA` **não vira fato**; *binding* de origem runtime **não é avaliado**. **Zero
+*renderer***. **Zero `E09`**, **zero handoff**. **Zero S2-D8 físico** e **zero `R2` físico**.
 
 Permanecem fatos vigentes: **30 `Rxx`**, **37 fragmentos emitíveis**, **118 *bindings***,
 **19 *templates*** e **18 fragmentos estáticos**. **Zero texto/*template* emitível
@@ -60,7 +64,7 @@ alterado** e **zero mudança semântica do índice**.
 execução desta atualização:
 
 - Python **3.14.5**;
-- **`5848 passed`**, sob **`-W error`**;
+- **`5899 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings.
 
 CI configurada em GitHub Actions, em `.github/workflows/ci.yml`, com Python **3.13** e **3.14**.
@@ -71,9 +75,16 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
 ## 4. Estado essencial da capacidade corrente — `C`
 
 - **Contrato de `C`: ARBITRADO** (`docs/07` §2.3; registrado em `docs/07` §12, item 19).
-- **A materialização física do índice e dos *templates* do corpus está concluída.** O
-  **primeiro consumidor operacional** já existe; a integração dos **demais** permanece
-  **separada e pendente**.
+- **A materialização física do índice e dos *templates* do corpus está concluída.** **Dois
+  consumidores operacionais** já existem — `ValidadorConsistenciaBase` e `SeletorFatos`; a
+  integração dos **demais** permanece **separada e pendente**.
+- **Cadeia vigente**, com as fronteiras separadas e nenhuma acumulando papel de outra:
+  - `ValidadorConsistenciaBase` → **consistência estrutural** — **materializado**;
+  - **S2-D8** / `R2` → **candidatura, emissibilidade, cobertura e escolha do *witness***, que
+    projeta os fragmentos autorizados — **ainda não materializados fisicamente**;
+  - `SeletorFatos` → **materialização dos fatos dos fragmentos já autorizados** —
+    **materializado**;
+  - `ValidadorResposta` → validação final da saída — **ainda não materializado**.
 - O índice físico `knowledge/indice-respostas-aprovadas.yaml` está **materializado e
   estruturalmente validado**: **30 `Rxx`**, **37 fragmentos**, **118 *bindings***. Ele guarda
   **referentes**, nunca valor resolvido (`C-1h`–`C-1m`, `C-15e`).
@@ -101,6 +112,22 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
 - Em fragmento que declara `itera_sobre`, a cardinalidade da avaliação vem do **caminho**:
   *binding* **absoluto** é avaliado **uma vez contra a raiz**, mesmo com coleção vazia;
   *binding* **relativo** é avaliado **por item corrente**.
+- Existe **segundo consumidor operacional de `C`**: o `SeletorFatos`
+  (`src/casa77_sdr/fact_selection.py`; contrato em `docs/07` §4.1.3). Ele:
+  - é **puro e determinístico**, e recebe a entrada **já autorizada a montante**;
+  - **não consulta status** e **não reavalia consistência**;
+  - **não conhece `PerguntaComercial`, `AssuntoComercial` nem `R2`**;
+  - **materializa somente `RENDERIZADO`**, aplicando `C-7` e o formatador declarado;
+  - devolve fato comercial **apenas como `valor_formatado`**, com proveniência — e
+    `valor_formatado` e texto ficam **fora do `repr`**;
+  - mantém o **fragmento estático representável**: zero fatos e **um** texto autorizado;
+  - **não materializa `ASSERTIVA` nem fato runtime**;
+  - **não renderiza *template* algum**.
+- A regra de escolha determinística do ***witness*** está **arbitrada** — a **primeira
+  alternativa emitível na ordem declarada do grupo** (`docs/07` §4.4.1, `SF-D4`). Mas
+  **S2-D8 continua não materializada**, o **`R2` físico continua inexistente** e a **projeção
+  real dos fragmentos autorizados ainda não está integrada**: a seleção *end-to-end* **não**
+  funciona.
 - **Vocabulário canônico de status fechado**: `APROVADO`, `AGUARDA_APROVACAO`, `BLOQUEADO`.
   **`PARCIAL` não é quarto status** — é rótulo humano agregado do Markdown; no índice,
   `R28/F1` é **`APROVADO`**, provado diretamente na autoridade.
@@ -132,7 +159,11 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   gramática. O Markdown aprovado **agora possui *templates* físicos em 19 fragmentos**; os
   outros **18 permanecem sem `RENDERIZADO`**. `decompor_template()` é **exercitado pelo teste de
   integração do corpus**, onde **`PH7` e `PH8` foram comprovadas sobre o corpus físico**.
-  **Nenhum *renderer* de produção existe.**
+  **Nenhum *renderer* de produção existe.** Os *templates* com *placeholder* **ainda não
+  possuem *renderer* determinístico de *fallback*** — pendência registrada em `docs/07` §12,
+  item 22. Ela **não invalida** a fronteira isolada do `SeletorFatos`, que **transporta o
+  texto literalmente**, mas **continua bloqueando** a integração completa segura onde o
+  *fallback* determinístico for necessário.
 - **`C-A1-ST6`–`C-A1-ST10`**, sobre o corpus materializado:
   - **`ST6`** — **comprovada**: o índice físico carrega e `E1` o valida estruturalmente;
   - **`ST7`** — **comprovada**: bijeção integral **37/37** entre índice e Markdown;
@@ -151,9 +182,10 @@ Em torno de `C` existem também fronteiras determinísticas **isoladas** — val
 estrutural, carregador *fail-closed*, comparador de equivalência, formatadores, avaliador de
 `ASSERTIVA`, verificador de bijeção e canonicalizador de rótulo de status. Elas recebem
 insumos prontos, **não resolvem *binding***, **não leem o índice** e **não consultam
-`knowledge/**`**; o `ValidadorConsistenciaBase` é quem as **compõe**, sempre sobre insumos
-**já carregados pelo chamador**. **Nenhuma delas, nem ele, materializa `C` integralmente.** O
-catálogo dos módulos vive no código; o contrato vive em `docs/07` §2.3.
+`knowledge/**`**; quem as **compõe** são os **dois consumidores operacionais** —
+`ValidadorConsistenciaBase` e `SeletorFatos` —, sempre sobre insumos **já carregados pelo
+chamador**. **Nenhuma delas, nem eles, materializa `C` integralmente.** O catálogo dos
+módulos vive no código; o contrato vive em `docs/07` §2.3.
 
 ---
 
@@ -162,7 +194,7 @@ catálogo dos módulos vive no código; o contrato vive em `docs/07` §2.3.
 | Pendência | Situação atual | Impacto / bloqueio | Fonte |
 |---|---|---|---|
 | **B** — colisão conceitual de nome `RegistroAtendimento` | aberta; nenhum referente renomeado ou unificado | bloqueia implementar o componente `RegistroAtendimento` | `docs/07` §4.1.1, §12 item 21 |
-| **C** — índice estruturado `Rxx` × YAML | índice físico, *templates*, **autoridade de status**, ***lookup* operacional** e **`ValidadorConsistenciaBase`** concluídos; **`SeletorFatos`, `ValidadorResposta` e S2-D8** permanecem **não materializados** | a **ausência física do índice deixou de ser o bloqueio** e o **primeiro consumidor operacional existe**; enquanto os consumidores restantes não forem materializados, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos | `docs/07` §2.3, §4.1.2, §12 itens 19 e 10 |
+| **C** — índice estruturado `Rxx` × YAML | índice físico, *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`** e **`SeletorFatos`** concluídos; **`ValidadorResposta`** e o **S2-D8 / `R2` físico** permanecem **não materializados** | a **ausência física do índice deixou de ser o bloqueio** e **dois consumidores operacionais existem**; enquanto o consumidor restante e a projeção de S2-D8/`R2` não forem materializados, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos | `docs/07` §2.3, §4.1.2, §4.1.3, §12 itens 19 e 10 |
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
 | **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado / não materializado; nenhum módulo nem mapa `R2` | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §4.4.1, §12 item 10; `docs/06` §11 |
@@ -189,10 +221,12 @@ Pendências comerciais e lacunas da base **não são replicadas aqui**:
 Bloqueiam o `OrquestradorMotor` e o pipeline completo:
 
 - **S2-D8** — materialização do produtor de pendências e de cobertura;
-- **C** — índice físico, *templates*, **autoridade de status**, ***lookup* operacional** e
-  **`ValidadorConsistenciaBase`** **já concluídos**; o bloqueio restante é **conectar as
-  capacidades dependentes ainda ausentes** — `SeletorFatos` e `ValidadorResposta` —, das
-  quais **S2-D8** também depende;
+- **C** — índice físico, *templates*, **autoridade de status**, ***lookup* operacional**,
+  **`ValidadorConsistenciaBase`** e **`SeletorFatos`** **já concluídos**; o bloqueio restante
+  é **conectar as capacidades dependentes ainda ausentes** — o **`ValidadorResposta`** e a
+  **projeção física de S2-D8 / `R2`**, que é quem produz os fragmentos autorizados —, além do
+  ***renderer* determinístico de *fallback*** onde ele for necessário (`docs/07` §12,
+  item 22);
 - **S3-D1** — produtor de `motivo_encerramento` ainda não atribuído; impede completar a
   **condição 8 de `CondicoesCiclo`** e os fluxos que dependem dela;
 - **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL`;
@@ -214,9 +248,10 @@ eventos confirmados e condições já estruturadas.
 
 ## 7. Próxima ação
 
-**Avaliar e especificar a materialização do `SeletorFatos`, próximo consumidor dependente de
+**Avaliar e especificar a materialização do `ValidadorResposta`, consumidor restante de
 `C`.**
 
-Essa avaliação deverá **preservar a separação `C` × `S2-D8`** e **não** decidir cobertura,
-candidatura ou emissibilidade. A rota **não** está escolhida. Ela será aberta por **novo
-mandato do GPT** e **não** foi iniciada.
+Essa avaliação deverá **preservar a separação com a redação/LLM** (§4.2) e **com S2-D8**
+(§4.4.1): o validador confere o rascunho contra os **fatos já autorizados**, e **não** decide
+cobertura, candidatura ou emissibilidade. A rota **não** está escolhida. Ela será aberta por
+**novo mandato do GPT** e **não** foi iniciada.
