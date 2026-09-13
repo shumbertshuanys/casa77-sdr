@@ -2371,16 +2371,25 @@ calculados, escolhidos ou interpretados pelo LLM.
 | `Qualificador` | calcular `resultado_qualificacao` conforme doc 02 §6 e §6.1. Recebe as **pendências impeditivas já classificadas**; **não detecta pendência** (doc 06 §11 — S2-D8) | dados + violações + **pendências impeditivas já classificadas** | um dos cinco valores oficiais + motivo + campos ausentes |
 | `MaquinaEstados` | aplicar a ordem do doc 06 §4/§4.2 e a tabela de transições. **Não lê o YAML** e **não fabrica eventos**: consome eventos já confirmados e condições já estruturadas | estado + eventos confirmados + `Qualificacao` + condições já estruturadas (§4.4), **incluindo `insumo_qualificacao_atualizado`** (doc 06 §4.1) | caminho percorrido + **`transicoes_que_mudaram_estado`** (§6.2, **materializada em runtime**) + **estado final único** + ações obrigatórias (§4.5) + efeitos auditáveis |
 | `DetectorHandoff` | reconhecer os **gatilhos 3–10** do doc 04 e emitir `E18` com motivo (partição do doc 06 §9). **Não recebe `Qualificacao`**; não recalcula regra comercial, pendência nem qualificação | mensagem interpretada + dados + YAML | motivo(s) de handoff |
-| `SeletorFatos` | escolher quais fatos aprovados podem entrar na resposta, **conferindo cada `Rxx` contra o YAML antes de selecioná-lo** (F3). **Não produz condição consumida pela `MaquinaEstados`** (§4.4): roda nas etapas 8–9, depois da primeira chamada da máquina | perguntas + estado + YAML + respostas aprovadas | lista fechada de fatos autorizados, ou divergência de base |
+| `SeletorFatos` | **materializar os fatos dos fragmentos já autorizados a montante** — resolver, aplicar `C-7` e formatar cada *binding* `RENDERIZADO` desses fragmentos, e transportar o texto canônico correspondente. **Não escolhe fragmento**, **não confere consistência**, **não lê status** e **não produz condição consumida pela `MaquinaEstados`** (§4.4): **roda na etapa 9**, depois da primeira chamada da máquina — a **etapa 8** apenas **projeta e transporta** os insumos já decididos a montante, e **não o executa** (§5). **Contrato vivo em §4.1.3** | índice de `C` + YAML + textos canônicos + **`fragmentos_autorizados`** — a tupla de tokens já projetada por **S2-D8** (§4.4.1) —, **todos já carregados** | **fatos autorizados**, cada um com proveniência `<Rxx>/<Fxx>` + *binding* + referente + formato e o **valor já formatado**, mais **um texto autorizado por fragmento**, transportado literalmente |
 | `ValidadorResposta` | vetar rascunho com valor, promessa ou termo não autorizado | rascunho + fatos autorizados | aprovado / bloqueado + motivo |
 | `Persistencia` | persistência **operacional**: gravar estado, dados, qualificação, pendências, motivos e chave de idempotência antes da emissão (P9, §7.3) | decisão final | confirmação de gravação ou falha |
 
-`SeletorFatos` é o ponto crítico da arquitetura: é **ele**, e não o LLM, que decide o que
-pode ser dito. Cada fato carrega o campo do YAML ou o código de resposta aprovada
-(`R01`–`R30`) de onde veio — e, quando vem de um `Rxx` com conteúdo comercial, carrega
-também o resultado da conferência contra o YAML. Um `Rxx` divergente **nunca entra na lista**
-(F4): o seletor devolve divergência de base, e a resposta ao interessado passa a ser
-R03 + handoff.
+**O que pode ser dito continua sendo decidido deterministicamente, e nunca pelo LLM** — mas
+essa decisão está **repartida em três fronteiras distintas**, que este documento não
+confunde:
+
+| Fronteira | Decide |
+|---|---|
+| `ValidadorConsistenciaBase` (§4.1.2) | **consistência**: a divergência entre fragmento e base, e **somente** ela |
+| **S2-D8** (§4.4.1) + **R2** | **candidatura, emissibilidade, cobertura e alternativa concreta** — e, com isso, **quais fragmentos ficam autorizados** |
+| `SeletorFatos` (§4.1.3) | **materialização** dos fatos **desses** fragmentos, com proveniência |
+
+Cada fato materializado carrega o **referente declarado** do YAML e a identidade
+`<Rxx>/<Fxx>` do fragmento de onde veio. Um fragmento divergente **nunca chega ao
+`SeletorFatos`**, porque **não é autorizado** — e a **consequência conversacional** da
+divergência é decidida por **F4-B5**/**F4-B6** (§2.2) e **D8-CII** (§4.4.1), conforme exista
+ou não cobertura segura, **nunca** pelo seletor.
 
 `ValidadorResposta` faz a checagem simétrica na saída: nenhum valor, prazo, capacidade,
 horário ou condição pode aparecer no texto final sem estar na lista de fatos autorizados —
@@ -2451,6 +2460,33 @@ prefixo, heurística textual, seleção ou semântica adicional é criada aqui**
 *Bindings* absolutos e relativos **podem coexistir** no mesmo fragmento. Com coleção vazia,
 um *binding* relativo **não tem item corrente algum a avaliar**, e isso **não** é juízo
 operacional aqui.
+
+#### 4.1.3 Contrato vivo do `SeletorFatos`
+
+O contrato de implementação desta fronteira utiliza `src/casa77_sdr/fact_selection.py`, com
+os cenários em `tests/test_fact_selection.py`. A sua **API funcional** é
+`materializar_fatos_autorizados`, nome deliberado: a semântica histórica de "selecionar" —
+**escolher qual fragmento responde** — **não pertence mais a este componente**. Este contrato
+**não reabre `C`**, **não altera `C-12`**, **não cria decisão comercial** e **não cria
+subetapa**.
+
+| # | Contrato |
+|---|---|
+| SF-1 | **Fronteira pura.** Zero I/O, *filesystem*, rede, LLM, relógio, calendário, ambiente, *logging*, *cache* e mutação de entrada. Recebe o índice, a raiz factual, o mapa `token -> texto canônico` e a tupla de tokens autorizados **já carregados**; **não abre `knowledge/**`**. |
+| SF-2 | **A entrada já está autorizada.** `fragmentos_autorizados` é a projeção final de **S2-D8** (§4.4.1) — `tuple` de tokens `<Rxx>/<Fxx>`, **ordem já definida a montante**, **sem duplicata**. A fronteira **não a reaudita, não a corrige e não a reordena**. Token fora do domínio canônico do índice, duplicata ou forma inválida são **erro de contrato do chamador**. |
+| SF-3 | **Status está fora desta fronteira.** Ela **não** consulta, projeta, compara ou filtra status, e **não** importa a fronteira que o consulta. A autoridade de status continua sendo o índice (**`C-11`**), e a sua aplicação à emissibilidade continua sendo **D8-F**. Isso **não** significa que um fragmento de status não emitível seja autorizado: ele **não deveria estar** na tupla produzida por S2-D8. |
+| SF-4 | **Consistência está fora desta fronteira.** Ela **não** é segunda autoridade sobre divergência: o juízo de consistência pertence a `ValidadorConsistenciaBase` (§4.1.2) e corre **a montante**. |
+| SF-5 | **Somente `RENDERIZADO` materializa fato.** A cadeia é fixa: `validar_caminho_de_binding` → `resolver_caminho` → `recusar_nulo_ou_pendente` (`C-7`) → o **formatador declarado de `C-6`**. **Nenhum *parser*, resolver, formatador ou gramática paralela é escrito**; o despacho privado `formato -> função` apenas liga o nome **já validado** por `validar_indice` à fronteira que o aplica. |
+| SF-6 | **Texto autorizado.** Cada fragmento recebido produz **exatamente um** texto autorizado, com o texto canônico **literal**. Vale igualmente para o fragmento **estático** e para o fragmento com *template*. |
+| SF-7 | **`ASSERTIVA` não materializa fato.** Ela é **consistency-only** (**C-5**, **C-5.1**): não é avaliada aqui, não produz DTO e o avaliador de predicado **não é sequer importado**. |
+| SF-8 | **Runtime fora.** Como o fato runtime só sustenta `ASSERTIVA` (**C-A2-V**), segue que **nenhuma verdade operacional é afirmada**: zero *snapshot* de runtime, zero consulta de calendário, zero juízo de disponibilidade. A assinatura **não recebe** *snapshot*. |
+| SF-9 | **Somente valor formatado.** O DTO de fato carrega proveniência — token, `Rxx`, fragmento, *binding*, referente, formato — e o **valor já formatado**. **Nunca** o valor bruto, `raw`, *snapshot*, *hash* factual ou objeto do YAML; o valor bruto vive **apenas na pilha**, entre `C-7` e o formatador. |
+| SF-10 | **Zero valor comercial em `repr`.** `valor_formatado` e `texto` são declarados `repr=False`: eles são *payload* de runtime da redação, **não** material de log. Nenhum `repr` customizado os reintroduz. Os DTOs são `frozen`/`slots`. |
+| SF-11 | **Zero *renderer*.** Nenhum *placeholder* é substituído, nada é concatenado, nenhum *template* é montado e nenhuma resposta é produzida. A gramática de *placeholder* **não é importada**. |
+| SF-12 | **Zero deduplicação.** Dois *bindings* — do mesmo fragmento ou de fragmentos distintos — que apontem para o **mesmo referente** produzem **duas** ocorrências, com proveniências distintas: a proveniência não pode ser perdida. A deduplicação da projeção pertence a **S2-D8** (**SF-D4**). |
+| SF-13 | **Determinismo.** A ordem da saída é, e só é: a **ordem recebida** em `fragmentos_autorizados` → a **ordem física** dos *bindings* → a **ordem física** da coleção iterada. Nada é ordenado, preferido por token, por `Rxx`, por texto ou por valor. Em `itera_sobre`, vale a semântica já fechada em §4.1.2: **absoluto uma vez contra a raiz, mesmo com coleção vazia**; **relativo uma vez por item corrente**, e **zero ocorrências** quando a coleção é vazia. |
+| SF-14 | ***Fail-closed*, sem resultado parcial.** Referente que não resolve, valor recusado por `C-7` ou formato inaplicável fazem a exceção da fronteira de origem atravessar **intacta**. Isso significa que o fragmento autorizado ficou **incoerente com a fotografia factual recebida** — é **falha de contrato**, e **não** é convertido em `E09`, `CAMPO_INDISPONIVEL`, `SEM_RESPOSTA_APROVADA_EMITIVEL`, handoff, alerta, pendência ou divergência. |
+| SF-15 | **Fronteira `C` × `S2-D8` preservada.** Zero decisão de cobertura, candidatura, emissibilidade, alternativa, `resposta_aprovada_disponivel`, `pendencia_impeditiva`, `E09`, grupo **R2**, condição de ciclo, handoff ou resposta conversacional. **Zero fatos** para um fragmento **não** significa "sem resposta aprovada": essa leitura pertence a S2-D8. |
 
 ### 4.2 Somente LLM
 
@@ -2655,6 +2691,27 @@ inalteradas** (§2.3).
 | R2-6 | **`ASSUNTO_NAO_CLASSIFICADO` tem zero grupos por definição** — logo **não é respondível**, e a causa correspondente é `SEM_RESPOSTA_APROVADA_EMITIVEL`. |
 | R2-7 | Referência do mapa a **fragmento inexistente** é **Classe I** (abaixo). |
 
+#### SF-D4 — projeção dos *witnesses* e `fragmentos_autorizados`
+
+**Contrato arbitrado.** Fecha **de quem é** a escolha da alternativa concreta e **como** ela
+é determinada. Isto **não cria o mapa `R2` físico**, **não altera R2-1–R2-7**, **não altera
+`resposta_aprovada_disponivel`**, **não altera `E09`**, **não altera `pendencias_resposta`** e
+**não cria prioridade comercial**.
+
+| # | Regra |
+|---|---|
+| SF-D4-1 | A escolha da alternativa concreta pertence ao **eixo B de S2-D8** e ocorre **antes da etapa 7**, sobre a **mesma fotografia factual** usada para avaliar cobertura. |
+| SF-D4-2 | Na futura representação física de `R2`, os **grupos** de um `AssuntoComercial` formam **sequência declarada**, e as **alternativas** de cada grupo também. Essa ordem é **estrutural e determinística**; ela **não é fato comercial** e **não altera a semântica de cobertura** (R2-4, R2-5). |
+| SF-D4-3 | Dentro de cada grupo **coberto**, o *witness* é a **primeira alternativa emitível na ordem declarada do `R2`**. É **proibido** ordenar por token, por `Rxx`, por texto, por valor ou por qualquer critério implícito, e é **proibido** o LLM escolher alternativa. |
+| SF-D4-4 | **Nenhum campo `priority` é criado**: a própria ordem declarada é o desempate. |
+| SF-D4-5 | Para cada `AssuntoComercial` efetivo, **todos** os grupos são avaliados e um *witness* emitível é escolhido **por grupo**. |
+| SF-D4-6 | Os *witnesses* de um assunto entram na projeção **somente se TODOS os seus grupos estiverem cobertos**. Com **qualquer** grupo descoberto, **zero token daquele assunto** entra — **não existe resposta parcial de assunto** (R2-5, D8-L3). |
+| SF-D4-7 | Com múltiplos assuntos, vale a ordem da **primeira ocorrência efetiva** das `PerguntaComercial` de confiança `ALTA` (D8-B1, §6.3). **Duplicata do mesmo assunto não repete a seleção** e não multiplica *witnesses*. |
+| SF-D4-8 | Dentro do assunto, preservar a **ordem declarada dos grupos**; dentro do grupo, a **primeira alternativa emitível**. |
+| SF-D4-9 | Ao formar a tupla global, **token escolhido mais de uma vez é deduplicado pela primeira ocorrência**, preservando a ordem. **A deduplicação acontece aqui, nunca no `SeletorFatos`** (SF-12, §4.1.3). |
+| SF-D4-10 | A saída conceitual dessa projeção é **`fragmentos_autorizados`** — a entrada do `SeletorFatos` (§4.1.3). O `SeletorFatos` **não recebe `R2`**, **não conhece grupo**, **não recebe assunto** e **não decide cobertura**. |
+| SF-D4-11 | **`R2` físico continua NÃO materializado**, e esta arbitragem **não o autoriza**. Ela fecha apenas a **regra de escolha**, para que a materialização futura seja determinística. |
+
 #### D8-F — fragmento emitível agora
 
 Um fragmento é **emitível agora** **somente se as três** condições valem:
@@ -2831,8 +2888,9 @@ Cobertura obrigatória: **cada `Txx` de T01–T41 deve estar coberta por pelo me
 seguintes — um código de ação; um efeito paralelo `P1`–`P6` (doc 06 §4.3); um campo
 dedicado da saída; ou uma mudança de estado suficiente por contrato.
 
-A materialização textual autorizada continua sendo decidida pelo `SeletorFatos` e pela
-redação (§4.1, §4.2), nunca pela máquina.
+A materialização textual autorizada continua fora da máquina: o que pode ser dito é decidido
+**a montante** (§4.4.1), materializado pelo `SeletorFatos` (§4.1.3) e redigido pela redação
+(§4.2) — **nunca** pela `MaquinaEstados`.
 
 #### Vocabulário aprovado — `AcaoMaquina`
 
@@ -2901,8 +2959,8 @@ adivinhar.
 | 5 | **Resolver identidade do atendimento** | conjunto elegível fechado (3) + **conjunto H — `ids_em_atendimento_humano`** (3) + projeção estruturada da interpretação (4) + veredito do identificador já validado (§6.1.1) + **`id_atendimento_validado`** (3) — o **ID técnico opaco** do atendimento identificado, **obrigatório** quando o veredito é `ENCONTRADO` e **`None`** quando é `NAO_INFORMADO` (§6.1.1, §6.2; pré-condições **P-I1–P-I5** de §7.1) + `havia_estado_esperado` (§6.2) | **primeiro** `situacao_takeover` (§6.3); se `SEM_TAKEOVER`, um de **seis** resultados conceituais: `ATENDIMENTO_ATIVO`, `MESMA_SOLICITACAO` (T36), `NOVA_SOLICITACAO` (T37), `AMBIGUA`, `PRIMEIRO_CONTATO_COMPROVADO` (identidade `None`) e `SEM_CANDIDATO_ELEGIVEL` (identidade `None`) — sempre com `criterio` do vocabulário fechado de §7.1 | ambíguo → **não decidir**: pedir esclarecimento, sem herdar nem sobrescrever dado algum (§7.1, A1–A7); persistir o processamento pendente quando possível. `SEM_CANDIDATO_ELEGIVEL` → **encerra sem transição**; tratamento pelo orquestrador **bloqueado pela pendência E4**. `situacao_takeover != SEM_TAKEOVER` → **D0–D6 não executam** e a identidade **não é calculada** (R5, abaixo) |
 | 6 | Registrar dados e correções | campos extraídos + atendimento resolvido | dados atualizados + correções + **sinal de mutação efetiva de insumo da qualificação** (`insumo_qualificacao_atualizado`, doc 06 §4.1) | conflito entre mensagem e estado → §7; dado incerto nunca é gravado; identidade ambígua → nada é registrado no atendimento anterior |
 | 7 | Executar a ordem determinística do doc 06 §4 — **primeira decisão determinística do ciclo** | dados + eventos + avaliação comercial feita **a montante** contra o YAML (`RegrasComerciais`, `Qualificador`) + **todas as condições estruturadas de §4.4** já determinadas — `insumo_qualificacao_atualizado`, classificação de `E09`, `resposta_aprovada_disponivel`, `interesse_confirmar_disponibilidade`, `calendario_integrado`, `identidade`, `motivos_handoff` e `motivo_encerramento`. A `MaquinaEstados` recebe tudo já estruturado e **não lê o YAML** (doc 06 I23) | eventos confirmados, violações, motivos, qualificação recalculada e o **estado intermediário** resultante da **primeira chamada da `MaquinaEstados`** — caminho percorrido (uma ou mais `Txx`, doc 06 §4.2), ainda sujeito ao fechamento da etapa 12 | `E07`, `E08`, `E09` e `E18` são **recebidos/confirmados a partir das saídas determinísticas a montante**, não fabricados aqui; violação da precedência (ex.: `E07` sobre incompatibilidade) é erro de programa, não caso de negócio → bloquear envio. A **classificação que fundamenta `E09`** pertence ao contrato **S2-D8** (§4.4.1); a **transformação dos sinais em eventos confirmados** deve respeitar **`N-b-RES2`** (doc 06 §11) |
-| 8 | Consultar YAML e respostas aprovadas | perguntas detectadas | valores de campo e códigos `R` correspondentes | campo `null`/`pendente` e ausência de resposta aprovada **já foram confirmados como `E09` na etapa 7** (gatilhos 1–2 do doc 04, doc 06 §9): aqui a pendência é **consultada e registrada**, nunca criada tardiamente. Esta etapa **não produz condição consumida pela etapa 7** |
-| 9 | Selecionar fatos permitidos — **conferindo cada `Rxx` comercial contra o YAML** (F3) | resultado de 7 e 8 | lista fechada de fatos, cada um com origem e conferência | divergência `Rxx` × YAML → o fato **não** entra na lista, registra-se erro de consistência da base e o dado divergente é bloqueado (F4); lista vazia com pergunta pendente → R03 + handoff. **Nenhum `E09` nasce nesta etapa** e **nenhuma condição de §4.4 é produzida aqui** |
+| 8 | **Projetar os insumos já decididos a montante** — a fotografia factual carregada e a projeção **`fragmentos_autorizados`** produzida pelo eixo B de S2-D8 (**SF-D4**, §4.4.1) | resultado de 7 + índice de `C` + YAML carregado + textos canônicos | os insumos transportados para a etapa 9, incluindo a tupla de fragmentos autorizados | **Nenhuma disponibilidade ou cobertura é descoberta aqui.** Campo `null`/`pendente` e ausência de resposta aprovada **já foram avaliados antes da etapa 7** e, quando fizeram falta, **já foram confirmados como `E09` na etapa 7** (gatilhos 1–2 do doc 04, doc 06 §9). **Nenhuma condição necessária à etapa 7 nasce aqui**, e esta etapa **não produz condição consumida pela etapa 7** |
+| 9 | **Materializar os fatos dos fragmentos já autorizados** (`SeletorFatos`, §4.1.3) | resultado de 8 — em especial `fragmentos_autorizados` | **fatos autorizados** com proveniência `<Rxx>/<Fxx>` + *binding* + referente + formato e **valor já formatado**, mais **um texto autorizado por fragmento**, literal | **Nenhum fragmento é escolhido aqui**, **nenhum status é consultado** e **nenhuma consistência é reconferida**: isso correu a montante (§4.1.2, §4.4.1). Fragmento autorizado cujo referente não resolva, seja recusado por `C-7` ou cujo formato não o represente é **incoerência com a fotografia factual recebida** — *fail-closed*, **sem resultado parcial**, e **sem** virar `E09`, handoff ou divergência. **Nenhum `E09` nasce nesta etapa** e **nenhuma condição de §4.4 é produzida aqui** |
 | 10 | Gerar rascunho | fatos autorizados + tom + estado | texto candidato | LLM indisponível ou lento → usar o texto aprovado literal (§7) |
 | 11 | Validar o rascunho | rascunho + fatos autorizados | aprovado ou bloqueado + motivo | qualquer valor, promessa ou termo fora da lista → bloqueio |
 | 12 | Bloquear ou substituir — e **fechar o ciclo determinístico** | resultado de 11 | texto final seguro + fechamento com `E15` e `E12` **pós-efeito** | substituir pelo texto aprovado literal; se não houver, R03 + handoff. Nunca reenviar ao LLM mais de uma vez. `E15` e `E12` só são confirmados **depois do efeito real** (doc 06 §2.2) e reentram na `MaquinaEstados` na ordem `E15` → `E12` (doc 06 §4.2): **no máximo duas chamadas adicionais** — uma para `E15`, uma para `E12` |
@@ -3625,7 +3683,7 @@ Cardinalidade **0..N** em ambos os contratos.
 |---|---|
 | N-b-Q1 | O `texto` é **preservado no runtime da `Interpretacao`**. Texto **vazio ou em branco** é **erro de contrato**. **Ampliação mínima por AJ2**: o `assunto` também é **preservado no runtime**, ao lado de `texto` e `confianca` (N-b-Q7). |
 | N-b-Q2 | `ALTA` → pergunta **efetiva**. `BAIXA` → texto **preservado apenas para diagnóstico**. |
-| N-b-Q3 | **Somente perguntas `ALTA`** entram em consumo estruturado futuro. Logo, uma pergunta `BAIXA` **não** é consumida futuramente pelo produtor de `E09`/**S2-D8** nem pelo `SeletorFatos`. |
+| N-b-Q3 | **Somente perguntas `ALTA`** entram no **consumo estruturado de S2-D8** — o produtor de `E09` e o eixo B (§4.4.1). Uma pergunta `BAIXA` **não** entra. O `SeletorFatos` **não recebe `PerguntaComercial` em confiança alguma**: ele recebe **somente** `fragmentos_autorizados`, a tupla projetada **posteriormente** por S2-D8 (**SF-D4-10**, §4.1.3). |
 | N-b-Q4 | Isso **não resolve** **S2-D8**, **SeletorFatos**, **C**, `Rxx` nem mapeamento YAML. |
 | N-b-Q5 | `PERGUNTA_COMERCIAL` está presente em `intencoes_detectadas` **se a coleção não for vazia**, **independentemente** da efetividade de cada item. |
 | N-b-Q6 | Confiança **derivada** do código: **ao menos uma `ALTA` ⇒ `ALTA`**; **todas `BAIXA` ⇒ `BAIXA`**. |
@@ -3927,11 +3985,17 @@ do assunto** de `PerguntaComercial`, conforme as regras abaixo, segundo a preced
 cria subetapa.**
 
 **O problema que AJ2 fecha.** Hoje a etapa 4 entrega a consulta comercial **apenas como
-texto livre**. Qualquer consumidor futuro — o produtor de **S2-D8**, o `SeletorFatos` —
-precisaria **reinterpretar esse texto** para saber *sobre o que* o interessado perguntou.
-Isso reintroduziria interpretação semântica fora da etapa 4, exatamente onde **P3** e
-**N-b-G1** a proíbem. AJ2 fornece o **sinal semântico estruturado** que faltava — e **nada
-além disso**.
+texto livre**. O seu consumidor — o **eixo B de S2-D8** (§4.4.1) — precisaria
+**reinterpretar esse texto** para saber *sobre o que* o interessado perguntou. Isso
+reintroduziria interpretação semântica fora da etapa 4, exatamente onde **P3** e **N-b-G1** a
+proíbem. AJ2 fornece o **sinal semântico estruturado** que faltava — e **nada além disso**.
+
+A cadeia vigente é **encadeada, nunca paralela**: `PerguntaComercial`/`AssuntoComercial` são
+consumidos por **S2-D8**, que decide candidatura, emissibilidade, cobertura e *witnesses*
+(**SF-D4**) e projeta **`fragmentos_autorizados`**; o `SeletorFatos` recebe **somente** essa
+tupla. Ele **não recebe `PerguntaComercial`**, **não recebe `AssuntoComercial`** e **não
+precisa saber sobre o que o interessado perguntou** (§4.1.3, **SF-2**). AJ2 continua, portanto,
+sendo insumo de **S2-D8** — e de mais ninguém a jusante.
 
 **Escopo semântico da categoria `PerguntaComercial`.** A designação é técnica, não
 gramatical: a categoria cobre **consultas comerciais do interessado**, inclusive **pergunta
@@ -4982,7 +5046,7 @@ Regra obrigatória sobre o repositório em memória:
 | `MaquinaEstados` | as **41 transições** do doc 06 §3; a **ordem de avaliação** das famílias C0–C11 (§4.2), com o **caminho percorrido** auditável e **estado final único**; a **projeção `transicoes_que_mudaram_estado`** (§6.2) — subsequência ordenada de `caminho`, classificada contra o estado intermediário do instante da aplicação; o **fechamento** `E15` → `E12` pós-efeito, o teto de **três chamadas por ciclo** e a ausência de loop; os efeitos paralelos P1–P6 (§4.3) e as inércias N1–N4 (§4.4); evento não coberto por transição, efeito paralelo ou inércia é **erro de contrato** (§4.5); a máquina **não lê o YAML** e **não fabrica eventos** |
 | `Qualificador` | os cinco resultados oficiais, a faixa entre capacidade sentada e coquetel, e I09 (ausência de dado nunca é incompatibilidade); recebe pendências impeditivas já classificadas e **não as detecta** |
 | `DetectorHandoff` | os **gatilhos 3–10** do doc 04, cada um com o motivo correto (partição do doc 06 §9); não recebe `Qualificacao` e não reemite os gatilhos 1–2 nem 11–12 |
-| `SeletorFatos` | nada fora do YAML e das respostas aprovadas entra na lista; campo pendente vira R03; **`Rxx` divergente do YAML não é selecionado** e produz erro de consistência da base (F4) |
+| `SeletorFatos` | **somente** os *bindings* `RENDERIZADO` dos **fragmentos recebidos** viram fatos, cada um com proveniência e **valor já formatado** — `ASSERTIVA` e fato runtime **não** materializam fato algum; **nenhum fragmento é escolhido localmente**; **nenhum status é consultado**; **nenhum `E09`, handoff, alerta ou divergência é criado**; referente recusado por `C-7` ou formato inaplicável propagam ***fail-closed***, **sem resultado parcial**; fragmento **estático** continua produzindo **zero fatos e um texto**, transportado **literalmente**, **sem *renderer*** |
 | `ValidadorResposta` | rascunho com valor inventado, promessa de prazo, confirmação de data ou desconto é bloqueado; texto literal de `Rxx` também é conferido |
 | `Persistencia` (contrato abstrato, com implementação em memória — B1/B2) | gravação, recuperação de estado e idempotência funcionam; falha de gravação bloqueia a emissão e preserva a mensagem; nenhuma afirmação de handoff sem registro (Q2, Q3) |
 
@@ -5129,7 +5193,7 @@ Casos conceituais obrigatórios da interpretação da etapa 4 (arbitragem N-b, �
 | K-Nb-21 | `formato` fora de `sentado` \| `coquetel` | **erro de contrato** `E-Nb-9` (N-b-D5); vocabulário fechado, `E-Nb-5` quando o valor é de outro domínio |
 | K-Nb-22 | `nome` e `contato` presentes | permanecem **apenas no runtime** da `Interpretacao`; **proibidos** na projeção (N-b-K8, §6.6) |
 | K-Nb-23 | Uma pergunta comercial com confiança `ALTA` | `PERGUNTA_COMERCIAL` com `ALTA`; pergunta **efetiva** (N-b-Q2, N-b-Q6) |
-| K-Nb-24 | Uma única pergunta comercial com confiança `BAIXA` | `PERGUNTA_COMERCIAL` com `BAIXA`; texto **preservado para diagnóstico** e **não efetivo**: não é consumida pelo produtor de `E09`/S2-D8 nem pelo `SeletorFatos` (N-b-Q3) |
+| K-Nb-24 | Uma única pergunta comercial com confiança `BAIXA` | `PERGUNTA_COMERCIAL` com `BAIXA`; texto **preservado para diagnóstico** e **não efetivo**: **não entra em S2-D8** — nem no produtor de `E09`, nem no eixo B (N-b-Q3). O `SeletorFatos` **não recebe `PerguntaComercial` diretamente, qualquer que seja a confiança** |
 | K-Nb-25 | Perguntas com confianças **`ALTA` e `BAIXA`** misturadas | `PERGUNTA_COMERCIAL` com `ALTA` (N-b-Q6); somente as `ALTA` são efetivas |
 | K-Nb-26 | `perguntas_comerciais` **não vazia** sem `PERGUNTA_COMERCIAL` | **erro de contrato** `E-Nb-14` |
 | K-Nb-27 | `PERGUNTA_COMERCIAL` presente com a coleção **vazia** | **erro de contrato** `E-Nb-15` |
@@ -5406,6 +5470,7 @@ adaptador **chama** o motor, nunca o contrário (**D6**).
 
 | 20 | **AJ2** — **origem semântica do assunto** de `PerguntaComercial`: de onde vem, e com que garantias, a informação de **sobre o que** o interessado consultou | **ARBITRADA** (§6.3). **AJ2 estende formalmente N-b**: `PerguntaComercial` tem **três** campos — `texto`, `confianca` e **`assunto`** obrigatório, do enum fechado **`AssuntoComercial`** de **54** valores (53 específicos + `ASSUNTO_NAO_CLASSIFICADO`), **sem confiança própria**; **um assunto por item**, com **segmentação** de consulta composta; **preservação textual** sem normalizar, resumir ou parafrasear; **duplicatas permitidas**; e o `assunto` **não atravessa** para a projeção, **não referencia `Rxx`** e **não produz condição** de §4.4 (**N-b-Q7**–**N-b-Q12**). `E-Nb-5` cobre `assunto` ausente ou fora do vocabulário, e a lista permanece **`E-Nb-1`–`E-Nb-19`**. Cenários: **`K-Nb-1`–`K-Nb-51`**. **`Q53`/`Q54` permanecem não classificados** | **contrato resolvido** — §6.3. Fronteiras relacionadas: **N-b** (item 12), de que AJ2 é extensão, e **S2-D8** (item 10), a quem pertence o **consumo** do assunto |
 | 21 | **B** — **colisão de nome `RegistroAtendimento`**: componente de comportamento de §4.1 × dataclass `frozen` de transporte da persistência operacional | **ABERTA** (§4.1.1). Colisão de **categoria**, não de campo nem de assinatura. **Nenhum referente é renomeado ou unificado**, e nada é resolvido silenciosamente. **Não afeta** a persistência operacional de §7.3 nem a fronteira de identidade de §7.1 | arbitragem específica **antes de implementar** o componente `RegistroAtendimento` de §4.1 — §4.1.1 |
+| 22 | ***Renderer* determinístico de *fallback*** — os fragmentos com *template* possuem *placeholder* físico e os seus fatos são materializados com proveniência (§4.1.3), mas **nenhuma fronteira compõe o texto final a partir deles** | **ABERTA**. `decompor_template` valida a forma do *template* e é **descartada** (**`PH11`**); o `SeletorFatos` transporta o texto **literalmente** e **não substitui *placeholder*** (**SF-11**). A composição do texto emitido permanece com a **redação** (§4.2), com `ValidadorResposta` na saída — **sem caminho determinístico de *fallback*** quando o LLM está indisponível ou lento, hipótese que a etapa 10 do §5 prevê | arbitragem específica futura — **não bloqueia** `SeletorFatos`, que é fronteira isolada e não compõe texto |
 
 
 **Silêncio sob takeover não é decisão comercial nova** (arbitragem R5). Enquanto o canal
