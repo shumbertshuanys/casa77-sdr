@@ -419,6 +419,12 @@ silenciosamente**. **Nenhum deles é decidido aqui.**
 
 Cada um é exatamente o tipo de caso que C-8 manda **bloquear** em vez de acomodar.
 
+**Reconciliação por `C-P`.** `C-9` **registra** esses conflitos e continua sendo esse
+registro. Por **`C-P`**, as camadas posteriores prevalecem na matéria que refinam, fecham ou
+substituem, e **`C-A1`**, **`C-A2`** e **`C-A5`** **fecharam a representação** desses casos.
+Isso **não decide fato comercial algum**, **não altera `C-8`** e **não converte
+silenciosamente coisa alguma**. **S2-D8** e **AJ2** **não os reabrem**.
+
 #### C-10 — Completude dos literais
 
 **Não é invariante** que "nenhum fragmento contém qualquer número fora de *placeholder*":
@@ -2358,7 +2364,7 @@ calculados, escolhidos ou interpretados pelo LLM.
 | `ResolvedorIdentidade` | decidir se a mensagem pertence a atendimento ativo, a T36, a T37 — ou se é ambígua — aplicando a cascata determinística **D0–D6** de §7.1. **Puro e determinístico**: zero I/O, zero rede, zero LLM, zero YAML, zero relógio. Não calcula elegibilidade nem recência, não consulta persistência, não interpreta texto, não cria atendimento, não persiste, não aplica transição e não altera a `MaquinaEstados` | **conjunto elegível fechado de candidatos já produzido pela etapa 3** (§6.2) + **`ids_em_atendimento_humano`** — o conjunto **H**, entrada **separada** do conjunto elegível e **fora** da política N-a (§6.2, H1–H6) + **projeção estruturada da interpretação** (§6.3) + veredito do identificador já validado (§6.1.1) + **`id_atendimento_validado`** — o **ID técnico opaco** do atendimento identificado, projetado pela etapa 3 quando o veredito é `ENCONTRADO` e `None` quando é `NAO_INFORMADO` (§6.2, arbitragem R-I) | **decisão auditável** (§7.1): `identidade`, `id_atendimento_alvo`, `criterio`, `situacao_takeover`, `candidatos_avaliados`, `classificacao_por_candidato`, `vinculo_declarado`, `escopo_restrito_por_identificador`. `identidade` pode ser `None` em **três** situações estruturalmente distintas: `PRIMEIRO_CONTATO_COMPROVADO`, `SEM_CANDIDATO_ELEGIVEL` e **`situacao_takeover != SEM_TAKEOVER`** — neste último caso porque a resolução de referente é **curto-circuitada antes de D0–D6** (R5, §7.1). As três continuam distinguíveis por campos estruturados (`criterio` e `situacao_takeover`), **sem criar quinto membro em `Identidade`**. **Nenhum texto livre na saída** |
 | `CarregadorYaml` | ler `knowledge/casa77.yaml` uma vez por execução e manter em memória | caminho do arquivo | estrutura carregada + versão |
 | `ValidadorYaml` | conferir presença, tipo e coerência dos campos exigidos pelas regras | estrutura carregada | válido / lista de campos faltantes |
-| `ValidadorConsistenciaBase` | conferir cada `Rxx` que cita fato comercial contra o YAML carregado (F3) | respostas aprovadas + YAML | lista de divergências, com `Rxx` e campo do YAML |
+| `ValidadorConsistenciaBase` | conferir cada **fragmento emitível** que cita fato comercial contra o YAML carregado (F3). **Contrato vivo em §4.1.2** | índice de `C` + YAML + textos canônicos, **todos já carregados** | resultado **estrutural**: divergências, referentes indisponíveis, tokens divergentes, status projetado e *bindings* de runtime não avaliados — identificados por `<Rxx>/<Fxx>`, *binding* e referente |
 | `NormalizadorEntrada` | limpar a mensagem e calcular a chave de idempotência conforme §4.3 | mensagem bruta + metadados do canal | mensagem normalizada + chave + origem da chave |
 | `RegistroAtendimento` | registrar dados e correções (`E02`–`E05`), sobrescrevendo valores corrigidos | dados extraídos + estado | dados atualizados + lista de correções |
 | `RegrasComerciais` | avaliar tipo, data, número de convidados e formato contra o YAML | dados + YAML | lista de violações com motivo e campo de origem |
@@ -2405,6 +2411,46 @@ aqui, e nada é resolvido silenciosamente.
 **Onde se resolve:** arbitragem específica antes de implementar o componente
 `RegistroAtendimento` desta §4.1. Não afeta a persistência operacional já contratada em §7.3
 nem a fronteira de identidade de §7.1.
+
+#### 4.1.2 Contrato vivo do `ValidadorConsistenciaBase`
+
+O contrato de implementação desta fronteira utiliza `src/casa77_sdr/response_consistency.py`
+e a consulta de status definida em `src/casa77_sdr/response_index_status.py`, com os cenários
+em `tests/test_response_consistency.py`. Este contrato **não reabre `C`**, **não altera
+`C-12`**, **não cria decisão comercial** e **não cria subetapa**: ele registra o que a
+fronteira faz e, principalmente, o que ela **não** faz.
+
+| # | Contrato |
+|---|---|
+| VCB-1 | **Fronteira pura.** Zero I/O, *filesystem*, rede, LLM, relógio, calendário, ambiente, *logging*, *cache* e mutação de entrada. Recebe o índice, a raiz factual e o mapa `token -> texto canônico` **já carregados**; **não abre arquivo algum**. |
+| VCB-2 | **Identidade.** A unidade de validação é o **fragmento emitível `<Rxx>/<Fxx>`** (**`C-A5-T1`**). `rxx` e `fragmento_id` aparecem no resultado como **projeções estruturais** da identidade, para localizar o defeito; o `Rxx` agregado **não** volta a ser a identidade principal. A divergência e a indisponibilidade são registradas no nível do ***binding***. |
+| VCB-3 | **Consulta de status.** O status autoritativo por fragmento é lido do índice (**`C-11`**) por `consultar_status`, que chama `validar_indice` e `derivar_tokens_do_indice` **antes** de ler. **Nenhum vocabulário paralelo de status é criado**: rótulo fora de **`C-3`** falha como `IndiceInvalido`, e a identidade não é reparseada. **Zero valor padrão**, **zero *fallback*** e **zero consulta ao Markdown**. |
+| VCB-4 | **Status não filtra consistência.** **Todos** os fragmentos do índice físico são conferidos, qualquer que seja o seu status. `status_por_fragmento` é informação **separada**: consistência factual **não** torna um fragmento emitível, e status **não** dispensa a conferência. |
+| VCB-5 | **Três espécies distintas, nunca confundidas.** **Classe II** (**`D8-CII`**) sai como `Divergencia`. **`C-7`** sai como `ReferenteIndisponivel` e **não é divergência**: o fato não contradiz a redação, apenas não está disponível; a saída **não** distingue `null` de `status: pendente`. **Classe I** (**`D8-CI`**) **não vira resultado**: a exceção da fronteira de origem atravessa **intacta** e **não existe resultado parcial**. |
+| VCB-6 | **Vocabulário fechado de divergência**: `ASSERTIVA_FALSA` e `FORMATO_INAPLICAVEL`. `FormatoInaplicavel` é **divergência estrutural do fragmento**, não `C-7`: o fato existe, o caminho resolveu e `C-7` não o recusou, mas o formato declarado não consegue representá-lo. As **únicas** capturas funcionais da fronteira são `ValorNuloOuPendente` e `FormatoInaplicavel`. |
+| VCB-7 | **`RUNTIME_AUTORITATIVO` está fora do escopo factual desta materialização.** A fronteira **não** recebe *snapshot* de runtime, **não** consulta calendário e **não** decide disponibilidade. Cada *binding* de origem runtime é apenas **registrado** em `bindings_runtime_nao_avaliados`, na ordem física, **sem divergência, sem indisponibilidade e sem afirmar verdade operacional**. |
+| VCB-8 | **`VCB` não repete `C-15` em runtime.** A equivalência textual é o **gate de materialização** do *template* (**`C-A1-ST10`**) e **não** é reexecutada nesta fronteira. O *template* carrega ***placeholder***, não valor: **mudança legítima de valor no YAML não é divergência** enquanto o referente resolver, `C-7` permitir, o formato se aplicar e o *binding* continuar correspondendo ao *template*. **Nenhum *snapshot*, valor anterior, *hash* factual ou texto renderizado congelado é guardado.** |
+| VCB-9 | **Decompor não é renderizar** (**`PH11`**). A decomposição do *template* é **validada e descartada**: nada é concatenado, nenhum valor é inserido e nenhum texto final é montado. **`VCB` não cria nem executa *renderer*.** |
+| VCB-10 | **Saída estrutural e determinística**, toda na ordem física `Rxx` → fragmento → *binding*: `divergencias`; `referentes_indisponiveis`; `tokens_divergentes` — **primeira ocorrência**, e **sem `C-7`** —; `status_por_fragmento`; e `bindings_runtime_nao_avaliados`. Os DTOs são `frozen`/`slots` e carregam **somente identificadores e o referente declarado** — nunca valor factual, `repr`, texto aprovado, *template*, valor formatado ou mensagem livre (**`C-1h`**–**`C-1m`**, **`C-15e`**). **Nenhum campo decide emissibilidade.** |
+| VCB-11 | **Fronteira `C` × `S2-D8` preservada** — **`C-12` permanece literal**. A fronteira **não** produz `resposta_aprovada_disponivel`, `pendencia_impeditiva`, `CAMPO_INDISPONIVEL`, `SEM_RESPOSTA_APROVADA_EMITIVEL`, `E09`, grupo **R2**, escolha de alternativa, cobertura, handoff, alerta operacional, condição de ciclo nem resposta conversacional. **S2-D8 consome o resultado estrutural** e **não** é implementada aqui. |
+| VCB-12 | **Política de igualdade entre caminhos** — o juízo de que dois *bindings* declaram o **mesmo** referente. A norma arbitrada é: comparar a **decomposição canônica produzida por `analisar_caminho_yaml`**, **nunca** a `str` bruta; igualdade é a igualdade **exata** do par `relativo` + **sequência ordenada de segmentos**; cada segmento e cada seletor é comparado **literalmente**; **ordem é significativa**; **caixa é significativa**; **zero `strip`**, **zero `casefold`**, **zero NFC/NFD**, **zero coerção**, **zero equivalência aproximada** e **zero equivalência por “resolver para o mesmo valor”**; entrada fora do domínio canônico **falha pela exceção do parser**. A **função dedicada de igualdade não é materializada nesta entrega**, porque nenhum consumidor atual a exige. |
+
+**`itera_sobre`.** O contrato é sustentado **por composição** das fronteiras existentes —
+`validar_itera_sobre`, `resolver_itera_sobre` e o item corrente de `CY13`. Quem decide a
+cardinalidade da avaliação é o **caminho**, e o discriminante é o `relativo` **já produzido
+por `validar_caminho_de_binding`** — **nenhum caminho é reparseado** e **nenhuma gramática,
+prefixo, heurística textual, seleção ou semântica adicional é criada aqui**:
+
+- ***binding* absoluto**: avaliado **uma vez contra a raiz**, **mesmo com coleção vazia** —
+  um fato global **não** depende da cardinalidade da coleção, e **não** é multiplicado pelos
+  itens;
+- ***binding* relativo**: avaliado **por item corrente**;
+- **primeiro desfecho não consistente**: encerra **somente** a avaliação daquele *binding*
+  relativo — a identidade registrada é a do *binding*, não a do item.
+
+*Bindings* absolutos e relativos **podem coexistir** no mesmo fragmento. Com coleção vazia,
+um *binding* relativo **não tem item corrente algum a avaliar**, e isso **não** é juízo
+operacional aqui.
 
 ### 4.2 Somente LLM
 
@@ -2760,11 +2806,14 @@ Continuam **verdadeiras e inalteradas**, sem atenuação:
 #### D8-X — fora do escopo de S2-D8
 
 Permanecem **abertas e inalteradas**: **`N-b-RES2`**; **S3-D1**; **E4**; **E1**; **E3**;
-**B**; **C** (§2.3); **S2-D5**; **S2-D7**; **R10**, **R13**, **R17** e **R20** (**C-9**);
-**`Q53`**/**`Q54`** (**AJ2-E4**); o **valor do limiar** e seu **mecanismo de carga**; o
-**destino do alerta operacional**; **S4**/**S5**; e o **`OrquestradorMotor`**. S2-D8 **não
-cria** o índice de C, **não cria** o mapa R2, **não cria** módulo, **não cria**
-`AssuntoComercial` em Python, **não escolhe** produtor LLM e **não cria subetapa**.
+**B**; **C** (§2.3); **S2-D5**; **S2-D7**; **`Q53`**/**`Q54`** (**AJ2-E4**); o **valor do
+limiar** e seu **mecanismo de carga**; o **destino do alerta operacional**; **S4**/**S5**;
+e o **`OrquestradorMotor`**. S2-D8 **não cria** o índice de C, **não cria** o mapa R2,
+**não cria** módulo, **não cria** `AssuntoComercial` em Python, **não escolhe** produtor
+LLM e **não cria subetapa**.
+
+S2-D8 também **não reabre** o registro de conflitos de **C-9** — `R10`, `R13`, `R17` e
+`R20` —, cuja representação foi fechada pelas camadas posteriores de `C` (**`C-P`**).
 
 ### 4.5 Contrato das ações da `MaquinaEstados`
 
@@ -4109,9 +4158,9 @@ valor em `VeredictoIdentificador`, campo em `ProjecaoInterpretacao` ou component
 **Fora do escopo de AJ2.** AJ2 **não decide** **S2-D8**, **S3-D1**, **E4**, **B**, **C**,
 **`N-b-RES2`**, o `DetectorHandoff`, o `SeletorFatos`, o `ValidadorResposta`, o
 `ValidadorConsistenciaBase`, o **limiar**, **S4**/**S5** nem o **destino do alerta**. A
-**coordenação dessas fronteiras** pertence aos contratos correspondentes. `R10`, `R13`, `R17`
-e `R20` permanecem **não decididos** (C-9), e `Q53`/`Q54` permanecem **não classificados**
-(AJ2-E4). **AJ2 não cria subetapa.**
+**coordenação dessas fronteiras** pertence aos contratos correspondentes. **AJ2 não
+reabre** o registro de conflitos de `R10`, `R13`, `R17` e `R20` (C-9), e `Q53`/`Q54`
+permanecem **não classificados** (AJ2-E4). **AJ2 não cria subetapa.**
 
 ##### Contrato de implementação M-AJ2 — delta AJ2 na fronteira determinística
 
@@ -4925,7 +4974,7 @@ Regra obrigatória sobre o repositório em memória:
 |---|---|
 | `CarregadorYaml` | carrega, e falha de forma explícita quando o arquivo falta ou é inválido |
 | `ValidadorYaml` | detecta campo obrigatório ausente e aponta qual |
-| `ValidadorConsistenciaBase` | **teste obrigatório de divergência**: com um `Rxx` citando valor diferente do YAML carregado, a divergência é detectada, o `Rxx` é reprovado, o campo do YAML em conflito é identificado e nenhum dado divergente é liberado (F3–F5) |
+| `ValidadorConsistenciaBase` | **teste obrigatório de divergência**: com um **fragmento emitível factualmente incompatível** com a base carregada — por exemplo, uma `ASSERTIVA` **avaliável e falsa**, ou um `RENDERIZADO` cujo **formato declarado não consegue representar** o fato corrente —, a divergência é detectada, o fragmento é **bloqueado estruturalmente**, o **referente** em conflito é identificado e **nenhum valor divergente é liberado** (F3–F5). Uma **mudança legítima de valor** de um *binding* `RENDERIZADO`, **permanecendo no domínio do formato declarado**, **não** é divergência (VCB-8) |
 | `NormalizadorEntrada` | identificador do canal produz a chave; sem identificador, a chave composta é usada e marcada como heurística; a mesma frase fora da janela temporal é mensagem nova, não duplicata (§4.3) |
 | `OrquestradorMotor` | executa as **14 etapas na ordem**, com **recuperação de contexto (3) antes da interpretação (4) e ambas antes da resolução de identidade (5)**; **estado enviado pelo adaptador é ignorado ou rejeitado** (E3); não emite antes de persistir (Q1); **termina o ciclo sem transição** nos **quatro** casos normativos — contexto inválido, `Identidade.AMBIGUA`, `SEM_CANDIDATO_ELEGIVEL` enquanto **E4** estiver aberta, e `situacao_takeover == HUMANO_MULTIPLO` (§5); e **distingue `HUMANO_UNICO`**, que **não** encerra sem transição — segue para a `MaquinaEstados` com `estado = atendimento_humano` e `identidade = None`, resolvendo por **T33** com zero emissão automática |
 | `ResolvedorIdentidade` | a **cascata D0–D6 é determinística** — mesmas entradas, mesma decisão, sem relógio, sem I/O e sem LLM; **alvo único** quando a cascata resolve, com `identidade` derivada do estado do alvo; **ambiguidade segura** — `AMBIGUA` sempre com alvo `None` e **sem herdar dado algum** (A1, A6); **primeiro contato** distinguido por `havia estado esperado?` = não; **`SEM_CANDIDATO_ELEGIVEL`** produzido quando há histórico conhecido e zero candidatos elegíveis, **sem virar primeiro contato, sem virar `NOVO` e sem transição**; **o identificador apenas restringe o escopo** (N7) e nunca decide sozinho; **contexto inválido nunca é entrada normal** (S7) — é erro de contrato ou pré-condição bloqueada na etapa 3; **precedência de takeover** (R5-P0): com `situacao_takeover != SEM_TAKEOVER` a cascata **não executa**, `identidade` é `None` e nenhuma `AMBIGUA` é produzida; **o conjunto H é entrada separada** — `SituacaoTakeover` é derivada de `ids_em_atendimento_humano`, **nunca** de um filtro sobre os candidatos elegíveis, e o alvo de `HUMANO_UNICO` vem **direto de H** (§6.2, H1–H6) |
@@ -5353,7 +5402,7 @@ adaptador **chama** o motor, nunca o contrário (**D6**).
 | 16 | **Retorno do controle ao bot** | **nenhuma transição inversa de T31** está especificada para devolver o canal ao atendimento automático sem passar por `E14`/T34. A partir de `atendimento_humano`, a saída especificada é o encerramento (T34); a partir de `encaminhado_humano`, T32. **ABERTA** | arbitragem futura — **não bloqueia** R5 |
 | 17 | **Duplicatas gerais de `id_atendimento` entre candidatos não identificados** | a arbitragem R-I exige unicidade **apenas do ID identificado** e **apenas** com `veredito_identificador == ENCONTRADO` (**P-I5**). **Não está decidido** se IDs duplicados entre candidatos **não identificados** constituem erro geral de contrato. **Nenhuma regra global de unicidade foi adicionada** | arbitragem específica futura — **não bloqueia** nenhuma entrega já autorizada |
 | 18 | **Valor numérico do limiar temporal de recência** e **mecanismo concreto de carga** da configuração (§6.2, N-a-L6) | o limiar é **argumento explícito e validado** das fronteiras que o consomem (N-a-L1–N-a-L6, M-E3, M-C3). **Nenhum número é definido** e **nenhuma tecnologia, variável de ambiente, arquivo ou serviço é escolhido**. Risco de calibração: curto demais descarta `encerrado` que **T36** deveria reabrir; longo demais devolve histórico antigo à cascata. **Não é dado comercial** — não entra em `knowledge/casa77.yaml`. **ABERTA** | aprovação específica de Douglas Bianchi + decisão operacional, **antes do `OrquestradorMotor`** |
-| 19 | **C** — contrato estruturado, legível por máquina, ligando cada `Rxx` aos campos de `knowledge/casa77.yaml`, e o artefato que o materializa | **ARBITRADA** (§2.3). Contrato fechado: artefato aprovado `knowledge/indice-respostas-aprovadas.yaml`, modelo `Rxx` → **fragmentos emitíveis**, status fechado `APROVADO`/`AGUARDA_APROVACAO`/`BLOQUEADO` sem valor padrão, *bindings* **`RENDERIZADO`** e **`ASSERTIVA`** (`EH_VERDADEIRO`/`EH_FALSO`), regra **consistency-only** para `ASSERTIVA` sobre campo relacionado a handoff, formatos de **apresentação pura** sem dependência oculta, bloqueio de **transformação semântica**, tratamento de `null`/`pendente`, fontes autoritativas em transição e a separação **C × S2-D8**. As camadas são lidas por **`C-P`**: **`C-1`–`C-15`**, depois **`C-A1`**–**`C-A5`**. Os conflitos `R10`, `R20`, `R13` e `R17` permanecem **registrados e não arbitrados** (**C-9**) | **contrato resolvido** — §2.3. O **artefato físico** — o índice, os *templates* e a bijeção auditada — é **requisito** de `ValidadorConsistenciaBase` e, em cascata, de `SeletorFatos` e `ValidadorResposta` |
+| 19 | **C** — contrato estruturado, legível por máquina, ligando cada `Rxx` aos campos de `knowledge/casa77.yaml`, e o artefato que o materializa | **ARBITRADA** (§2.3). Contrato fechado: artefato aprovado `knowledge/indice-respostas-aprovadas.yaml`, modelo `Rxx` → **fragmentos emitíveis**, status fechado `APROVADO`/`AGUARDA_APROVACAO`/`BLOQUEADO` sem valor padrão, *bindings* **`RENDERIZADO`** e **`ASSERTIVA`** (`EH_VERDADEIRO`/`EH_FALSO`), regra **consistency-only** para `ASSERTIVA` sobre campo relacionado a handoff, formatos de **apresentação pura** sem dependência oculta, bloqueio de **transformação semântica**, tratamento de `null`/`pendente`, fontes autoritativas em transição e a separação **C × S2-D8**. As camadas são lidas por **`C-P`**: **`C-1`–`C-15`**, depois **`C-A1`**–**`C-A5`**. Os conflitos `R10`, `R20`, `R13` e `R17` permanecem **registrados** em **C-9**, com a representação fechada pelas camadas posteriores (**`C-P`**) | **contrato resolvido** — §2.3. O **artefato físico** — o índice, os *templates* e a bijeção auditada — é **requisito** de `ValidadorConsistenciaBase` e, em cascata, de `SeletorFatos` e `ValidadorResposta` |
 
 | 20 | **AJ2** — **origem semântica do assunto** de `PerguntaComercial`: de onde vem, e com que garantias, a informação de **sobre o que** o interessado consultou | **ARBITRADA** (§6.3). **AJ2 estende formalmente N-b**: `PerguntaComercial` tem **três** campos — `texto`, `confianca` e **`assunto`** obrigatório, do enum fechado **`AssuntoComercial`** de **54** valores (53 específicos + `ASSUNTO_NAO_CLASSIFICADO`), **sem confiança própria**; **um assunto por item**, com **segmentação** de consulta composta; **preservação textual** sem normalizar, resumir ou parafrasear; **duplicatas permitidas**; e o `assunto` **não atravessa** para a projeção, **não referencia `Rxx`** e **não produz condição** de §4.4 (**N-b-Q7**–**N-b-Q12**). `E-Nb-5` cobre `assunto` ausente ou fora do vocabulário, e a lista permanece **`E-Nb-1`–`E-Nb-19`**. Cenários: **`K-Nb-1`–`K-Nb-51`**. **`Q53`/`Q54` permanecem não classificados** | **contrato resolvido** — §6.3. Fronteiras relacionadas: **N-b** (item 12), de que AJ2 é extensão, e **S2-D8** (item 10), a quem pertence o **consumo** do assunto |
 | 21 | **B** — **colisão de nome `RegistroAtendimento`**: componente de comportamento de §4.1 × dataclass `frozen` de transporte da persistência operacional | **ABERTA** (§4.1.1). Colisão de **categoria**, não de campo nem de assinatura. **Nenhum referente é renomeado ou unificado**, e nada é resolvido silenciosamente. **Não afeta** a persistência operacional de §7.3 nem a fronteira de identidade de §7.1 | arbitragem específica **antes de implementar** o componente `RegistroAtendimento` de §4.1 — §4.1.1 |
