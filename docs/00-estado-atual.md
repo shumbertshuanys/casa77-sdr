@@ -26,9 +26,10 @@ exclusivamente em `knowledge/casa77.yaml`.
   numeração de subetapa**. **Não existe subetapa `3B.8`.** Estão **concluídos** a
   **materialização física do índice e dos *templates***, a **migração da autoridade de
   status**, o **primeiro *lookup* operacional de status**, o **`ValidadorConsistenciaBase`**,
-  o **`SeletorFatos`** e o **compositor determinístico por fragmento**. O bloco segue na
-  **integração das capacidades dependentes ainda ausentes**. `C` **não** está integralmente
-  operacional.
+  o **`SeletorFatos`**, o **compositor determinístico por fragmento** e o
+  **`ProjetorEmissao`** — a **fronteira determinística** que projeta os fragmentos destinados
+  à emissão. O bloco segue na **integração das capacidades dependentes ainda ausentes**. `C`
+  **não** está integralmente operacional.
 - Etapa 4 permanece **absorvida pela Etapa 3B**; etapas 5 a 10 permanecem futuras
   (`docs/05-roadmap.md`).
 
@@ -36,20 +37,28 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-Commit funcional `c8ee852c703a7def6dfffded434b7a836dad00b5`.
+Commit funcional `debdc72d61d8706a7d974008df2b4292e80f3246`.
 
-**Compositor determinístico materializado** em `src/casa77_sdr/response_composition.py`, com
-a API pública `compor_textos_emitiveis`. Ele recebe **somente** o `ResultadoSelecaoFatos` e
-produz **um `TextoEmitivel` por `TextoAutorizado`**, na mesma ordem.
+**`ProjetorEmissao` materializado** em `src/casa77_sdr/emission_projection.py`, com a API
+pública `projetar_fragmentos_para_emissao`. Ele recebe **`fragmentos_autorizados`** — a
+projeção de cobertura produzida a montante — e as **ações da primeira decisão da
+`MaquinaEstados`**, e devolve uma **`tuple[str, ...]`** com os **fragmentos destinados à
+emissão**.
 
-Fragmentos **estáticos** permanecem **literais**. *Templates* são decompostos por
-`decompor_template`, que é a **autoridade** sobre a gramática, e cada *placeholder* recebe o
-`valor_formatado` do *binding* correspondente **do mesmo fragmento**; *placeholder* repetido
-**reutiliza o mesmo fato**. A **proveniência estrutural** é preservada, e o resultado **não
-reinterpreta valores como *template***.
+A **ordem dos *witnesses* é preservada integralmente**: nenhum é removido, reordenado,
+substituído ou reescrito. Os **fragmentos mandatórios** das ações entram **depois deles**, na
+ordem das ações. A **deduplicação existe somente no bloco mandatório**, pela primeira
+ocorrência; repetição dentro da tupla recebida é **erro de contrato**, e o **conflito
+*cross-source*** — o mesmo identificador chegando pelas duas origens — **fecha em segurança**,
+sem resultado parcial.
 
-**Zero YAML, índice, status, estado e LLM.** **Zero decisão de cobertura ou emissibilidade.**
-**Zero montagem *cross-fragment***, **zero resposta final** e **zero `ValidadorResposta`**.
+O mapa de ações é **total sobre as 20 `AcaoMaquina`**. Nesta versão, **somente
+`INFORMAR_LACUNA_DE_INFORMACAO` → `R03/F1`** possui contribuição materializada; **todas as
+demais ações contribuem zero fragmentos nesta fronteira**. **`()` não significa ação textual
+satisfeita** — a obrigação conversacional daquela ação **permanece**.
+
+**Zero YAML**, **zero índice em produção**, **zero LLM**, **zero texto**, **zero decisão
+comercial** e **zero alteração da `MaquinaEstados`**, que continua **sem conhecer `Rxx`**.
 
 Permanecem fatos vigentes: **30 `Rxx`**, **37 fragmentos emitíveis**, **118 *bindings***,
 **19 *templates*** e **18 fragmentos estáticos**. **Zero texto/*template* emitível
@@ -59,11 +68,11 @@ alterado** e **zero mudança semântica do índice**.
 
 ## 3. Baseline funcional
 
-Último **baseline funcional verificado** — evidência da entrega funcional acima, **não** uma
+**Baseline funcional da nova entrega** — evidência da entrega funcional acima, **não** uma
 execução desta atualização:
 
 - Python **3.14.5**;
-- **`5981 passed`**, sob **`-W error`**;
+- **`6064 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings.
 
 CI configurada em GitHub Actions, em `.github/workflows/ci.yml`, com Python **3.13** e **3.14**.
@@ -80,12 +89,15 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
 - **Cadeia vigente**, com as fronteiras separadas e nenhuma acumulando papel de outra:
   - `ValidadorConsistenciaBase` → **consistência** — **materializado**;
   - **S2-D8** / `R2` → **candidatura, emissibilidade, cobertura e escolha do *witness***, que
-    projeta os fragmentos autorizados — **ainda não materializados**;
+    projeta os fragmentos autorizados — **contrato arbitrado, implementação física ainda
+    ausente**;
+  - `MaquinaEstados` → **ações semânticas** — **materializada**;
+  - **`ProjetorEmissao`** → ***witnesses*** **e ações** → **tokens destinados à emissão** —
+    **materializado**;
   - `SeletorFatos` → **fatos e textos autorizados**, separados — **materializado**;
   - **compositor determinístico** → **texto emitível por fragmento** — **materializado**;
-  - `ValidadorResposta` → validação final da saída — **ainda não materializado**;
-  - **montagem da resposta final** e **política da etapa 10** → **ainda não arbitradas nem
-    materializadas**.
+  - **montagem final** → **ainda não materializada**;
+  - `ValidadorResposta` → validação final da saída — **ainda não materializado**.
 - O índice físico `knowledge/indice-respostas-aprovadas.yaml` está **materializado e
   estruturalmente validado**: **30 `Rxx`**, **37 fragmentos**, **118 *bindings***. Ele guarda
   **referentes**, nunca valor resolvido (`C-1h`–`C-1m`, `C-15e`).
@@ -146,6 +158,40 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   `itera_sobre`**, comprovado **mecanicamente** sobre o índice carregado. Isso **não** proíbe
   `itera_sobre` na arquitetura: introduzi-lo no futuro exige **nova arbitragem** da
   apresentação dos múltiplos valores.
+- Existe **fronteira determinística operacional de projeção de emissão**
+  (`src/casa77_sdr/emission_projection.py`; contrato em `docs/07` §4.1.5). Ela **não é um
+  15º componente**: §4.1 permanece com **14**. É a **fronteira determinística operacional**
+  que liga as ações já decididas pela máquina à materialização textual. Ela:
+  - recebe **`fragmentos_autorizados`** e as **ações da primeira decisão da
+    `MaquinaEstados`**, e devolve **`tuple[str, ...]`**;
+  - **preserva integralmente a ordem dos *witnesses*** e acrescenta os **mandatórios depois
+    deles**, na ordem das ações;
+  - **deduplica somente no bloco mandatório**, pela primeira ocorrência;
+  - **fecha** diante de repetição na tupla recebida e de **conflito *cross-source***;
+  - **não abre** `knowledge/**`, **não carrega o índice em produção**, **não chama LLM**,
+    **não monta texto**, **não toma decisão comercial** e **não executa ação alguma**.
+- **Ações sem mapeamento.** A **maioria das `AcaoMaquina` ainda não possui fragmento aprovado
+  materializado nesta fronteira**: nesta versão, **somente `INFORMAR_LACUNA_DE_INFORMACAO`
+  possui contribuição textual mandatória materializada**. Para as demais, **`()` significa
+  zero fragmento acrescentado pelo `ProjetorEmissao`** — e **não** que a ação esteja
+  resolvida: a **obrigação conversacional permanece**.
+- **`R03/F1`** é o **único fragmento mandatório atualmente materializado** pelo projetor. Um
+  ***gate* mecânico do corpus** comprova a sua **existência**, o status **`APROVADO`** e os
+  **zero *bindings***. Ele **não é reavaliado por S2-D8 nesta fronteira**, **não pertence a
+  `R2`** e **não torna a `MaquinaEstados` conhecedora de `Rxx`**.
+- **Limites materiais do projetor nesta versão**: ele consome as ações da **primeira** decisão
+  da máquina; **ações produzidas por chamadas posteriores da `MaquinaEstados` não entram nesta
+  projeção**; somente **fragmentos mandatórios estáticos e previamente aprovados por *gate* de
+  corpus** podem ser inseridos pelo mapa atual; qualquer futuro mandatório com ***binding***,
+  **`ASSERTIVA`** ou **fato de runtime** **exige nova arbitragem**; e ação com mapa vazio
+  **continua podendo ter obrigação textual pendente**.
+- **Política geral de composição — `PC-1`–`PC-6`** — é agora **norma arquitetural** em
+  `docs/07` §4.1.5: **múltiplos fragmentos individualmente aprovados podem compor a mesma
+  resposta**; os ***witnesses*** **preservam ordem e cardinalidade**; em **cobertura mista**,
+  **`R03/F1` entra ao final**; o **separador futuro `"\n\n"`** está **arbitrado**; há **zero
+  conteúdo lexical novo** entre unidades; e o **LLM não altera lexicalmente o corpo comercial
+  já composto de fragmentos aprovados**. **Essa política ainda não equivale a montagem final
+  implementada.**
 - **Vocabulário canônico de status fechado**: `APROVADO`, `AGUARDA_APROVACAO`, `BLOQUEADO`.
   **`PARCIAL` não é quarto status** — é rótulo humano agregado do Markdown; no índice,
   `R28/F1` é **`APROVADO`**, provado diretamente na autoridade.
@@ -179,9 +225,12 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   integração do corpus**, onde **`PH7` e `PH8` foram comprovadas sobre o corpus físico**.
   **A composição determinística por fragmento existe** (`docs/07` §4.1.4): um *template* com
   *placeholder* já é materializável em texto emitível. O que **continua ausente** é a
-  **montagem da resposta final** — sequência entre fragmentos, omissão, separadores, o
-  **papel residual do LLM** na etapa 10 e o contrato final do `ValidadorResposta` —, e é dela
-  que depende um caminho degradado completo (`docs/07` §12, item 22).
+  **montagem da resposta final** — a **implementação** da montagem, a **aplicação física do
+  separador**, a **forma canônica completa do rascunho**, o **papel residual do LLM** nas
+  superfícies ainda sem fragmento aprovado e o contrato final do `ValidadorResposta` —, e é
+  dela que depende um caminho degradado completo (`docs/07` §12, item 22). A **ordem entre as
+  unidades** e o **separador** já estão **arbitrados** por `PC-1`–`PC-6`, mas **arbitragem não
+  é materialização**.
 - **`C-A1-ST6`–`C-A1-ST10`**, sobre o corpus materializado:
   - **`ST6`** — **comprovada**: o índice físico carrega e `E1` o valida estruturalmente;
   - **`ST7`** — **comprovada**: bijeção integral **37/37** entre índice e Markdown;
@@ -202,7 +251,8 @@ estrutural, carregador *fail-closed*, comparador de equivalência, formatadores,
 insumos prontos, **não resolvem *binding***, **não leem o índice** e **não consultam
 `knowledge/**`**; quem as **compõe** são os **dois consumidores operacionais** —
 `ValidadorConsistenciaBase` e `SeletorFatos` —, sempre sobre insumos **já carregados pelo
-chamador**, e o **compositor determinístico** fecha a cadeia sobre o resultado do segundo.
+chamador**; o **`ProjetorEmissao`** entrega a esse segundo consumidor os fragmentos destinados
+à emissão, e o **compositor determinístico** fecha a cadeia sobre o resultado dele.
 **Nenhuma delas, nem eles, materializa `C` integralmente.** O catálogo dos módulos vive no
 código; o contrato vive em `docs/07` §2.3.
 
@@ -213,7 +263,7 @@ código; o contrato vive em `docs/07` §2.3.
 | Pendência | Situação atual | Impacto / bloqueio | Fonte |
 |---|---|---|---|
 | **B** — colisão conceitual de nome `RegistroAtendimento` | aberta; nenhum referente renomeado ou unificado | bloqueia implementar o componente `RegistroAtendimento` | `docs/07` §4.1.1, §12 item 21 |
-| **C** — índice estruturado `Rxx` × YAML | índice físico, *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`SeletorFatos`** e **compositor determinístico por fragmento** materializados; **`ValidadorResposta`**, o **S2-D8 / `R2` físico** e a **política/montagem final da etapa 10** permanecem **pendentes** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice ao **texto emitível por fragmento**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §12 itens 19, 10 e 22 |
+| **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`SeletorFatos`**, **compositor determinístico por fragmento** e **`ProjetorEmissao`**. **Pendentes**: **S2-D8 / `R2` físico**, **montagem final**, **`ValidadorResposta`**, **integração completa da etapa 10**, **superfícies conversacionais ainda sem fragmento aprovado** e **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice ao **texto emitível por fragmento**, com a **projeção de emissão** entre a decisão da máquina e a materialização; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §12 itens 19, 10 e 22 |
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
 | **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado / não materializado; nenhum módulo nem mapa `R2` | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §4.4.1, §12 item 10; `docs/06` §11 |
@@ -241,11 +291,14 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
 
 - **S2-D8** — materialização do produtor de pendências e de cobertura;
 - **C** — índice físico, *templates*, **autoridade de status**, ***lookup* operacional**,
-  **`ValidadorConsistenciaBase`**, **`SeletorFatos`** e o **compositor determinístico por
-  fragmento** **já concluídos**; o bloqueio restante é **conectar as capacidades dependentes
-  ainda ausentes** — o **`ValidadorResposta`**, a **projeção física de S2-D8 / `R2`**, que é
-  quem produz os fragmentos autorizados, e a **montagem da resposta final com a política
-  segura da etapa 10** (`docs/07` §12, item 22);
+  **`ValidadorConsistenciaBase`**, **`SeletorFatos`**, o **compositor determinístico por
+  fragmento** e o **`ProjetorEmissao`** **já concluídos** — a fronteira que projeta
+  ***witnesses* e ações** nos **fragmentos destinados à emissão** **deixou de ser lacuna**. O
+  bloqueio restante é **conectar as capacidades dependentes ainda ausentes** — a **projeção
+  física de S2-D8 / `R2`**, que é quem produz os fragmentos autorizados, a **montagem da
+  resposta final**, o **`ValidadorResposta`**, a **política e a integração residual da etapa
+  10**, as **ações textuais sem unidade aprovada quando relevantes** e a **integração completa
+  pelo `OrquestradorMotor`** (`docs/07` §12, item 22);
 - **S3-D1** — produtor de `motivo_encerramento` ainda não atribuído; impede completar a
   **condição 8 de `CondicoesCiclo`** e os fluxos que dependem dela;
 - **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL`;
@@ -267,11 +320,16 @@ eventos confirmados e condições já estruturadas.
 
 ## 7. Próxima ação
 
-**Arbitrar o contrato da montagem final da resposta, o papel da etapa 10/LLM e a superfície
-determinística que o `ValidadorResposta` deverá validar para satisfazer P4/P5.**
+**Arbitrar o fechamento do caminho final de emissão — forma canônica da montagem final,
+superfícies conversacionais ainda sem fragmento aprovado e ações produzidas pelas chamadas
+posteriores da `MaquinaEstados` — para então materializar a montagem final e o
+`ValidadorResposta`.**
 
-A implementação do `ValidadorResposta` **não** é a próxima ação: existe **decisão
-arquitetural aberta** entre o compositor (§4.1.4), a etapa 10 e o rascunho final. A
-arbitragem precisa fechar **sequência entre fragmentos**, **omissão**, **separadores**,
-**papel residual do LLM** e a **forma canônica** do que será validado. Essa decisão **não é
-tomada aqui** — este arquivo é snapshot — e será aberta por **novo mandato do GPT**.
+A implementação da montagem final e do `ValidadorResposta` **não** é a próxima ação: existe
+**decisão arquitetural aberta**. `PC-1`–`PC-6` já fixaram a **política geral de composição**
+— ordem, cardinalidade, lacuna ao final e separador —, mas continuam abertas a **forma
+canônica do rascunho final**, a **aplicação física do separador**, as **superfícies
+conversacionais ainda sem fragmento aprovado** e o **destino das ações produzidas pelas
+chamadas posteriores da `MaquinaEstados`**. Por haver decisão arquitetural aberta, a próxima
+ação é **arbitragem**, não implementação. Essa decisão **não é tomada aqui** — este arquivo é
+snapshot — e será aberta por **novo mandato específico**.
