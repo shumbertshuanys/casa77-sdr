@@ -2511,7 +2511,8 @@ A **cadeia vigente**, com cada fronteira devolvendo exatamente uma coisa:
 | **`ProjetorEmissao`** (§4.1.5) | os **fragmentos destinados à emissão** |
 | `SeletorFatos` (§4.1.3) | `ResultadoSelecaoFatos` — *template* e fatos **separados** |
 | **compositor** (esta §4.1.4) | `ResultadoComposicao` — **um texto emitível por fragmento** |
-| montagem final / `ValidadorResposta` | **ainda não materializadas** (§12, itens 7 e 22) |
+| **montagem canônica** (§4.1.6) | `RespostaMontada` — **uma emissão numa única mensagem** |
+| `ValidadorResposta` / integração ***end-to-end*** da etapa 10 | **ainda não materializados** (§12, itens 7 e 22) |
 
 | # | Contrato |
 |---|---|
@@ -2526,7 +2527,7 @@ A **cadeia vigente**, com cada fronteira devolvendo exatamente uma coisa:
 | CMP-9 | **Proveniência preservada.** `origens` tem **uma entrada por *binding* distinto realmente inserido**, na ordem da **primeira ocorrência física do *placeholder* no *template*** — *placeholder* repetido **não** duplica a origem. Cada `OrigemValor` carrega **somente** *binding*, referente declarado e formato declarado. Fragmento **estático** tem `origens` vazia, e isso é **sucesso normal**. |
 | CMP-10 | **Zero vazamento.** `TextoEmitivel.texto` é `repr=False`: é conteúdo pronto para emissão, **não** material de log, e nenhum `repr` customizado o reintroduz. `OrigemValor` **não** carrega valor factual. Os DTOs são `frozen`/`slots`. |
 | CMP-11 | ***Fail-closed*, sem resultado parcial.** A incoerência da seleção recebida — forma inválida, token duplicado entre textos, fato de token desconhecido, `rxx`/`fragmento_id` que não coincidem literalmente, cardinalidade incompatível — sai como `ComposicaoNaoAvaliavel`, cuja mensagem **nunca** carrega token, *binding*, referente, valor, texto, cardinalidade, índice, posição, `repr` ou tipo concreto. **Nada é capturado** e **nenhum resultado parcial é devolvido**. |
-| CMP-12 | **Nada aqui fecha a resposta final**, e **nenhuma decisão *cross-fragment*** é tomada **pelo compositor**. Parte dessas matérias **já está arbitrada** pela **política geral de composição** **`PC-1`**–**`PC-6`** (§4.1.5): a **composição de vários fragmentos aprovados** sob essa política; os ***witnesses*** preservados **uma vez** e na **ordem produzida por `SF-D4`**; a **lacuna `R03`/`F1` ao final** em cobertura mista; o **separador futuro `"\n\n"`**; o **zero conteúdo lexical novo** entre unidades; e **`PC-5`**, sobre a **não alteração lexical do corpo comercial aprovado**. **Ainda não materializados ou não fechados integralmente**: a **implementação da montagem final**, a **aplicação física do separador**, a **forma canônica completa do rascunho final**, o **papel residual do LLM** nas superfícies conversacionais **ainda sem fragmento aprovado** e o **`ValidadorResposta`** — matéria da arbitragem e materialização posteriores de **P4** / `ValidadorResposta` (§12, item 22). **Nenhuma dessas decisões é tomada pelo compositor**, e **a integração *end-to-end* não está concluída.** |
+| CMP-12 | **Nada aqui fecha a resposta final**, e **nenhuma decisão *cross-fragment*** é tomada **pelo compositor**. Parte dessas matérias **já está arbitrada** pela **política geral de composição** **`PC-1`**–**`PC-6`** (§4.1.5): a **composição de vários fragmentos aprovados** sob essa política; os ***witnesses*** preservados **uma vez** e na **ordem produzida por `SF-D4`**; a **lacuna `R03`/`F1` ao final** em cobertura mista; o **separador `"\n\n"`**; o **zero conteúdo lexical novo** entre unidades; e **`PC-5`**, sobre a **não alteração lexical do corpo comercial aprovado**. **Já materializado — isoladamente, e fora deste contrato**: a **montagem canônica de uma emissão**, a **aplicação física de `"\n\n"`** e a **forma determinística de `RespostaMontada`** (**§4.1.6**). **Ainda não materializados ou não fechados integralmente**: o **`ValidadorResposta`**, a **integração *end-to-end* da etapa 10**, o **papel residual das superfícies conversacionais ainda sem fragmento aprovado** e a **forma completa do fluxo final do ciclo** — matéria da arbitragem e materialização posteriores de **P4** / `ValidadorResposta` (§12, item 22). **Nenhuma dessas decisões é tomada pelo compositor**, e **a integração *end-to-end* não está concluída.** |
 
 **Consequência registrada, e só ela.** A composição determinística passa a existir como
 **pré-requisito material** para essa futura arbitragem de **P4** / `ValidadorResposta`.
@@ -2548,7 +2549,7 @@ seguintes:
 |---|---|
 | PC-1 | Uma resposta **pode** conter vários fragmentos individualmente aprovados, **desde que todos tenham sido deterministicamente autorizados naquele ciclo**. |
 | PC-2 | Cada ***witness*** é preservado como **unidade própria**, aparece **exatamente uma vez** e preserva a **ordem produzida por `SF-D4`**. A regra fala **somente dos *witnesses***: o fragmento de lacuna **`R03`/`F1`** **não** entra sob a ordem de `SF-D4`, e o seu lugar é fixado **separadamente** por **PC-4**. |
-| PC-3 | Na **futura** montagem final, as unidades pertencem a **uma única mensagem** e são separadas por **`"\n\n"`**, com **zero conteúdo lexical novo** entre elas. **O `ProjetorEmissao` não executa PC-3.** |
+| PC-3 | Na **montagem canônica de uma emissão**, as unidades pertencem a **uma única mensagem** e são separadas por **exatamente `"\n\n"`**, com **zero conteúdo lexical novo** entre elas. **O `ProjetorEmissao` não executa PC-3.** |
 | PC-4 | Em cobertura mista que produza `INFORMAR_LACUNA_DE_INFORMACAO`, os fragmentos de cobertura **permanecem** e o fragmento de lacuna entra **ao final**. |
 | PC-5 | No MVP, o LLM **não reescreve, não parafraseia, não encurta e não acrescenta palavras** ao **corpo comercial composto por fragmentos aprovados**. Isso **não** resolve as demais superfícies conversacionais ainda sem fragmento aprovado. |
 | PC-6 | Estrutura incompatível com o contrato **fecha em segurança**. **Nunca** existe composição improvisada. |
@@ -2577,7 +2578,46 @@ seguintes:
 | **`ProjetorEmissao`** (esta §4.1.5) | os **fragmentos destinados à emissão** |
 | `SeletorFatos` (§4.1.3) | `ResultadoSelecaoFatos` — *template* e fatos **separados** |
 | **compositor** (§4.1.4) | `ResultadoComposicao` — **um texto emitível por fragmento** |
-| montagem final / `ValidadorResposta` | **ainda não materializadas** (§12, itens 7 e 22) |
+| **montagem canônica** (§4.1.6) | `RespostaMontada` — **uma emissão numa única mensagem** |
+| `ValidadorResposta` / integração ***end-to-end*** da etapa 10 | **ainda não materializados** (§12, itens 7 e 22) |
+
+#### 4.1.6 Contrato vivo da montagem canônica de uma emissão
+
+O compositor de **§4.1.4** devolve **um texto emitível por fragmento** e
+**deliberadamente não os junta** (**CMP-3**, **CMP-8**). Falta a fronteira que **materializa
+`PC-3`**: pôr as unidades já compostas numa **única mensagem**, na **ordem recebida**,
+separadas por **`"\n\n"`**. É ela que este contrato registra, com implementação em
+`src/casa77_sdr/response_assembly.py` e cenários em `tests/test_response_assembly.py`.
+
+**Ela monta UMA emissão, nunca um ciclo.** O que entra é uma sequência de textos **já
+decidida**; o que sai é a **mesma** sequência, materializada. Ela **não sabe** fase, estado,
+ação, evento, destino, canal, interessado, atendimento humano, `E15` ou `E12` — e **não
+decide** nenhum deles.
+
+| # | Contrato |
+|---|---|
+| MF-1 | **Fronteira pura.** Zero I/O, *filesystem*, rede, LLM, relógio, calendário, ambiente, *logging*, *cache* e mutação de entrada. **Não abre `knowledge/**`**, **não lê o YAML**, **não carrega o índice** e **não consulta status**. **Zero LLM nesta fronteira.** |
+| MF-2 | **Entrada única.** Recebe **somente** o `ResultadoComposicao` já produzido por `compor_textos_emitiveis` (§4.1.4), em **tipo exato**. Nada mais entra: nem seleção, nem índice, nem ação, nem estado. **Subclasse não é forma canônica.** |
+| MF-3 | **Não é um 15º componente.** §4.1 permanece com **14**, e **nenhuma etapa nova é criada**: esta é a **fronteira determinística** que materializa a forma canônica de uma emissão, como §4.1.5 é a que projeta e §4.1.4 a que compõe. |
+| MF-4 | **Preservação integral.** Cardinalidade, ordem e conteúdo de `textos_emitiveis` saem intactos: **uma** ocorrência de cada item, **todos** os itens, **na ordem recebida**. **Zero filtro, escolha, ordenação, omissão, repetição e *fallback*.** |
+| MF-5 | **Separador `"\n\n"` — `PC-3` materializado.** Com **N > 1**, o separador aparece **exatamente** entre unidades adjacentes: **nunca** antes da primeira, **nunca** depois da última, **nunca** em triplicata, e **sem** espaço, pontuação ou conector adicional. Com **uma só** unidade, o texto final é **exatamente** o dela. |
+| MF-6 | **Zero conteúdo lexical novo.** O texto final é, literalmente, os textos recebidos **unidos** pelo separador — o equivalente exato de `"\n\n".join(...)`. **Nenhum prefixo, nenhum sufixo** e nenhum outro mecanismo semântico. |
+| MF-7 | **Zero reinterpretação.** O conteúdo de cada `TextoEmitivel.texto` é **opaco**: espaço inicial ou final, quebra de linha já presente, pontuação e algo parecido com `{{nome}}` permanecem **literais**. **Zero normalização** — nada de `strip`, `replace`, `format`, `format_map`, expressão regular, `casefold` ou normalização Unicode. |
+| MF-8 | **Cardinalidade zero fecha.** Composição **sem** unidades **não é emissão vazia**: é incoerência do chamador, e sai como `cardinalidade_vazia`. Esta fronteira **não conhece `SEM_EMISSAO`**: o **silêncio legítimo não entra aqui** — ele significa que **esta função não é chamada**, e pertence ao orquestrador futuro. |
+| MF-9 | ***Fail-closed*, sem resultado parcial.** São validados o tipo exato do `ResultadoComposicao`, a `tuple` exata de `textos_emitiveis`, o tipo exato de cada `TextoEmitivel`, o `str` **exato** de `token` e de `texto`, a **unicidade do token** e a **cardinalidade não nula**. Token repetido é **erro de contrato** e **não** é deduplicado em silêncio. **Nada é capturado** e **nenhum resultado parcial é devolvido**. |
+| MF-10 | **Zero decisão.** A montagem **não** decide cobertura, emissibilidade, autorização, fatos, *bindings*, ação, regra comercial, resposta segura, handoff ou destino. Ela **materializa a forma canônica da sequência recebida**, e nada além disso. |
+
+**Proveniência.** `RespostaMontada.tokens` é **exatamente** a tupla dos `token` das unidades,
+**na mesma ordem**: nenhum acrescentado, removido, reordenado ou deduplicado. Tokens são
+**identificadores estruturais** e podem aparecer em `repr`; `RespostaMontada.texto` é
+`repr=False` — é conteúdo pronto para emissão, **não** material de log.
+
+**O que isto NÃO afirma.** Registrar §4.1.6 **não** implementa o **`ValidadorResposta`**,
+**não** implementa a **etapa 10 *end-to-end***, **não** conecta o *fallback* operacional,
+**não** decide `E15` nem `E12`, **não** resolve as **superfícies conversacionais ainda sem
+fragmento aprovado** e **não** declara o pipeline completo. **§4.2 permanece inalterada.** A
+fronteira é **isolada**: ela materializa **uma emissão já decidida**, e quem a decide,
+valida e envia **continua fora dela**.
 
 ### 4.2 Somente LLM
 
@@ -4605,12 +4645,14 @@ e elas **não** podem ser confundidas:
 
 | Estado | Matéria |
 |---|---|
-| **Já arbitrado** — §4.1.5 (**`PC-1`**–**`PC-6`**), **CMP-12** e §12, item 22 | a **composição de vários fragmentos individualmente aprovados** segundo a política geral; cada ***witness*** aparecendo **exatamente uma vez**; a **ordem dos *witnesses***, que preserva a produzida por `SF-D4`; **`R03`/`F1` ao final** em cobertura mista; o **separador futuro `"\n\n"`**; o **zero conteúdo lexical novo** entre unidades; e o LLM **não alterando lexicalmente** o **corpo comercial composto por fragmentos aprovados** (**`PC-5`**, §4.2) |
-| **Ainda NÃO materializado ou não fechado integralmente** | a **implementação da montagem final**; a **aplicação física do separador**; a **forma canônica completa do rascunho final**; o **papel residual do LLM** nas superfícies conversacionais **ainda sem fragmento aprovado**; o **`ValidadorResposta`**; e a **integração *end-to-end*** — o ***fallback* operacional conectado** |
+| **Já arbitrado** — §4.1.5 (**`PC-1`**–**`PC-6`**), **CMP-12** e §12, item 22 | a **composição de vários fragmentos individualmente aprovados** segundo a política geral; cada ***witness*** aparecendo **exatamente uma vez**; a **ordem dos *witnesses***, que preserva a produzida por `SF-D4`; **`R03`/`F1` ao final** em cobertura mista; o **separador `"\n\n"`** — **arbitrado por `PC-3`** e **fisicamente materializado** pela fronteira isolada de **§4.1.6**; o **zero conteúdo lexical novo** entre unidades; e o LLM **não alterando lexicalmente** o **corpo comercial composto por fragmentos aprovados** (**`PC-5`**, §4.2) |
+| **Já materializado como fronteira isolada** | a **montagem canônica de uma emissão** e a **aplicação física do separador `"\n\n"`** (§4.1.6) — sobre uma sequência **já decidida**, e **nada além disso** |
+| **Ainda NÃO materializado ou não fechado integralmente** | a **forma canônica completa do rascunho final** do ciclo; o **papel residual do LLM** nas superfícies conversacionais **ainda sem fragmento aprovado**; o **`ValidadorResposta`**; e a **integração *end-to-end*** — o ***fallback* operacional conectado** |
 
-É da **segunda** metade que depende um **caminho degradado completo**. Enquanto ela não
-estiver materializada, o comportamento vigente da linha **LLM indisponível**, acima,
-**permanece literal e inalterado**.
+É da **última** metade que depende um **caminho degradado completo**: materializar a
+montagem de **uma** emissão **não** a conecta ao ciclo. Enquanto ela não estiver
+materializada, o comportamento vigente da linha **LLM indisponível**, acima, **permanece
+literal e inalterado**.
 
 Três regras estruturais decorrentes:
 
@@ -5607,7 +5649,7 @@ adaptador **chama** o motor, nunca o contrário (**D6**).
 
 | 20 | **AJ2** — **origem semântica do assunto** de `PerguntaComercial`: de onde vem, e com que garantias, a informação de **sobre o que** o interessado consultou | **ARBITRADA** (§6.3). **AJ2 estende formalmente N-b**: `PerguntaComercial` tem **três** campos — `texto`, `confianca` e **`assunto`** obrigatório, do enum fechado **`AssuntoComercial`** de **54** valores (53 específicos + `ASSUNTO_NAO_CLASSIFICADO`), **sem confiança própria**; **um assunto por item**, com **segmentação** de consulta composta; **preservação textual** sem normalizar, resumir ou parafrasear; **duplicatas permitidas**; e o `assunto` **não atravessa** para a projeção, **não referencia `Rxx`** e **não produz condição** de §4.4 (**N-b-Q7**–**N-b-Q12**). `E-Nb-5` cobre `assunto` ausente ou fora do vocabulário, e a lista permanece **`E-Nb-1`–`E-Nb-19`**. Cenários: **`K-Nb-1`–`K-Nb-51`**. **`Q53`/`Q54` permanecem não classificados** | **contrato resolvido** — §6.3. Fronteiras relacionadas: **N-b** (item 12), de que AJ2 é extensão, e **S2-D8** (item 10), a quem pertence o **consumo** do assunto |
 | 21 | **B** — **colisão de nome `RegistroAtendimento`**: componente de comportamento de §4.1 × dataclass `frozen` de transporte da persistência operacional | **ABERTA** (§4.1.1). Colisão de **categoria**, não de campo nem de assinatura. **Nenhum referente é renomeado ou unificado**, e nada é resolvido silenciosamente. **Não afeta** a persistência operacional de §7.3 nem a fronteira de identidade de §7.1 | arbitragem específica **antes de implementar** o componente `RegistroAtendimento` de §4.1 — §4.1.1 |
-| 22 | **Montagem final da resposta e política da etapa 10** — o que ainda **não** tem materialização | **PARCIALMENTE RECONCILIADA.** **Arbitrado e vigente** (§4.1.5): a **política geral de composição** **`PC-1`**–**`PC-6`**; a **ordem das unidades**, que preserva a produzida por `SF-D4`; o **fragmento de lacuna ao final** em cobertura mista (**PC-4**); o **separador futuro** **`"\n\n"`** (**PC-3**), **arbitrado mas ainda não materializado**; e **`PC-5`**, que tira do LLM a alteração lexical do **corpo comercial composto por fragmentos aprovados** (§4.2). **Materializado**: o *renderer*/compositor **por fragmento** (§4.1.4) e a **projeção dos fragmentos destinados à emissão** (§4.1.5). **Ainda NÃO materializados**: a **montagem final** da mensagem única, o **`ValidadorResposta`** e o **papel residual do LLM** na etapa 10. **Ainda pendentes**: as **ações textuais sem fragmento aprovado**, para as quais a obrigação conversacional permanece (**PE-7**), e as **demais superfícies conversacionais** de §4.2. **A integração *end-to-end* não está concluída** | arbitragem e materialização específicas futuras, **junto de P4 e do `ValidadorResposta`** (item 7). **Não bloqueia** §4.1.4 nem §4.1.5, que são fronteiras isoladas e **não montam resposta** |
+| 22 | **Montagem final da resposta e política da etapa 10** — o que **já está materializado isoladamente** e o que **ainda falta** | **PARCIALMENTE RECONCILIADA.** **Arbitrado e vigente** (§4.1.5): a **política geral de composição** **`PC-1`**–**`PC-6`**; a **ordem das unidades**, que preserva a produzida por `SF-D4`; o **fragmento de lacuna ao final** em cobertura mista (**PC-4**); o **separador `"\n\n"`** (**PC-3**); e **`PC-5`**, que tira do LLM a alteração lexical do **corpo comercial composto por fragmentos aprovados** (§4.2). **Arbitrado E materializado isoladamente**: o *renderer*/compositor **por fragmento** (§4.1.4), a **projeção dos fragmentos destinados à emissão** (§4.1.5) e a **montagem canônica de uma emissão** na mensagem única, **com a aplicação física do separador** (**§4.1.6**, `MF-1`–`MF-10`) — **fronteiras isoladas**, sobre sequência **já decidida**. **Ainda NÃO materializados**: o **`ValidadorResposta`**, a **integração *end-to-end*** que liga a montagem ao ciclo, as **superfícies conversacionais residuais ainda sem fragmento aprovado** e o **papel residual correspondente do LLM** na etapa 10. **Ainda pendentes**: as **ações textuais sem fragmento aprovado**, para as quais a obrigação conversacional permanece (**PE-7**), e as **demais superfícies conversacionais** de §4.2. **A integração *end-to-end* não está concluída** | arbitragem e materialização específicas futuras, **junto de P4 e do `ValidadorResposta`** (item 7). **Não bloqueia** §4.1.4, §4.1.5 nem §4.1.6, que são **fronteiras isoladas** e **não fecham o ciclo** |
 
 **Silêncio sob takeover não é decisão comercial nova** (arbitragem R5). Enquanto o canal
 está sob controle humano, o silêncio automático é **consequência do contrato já existente**,
