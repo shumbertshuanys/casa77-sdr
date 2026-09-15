@@ -3080,6 +3080,55 @@ LLM e **não cria subetapa**.
 S2-D8 também **não reabre** o registro de conflitos de **C-9** — `R10`, `R13`, `R17` e
 `R20` —, cuja representação foi fechada pelas camadas posteriores de `C` (**`C-P`**).
 
+### 4.4.2 Contrato vivo da representação física do mapa de cobertura `R2`
+
+**Esta seção não altera §4.4.1.** `R2-1`–`R2-7`, `SF-D4-1`–`SF-D4-11`, `D8-F1`–`D8-F6`,
+`D8-L`, `D8-CI` e `D8-CII` permanecem **literais e inalterados**. Ela registra **apenas** as
+fronteiras determinísticas **já materializadas** que dão forma física a `R2` — o **esqueleto**,
+a **validação estrutural** e o **carregamento** —, em
+`src/casa77_sdr/coverage_map.py` e `src/casa77_sdr/coverage_map_load.py`, com os cenários em
+`tests/test_coverage_map.py` e `tests/test_coverage_map_load.py`. §4.1 permanece com
+**14 componentes** e §2 com **nove responsabilidades**; **nenhuma etapa nova é criada** e
+**nenhuma condição de §4.4 é criada ou alterada**.
+
+**O conteúdo do mapa NÃO existe.** `knowledge/mapa-cobertura.yaml` é o **caminho reservado**
+do futuro artefato aprovado: ele **não foi criado**, e **nenhuma associação
+`AssuntoComercial → Rxx/Fxx` foi estabelecida**. Essa associação depende de **decisão humana
+futura** e é dela — não desta seção — que `R2` dependerá para existir de fato. **S2-D8
+continua não materializada** e continua **bloqueador** (§12, item 10).
+
+Forma física arbitrada, e somente ela:
+
+```yaml
+assuntos:
+  - assunto: <AssuntoComercial>
+    grupos:
+      - alternativas:
+          - rxx: R09
+            fragmento: F1
+```
+
+O exemplo acima é **estrutural e sintético**: ele ilustra o esqueleto e **não** é mapeamento
+aprovado.
+
+| # | Contrato |
+|---|---|
+| R2F-1 | **Representação física.** `R2` será **YAML versionado**, no caminho reservado `knowledge/mapa-cobertura.yaml`. O artefato **ainda não existe**, e nada nesta camada o cria, descobre ou presume. |
+| R2F-2 | **Esqueleto fechado em todos os níveis.** Raiz: **somente** `assuntos`. Item de assunto: **somente** `assunto` e `grupos`. Grupo: **somente** `alternativas`. Alternativa: **somente** `rxx` e `fragmento`. Logo **`priority` (SF-D4-4)**, `texto`, `status`, *binding*, `caminho_yaml`, `predicado`, `formato` e **valor comercial** são **estruturalmente irrepresentáveis** — `R2-3`: o mapa **referencia**, ele **não copia**. |
+| R2F-3 | **`R2-1` é um mapeamento TOTAL, e as cardinalidades são literais.** O vocabulário fechado de `AssuntoComercial` aparece **inteiro**: os **54** valores, cada um **exatamente uma vez**. **Assunto ausente fecha** — um mapa vazio, ou a que falte **um único** assunto, é **inválido** —, porque um assunto que simplesmente não aparece é **indistinguível de um assunto esquecido**. Dentro dessa totalidade, cada assunto declara **0..N** grupos: a **lista vazia é válida** e é a forma canônica de "sem cobertura", **declarada de propósito**. `R2-2`: **1..N** alternativas por grupo — lista vazia **fecha**. A **ordem** em que os assuntos aparecem **não é julgada**. |
+| R2F-4 | **`R2-6` materializado.** **`ASSUNTO_NAO_CLASSIFICADO` está presente exatamente uma vez** — a totalidade de `R2F-3` o exige — e o seu `grupos` **precisa ser a lista vazia**. Declarar grupo para ele **fecha** por `R2-6`; **omiti-lo do mapa também fecha**, pela totalidade. A sua semântica **não** é convertida em assunto coberto. |
+| R2F-5 | **Vocabulário reutilizado.** O vocabulário de assunto é o enum **`AssuntoComercial`** de **AJ2** (§6.3), com os seus **54** valores. **Nenhum enum paralelo é criado** e nenhum valor é redeclarado. |
+| R2F-6 | **Ordem preservada.** A **ordem física declarada** das listas é preservada integralmente e **nada é ordenado, reordenado, preferido ou deduplicado**. É essa ordem que **SF-D4-2**, **SF-D4-3** e **SF-D4-8** consomem no futuro. **Nenhuma projeção de alternativas é exportada**: antecipar a entrada do produtor seria implementar cobertura aqui. |
+| R2F-7 | **Totalidade e unicidade do `assunto`.** Cada `AssuntoComercial` aparece **exatamente uma vez**: **ausência fecha** (`R2F-3`) e **repetição fecha**. As duas derivam de `R2-1` ser um **mapeamento** — duas entradas para a mesma chave tornariam indefinido qual é o conjunto de grupos daquele assunto, e nenhuma entrada deixaria o conjunto indeclarado. Essa é a **única** unicidade aplicada: **alternativa repetida no grupo**, **grupo repetido no assunto** e **a mesma alternativa em assuntos distintos** **não são proibidos** — nenhuma regra de `R2-1`–`R2-7` os proíbe, e a deduplicação da tupla global pertence a **SF-D4-9**, a jusante. |
+| R2F-8 | **O fragmento de lacuna não é alternativa.** `R03/F1` **não pode** figurar como alternativa: o registro externo a `SF-D4` fecha que **nenhum grupo fictício de lacuna é criado**, e §4.1.5 o trata como contribuição **mandatória das ações**, jamais como cobertura. |
+| R2F-9 | **Conferência de referência — IDENTIDADE, e só ela.** A integridade da referência é conferida contra o **domínio canônico de identidade**, derivado por `derivar_tokens_do_indice` (`C-A5-T1`–`C-A5-T5`): **nenhuma gramática de `Rxx` ou de `Fxx` é escrita aqui**. **`derivar_tokens_do_indice` NÃO substitui `validar_indice`**: ele lê apenas a projeção mínima de identidade, e `status`, *bindings*, `itera_sobre`, `formato`, `predicado`, mecanismo, origem e chave desconhecida **não são julgados nesta função** — índice defeituoso **fora** dessa projeção atravessa **sem veredito**, e é correto, porque aqui se prova **existência da referência**, não validade do índice. **Referência pendurada fecha** — é a **Classe I** de `R2-7` e `D8-CI4`, tratada pelo caminho de falha já vigente e **nunca** convertida em `E09`, pendência ou handoff (**D8-CI14**). Quando a **própria projeção de identidade** é inviável, a exceção dessa fronteira **atravessa intacta**: o defeito é do índice, não do mapa. **Isso NÃO prova `D8-CI2`** — a **validação estrutural integral do índice** que `D8-CI2` exige pertence à **futura cadeia de S2-D8** e deve **reutilizar `validar_indice`**. |
+| R2F-10 | **Duas propriedades NÃO são invalidade estrutural.** Alternativa que referencie fragmento com *binding* **`RUNTIME_AUTORITATIVO`** ou fragmento que declare **`itera_sobre`** é **estruturalmente válida**: `R2-1`–`R2-7` não as mencionam, e transformá-las em invalidade criaria restrição inexistente. O que essas propriedades significam para **emissibilidade** pertence a **D8-F**, na etapa posterior. |
+| R2F-11 | **Pureza.** Zero I/O, *filesystem*, rede, LLM, relógio, *logging*, *cache* e mutação de entrada na validação estrutural; **`knowledge/**` não é aberto**. Ela **não** consulta status (**D8-F1**), **não** resolve *binding* (**D8-F2**), **não** aplica formatador, **não** avalia `ASSERTIVA` (**D8-F3**), **não** avalia `MD-15'` e **não** consulta calendário ou runtime. |
+| R2F-12 | **`D8-F` não é implementado aqui, e `D8-F1`–`D8-F6` não são ampliadas.** Em particular, **formato inaplicável continua sob `SF-14`** (§4.1.3), na etapa posterior: ele **não** vira Classe II, **não** vira `E09` e **não** vira decisão de cobertura. |
+| R2F-13 | **Carregamento.** UTF-8 **estrito**, YAML **seguro**, **chave repetida recusada**, e erro de leitura ou de análise convertido em `MapaCoberturaIlegivel` com mensagem `<categoria>: <caminho>`. `MapaCoberturaInvalido` **propaga intacta** e **não é escondida**. **Sem caminho padrão**, descoberta, *glob* ou variável de ambiente; **zero regra comercial** e **zero conteúdo de mapa embutido**. |
+| R2F-14 | ***Fail-closed*, sem resultado parcial.** A **primeira** violação encerra e nada é acumulado. A mensagem estrutural tem a forma `<categoria>: <localizador>` e **nunca** carrega o assunto recebido, o `Rxx`, o fragmento, o texto, o valor, PII ou qualquer trecho do conteúdo YAML. |
+| R2F-15 | **Escopo isolado.** Materializar esta camada **não** cria o conteúdo do mapa, **não** materializa o produtor **S2-D8**, **não** decide respondibilidade (**R2-5**), **não** aplica a semântica de conjunção e disjunção (**R2-4**), **não** escolhe *witness* (**SF-D4-3**), **não** produz `fragmentos_autorizados` (**SF-D4-10**), **não** produz `E09`, **não** produz `pendencias_resposta`, **não** implementa o `OrquestradorMotor`, **não** integra o ciclo e **não** torna **S2-D8** operacional. |
+
 ### 4.5 Contrato das ações da `MaquinaEstados`
 
 As "ações obrigatórias" devolvidas pela máquina são **vocabulário técnico fechado**:
