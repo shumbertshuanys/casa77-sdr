@@ -29,11 +29,10 @@ cache, zero fila. Ele **não** interpreta texto livre, **não** lê contexto,
 própria — `Exx`, `Txx`, `Rxx`, `Qualificacao`, `Violacao`, `Estado`, pendência,
 `motivo_encerramento`, `CondicoesCiclo`, `DecisaoMaquina` ou
 `RegistroAtendimento` (**E-Nb-19**). A **condição 5** é a **única** condição de
-§4.4 **produzida aqui** — e a única **materializada** em código. As condições
-**2** e **4** possuem **produtor conceitual** atribuído por **S2-D8** (§4.4.1,
-eixos **A** e **B**), mas continuam **NÃO MATERIALIZADAS**: S2-D8 permanece
-**ARBITRADA / NÃO MATERIALIZADA** e **nada neste módulo as produz**. A condição
-**8** continua **NÃO ATRIBUÍDA** (**S3-D1**).
+§4.4 **produzida aqui**. As condições **2** e **4** pertencem a **S2-D8**
+(§4.4.1, eixos **A** e **B**), cujo produtor vive em **fronteira própria e
+separada**: **nada neste módulo as produz**, e este módulo **não** a conhece
+operacionalmente. A condição **8** continua **NÃO ATRIBUÍDA** (**S3-D1**).
 
 Erros de contrato **bloqueiam na fronteira**: nenhuma `Interpretacao` canônica é
 produzida e nenhuma projeção existe. As duas famílias são **distintas**: **tipo
@@ -52,8 +51,8 @@ vocabulário** (AJ2-X2); tipo runtime incompatível continua `TypeError` **sem
 código** (M-NB4). **A lista de erros permanece `E-Nb-1`–`E-Nb-19`** e **nenhuma
 exceção pública nova é criada**. O `assunto` **não atravessa** para a
 `ProjecaoInterpretacao`, **não referencia `Rxx`**, **não participa de N-b-X3** e
-**não produz condição** de §4.4 (N-b-Q12): seu consumo pertence a **S2-D8**, que
-**continua ARBITRADA / NÃO MATERIALIZADA**. As validações de assunto correm
+**não produz condição** de §4.4 (N-b-Q12): seu consumo pertence à fronteira
+**S2-D8**, e **este módulo não realiza esse consumo**. As validações de assunto correm
 **depois** das validações N-b/AJ1 preexistentes, preservando a precedência
 histórica dos erros.
 
@@ -161,8 +160,8 @@ class AssuntoComercial(StrEnum):
     **`ASSUNTO_NAO_CLASSIFICADO` é valor legítimo de totalidade** (AJ2-N1): não é
     erro, não é confiança `BAIXA`, não é ausência e não é `TrechoAmbiguo`
     (AJ2-N2–AJ2-N5). **Nunca escolher "o mais próximo"** — aproximar é fabricar
-    classificação (N-b-Q10). O que se faz com ele a jusante pertence a **S2-D8**,
-    que **continua ARBITRADA / NÃO MATERIALIZADA** (AJ2-C4).
+    classificação (N-b-Q10). O **tratamento a jusante** pertence a **S2-D8** /
+    **`R2`**, e **não é decidido por este enum** (AJ2-C4).
     """
 
     # Preço e condição comercial (12)
@@ -1159,8 +1158,9 @@ def decidir_interesse_confirmar_disponibilidade(
     avaliado neste ciclo** e **não** é "falso implícito". **Ausência de
     `Interpretacao` não equivale a `Interpretacao` vazia** (N-b-G8).
 
-    Esta é a **única** condição de §4.4 produzida por este módulo: as condições
-    **2**, **4** e **8** continuam **NÃO ATRIBUÍDAS** (N-b-G3).
+    Esta é a **única** condição de §4.4 produzida por este módulo (N-b-G3). As
+    condições **2** e **4** pertencem à fronteira **S2-D8**; a condição **8**
+    permanece **não atribuída** (**S3-D1**).
 
     Quando não é `None`, a `Interpretacao` é **verificada como canônica válida**
     antes de produzir a condição: uma instância inválida **não atravessa** e
