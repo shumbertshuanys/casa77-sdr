@@ -158,9 +158,11 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   - **não renderiza *template* algum**.
 - A regra de escolha determinística do ***witness*** está **arbitrada** — a **primeira
   alternativa emitível na ordem declarada do grupo** (`docs/07` §4.4.1, `SF-D4`). Mas
-  **S2-D8 continua não materializada**, o **`R2` físico continua inexistente** e a **projeção
-  real dos fragmentos autorizados ainda não está integrada**: a seleção *end-to-end* **não**
-  funciona.
+  **S2-D8 continua não materializada**, o artefato **`knowledge/mapa-cobertura.yaml` com
+  conteúdo aprovado continua inexistente** e a **projeção real dos fragmentos autorizados
+  ainda não está integrada**: a seleção *end-to-end* **não** funciona. A **infraestrutura
+  estrutural de `R2`** — esqueleto, totalidade, validação, carregamento e conferência de
+  identidade — **já existe** (`docs/07` §4.4.2) e **não é o que falta**.
 - Existe **fronteira determinística operacional de composição por fragmento**
   (`src/casa77_sdr/response_composition.py`; contrato em `docs/07` §4.1.4). Ela **não é um
   15º componente**: §4.1 permanece com **14**. Ela:
@@ -324,7 +326,7 @@ código; o contrato vive em `docs/07` §2.3.
 | Pendência | Situação atual | Impacto / bloqueio | Fonte |
 |---|---|---|---|
 | **B** — colisão conceitual de nome `RegistroAtendimento` | aberta; nenhum referente renomeado ou unificado | bloqueia implementar o componente `RegistroAtendimento` | `docs/07` §4.1.1, §12 item 21 |
-| **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`ProjetorEmissao`**, **`SeletorFatos`**, **compositor determinístico por fragmento**, a **montagem canônica de uma emissão** e o **`ValidadorResposta`**. **Pendentes**: **S2-D8 / `R2` físico**, **integração *end-to-end* da etapa 10**, **superfícies conversacionais sem unidade aprovada**, as **ações produzidas por chamadas posteriores da `MaquinaEstados`**, a **evolução futura do `ProjetorEmissao`** para essas fases e a **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice à **emissão montada numa única mensagem**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §4.1.6, §4.1.7, §12 itens 19, 10 e 22 |
+| **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`ProjetorEmissao`**, **`SeletorFatos`**, **compositor determinístico por fragmento**, a **montagem canônica de uma emissão** e o **`ValidadorResposta`**. **Pendentes**: o **produtor determinístico S2-D8** e o **artefato `knowledge/mapa-cobertura.yaml` com conteúdo aprovado** — a **infraestrutura estrutural de `R2`** já está materializada (`docs/07` §4.4.2; ver a linha própria de **S2-D8**) —, **integração *end-to-end* da etapa 10**, **superfícies conversacionais sem unidade aprovada**, as **ações produzidas por chamadas posteriores da `MaquinaEstados`**, a **evolução futura do `ProjetorEmissao`** para essas fases e a **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice à **emissão montada numa única mensagem**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §4.1.6, §4.1.7, §12 itens 19, 10 e 22 |
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
 | **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado. **Materializado**: a **infraestrutura estrutural de `R2`** — esqueleto fechado, **totalidade** dos 54 assuntos, carregador YAML estrito e **conferência contra o domínio canônico de identidade** (`src/casa77_sdr/coverage_map.py`, `src/casa77_sdr/coverage_map_load.py`; `docs/07` §4.4.2). **Ainda ausentes**: o **artefato físico com conteúdo aprovado** — `knowledge/mapa-cobertura.yaml` é **caminho reservado** e **não existe** —, o **conteúdo humano de cobertura**, o **produtor determinístico S2-D8** e a **execução de cobertura e de *witnesses*** | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §4.4.1, §4.4.2, §12 item 10; `docs/06` §11 |
@@ -358,11 +360,11 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
   **compositor determinístico por fragmento**, a **montagem canônica de uma emissão** e o
   **`ValidadorResposta`** **já concluídos** — a **ausência do *gate* final de integridade
   textual deixou de ser lacuna**. O bloqueio restante é **conectar as capacidades dependentes
-  ainda ausentes** — a **projeção física de S2-D8 / `R2`**, que é quem produz os fragmentos
-  autorizados, as **superfícies textuais sem unidade aprovada**, a **integração residual da
-  etapa 10**, as
-  **ações produzidas por chamadas posteriores da `MaquinaEstados`** e a **integração completa
-  pelo `OrquestradorMotor`** (`docs/07` §12, item 22);
+  ainda ausentes** — o **produtor S2-D8** e o **artefato `R2` com conteúdo aprovado**,
+  necessários para produzir os fragmentos autorizados, as **superfícies textuais sem unidade
+  aprovada**, a **integração residual da etapa 10**, as **ações produzidas por chamadas
+  posteriores da `MaquinaEstados`** e a **integração completa pelo `OrquestradorMotor`**
+  (`docs/07` §12, item 22);
 - **S3-D1** — produtor de `motivo_encerramento` ainda não atribuído; impede completar a
   **condição 8 de `CondicoesCiclo`** e os fluxos que dependem dela;
 - **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL`;
