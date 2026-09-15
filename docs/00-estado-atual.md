@@ -27,10 +27,11 @@ exclusivamente em `knowledge/casa77.yaml`.
   **materialização física do índice e dos *templates***, a **migração da autoridade de
   status**, o **primeiro *lookup* operacional de status**, o **`ValidadorConsistenciaBase`**,
   o **`SeletorFatos`**, o **compositor determinístico por fragmento**, o
-  **`ProjetorEmissao`** — a fronteira que projeta os fragmentos destinados à emissão — e a
-  **fronteira determinística de montagem canônica de uma emissão**. O bloco segue na
-  **integração das capacidades dependentes ainda ausentes**. `C` **não** está integralmente
-  operacional.
+  **`ProjetorEmissao`** — a fronteira que projeta os fragmentos destinados à emissão —, a
+  **fronteira determinística de montagem canônica de uma emissão** e o
+  **`ValidadorResposta`** — o *gate* final de integridade textual sobre a emissão já montada.
+  O bloco segue na **integração das capacidades dependentes ainda ausentes**. `C` **não**
+  está integralmente operacional.
 - Etapa 4 permanece **absorvida pela Etapa 3B**; etapas 5 a 10 permanecem futuras
   (`docs/05-roadmap.md`).
 
@@ -38,31 +39,36 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-Commit funcional `9e9b62b0016dddcb5bc2d72a633dc5484554f37f`.
+Commit funcional `156e23398a4118d2e6ca3a0cbf1476a4307a3a8e`.
 
-**Montagem canônica de uma emissão materializada** em
-`src/casa77_sdr/response_assembly.py`, com a API pública `montar_resposta_final`, o DTO
-`RespostaMontada` e a exceção própria `MontagemRespostaNaoAvaliavel`. A **entrada é única**: o
-`ResultadoComposicao` já produzido pelo compositor por fragmento.
+**`ValidadorResposta` materializado** em `src/casa77_sdr/response_validation.py`, com a API
+pública `validar_resposta_final`, o DTO `ResultadoValidacaoResposta`, o enum fechado
+`MotivoValidacaoResposta` e a exceção própria `ValidacaoRespostaNaoAvaliavel`. As **entradas
+são duas**: o **texto candidato** e a **`RespostaMontada`** já produzida pela montagem
+canônica.
 
-Ela monta **uma emissão, nunca o ciclo**. A **ordem** e a **cardinalidade** das unidades são
-preservadas **exatamente**, e `RespostaMontada.tokens` preserva os `token` dos
-`TextoEmitivel`, na mesma ordem — nenhum acrescentado, removido, reordenado ou deduplicado.
-Com **uma** unidade, o texto final é **literalmente** o dela; com **várias**, elas são
-separadas por **exatamente `"\n\n"`**, com **zero conteúdo lexical novo** entre elas.
+A regra é **única**: aprova **se e somente se** `texto_candidato == montada.texto`,
+**literalmente**. Iguais → `aprovado=True` com `APROVADO`; diferentes → `aprovado=False` com
+`TEXTO_DIVERGENTE`. O vocabulário de motivo é **fechado nesses dois**. **Zero normalização**:
+`strip`, caixa, normalização Unicode, expressão regular, `replace` e comparação aproximada
+são **proibidos**, e **um único caractere de diferença reprova**.
 
-**Zero normalização**: espaço inicial ou final, quebra de linha já presente, pontuação e algo
-parecido com `{{nome}}` permanecem **literais**. **Cardinalidade zero fecha** e **token
-duplicado fecha**, *fail-closed* e **sem resultado parcial**. O campo `texto` fica **fora do
-`repr`**; os tokens, sendo identificadores estruturais, podem aparecer.
+**Zero redação**: ela **não** cria, corrige, substitui nem sugere texto, e **não** produz
+*fallback*. Entrada estruturalmente inválida **fecha** como `ValidacaoRespostaNaoAvaliavel`,
+**sem resultado parcial** e com mensagem **exclusivamente estrutural**. A exigência de que
+`montada.texto` seja `str` exata é **parte do fecho**: sem ela a comparação seria
+**refletida** para o outro operando, que poderia **forçar a aprovação** com um `__eq__`
+próprio. **Zero vazamento**: nem DTO, nem exceção, nem `repr` carregam o texto candidato ou o
+texto montado.
 
-**Zero YAML**, **zero índice**, **zero LLM**, **zero I/O**, **zero decisão comercial** e
-**zero decisão de fase, destino, evento ou estado**. A fronteira é **isolada**: montar uma
-emissão **não** é integrar o ciclo, e a **etapa 10 *end-to-end* não está pronta**.
+**Zero YAML**, **zero índice**, **zero status**, **zero LLM**, **zero I/O**, **zero decisão
+comercial** e **zero revalidação de fato** — a autoridade textual chega **transitivamente**,
+já incorporada na `RespostaMontada`. A fronteira é **isolada**: validar uma emissão **não** é
+integrar o ciclo, e a **etapa 10 *end-to-end* não está pronta**.
 
 Permanecem fatos vigentes: **30 `Rxx`**, **37 fragmentos emitíveis**, **118 *bindings***,
 **19 *templates*** e **18 fragmentos estáticos**. **Zero texto/*template* emitível
-alterado** e **zero mudança semântica do índice**.
+alterado**, **zero mudança semântica do índice** e **zero alteração comercial**.
 
 ---
 
@@ -72,7 +78,7 @@ alterado** e **zero mudança semântica do índice**.
 execução desta atualização:
 
 - Python **3.14.5**;
-- **`6177 passed`**, sob **`-W error`**;
+- **`6298 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings.
 
 CI configurada em GitHub Actions, em `.github/workflows/ci.yml`, com Python **3.13** e **3.14**.
@@ -84,9 +90,9 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
 
 - **Contrato de `C`: ARBITRADO** (`docs/07` §2.3; registrado em `docs/07` §12, item 19).
 - **A materialização física do índice e dos *templates* do corpus está concluída.** **Dois
-  consumidores operacionais** e as **fronteiras determinísticas de projeção, composição e
-  montagem canônica** já existem; a integração das **capacidades restantes** permanece
-  **separada e pendente**.
+  consumidores operacionais** e as **fronteiras determinísticas de projeção, composição,
+  montagem canônica e validação final** já existem; a integração das **capacidades
+  restantes** permanece **separada e pendente**.
 - **Cadeia vigente**, com as fronteiras separadas e nenhuma acumulando papel de outra:
   - `ValidadorConsistenciaBase` → **consistência** — **materializado**;
   - **S2-D8** / `R2` → **candidatura, emissibilidade, cobertura e escolha do *witness***, que
@@ -98,7 +104,7 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   - `SeletorFatos` → **fatos e textos autorizados**, separados — **materializado**;
   - **compositor determinístico** → **texto emitível por fragmento** — **materializado**;
   - **montagem canônica de uma emissão** → **`RespostaMontada`** — **materializada**;
-  - `ValidadorResposta` → validação final da saída — **ainda não materializado**.
+  - **`ValidadorResposta`** → **validação final da saída** — **materializado**.
 - O índice físico `knowledge/indice-respostas-aprovadas.yaml` está **materializado e
   estruturalmente validado**: **30 `Rxx`**, **37 fragmentos**, **118 *bindings***. Ele guarda
   **referentes**, nunca valor resolvido (`C-1h`–`C-1m`, `C-15e`).
@@ -210,6 +216,27 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   `SEM_EMISSAO`** — silêncio legítimo significa que ela **não é chamada**, e isso pertence ao
   orquestrador futuro; **não substitui o `ValidadorResposta`**; e **não torna o pipeline
   operacional**.
+- Existe **fronteira determinística operacional de validação final da emissão**
+  (`src/casa77_sdr/response_validation.py`; contrato em `docs/07` §4.1.7). Ela **não é um
+  15º componente**: §4.1 permanece com **14**, e **nenhuma etapa nova é criada**. Ela:
+  - recebe **somente** o **texto candidato** e a **`RespostaMontada`**, em **tipo exato**, e
+    devolve **`ResultadoValidacaoResposta`**;
+  - aprova **se e somente se** `texto_candidato == montada.texto`, **literalmente** —
+    `APROVADO` ou `TEXTO_DIVERGENTE`, vocabulário **fechado** em dois motivos;
+  - **não normaliza** nada e **não corrige, cria, substitui nem sugere** texto;
+  - **fecha** diante de entrada estruturalmente inválida, **sem resultado parcial**,
+    inclusive quando `montada.texto` não é `str` exata — sem essa guarda, a comparação seria
+    **refletida** e o outro operando poderia **forçar a aprovação**;
+  - **não vaza texto** em DTO, exceção ou `repr`;
+  - **não revalida fato comercial** e **não reabre seleção**: a autoridade textual chega
+    **transitivamente**, já incorporada na `RespostaMontada`;
+  - **não abre** `knowledge/**`, **não lê o YAML nem o índice**, **não consulta status**,
+    **não chama LLM** e **não faz I/O**.
+- **Limites materiais da validação nesta versão**: ela valida **uma saída já montada** e
+  **não integra o ciclo**; **não conhece** fase, destino, ação, evento ou estado; **não
+  decide `E15` nem `E12`**; **não representa `SEM_EMISSAO`**; **não resolve** as superfícies
+  conversacionais sem fragmento aprovado; e **não torna o pipeline operacional**. O desfecho
+  diante de `TEXTO_DIVERGENTE` pertence à **etapa 12**, **fora desta fronteira**.
 - **Vocabulário canônico de status fechado**: `APROVADO`, `AGUARDA_APROVACAO`, `BLOQUEADO`.
   **`PARCIAL` não é quarto status** — é rótulo humano agregado do Markdown; no índice,
   `R28/F1` é **`APROVADO`**, provado diretamente na autoridade.
@@ -246,9 +273,10 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   materializável em texto emitível, e as unidades já são materializáveis numa **única
   mensagem**, com o separador aplicado fisicamente. O que **continua ausente** é o
   **fechamento do caminho final** — a **forma canônica completa do rascunho do ciclo**, o
-  **papel residual do LLM** nas superfícies ainda sem fragmento aprovado, o
-  `ValidadorResposta` e a **integração *end-to-end*** —, e é dele que depende um caminho
-  degradado completo (`docs/07` §12, item 22).
+  **papel residual do LLM** nas superfícies ainda sem fragmento aprovado e a **integração
+  *end-to-end*** —, e é dele que depende um caminho degradado completo (`docs/07` §12,
+  item 22). O ***gate* final de integridade textual** já existe (`docs/07` §4.1.7), mas
+  **validar não é integrar**.
 - **`C-A1-ST6`–`C-A1-ST10`**, sobre o corpus materializado:
   - **`ST6`** — **comprovada**: o índice físico carrega e `E1` o valida estruturalmente;
   - **`ST7`** — **comprovada**: bijeção integral **37/37** entre índice e Markdown;
@@ -270,8 +298,9 @@ insumos prontos, **não resolvem *binding***, **não leem o índice** e **não c
 `knowledge/**`**; quem as **compõe** são os **dois consumidores operacionais** —
 `ValidadorConsistenciaBase` e `SeletorFatos` —, sempre sobre insumos **já carregados pelo
 chamador**; o **`ProjetorEmissao`** entrega a esse segundo consumidor os fragmentos destinados
-à emissão, o **compositor determinístico** materializa o texto de cada fragmento e a
-**montagem canônica** fecha a cadeia numa **única emissão**.
+à emissão, o **compositor determinístico** materializa o texto de cada fragmento, a
+**montagem canônica** fecha a cadeia numa **única emissão** e o **`ValidadorResposta`** prova
+que o texto candidato **é** essa emissão.
 **Nenhuma delas, nem eles, materializa `C` integralmente.** O catálogo dos módulos vive no
 código; o contrato vive em `docs/07` §2.3.
 
@@ -282,7 +311,7 @@ código; o contrato vive em `docs/07` §2.3.
 | Pendência | Situação atual | Impacto / bloqueio | Fonte |
 |---|---|---|---|
 | **B** — colisão conceitual de nome `RegistroAtendimento` | aberta; nenhum referente renomeado ou unificado | bloqueia implementar o componente `RegistroAtendimento` | `docs/07` §4.1.1, §12 item 21 |
-| **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`ProjetorEmissao`**, **`SeletorFatos`**, **compositor determinístico por fragmento** e a **montagem canônica de uma emissão**. **Pendentes**: **S2-D8 / `R2` físico**, **`ValidadorResposta`**, **integração *end-to-end* da etapa 10**, **superfícies conversacionais sem unidade aprovada**, as **ações produzidas por chamadas posteriores da `MaquinaEstados`**, a **evolução futura do `ProjetorEmissao`** para essas fases e a **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice à **emissão montada numa única mensagem**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §4.1.6, §12 itens 19, 10 e 22 |
+| **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`ProjetorEmissao`**, **`SeletorFatos`**, **compositor determinístico por fragmento**, a **montagem canônica de uma emissão** e o **`ValidadorResposta`**. **Pendentes**: **S2-D8 / `R2` físico**, **integração *end-to-end* da etapa 10**, **superfícies conversacionais sem unidade aprovada**, as **ações produzidas por chamadas posteriores da `MaquinaEstados`**, a **evolução futura do `ProjetorEmissao`** para essas fases e a **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice à **emissão montada numa única mensagem**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §4.1.6, §4.1.7, §12 itens 19, 10 e 22 |
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
 | **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado / não materializado; nenhum módulo nem mapa `R2` | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §4.4.1, §12 item 10; `docs/06` §11 |
@@ -311,11 +340,12 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
 - **S2-D8** — materialização do produtor de pendências e de cobertura;
 - **C** — índice físico, *templates*, **autoridade de status**, ***lookup* operacional**,
   **`ValidadorConsistenciaBase`**, o **`ProjetorEmissao`**, o **`SeletorFatos`**, o
-  **compositor determinístico por fragmento** e a **montagem canônica de uma emissão** **já
-  concluídos** — a **ausência da montagem canônica isolada deixou de ser lacuna**. O bloqueio
-  restante é **conectar as capacidades dependentes ainda ausentes** — a **projeção física de
-  S2-D8 / `R2`**, que é quem produz os fragmentos autorizados, o **`ValidadorResposta`**, as
-  **superfícies textuais sem unidade aprovada**, a **integração residual da etapa 10**, as
+  **compositor determinístico por fragmento**, a **montagem canônica de uma emissão** e o
+  **`ValidadorResposta`** **já concluídos** — a **ausência do *gate* final de integridade
+  textual deixou de ser lacuna**. O bloqueio restante é **conectar as capacidades dependentes
+  ainda ausentes** — a **projeção física de S2-D8 / `R2`**, que é quem produz os fragmentos
+  autorizados, as **superfícies textuais sem unidade aprovada**, a **integração residual da
+  etapa 10**, as
   **ações produzidas por chamadas posteriores da `MaquinaEstados`** e a **integração completa
   pelo `OrquestradorMotor`** (`docs/07` §12, item 22);
 - **S3-D1** — produtor de `motivo_encerramento` ainda não atribuído; impede completar a
@@ -339,14 +369,18 @@ eventos confirmados e condições já estruturadas.
 
 ## 7. Próxima ação
 
-**Materializar o `ValidadorResposta` sobre a montagem canônica, com validação determinística
-por igualdade exata entre o texto candidato e `RespostaMontada.texto`, preservando o princípio
-`P4` e sem integrar ainda o ciclo completo.**
+**Materializar o produtor determinístico de S2-D8 / `R2` — candidatura, emissibilidade,
+cobertura e escolha do *witness* —, já arbitrado, que projeta os fragmentos autorizados, sem
+integrar ainda o ciclo completo.**
 
-O contrato técnico **já está arbitrado**: aprovado **se e somente se** o texto candidato for
-**literalmente igual** ao texto montado. Por isso a próxima ação é **implementação**, não
-arbitragem. Ela permanece **isolada**: **não** integra a etapa 10 *end-to-end*, **não**
-resolve as **superfícies conversacionais sem unidade aprovada**, **não** trata as **ações
-produzidas por chamadas posteriores da `MaquinaEstados`** e **não** liga o
-`OrquestradorMotor` — tudo isso continua pendente. Esta decisão **não é tomada aqui** — este
-arquivo é snapshot — e a entrega será aberta por **novo mandato específico**.
+O contrato **já está arbitrado**: S2-D8 em `docs/07` §4.4.1 e §12 item 10, e a regra de
+escolha determinística do *witness* — a **primeira alternativa emitível na ordem declarada do
+grupo** (`SF-D4`). Por isso a próxima ação é **implementação**, não arbitragem: não existe
+módulo nem mapa `R2` físico, e sem eles a cadeia **não recebe `fragmentos_autorizados`
+reais** — a seleção *end-to-end* **não funciona**.
+
+Ela permanece **isolada**: **não** integra a etapa 10 *end-to-end*, **não** resolve as
+**superfícies conversacionais sem unidade aprovada**, **não** trata as **ações produzidas por
+chamadas posteriores da `MaquinaEstados`** e **não** liga o `OrquestradorMotor` — tudo isso
+continua pendente. Esta decisão **não é tomada aqui** — este arquivo é snapshot — e a entrega
+será aberta por **novo mandato específico**.
