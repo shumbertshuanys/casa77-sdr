@@ -1378,7 +1378,11 @@ def _codigo_do_modulo_sem_docstrings() -> str:
 
 
 def test_condicao_5_e_a_unica_condicao_produzida() -> None:
-    """N-b-G3 — as condições 2, 4 e 8 continuam NÃO ATRIBUÍDAS."""
+    """N-b-G3 — a condição 5 é a única produzida por `interpretation.py`.
+
+    As condições **2** e **4** pertencem a **S2-D8**, e a **8** permanece fora
+    desta fronteira (**S3-D1**).
+    """
     codigo = _codigo_do_modulo_sem_docstrings()
     for proibida in (
         "pendencia_impeditiva",

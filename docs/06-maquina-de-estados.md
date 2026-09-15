@@ -186,10 +186,13 @@ A classificação **impeditiva × acessória** (§1.3) acompanha o evento e é o
 T11/T18 de T12/T19. A máquina **não detecta**, **não reclassifica** e **não recalcula**
 pendência.
 
-O **produtor concreto** de `E09` **não é atribuído** — em particular, **não** é o
-`CarregadorYaml`, **não** é o `ValidadorYaml`, **não** é o `SeletorFatos` e **não** é o
-`Qualificador`. O **contrato** do produtor está **ARBITRADO e NÃO MATERIALIZADO** em
-**S2-D8** (§11; `docs/07` §4.4.1).
+O produtor das **causas** de `E09` é **S2-D8** (§11; `docs/07` §4.4.1, §4.4.3), **já
+materializado** em `src/casa77_sdr/coverage_decision.py`. Ele **não** é o `CarregadorYaml`,
+**não** é o `ValidadorYaml`, **não** é o `SeletorFatos` e **não** é o `Qualificador`.
+**S2-D8 não cria nem confirma `Evento.E09`**: ela produz **causas estruturadas** que
+**podem** confirmá-lo, e a **conversão em evento** permanece **pendente** da integração
+futura pelo `OrquestradorMotor`. O estado de materialização vive em
+`docs/00-estado-atual.md`, confrontado com a `main`.
 
 **Os dois eixos que compõem `E09`** (arbitragem S2-D8). Os dois casos (a) e (b) acima
 correspondem a **dois eixos semanticamente independentes**, avaliados **a montante**:
@@ -796,7 +799,7 @@ caminhos **distintos e não concorrentes**:
 
 | Gatilhos do doc 04 | Caminho | Produtor |
 |---|---|---|
-| 1–2 — pergunta sem resposta aprovada; campo `null`/`pendente` | `E09`, já classificado em impeditivo × acessório | **S2-D8 — ARBITRADA / NÃO MATERIALIZADA** (§11): o **contrato** existe, com os **eixos A e B**; **nenhum componente concreto foi escolhido** e **nada está implementado** |
+| 1–2 — pergunta sem resposta aprovada; campo `null`/`pendente` | `E09`, já classificado em impeditivo × acessório | **S2-D8** (§11): o contrato existe, com os **eixos A e B**, e o **produtor determinístico está materializado** em `src/casa77_sdr/coverage_decision.py`. Ele produz as **causas** que podem confirmar `E09`; **confirmar o evento** pertence à **integração futura**, ainda pendente |
 | 3–10 — desconto/condição especial, confirmação de data/visita/reserva, contratação, cancelamento, alteração de data, assunto jurídico ou contratual, pedido explícito de humano, reclamação ou tom hostil | `E18` com motivo (§2.1) | `DetectorHandoff` |
 | 11–12 — `qualificado_com_ressalva` ou `indefinido`; coleta concluída e lead qualificado | **transições da §3**: T08, T13, T21, T40 e os caminhos de `E09` aplicáveis | `MaquinaEstados` |
 
@@ -836,20 +839,20 @@ O `ProcessamentoPendente` atual **não ganha campos** por causa desta regra.
 A **confirmação física de entrega permanece futura, da etapa 5** (canal de entrega do
 resumo — `docs/04-handoff-humano.md`, "Pendências desta etapa").
 
-## 11. S2-D8 — ARBITRADA / NÃO MATERIALIZADA
+## 11. S2-D8 — contrato de detecção e classificação de pendências
 
 **`S2-D8` — contrato de detecção e classificação de pendências.** O prefixo `S2-` é
 obrigatório: esta pendência **não** tem relação com a arbitragem comercial `D1`–`D8` já
 registrada no histórico do projeto.
 
-**Estado: ARBITRADA / NÃO MATERIALIZADA.** O **contrato documental está fechado**; a
-**materialização não existe**. O detalhe normativo vive em `docs/07` §4.4.1 e **não é
-duplicado aqui**.
+**O contrato documental está fechado.** O detalhe normativo vive em `docs/07` §4.4.1 e
+**não é duplicado aqui**; o **estado de materialização** vive em `docs/00-estado-atual.md`,
+confrontado com a `main`, e **também não é duplicado aqui**.
 
 | # | Continua verdadeiro |
 |---|---|
-| 1 | **nenhum código foi criado ou alterado** — `src/`, `tests/`, `knowledge/` e `prompts/` permanecem intactos |
-| 2 | **nenhum componente concreto foi escolhido** — não é o `CarregadorYaml`, não é o `ValidadorYaml`, não é o `SeletorFatos` e não é o `Qualificador` |
+| 1 | **esta máquina não muda por causa de S2-D8** — nenhum arquivo dela é alterado pelo contrato, e `knowledge/` e `prompts/` permanecem intactos |
+| 2 | **o produtor é uma fronteira própria e separada** — não é o `CarregadorYaml`, não é o `ValidadorYaml`, não é o `SeletorFatos` e não é o `Qualificador` |
 | 3 | **nenhum estado, evento, transição, efeito paralelo, inércia, ação ou invariante novo** é criado nesta máquina |
 | 4 | **S2-D8 não bloqueia** a implementação isolada da `MaquinaEstados`, que recebe `E09` e as condições estruturadas já prontos |
 | 5 | **S2-D8 continua bloqueando** o `OrquestradorMotor` e a integração completa do pipeline |
@@ -863,7 +866,7 @@ Escopo do contrato, agora **arbitrado**:
 | detectar ausência de resposta aprovada |
 | classificar a pendência em **impeditiva × acessória** |
 | fornecer os identificadores técnicos ao `Qualificador` (`pendencias_impeditivas`) |
-| confirmar `E09` |
+| produzir as **causas estruturadas** que **podem** confirmar `E09` — **sem** criar nem confirmar o evento |
 | fornecer à `MaquinaEstados` a condição estruturada `resposta_aprovada_disponivel` (ampliação S3) |
 
 ### Os dois eixos
@@ -882,9 +885,9 @@ causas, com **no máximo um evento por ciclo** e **exatamente dois** motivos pos
 
 ### Segunda saída estruturada — `resposta_aprovada_disponivel` (ampliação S3)
 
-O mesmo produtor futuro, ainda **não atribuído a componente concreto**, fornece à
-`MaquinaEstados` a condição estruturada **`resposta_aprovada_disponivel`**, consumida pelas
-linhas **T10**, **T17** e **T28**. Regras:
+O mesmo produtor fornece à `MaquinaEstados` a condição estruturada
+**`resposta_aprovada_disponivel`**, consumida pelas linhas **T10**, **T17** e **T28**.
+Regras:
 
 - ela precisa estar **determinada antes da primeira chamada da `MaquinaEstados`** — isto é,
   antes da etapa 7 do doc 07 (§5 daquele documento). A **ordem conceitual determinística**
@@ -898,8 +901,8 @@ linhas **T10**, **T17** e **T28**. Regras:
   aplicável é verdadeira (`docs/07` §4.4.1, **D8-F1**–**D8-F6**);
 - a `MaquinaEstados` **não consulta** `knowledge/respostas-aprovadas.md` e **não referencia
   nenhum `Rxx`**: recebe apenas a condição booleana já determinada;
-- **nenhum produtor concreto é escolhido** — em particular, o `SeletorFatos` **não** é
-  declarado produtor desta condição.
+- o produtor desta condição é **S2-D8**, e **somente ele** — em particular, o
+  `SeletorFatos` **não** é declarado produtor dela.
 
 ### Ordem das famílias — leitura conforme o runtime real
 
@@ -921,12 +924,14 @@ precedência, efeito paralelo ou inércia é criada, removida ou alterada.**
 
 ### O que S2-D8 NÃO faz
 
-Ela **não materializa AJ2** e **não materializa C** — ambas continuam **ARBITRADAS / NÃO
-MATERIALIZADAS** (`docs/07` §6.3 e §2.3) —, **não fecha `N-b-RES2`**, que **continua
-ABERTO**, **não implementa o `OrquestradorMotor`**, **não cria o índice
-`knowledge/indice-respostas-aprovadas.yaml`**, **não cria o mapa de grupos de cobertura**,
-**não resolve** `S3-D1`, `E4`, `E1`, `E3`, `B`, `S2-D5` nem `S2-D7`, e **não cria a 3B.8**,
-que **continua não existindo**.
+Ela **não materializa AJ2** e **não materializa C** — o contrato de cada uma vive em
+`docs/07` §6.3 e §2.3, e o **estado de materialização** delas vive em
+`docs/00-estado-atual.md`, **não aqui** —, **não cria nem confirma `Evento.E09`**, **não
+fecha `N-b-RES2`**, que **continua ABERTO**, **não implementa o `OrquestradorMotor`**, **não
+cria o índice `knowledge/indice-respostas-aprovadas.yaml`**, **não cria o conteúdo do mapa de
+grupos de cobertura** — `knowledge/mapa-cobertura.yaml` **continua inexistente**, e sem ele a
+cobertura real **não é operacional *end-to-end*** —, **não resolve** `S3-D1`, `E4`, `E1`,
+`E3`, `B`, `S2-D5` nem `S2-D7`, e **não cria a 3B.8**, que **continua não existindo**.
 
 ---
 

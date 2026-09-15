@@ -2511,7 +2511,7 @@ A **cadeia vigente**, com cada fronteira devolvendo exatamente uma coisa:
 
 | Fronteira | Devolve |
 |---|---|
-| **S2-D8** / `R2` | os fragmentos que **cobrem a consulta** (`SF-D4-10`) — **ainda não materializados** |
+| **S2-D8** / `R2` | os fragmentos que **cobrem a consulta** (`SF-D4-10`) — o **produtor determinístico está materializado** (§4.4.3) e a **infraestrutura estrutural de `R2`** também (§4.4.2); o **conteúdo aprovado do mapa** continua **ausente**, e sem ele **nenhuma cobertura comercial real é produzida** |
 | `MaquinaEstados` (§4.5) | as **ações** da primeira decisão — **materializada** |
 | **`ProjetorEmissao`** (§4.1.5) | os **fragmentos destinados à emissão** |
 | `SeletorFatos` (§4.1.3) | `ResultadoSelecaoFatos` — *template* e fatos **separados** |
@@ -2581,7 +2581,7 @@ seguintes:
 
 | Fronteira | Devolve |
 |---|---|
-| **S2-D8** / `R2` | os fragmentos que **cobrem a consulta** (`SF-D4-10`) — **ainda não materializados** |
+| **S2-D8** / `R2` | os fragmentos que **cobrem a consulta** (`SF-D4-10`) — o **produtor determinístico está materializado** (§4.4.3) e a **infraestrutura estrutural de `R2`** também (§4.4.2); o **conteúdo aprovado do mapa** continua **ausente**, e sem ele **nenhuma cobertura comercial real é produzida** |
 | `MaquinaEstados` (§4.5) | as **ações** da primeira decisão — **materializada** |
 | **`ProjetorEmissao`** (esta §4.1.5) | os **fragmentos destinados à emissão** |
 | `SeletorFatos` (§4.1.3) | `ResultadoSelecaoFatos` — *template* e fatos **separados** |
@@ -2666,7 +2666,9 @@ tipo exato de `montada` — e, junto dele, a forma estrutural de `montada.texto`
 fronteira é capturada aqui.**
 
 **O que continua ausente, e não é afetado por esta materialização:** a **integração
-*end-to-end*** da etapa 10; **S2-D8**/`R2`; as **superfícies conversacionais residuais**, ainda
+*end-to-end*** da etapa 10; o **conteúdo aprovado do mapa `R2`** — o produtor de **S2-D8** e a
+infraestrutura estrutural de `R2` já estão materializados (§4.4.2, §4.4.3), mas sem esse
+conteúdo não há cobertura real; as **superfícies conversacionais residuais**, ainda
 sem fragmento aprovado; e o **`OrquestradorMotor`**. **§4.2 é reconciliada somente no ponto
 que descreve o `ValidadorResposta`; as demais matérias de §4.2 permanecem vigentes.**
 
@@ -2739,18 +2741,19 @@ campo carrega dado pessoal (PII), texto de mensagem ou valor comercial.
 | # | Condição | Forma | Produtor |
 |---|---|---|---|
 | 1 | `insumo_qualificacao_atualizado` | `bool \| None` (doc 06 §4.1) | etapa 6 do pipeline (§5) |
-| 2 | `pendencia_impeditiva` | `bool \| None` | **produtor conceitual: S2-D8, eixo A** (arbitragem S2-D8, abaixo; doc 06 §11). A **implementação concreta** pertence à composição do `OrquestradorMotor` |
+| 2 | `pendencia_impeditiva` | `bool \| None` | **S2-D8, eixo A** (arbitragem S2-D8, abaixo; doc 06 §11), com **produtor materializado** em `src/casa77_sdr/coverage_decision.py` (§4.4.3). A **integração** ao ciclo pertence à composição do `OrquestradorMotor` |
 | 3 | `motivos_handoff` | conjunto/tupla de **identificadores textuais opacos** | `DetectorHandoff` (gatilhos 3–10, doc 06 §9) |
-| 4 | `resposta_aprovada_disponivel` | `bool \| None` | **produtor conceitual: S2-D8, eixo B** (arbitragem S2-D8, abaixo; doc 06 §11). A **implementação concreta** pertence à composição do `OrquestradorMotor` |
+| 4 | `resposta_aprovada_disponivel` | `bool \| None` | **S2-D8, eixo B** (arbitragem S2-D8, abaixo; doc 06 §11), com **produtor materializado** em `src/casa77_sdr/coverage_decision.py` (§4.4.3). A **integração** ao ciclo pertence à composição do `OrquestradorMotor` |
 | 5 | `interesse_confirmar_disponibilidade` | `bool \| None` | **fronteira da etapa 4** (arbitragem N-b, §6.3): derivada da `Interpretacao` pela **função total** N-b-CD1–N-b-CD4, abaixo. Único produtor de `CondicoesCiclo` que N-b atribui |
 | 6 | `calendario_integrado` | `bool \| None` | configuração/integração avaliada a montante |
 | 7 | `identidade` | resultado estruturado do `ResolvedorIdentidade` (§7.1) | `ResolvedorIdentidade` (etapa 5) |
 | 8 | `motivo_encerramento` | motivo estruturado entre as **quatro** modalidades aprovadas de T35 (doc 06 §3) | **não atribuído — S3-D1** |
 
-As condições **2** e **4** têm **produtor conceitual** em **S2-D8**, mas **nenhum componente
-arquitetural novo é criado por isso**: atribuir o **eixo A** e o **eixo B** diz **quem responde
-a pergunta**, não **qual classe a implementa**. A condição **8** permanece **sem produtor
-atribuído** em **`S3-D1`**.
+As condições **2** e **4** têm produtor em **S2-D8**, hoje **materializado** (§4.4.3), e
+**nenhum componente arquitetural novo é criado por isso**: §4.1 permanece com **14**, e
+atribuir o **eixo A** e o **eixo B** diz **quem responde a pergunta**, não que uma
+responsabilidade nova tenha sido acrescentada à tabela. A condição **8** permanece **sem
+produtor atribuído** em **`S3-D1`**.
 
 **Condição 5 — função total** (arbitragem N-b, §6.3).
 
@@ -2765,8 +2768,9 @@ atribuído** em **`S3-D1`**.
 ciclo**. `None` **não** é "falso implícito".
 
 **Precedência — S2-D8 sobre N-b quanto ao produtor das condições.** **S2-D8** (abaixo)
-atribui **produtor conceitual** às condições **2** e **4** — respectivamente o **eixo A** e o
-**eixo B** —, **sem escolher componente concreto**. A condição **8** (`motivo_encerramento`)
+atribui o produtor das condições **2** e **4** — respectivamente o **eixo A** e o **eixo B** —,
+hoje **materializado** em `src/casa77_sdr/coverage_decision.py` (§4.4.3). Isso **não cria
+componente arquitetural novo**: §4.1 permanece com **14**. A condição **8** (`motivo_encerramento`)
 permanece **NÃO ATRIBUÍDA**: **S3-D1** está aberta. A tabela tem **oito** condições —
 **nenhuma é criada, e nenhuma é removida**.
 
@@ -3094,8 +3098,11 @@ a **validação estrutural** e o **carregamento** —, em
 **O conteúdo do mapa NÃO existe.** `knowledge/mapa-cobertura.yaml` é o **caminho reservado**
 do futuro artefato aprovado: ele **não foi criado**, e **nenhuma associação
 `AssuntoComercial → Rxx/Fxx` foi estabelecida**. Essa associação depende de **decisão humana
-futura** e é dela — não desta seção — que `R2` dependerá para existir de fato. **S2-D8
-continua não materializada** e continua **bloqueador** (§12, item 10).
+futura** e é dela — não desta seção — que `R2` dependerá para existir de fato. A
+**infraestrutura estrutural de `R2`** está materializada **aqui**, e o **produtor
+determinístico de S2-D8** está materializado em **§4.4.3**; o bloqueio remanescente é o
+**conteúdo aprovado do mapa**, e **sem ele a cobertura real permanece não operacional**
+(§12, item 10).
 
 Forma física arbitrada, e somente ela:
 
@@ -3121,7 +3128,7 @@ aprovado.
 | R2F-6 | **Ordem preservada.** A **ordem física declarada** das listas é preservada integralmente e **nada é ordenado, reordenado, preferido ou deduplicado**. É essa ordem que **SF-D4-2**, **SF-D4-3** e **SF-D4-8** consomem no futuro. **Nenhuma projeção de alternativas é exportada**: antecipar a entrada do produtor seria implementar cobertura aqui. |
 | R2F-7 | **Totalidade e unicidade do `assunto`.** Cada `AssuntoComercial` aparece **exatamente uma vez**: **ausência fecha** (`R2F-3`) e **repetição fecha**. As duas derivam de `R2-1` ser um **mapeamento** — duas entradas para a mesma chave tornariam indefinido qual é o conjunto de grupos daquele assunto, e nenhuma entrada deixaria o conjunto indeclarado. Essa é a **única** unicidade aplicada: **alternativa repetida no grupo**, **grupo repetido no assunto** e **a mesma alternativa em assuntos distintos** **não são proibidos** — nenhuma regra de `R2-1`–`R2-7` os proíbe, e a deduplicação da tupla global pertence a **SF-D4-9**, a jusante. |
 | R2F-8 | **O fragmento de lacuna não é alternativa.** `R03/F1` **não pode** figurar como alternativa: o registro externo a `SF-D4` fecha que **nenhum grupo fictício de lacuna é criado**, e §4.1.5 o trata como contribuição **mandatória das ações**, jamais como cobertura. |
-| R2F-9 | **Conferência de referência — IDENTIDADE, e só ela.** A integridade da referência é conferida contra o **domínio canônico de identidade**, derivado por `derivar_tokens_do_indice` (`C-A5-T1`–`C-A5-T5`): **nenhuma gramática de `Rxx` ou de `Fxx` é escrita aqui**. **`derivar_tokens_do_indice` NÃO substitui `validar_indice`**: ele lê apenas a projeção mínima de identidade, e `status`, *bindings*, `itera_sobre`, `formato`, `predicado`, mecanismo, origem e chave desconhecida **não são julgados nesta função** — índice defeituoso **fora** dessa projeção atravessa **sem veredito**, e é correto, porque aqui se prova **existência da referência**, não validade do índice. **Referência pendurada fecha** — é a **Classe I** de `R2-7` e `D8-CI4`, tratada pelo caminho de falha já vigente e **nunca** convertida em `E09`, pendência ou handoff (**D8-CI14**). Quando a **própria projeção de identidade** é inviável, a exceção dessa fronteira **atravessa intacta**: o defeito é do índice, não do mapa. **Isso NÃO prova `D8-CI2`** — a **validação estrutural integral do índice** que `D8-CI2` exige pertence à **futura cadeia de S2-D8** e deve **reutilizar `validar_indice`**. |
+| R2F-9 | **Conferência de referência — IDENTIDADE, e só ela.** A integridade da referência é conferida contra o **domínio canônico de identidade**, derivado por `derivar_tokens_do_indice` (`C-A5-T1`–`C-A5-T5`): **nenhuma gramática de `Rxx` ou de `Fxx` é escrita aqui**. **`derivar_tokens_do_indice` NÃO substitui `validar_indice`**: ele lê apenas a projeção mínima de identidade, e `status`, *bindings*, `itera_sobre`, `formato`, `predicado`, mecanismo, origem e chave desconhecida **não são julgados nesta função** — índice defeituoso **fora** dessa projeção atravessa **sem veredito**, e é correto, porque aqui se prova **existência da referência**, não validade do índice. **Referência pendurada fecha** — é a **Classe I** de `R2-7` e `D8-CI4`, tratada pelo caminho de falha já vigente e **nunca** convertida em `E09`, pendência ou handoff (**D8-CI14**). Quando a **própria projeção de identidade** é inviável, a exceção dessa fronteira **atravessa intacta**: o defeito é do índice, não do mapa. **Isso NÃO prova `D8-CI2`** — a **validação estrutural integral do índice** que `D8-CI2` exige pertence à **cadeia de S2-D8** e deve **reutilizar `validar_indice`**. |
 | R2F-10 | **Duas propriedades NÃO são invalidade estrutural.** Alternativa que referencie fragmento com *binding* **`RUNTIME_AUTORITATIVO`** ou fragmento que declare **`itera_sobre`** é **estruturalmente válida**: `R2-1`–`R2-7` não as mencionam, e transformá-las em invalidade criaria restrição inexistente. O que essas propriedades significam para **emissibilidade** pertence a **D8-F**, na etapa posterior. |
 | R2F-11 | **Pureza.** Zero I/O, *filesystem*, rede, LLM, relógio, *logging*, *cache* e mutação de entrada na validação estrutural; **`knowledge/**` não é aberto**. Ela **não** consulta status (**D8-F1**), **não** resolve *binding* (**D8-F2**), **não** aplica formatador, **não** avalia `ASSERTIVA` (**D8-F3**), **não** avalia `MD-15'` e **não** consulta calendário ou runtime. |
 | R2F-12 | **`D8-F` não é implementado aqui, e `D8-F1`–`D8-F6` não são ampliadas.** Formato **não** é quarta condição de emissibilidade, S2-D8 **não** executa formatador próprio, o formatador **não** é duplicado e o `SeletorFatos` **não** decide cobertura. O que existe é **composição já materializada**, em **dois momentos distintos** que não se confundem. **A montante**, a autoridade de consistência é o `ValidadorConsistenciaBase` (§4.1.2), e nessa conferência `FormatoInaplicavel` **já é representado** por `CategoriaDivergencia.FORMATO_INAPLICAVEL` (**VCB-6**); logo, **quando detectado ali, ele é divergência de Classe II** (**D8-CII**, **VCB-5**), como qualquer outra. **S2-D8 consome o resultado estrutural** dessa conferência: a **alternativa divergente permanece bloqueada** (**D8-CII1**, **D8-CII3**); se **outra alternativa segura do mesmo grupo** cobrir integralmente, **nenhuma lacuna e nenhum `E09` são fabricados** (**D8-CII5**, **D8-L2**); e se a divergência **deixar o grupo inteiro descoberto**, aplica-se a **consequência de cobertura já arbitrada** (**D8-L1**, **D8-L3**). Nada disso acrescenta formato a `D8-F`. **A jusante**, **`SF-14` permanece válido, com função diferente** (§4.1.3): se, **apesar da autorização a montante**, o `SeletorFatos` ainda encontrar `FormatoInaplicavel`, a exceção **atravessa intacta** como **falha de contrato** — o fragmento autorizado ficou incoerente com a fotografia factual recebida —, e **não** é convertida em `E09`, handoff, alerta, pendência ou divergência nova. **Divergência detectada a montante** e **falha defensiva posterior em `SF-14`** são coisas **distintas**. |
@@ -3874,7 +3881,7 @@ determinístico e **não** existe componente 15.
 |---|---|
 | N-b-G1 | A `Interpretacao` **relata o que foi lido**. Ela **não** classifica compatibilidade, **não** decide handoff, **não** resolve identidade, **não** qualifica, **não** escolhe pacote, **não** consulta o YAML e **não** recebe o YAML. |
 | N-b-G2 | A `Interpretacao` **não produz** `Exx`, `Txx`, `Rxx`, `Qualificacao`, `Violacao`, estado, pendência nem `motivo_encerramento`. |
-| N-b-G3 | A **única** condição de `CondicoesCiclo` (§4.4) cujo produtor esta arbitragem fecha é a **condição 5**, `interesse_confirmar_disponibilidade`. As condições **2**, **4** e **8** permanecem **NÃO ATRIBUÍDAS**. |
+| N-b-G3 | A **única** condição de `CondicoesCiclo` (§4.4) cujo produtor esta arbitragem fecha é a **condição 5**, `interesse_confirmar_disponibilidade`. As condições **2**, **4** e **8** **não são atribuídas por esta arbitragem**; o produtor de cada uma vive na sua fronteira especializada. |
 | N-b-G4 | A `Interpretacao` **não é entrada direta** do `ResolvedorIdentidade`. O resolvedor recebe **exclusivamente** a `ProjecaoInterpretacao` já existente, com **sete** campos (§7.1). |
 | N-b-G5 | `Interpretacao` → `ProjecaoInterpretacao` é **derivação pura e determinística** (N-b-K1–N-b-K7), feita **dentro da fronteira da etapa 4**. |
 | N-b-G6 | Exigem confiança **declarada**: cada **campo presente** de `dados_extraidos`; cada `CorrecaoInterpretada`; cada `PerguntaComercial`; cada `ReferenciaAoEventoAnterior`; cada intenção **autônoma** dos grupos **A2** e **B**; e `pedido_de_humano == verdadeiro`. |
@@ -4041,7 +4048,7 @@ coexistência é **erro de contrato**.
 
 `True`/`False` significam **avaliado neste ciclo**; `None` significa **não avaliado neste
 ciclo**. **Somente a linha 5** de §4.4 muda: as outras **sete** condições permanecem
-exatamente como estão, e as condições **2**, **4** e **8** continuam **não atribuídas**.
+exatamente como estão, e as condições **2**, **4** e **8** **não são atribuídas por N-b**.
 
 **Derivação para a `ProjecaoInterpretacao`.** Tabela **total** sobre os **sete** campos de
 §7.1. A derivação **não aplica C3**: ela **transporta valor e confiança**, e o consumidor
@@ -4215,10 +4222,12 @@ fechados**; **campos das estruturas fechados**; **produtores públicos fechados*
 **condição 5 como única condição de §4.4 produzida**. O **fechamento de imports** é
 **somente evidência complementar de pureza**: **import, por si só, não prova `E-Nb-19`**.
 
-**Condição 5 — preservada.** A **condição 5** de §4.4 **já possui produtor conceitualmente
-atribuído** por N-b (N-b-G3, N-b-CD1–N-b-CD4). A futura implementação apenas **materializa**
-esse produtor — **não** o cria. As condições **2**, **4** e **8** continuam as **únicas
-NÃO ATRIBUÍDAS**, e **nenhuma outra condição é alterada**.
+**Condição 5 — preservada.** A **condição 5** de §4.4 tem o seu produtor **atribuído** por
+N-b (N-b-G3, N-b-CD1–N-b-CD4), e a implementação apenas **materializa** esse produtor —
+**não** o cria. **AJ1 não atribui as condições 2, 4 ou 8**, e **nenhuma outra condição é
+alterada**: o estado corrente dos respectivos produtores vive em `docs/00-estado-atual.md` e
+nas fronteiras especializadas — as condições **2** e **4** em **S2-D8** (§4.4.1, §4.4.3), e a
+condição **8** sem produtor atribuído por **`S3-D1`**.
 
 **`FormatoEvento` — decisão para a futura materialização.** É **permitido reutilizar, por
 import**, o `FormatoEvento` de `src/casa77_sdr/qualification.py`, porque: é **vocabulário
@@ -4239,10 +4248,12 @@ preserva a **proibição de a etapa 4 emitir `Exx`**; `N-b-RES2` permanece como 
 explícito aberto** da **transformação posterior** dos sinais interpretados em **eventos
 confirmados**, ainda **sem produtor concreto**; e `N-b-RES3` preserva a **classificação**
 desse residual, **sem criar componente, pendência nova ou atribuição automática de
-produtor**. Permanecem igualmente **abertas e inalteradas**: **S2-D8**; **S3-D1**; **E4**;
-**B**; **C**; o `DetectorHandoff`; o `SeletorFatos`; o `ValidadorResposta`; o
-`ValidadorConsistenciaBase`; o `OrquestradorMotor`; a integração da **etapa 13**; a escolha
-de **persistência**; o **limiar**; **S4**/**S5**; e o **destino do alerta**. **Fornecedor,
+produtor**. **AJ1 também não altera**, e mantém **fora do seu escopo**: **S2-D8**;
+**S3-D1**; **E4**; **B**; **C**; o `DetectorHandoff`; o `SeletorFatos`; o
+`ValidadorResposta`; o `ValidadorConsistenciaBase`; o `OrquestradorMotor`; a integração da
+**etapa 13**; a escolha de **persistência**; o **limiar**; **S4**/**S5**; e o **destino do
+alerta**. O **estado corrente** de cada uma dessas matérias vive em
+`docs/00-estado-atual.md`, **não aqui**. **Fornecedor,
 modelo, SDK, API, biblioteca, formato de transporte e JSON Schema continuam não escolhidos**
 (N-b-F3).
 
@@ -4395,8 +4406,8 @@ segurança.
 
 **AJ2 não antecipa S2-D8.** `ASSUNTO_NAO_CLASSIFICADO` **não implica**, por si só, ausência
 de `Rxx`, `resposta_aprovada_disponivel = false`, `E09`, `pendencia_impeditiva`, `R03` nem
-handoff. **AJ2 não decide isso.** **S2-D8 decidirá futuramente o tratamento de
-`ASSUNTO_NAO_CLASSIFICADO`.**
+handoff. **AJ2 não decide isso.** **O tratamento de `ASSUNTO_NAO_CLASSIFICADO` pertence a
+S2-D8**, que o arbitra em `R2-6` e o materializa em §4.4.3.
 
 ##### Regras de `PerguntaComercial` após AJ2 — `N-b-Q7` a `N-b-Q12`
 
@@ -4473,7 +4484,7 @@ transição. Ele é, por construção, incapaz de violar `E-Nb-19`.
 | AJ2-C1 | **C não produz `AssuntoComercial`.** |
 | AJ2-C2 | `AssuntoComercial` **nasce na etapa 4**, na fronteira do produtor semântico. |
 | AJ2-C3 | **AJ2 não altera C**, que permanece **ARBITRADA** e cujo contrato é §2.3. |
-| AJ2-C4 | **S2-D8 decidirá futuramente** qualquer mapeamento `assunto` → `Rxx` ou `assunto` → fragmento. |
+| AJ2-C4 | **AJ2 não decide** qualquer mapeamento `assunto` → `Rxx` ou `assunto` → fragmento. Esse mapeamento é **conteúdo aprovado de `R2`**, decidido **fora de AJ2** e **consumido** por **S2-D8**, que **não inventa, não escolhe e não autoriza** associação comercial alguma. |
 
 **Precedência sobre `C-14f`.** Na **fronteira de cenários**, **AJ2 prevalece**: ela é
 **`K-Nb-1`–`K-Nb-51`** (**`C-P`**). As **11** `IntencaoConversacional` e os erros
@@ -4481,8 +4492,8 @@ transição. Ele é, por construção, incapaz de violar `E-Nb-19`.
 
 **S2-D8 é ARBITRADA.** AJ2 **não arbitra** `assunto` → `Rxx`, `assunto` → fragmento,
 `E09`, `pendencia_impeditiva`, `resposta_aprovada_disponivel`, composição ou deduplicação
-operacional, nem o **produtor** de S2-D8. AJ2 **apenas fornece o sinal semântico estruturado
-que faltava** ao futuro consumidor.
+operacional, nem o **produtor** de S2-D8. AJ2 **apenas fornece o sinal semântico
+estruturado** consumido a jusante por **S2-D8**.
 
 ##### Cenários — a fronteira passa de `K-Nb-1`–`K-Nb-40` para `K-Nb-1`–`K-Nb-51`
 
@@ -5766,7 +5777,7 @@ adaptador **chama** o motor, nunca o contrário (**D6**).
 | 7 | Precisão do validador de resposta | **RESOLVIDO / MATERIALIZADO** nesta fronteira (§4.1.7): **igualdade literal**, **zero normalização**, ***fail-closed* estrutural** e **testes de discriminação**. O dilema *validador fraco × forte demais* pressupunha análise semântica do texto, que **não existe** aqui — nada inventado passa, e nada canônico é bloqueado. **Isto não declara a integração *end-to-end* concluída**; as **superfícies conversacionais sem forma canônica** seguem no item 22 | **resolvido** — §4.1.7. Os casos de `tests/perguntas-criticas.md` seguem úteis às **superfícies sem forma canônica** |
 | 8 | Custo por conversa não medido | sem parâmetro de custo do LLM | etapa 9 |
 | 9 | Política de retenção de log não definida (L7) | dado pessoal guardado sem prazo | antes da produção, etapa 10 |
-| 10 | **S2-D8** — contrato de detecção e classificação de pendências: detectar campo `null`/`pendente` relevante e ausência de resposta aprovada, classificar impeditiva × acessória, fornecer os identificadores técnicos ao `Qualificador`, confirmar `E09` e fornecer a condição estruturada `resposta_aprovada_disponivel` | **ARBITRADA** (§4.4.1; doc 06 §11). Contrato fechado: **dois eixos** (**A**, de qualificação, e **B**, de resposta); **Q1** como decisão do MVP; regra impeditiva **IMP-1**–**IMP-4** com o invariante `pendencia_impeditiva == True` ⇒ `INDEFINIDO`; **ordem conceitual determinística** anterior à etapa 7 (§5); mapa **R2** de **grupos de cobertura**; **fragmento emitível** e **regra de lacuna real**; **Classe I** × **Classe II**; **exatamente dois** motivos de `E09` — `CAMPO_INDISPONIVEL` e `SEM_RESPOSTA_APROVADA_EMITIVEL`; semântica de `pendencias_resposta`; e a reconciliação **F4-B** de §2.2. As condições **2** e **4** de §4.4 têm **produtor conceitual** — os eixos **A** e **B**; a **condição 8** permanece **NÃO ATRIBUÍDA** (**S3-D1**). A `MaquinaEstados` **não depende** dela: recebe `E09` pronto | **contrato resolvido** — §4.4.1. O **artefato físico** — módulo e mapa **R2** — é requisito do `OrquestradorMotor`, depois de **AJ2** e de **C** (doc 06 §11) |
+| 10 | **S2-D8** — contrato de detecção e classificação de pendências: detectar campo `null`/`pendente` relevante e ausência de resposta aprovada, classificar impeditiva × acessória, fornecer os identificadores técnicos ao `Qualificador`, produzir as **causas estruturadas** que podem confirmar `E09` — **sem** criar nem confirmar o evento — e fornecer a condição estruturada `resposta_aprovada_disponivel` | **ARBITRADA E MATERIALIZADA** (§4.4.1, §4.4.3; doc 06 §11). Contrato fechado: **dois eixos** (**A**, de qualificação, e **B**, de resposta); **Q1** como decisão do MVP; regra impeditiva **IMP-1**–**IMP-4** com o invariante `pendencia_impeditiva == True` ⇒ `INDEFINIDO`; **ordem conceitual determinística** anterior à etapa 7 (§5); mapa **R2** de **grupos de cobertura**; **fragmento emitível** e **regra de lacuna real**; **Classe I** × **Classe II**; **exatamente dois** motivos de `E09` — `CAMPO_INDISPONIVEL` e `SEM_RESPOSTA_APROVADA_EMITIVEL`; semântica de `pendencias_resposta`; e a reconciliação **F4-B** de §2.2. As condições **2** e **4** de §4.4 têm **produtor concreto materializado** em `src/casa77_sdr/coverage_decision.py` (§4.4.3) — os eixos **A** e **B** —, que produz também `fragmentos_autorizados`, `pendencias_resposta` e as **causas** de `E09`; a **condição 8** permanece **NÃO ATRIBUÍDA** (**S3-D1**). A `MaquinaEstados` **não depende** dela: recebe `E09` pronto | **contrato resolvido** — §4.4.1 — e **produtor materializado** — §4.4.3. A **infraestrutura física de `R2`** também está materializada (§4.4.2); continuam **futuros** o **conteúdo aprovado de `knowledge/mapa-cobertura.yaml`**, que **não existe**, e a **integração** que transforma **causa** em **`Evento.E09`**, requisito do `OrquestradorMotor` (doc 06 §11) |
 
 | 11 | **N-a** — política de **elegibilidade e recência** que produz o conjunto elegível da etapa 3 | **ARBITRADA** (§6.2): classificação **fechada dos oito estados**; recência aplicável **exclusivamente** a `encerrado`; `instante_ultima_transicao` como **único** marco temporal do MVP — **quando inicializado ou atualizado, recebe o `instante_de_referencia_do_ciclo` daquele ciclo**, **nunca** o relógio vivo; atualização decidida pelo **caminho de transições**; limiar como **configuração operacional validada explicitamente**; projeção do registro em `CandidatoAtendimento`; composição de E; duplicatas; **ordem canônica** só para auditabilidade; e a precedência conceitual da etapa 3 — com **N-a-F1**, **N-I**, **P-I**, **R5-P0**, **H1–H6** e **D0–D6** preservados | **contrato resolvido** — §6.2. As fronteiras de implementação são **M-T**, **M-E**, **M-C**, **M-DT** e **M-AE**; a **coordenação delas no pipeline** pertence ao `OrquestradorMotor`. O **limiar** é o item 18; **E4** é o item 15 |
 
@@ -5782,7 +5793,7 @@ adaptador **chama** o motor, nunca o contrário (**D6**).
 
 | 20 | **AJ2** — **origem semântica do assunto** de `PerguntaComercial`: de onde vem, e com que garantias, a informação de **sobre o que** o interessado consultou | **ARBITRADA** (§6.3). **AJ2 estende formalmente N-b**: `PerguntaComercial` tem **três** campos — `texto`, `confianca` e **`assunto`** obrigatório, do enum fechado **`AssuntoComercial`** de **54** valores (53 específicos + `ASSUNTO_NAO_CLASSIFICADO`), **sem confiança própria**; **um assunto por item**, com **segmentação** de consulta composta; **preservação textual** sem normalizar, resumir ou parafrasear; **duplicatas permitidas**; e o `assunto` **não atravessa** para a projeção, **não referencia `Rxx`** e **não produz condição** de §4.4 (**N-b-Q7**–**N-b-Q12**). `E-Nb-5` cobre `assunto` ausente ou fora do vocabulário, e a lista permanece **`E-Nb-1`–`E-Nb-19`**. Cenários: **`K-Nb-1`–`K-Nb-51`**. **`Q53`/`Q54` permanecem não classificados** | **contrato resolvido** — §6.3. Fronteiras relacionadas: **N-b** (item 12), de que AJ2 é extensão, e **S2-D8** (item 10), a quem pertence o **consumo** do assunto |
 | 21 | **B** — **colisão de nome `RegistroAtendimento`**: componente de comportamento de §4.1 × dataclass `frozen` de transporte da persistência operacional | **ABERTA** (§4.1.1). Colisão de **categoria**, não de campo nem de assinatura. **Nenhum referente é renomeado ou unificado**, e nada é resolvido silenciosamente. **Não afeta** a persistência operacional de §7.3 nem a fronteira de identidade de §7.1 | arbitragem específica **antes de implementar** o componente `RegistroAtendimento` de §4.1 — §4.1.1 |
-| 22 | **Montagem final da resposta e política da etapa 10** — o que **já está materializado isoladamente** e o que **ainda falta** | **PARCIALMENTE RECONCILIADA.** **Arbitrado e vigente** (§4.1.5): a **política geral de composição** **`PC-1`**–**`PC-6`**; a **ordem das unidades**, que preserva a produzida por `SF-D4`; o **fragmento de lacuna ao final** em cobertura mista (**PC-4**); o **separador `"\n\n"`** (**PC-3**); e **`PC-5`**, que tira do LLM a alteração lexical do **corpo comercial composto por fragmentos aprovados** (§4.2). **Arbitrado E materializado isoladamente**: o *renderer*/compositor **por fragmento** (§4.1.4), a **projeção dos fragmentos destinados à emissão** (§4.1.5) e a **montagem canônica de uma emissão** na mensagem única, **com a aplicação física do separador** (**§4.1.6**, `MF-1`–`MF-10`), e o ***gate* final de integridade textual** (**§4.1.7**, `VR-1`–`VR-10`) — **fronteiras isoladas**, sobre sequência **já decidida**. **Ainda NÃO materializados**: a **integração *end-to-end*** que liga a montagem e a validação ao ciclo, **S2-D8**/`R2`, o **`OrquestradorMotor`**, as **superfícies conversacionais residuais ainda sem fragmento aprovado** e o **papel residual correspondente do LLM** na etapa 10. **Ainda pendentes**: as **ações textuais sem fragmento aprovado**, para as quais a obrigação conversacional permanece (**PE-7**), e as **demais superfícies conversacionais** de §4.2. **A integração *end-to-end* não está concluída** | arbitragem e materialização específicas futuras da **integração *end-to-end***, de **S2-D8**/`R2`, do **`OrquestradorMotor`**, das **superfícies conversacionais residuais** e do **papel residual correspondente da etapa 10**. **`P4`** e o **`ValidadorResposta`** **já estão materializados isoladamente** (§4.1.7, item 7). **Não bloqueia** §4.1.4, §4.1.5, §4.1.6 nem §4.1.7, que são **fronteiras isoladas** e **não fecham o ciclo** |
+| 22 | **Montagem final da resposta e política da etapa 10** — o que **já está materializado isoladamente** e o que **ainda falta** | **PARCIALMENTE RECONCILIADA.** **Arbitrado e vigente** (§4.1.5): a **política geral de composição** **`PC-1`**–**`PC-6`**; a **ordem das unidades**, que preserva a produzida por `SF-D4`; o **fragmento de lacuna ao final** em cobertura mista (**PC-4**); o **separador `"\n\n"`** (**PC-3**); e **`PC-5`**, que tira do LLM a alteração lexical do **corpo comercial composto por fragmentos aprovados** (§4.2). **Arbitrado E materializado isoladamente**: o *renderer*/compositor **por fragmento** (§4.1.4), a **projeção dos fragmentos destinados à emissão** (§4.1.5) e a **montagem canônica de uma emissão** na mensagem única, **com a aplicação física do separador** (**§4.1.6**, `MF-1`–`MF-10`), e o ***gate* final de integridade textual** (**§4.1.7**, `VR-1`–`VR-10`) — **fronteiras isoladas**, sobre sequência **já decidida**. **Também materializados isoladamente**: a **infraestrutura estrutural de `R2`** (**§4.4.2**) e o **produtor determinístico de S2-D8** (**§4.4.3**). **Ainda NÃO materializados**: o **conteúdo aprovado de `knowledge/mapa-cobertura.yaml`**, que **não existe** e sem o qual não há cobertura real, a **integração *end-to-end*** que liga a montagem e a validação ao ciclo, o **`OrquestradorMotor`**, as **superfícies conversacionais residuais ainda sem fragmento aprovado** e o **papel residual correspondente do LLM** na etapa 10. **Ainda pendentes**: as **ações textuais sem fragmento aprovado**, para as quais a obrigação conversacional permanece (**PE-7**), e as **demais superfícies conversacionais** de §4.2. **A integração *end-to-end* não está concluída** | materialização futura do **conteúdo aprovado de `R2`** — `knowledge/mapa-cobertura.yaml`, que **não existe** —, da **integração *end-to-end***, do **`OrquestradorMotor`**, das **superfícies conversacionais residuais** e do **papel residual correspondente da etapa 10**. A **infraestrutura estrutural de `R2`** (§4.4.2) e o **produtor determinístico de S2-D8** (§4.4.3) **não são futuros**: já estão materializados. **`P4`** e o **`ValidadorResposta`** **já estão materializados isoladamente** (§4.1.7, item 7). **Não bloqueia** §4.1.4, §4.1.5, §4.1.6 nem §4.1.7, que são **fronteiras isoladas** e **não fecham o ciclo** |
 
 **Silêncio sob takeover não é decisão comercial nova** (arbitragem R5). Enquanto o canal
 está sob controle humano, o silêncio automático é **consequência do contrato já existente**,

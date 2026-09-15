@@ -7,10 +7,12 @@ o identificador, projeta o contexto, constrói **H**, determina
 mínima e fechada.
 
 **Isto não é a etapa 3 inteira materializada.** É o *wiring* da fronteira
-etapa 3 → identidade/etapa 5, e nada além disso: **N-a-T3–N-a-T7** (escrita do
-marco temporal), **N-b**, **E4**, **S2-D8**, **S3-D1**, o **tratamento
+etapa 3 → identidade/etapa 5, e nada além disso. **S2-D8** existe em **fronteira
+própria e separada**, e **não é responsabilidade desta**. Fora daqui, e conforme
+o estado canônico de `docs/00-estado-atual.md`, permanecem **N-a-T3–N-a-T7**
+(escrita do marco temporal), **N-b**, **E4**, **S3-D1**, o **tratamento
 operacional dos bloqueios** (S4, S5), o **destino do alerta** e o
-`OrquestradorMotor` **continuam não implementados**.
+`OrquestradorMotor`.
 
 Não é componente arquitetural novo: a tabela de `docs/07` §4.1 permanece com
 **14** componentes e a de §2 com **nove** responsabilidades. A etapa 3 continua
