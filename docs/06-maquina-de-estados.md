@@ -928,7 +928,7 @@ Ela **não materializa AJ2** e **não materializa C** — o contrato de cada uma
 `docs/07` §6.3 e §2.3, e o **estado de materialização** delas vive em
 `docs/00-estado-atual.md`, **não aqui** —, **não cria nem confirma `Evento.E09`**, **não
 materializa `N-b-RES2`** — fronteira **posterior e separada**, cujo produtor concreto está
-**materializado nesta entrega candidata** em `src/casa77_sdr/interpretation_events.py` e cuja
+**materializado** em `src/casa77_sdr/interpretation_events.py` e cuja
 **integração no ciclo continua pendente** —, **não implementa o `OrquestradorMotor`**, **não
 cria o índice `knowledge/indice-respostas-aprovadas.yaml`**, **não cria o conteúdo do mapa de
 grupos de cobertura** — `knowledge/mapa-cobertura.yaml` é **conteúdo aprovado**, decidido fora
