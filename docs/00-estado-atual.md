@@ -39,6 +39,14 @@ exclusivamente em `knowledge/casa77.yaml`.
   **33** com cobertura declarada e **21** com `grupos: []`. Dadas as entradas estruturadas,
   S2-D8 **opera sobre o mapa real**. Mas a **cobertura não está integrada *end-to-end***:
   o **`OrquestradorMotor` permanece ausente**.
+- **Fora de `C`**, o **produtor não determinístico de `N-b`** está **materializado
+  e versionado**: a fronteira agnóstica de provedor
+  (`src/casa77_sdr/interpretation_llm.py`), o adaptador **Anthropic**
+  (`src/casa77_sdr/interpretation_anthropic.py`) e o *prompt* especializado
+  (`prompts/prompt-interpretacao.md`), com o contrato vivo em `docs/07` §6.3
+  (`M-PN1`–`M-PN12`). Texto livre passa por **saída estruturada** e **canonicalização
+  obrigatória**, terminando em `Interpretacao`. A
+  **integração da etapa 4 continua pendente** e **`N-b-RES2` continua aberto**.
 - Etapa 4 permanece **absorvida pela Etapa 3B**; etapas 5 a 10 permanecem futuras
   (`docs/05-roadmap.md`).
 
@@ -46,7 +54,7 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-Commit funcional `e9e7ede464c76cc2e5b8a4b1db20f3e296625090`.
+Commit funcional `70814d7a3c61407d0ad020b7c874acac36fc348c`.
 
 **Cobertura comercial real de `R2` materializada.** O artefato
 `knowledge/mapa-cobertura.yaml` passou a existir, com a **associação total dos 54
@@ -90,11 +98,18 @@ novo conteúdo versionado de `R2` vive em `knowledge/mapa-cobertura.yaml`.
 ## 3. Baseline funcional
 
 **Baseline funcional corrente** — evidência da suíte sobre a capacidade corrente
-materializada, **não** uma execução desta atualização:
+materializada:
 
 - Python **3.14.5**;
-- **`6966 passed`**, sob **`-W error`**;
-- zero failures, zero errors, zero warnings.
+- **`7112 passed`**, sob **`-W error`**;
+- zero failures, zero errors, zero warnings, zero skips.
+
+O salto de **`6966`** para **`7112`** vem da materialização local do produtor
+não determinístico de `N-b`: **92** cenários da fronteira agnóstica e **54** do
+adaptador Anthropic, todos **offline** — sem rede, sem credencial e com guarda
+de socket ativa nos testes do adaptador. `tests/test_interpretation.py`
+permanece **inalterado** e continua a autoridade dos estados de domínio
+construíveis diretamente.
 
 CI configurada em GitHub Actions, em `.github/workflows/ci.yml`, com Python **3.13** e **3.14**.
 Resultados de execução são evidência do GitHub e não são acumulados neste snapshot.
@@ -340,7 +355,7 @@ código; o contrato vive em `docs/07` §2.3.
 | **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL` | aberta; o ciclo encerra sem transição | bloqueia o `OrquestradorMotor` | `docs/07` §12 item 15 |
 | **N-a** — integração operacional residual | especificação concluída e fronteiras `M-T`/`M-E`/`M-C`/`M-DT`/`M-AE` materializadas; integração da etapa 13 no pipeline pendente, com bloqueios S4/S5 sem tratamento operacional | bloqueia o pipeline completo | `docs/07` §6.2, §12 item 11 |
 | **Limiar temporal de recência** | valor numérico e mecanismo de carga indefinidos; não é dado comercial | bloqueia a integração operacional de `N-a` e o `OrquestradorMotor` | `docs/07` §12 item 18 |
-| **N-b** — produtor não determinístico / LLM, `N-b-RES2` e integração da etapa 4 | contrato arbitrado; fronteira determinística materializada; produtor real, interpretação de texto livre, `N-b-RES2` e integração pendentes | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §6.3, §12 item 12 |
+| **N-b** — `N-b-RES2` e integração da etapa 4 | contrato arbitrado; fronteira determinística materializada; **produtor não determinístico versionado** (`docs/07` §6.3, `M-PN1`–`M-PN12`) — Anthropic / `claude-sonnet-5`, saída estruturada, canonicalização obrigatória, zero retry, exercitado **offline** pela suíte. os **evals semânticos** e o **smoke** existem e **não foram executados**. **Pendentes**: a **integração da etapa 4** no ciclo e **`N-b-RES2`**, que exige arbitragem própria | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §6.3, §12 item 12 |
 | **Unicidade geral de `id_atendimento`** | não decidida entre candidatos não identificados | não bloqueia o bloco corrente de materialização de `C` | `docs/07` §12 item 17 |
 | **Retorno do controle ao bot** | não existe transição inversa de `T31` | não bloqueia | `docs/07` §12 item 16 |
 | **Persistência operacional não volátil** | contrato arbitrado; implementação volátil não sustenta operação real; nenhuma tecnologia escolhida | bloqueia qualquer uso em canal real | `docs/07` §7.3, §7.4, §12 item 2a |
@@ -368,7 +383,10 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
 - **S3-D1** — produtor de `motivo_encerramento` ainda não atribuído; impede completar a
   **condição 8 de `CondicoesCiclo`** e os fluxos que dependem dela;
 - **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL`;
-- **N-b** — produtor não determinístico, `N-b-RES2` e integração da etapa 4;
+- **N-b** — **`N-b-RES2`** e a **integração da etapa 4** no ciclo. O **produtor não
+  determinístico deixou de ser a lacuna**: ele está versionado
+  (`docs/07` §6.3, `M-PN1`–`M-PN12`), e **não** converte
+  sinal interpretado em evento confirmado;
 - **N-a** — integração operacional da etapa 13, tratamento dos bloqueios S4/S5 e destino do
   alerta operacional;
 - **limiar temporal** — valor e mecanismo de carga.
