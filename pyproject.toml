@@ -7,7 +7,7 @@ name = "casa77-sdr"
 version = "0.1.0"
 description = "Motor de respostas do bot SDR da Casa 77"
 requires-python = ">=3.13"
-dependencies = ["PyYAML>=6.0"]
+dependencies = ["PyYAML>=6.0", "anthropic>=1.0"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
