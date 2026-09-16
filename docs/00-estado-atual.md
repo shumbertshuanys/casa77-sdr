@@ -69,7 +69,7 @@ duas faixas não são inequívocas. Ela **não conhece `Rxx`**, **não conhece
 
 S2-D8 ganhou o ***gate* de candidatura de preço `D8-G`** (§4.4.1), que **consome**
 esse veredito: as duas faixas de preço são **grupos singleton**, **nunca
-substitutas**, e **nenhuma é *fallback* da outra. Com faixa indeterminada, **as
+substitutas**, e **nenhuma é *fallback* da outra**. Com faixa indeterminada, **as
 duas** são exigidas. Ganhou também **`D8-L4`**: só **grupos aplicáveis** entram na
 avaliação, e assunto com grupos declarados e **zero grupos aplicáveis** **não é
 respondível** — **nunca verdadeiro por vacuidade**.
