@@ -7,8 +7,9 @@ mapeamento real de cobertura**. Nenhum teste abre `knowledge/**`, nenhum cria
 conteúdo ou como expectativa.
 
 Os `AssuntoComercial` empregados são membros reais do enum de **AJ2**, porque o
-vocabulário é reutilizado e nunca duplicado — mas a **associação** entre um
-assunto e um `Rxx`/`Fxx` continua **inexistente no projeto**.
+vocabulário é reutilizado e nunca duplicado. As estruturas sintéticas servem
+para **isolar S2-D8**; a cobertura sobre o **corpus real** é testada em
+`tests/test_mapa_cobertura_corpus.py`.
 
 Os identificadores `R05/F1`, `R05/F2` e `R05/F3` aparecem porque o **gate de
 candidatura** arbitrado os nomeia estruturalmente, como §4.1.5 nomeia `R03/F1`.
@@ -44,6 +45,7 @@ from casa77_sdr.interpretation import (
     Interpretacao,
     PerguntaComercial,
 )
+from casa77_sdr.pricing_applicability import AplicabilidadePacote
 from casa77_sdr.qualification import (
     MotivoQualificacao,
     Qualificacao,
@@ -155,8 +157,8 @@ def indice_r05() -> dict[str, Any]:
 
 
 INDICE_PADRAO = indice_de(
-    ("R09", (("F1", APROVADO), ("F2", APROVADO))),
-    ("R14", (("F1", APROVADO), ("F2", APROVADO))),
+    ("R40", (("F1", APROVADO), ("F2", APROVADO))),
+    ("R41", (("F1", APROVADO), ("F2", APROVADO))),
 )
 
 
@@ -306,6 +308,7 @@ def decidir(
     consistencia: Any = None,
     fatos_runtime: Any = None,
     qualificacao: Any = QUALIFICACAO,
+    aplicabilidade: Any = None,
 ) -> ResultadoS2D8:
     indice = INDICE_PADRAO if indice is None else indice
     return decidir_pendencias_e_cobertura(
@@ -315,6 +318,7 @@ def decidir(
         indice,
         consistencia_de(indice) if consistencia is None else consistencia,
         {} if fatos_runtime is None else fatos_runtime,
+        aplicabilidade,
     )
 
 
@@ -385,7 +389,7 @@ def test_zero_perguntas() -> None:
 def test_somente_baixa_nao_entra() -> None:
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO, Confianca.BAIXA)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
     )
 
     assert resultado.resposta_aprovada_disponivel is False
@@ -407,11 +411,11 @@ def test_baixa_nao_entra_em_pendencias_mesmo_descoberta() -> None:
 def test_uma_alta_coberta() -> None:
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
     )
 
     assert resultado.resposta_aprovada_disponivel is True
-    assert resultado.fragmentos_autorizados == ("R09/F1",)
+    assert resultado.fragmentos_autorizados == ("R40/F1",)
     assert resultado.pendencias_resposta == ()
     assert resultado.causas_e09 == ()
 
@@ -423,22 +427,22 @@ def test_uma_alta_coberta() -> None:
 def test_dois_grupos_produzem_dois_witnesses() -> None:
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",), ("R14/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",), ("R41/F1",)))),
     )
 
-    assert resultado.fragmentos_autorizados == ("R09/F1", "R14/F1")
+    assert resultado.fragmentos_autorizados == ("R40/F1", "R41/F1")
 
 
 def test_primeira_alternativa_bloqueada_segunda_segura() -> None:
-    indice = indice_de(("R09", (("F1", BLOQUEADO), ("F2", APROVADO))))
+    indice = indice_de(("R40", (("F1", BLOQUEADO), ("F2", APROVADO))))
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
         indice=indice,
-        mapa=mapa_de((PRECO, grupos(("R09/F1", "R09/F2")))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1", "R40/F2")))),
     )
 
-    assert resultado.fragmentos_autorizados == ("R09/F2",)
+    assert resultado.fragmentos_autorizados == ("R40/F2",)
     assert resultado.causas_e09 == ()
     assert resultado.resposta_aprovada_disponivel is True
 
@@ -446,20 +450,20 @@ def test_primeira_alternativa_bloqueada_segunda_segura() -> None:
 def test_witness_e_a_primeira_emitivel_na_ordem_declarada() -> None:
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R14/F2", "R09/F1")))),
+        mapa=mapa_de((PRECO, grupos(("R41/F2", "R40/F1")))),
     )
 
-    assert resultado.fragmentos_autorizados == ("R14/F2",)
+    assert resultado.fragmentos_autorizados == ("R41/F2",)
 
 
 def test_grupo_descoberto_zera_o_assunto_inteiro() -> None:
     """SF-D4-6: não existe resposta parcial de assunto."""
-    indice = indice_de(("R09", (("F1", APROVADO), ("F2", BLOQUEADO))))
+    indice = indice_de(("R40", (("F1", APROVADO), ("F2", BLOQUEADO))))
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
         indice=indice,
-        mapa=mapa_de((PRECO, grupos(("R09/F1",), ("R09/F2",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",), ("R40/F2",)))),
     )
 
     assert resultado.fragmentos_autorizados == ()
@@ -499,10 +503,10 @@ def test_assunto_nao_classificado_nao_e_respondivel() -> None:
 def test_assunto_duplicado_nao_repete_a_selecao() -> None:
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO), pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
     )
 
-    assert resultado.fragmentos_autorizados == ("R09/F1",)
+    assert resultado.fragmentos_autorizados == ("R40/F1",)
 
 
 def test_ordem_e_da_primeira_ocorrencia_efetiva() -> None:
@@ -511,23 +515,23 @@ def test_ordem_e_da_primeira_ocorrencia_efetiva() -> None:
             pergunta(CAPACIDADE), pergunta(PRECO), pergunta(CAPACIDADE)
         ),
         mapa=mapa_de(
-            (PRECO, grupos(("R09/F1",))),
-            (CAPACIDADE, grupos(("R14/F1",))),
+            (PRECO, grupos(("R40/F1",))),
+            (CAPACIDADE, grupos(("R41/F1",))),
         ),
     )
 
-    assert resultado.fragmentos_autorizados == ("R14/F1", "R09/F1")
+    assert resultado.fragmentos_autorizados == ("R41/F1", "R40/F1")
 
 
 def test_multiplos_assuntos_mistos() -> None:
     """D8-T4e: um coberto e outro descoberto → `True` **mais** causa."""
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO), pergunta(CAPACIDADE)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
     )
 
     assert resultado.resposta_aprovada_disponivel is True
-    assert resultado.fragmentos_autorizados == ("R09/F1",)
+    assert resultado.fragmentos_autorizados == ("R40/F1",)
     assert resultado.causas_e09 == (
         sem_resposta(CAPACIDADE),
     )
@@ -538,21 +542,21 @@ def test_witness_duplicado_entre_assuntos_e_deduplicado() -> None:
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO), pergunta(CAPACIDADE)),
         mapa=mapa_de(
-            (PRECO, grupos(("R09/F1",))),
-            (CAPACIDADE, grupos(("R09/F1",), ("R14/F1",))),
+            (PRECO, grupos(("R40/F1",))),
+            (CAPACIDADE, grupos(("R40/F1",), ("R41/F1",))),
         ),
     )
 
-    assert resultado.fragmentos_autorizados == ("R09/F1", "R14/F1")
+    assert resultado.fragmentos_autorizados == ("R40/F1", "R41/F1")
 
 
 def test_witness_duplicado_dentro_do_mesmo_assunto_e_deduplicado() -> None:
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",), ("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",), ("R40/F1",)))),
     )
 
-    assert resultado.fragmentos_autorizados == ("R09/F1",)
+    assert resultado.fragmentos_autorizados == ("R40/F1",)
 
 
 # --------------------------------------------------------------------------
@@ -561,12 +565,12 @@ def test_witness_duplicado_dentro_do_mesmo_assunto_e_deduplicado() -> None:
 
 @pytest.mark.parametrize("status", [AGUARDA, BLOQUEADO])
 def test_status_nao_emitivel_nao_habilita(status: str) -> None:
-    indice = indice_de(("R09", (("F1", status),)))
+    indice = indice_de(("R40", (("F1", status),)))
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
         indice=indice,
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
     )
 
     assert resultado.fragmentos_autorizados == ()
@@ -577,16 +581,16 @@ def test_status_nao_emitivel_nao_habilita(status: str) -> None:
 
 def test_status_nao_emitivel_em_grupo_coberto_nao_cria_causa() -> None:
     """D8-L2: alternativa bloqueada dentro de grupo coberto não cria lacuna."""
-    indice = indice_de(("R09", (("F1", AGUARDA), ("F2", APROVADO))))
+    indice = indice_de(("R40", (("F1", AGUARDA), ("F2", APROVADO))))
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
         indice=indice,
-        mapa=mapa_de((PRECO, grupos(("R09/F1", "R09/F2")))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1", "R40/F2")))),
     )
 
     assert resultado.causas_e09 == ()
-    assert resultado.fragmentos_autorizados == ("R09/F2",)
+    assert resultado.fragmentos_autorizados == ("R40/F2",)
 
 
 # --------------------------------------------------------------------------
@@ -596,12 +600,12 @@ def test_status_nao_emitivel_em_grupo_coberto_nao_cria_causa() -> None:
 def test_c7_renderizado_deixa_grupo_descoberto() -> None:
     consistencia = consistencia_de(
         INDICE_PADRAO,
-        indisponiveis=(indisponivel("R09/F1", "RENDERIZADO", "bloco.preco"),),
+        indisponiveis=(indisponivel("R40/F1", "RENDERIZADO", "bloco.preco"),),
     )
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
         consistencia=consistencia,
     )
 
@@ -614,12 +618,12 @@ def test_c7_renderizado_deixa_grupo_descoberto() -> None:
 def test_c7_assertiva_tambem_e_campo_indisponivel() -> None:
     consistencia = consistencia_de(
         INDICE_PADRAO,
-        indisponiveis=(indisponivel("R09/F1", "ASSERTIVA", "bloco.flag"),),
+        indisponiveis=(indisponivel("R40/F1", "ASSERTIVA", "bloco.flag"),),
     )
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
         consistencia=consistencia,
     )
 
@@ -632,13 +636,13 @@ def test_assertiva_falsa_bloqueia_por_classe_ii() -> None:
     consistencia = consistencia_de(
         INDICE_PADRAO,
         divergencias=(
-            divergencia("R09/F1", CategoriaDivergencia.ASSERTIVA_FALSA),
+            divergencia("R40/F1", CategoriaDivergencia.ASSERTIVA_FALSA),
         ),
     )
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
         consistencia=consistencia,
     )
 
@@ -652,13 +656,13 @@ def test_formato_inaplicavel_bloqueia_por_classe_ii() -> None:
     consistencia = consistencia_de(
         INDICE_PADRAO,
         divergencias=(
-            divergencia("R09/F1", CategoriaDivergencia.FORMATO_INAPLICAVEL),
+            divergencia("R40/F1", CategoriaDivergencia.FORMATO_INAPLICAVEL),
         ),
     )
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
         consistencia=consistencia,
     )
 
@@ -673,30 +677,30 @@ def test_divergencia_em_grupo_coberto_nao_cria_causa() -> None:
     consistencia = consistencia_de(
         INDICE_PADRAO,
         divergencias=(
-            divergencia("R09/F1", CategoriaDivergencia.FORMATO_INAPLICAVEL),
+            divergencia("R40/F1", CategoriaDivergencia.FORMATO_INAPLICAVEL),
         ),
     )
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1", "R09/F2")))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1", "R40/F2")))),
         consistencia=consistencia,
     )
 
-    assert resultado.fragmentos_autorizados == ("R09/F2",)
+    assert resultado.fragmentos_autorizados == ("R40/F2",)
     assert resultado.causas_e09 == ()
 
 
 def test_multiplas_causas_deduplicadas_e_ordenadas() -> None:
     consistencia = consistencia_de(
         INDICE_PADRAO,
-        indisponiveis=(indisponivel("R09/F1", "RENDERIZADO", "bloco.a"),),
+        indisponiveis=(indisponivel("R40/F1", "RENDERIZADO", "bloco.a"),),
     )
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO), pergunta(CAPACIDADE)),
         mapa=mapa_de(
-            (PRECO, grupos(("R09/F1",), ("R09/F1",))),
+            (PRECO, grupos(("R40/F1",), ("R40/F1",))),
             (CAPACIDADE, grupos()),
         ),
         consistencia=consistencia,
@@ -759,26 +763,26 @@ def test_causa_e_frozen_e_slots() -> None:
 def test_toda_causa_do_eixo_b_e_acessoria(cenario: str) -> None:
     """D8-E6: causa do eixo B é **acessória**, sempre."""
     if cenario == "status":
-        indice = indice_de(("R09", (("F1", BLOQUEADO),)))
+        indice = indice_de(("R40", (("F1", BLOQUEADO),)))
         resultado = decidir(
             interpretacao=interpretacao_de(pergunta(PRECO)),
             indice=indice,
-            mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+            mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
         )
     elif cenario == "divergencia":
         resultado = decidir(
             interpretacao=interpretacao_de(pergunta(PRECO)),
-            mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+            mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
             consistencia=consistencia_de(
-                INDICE_PADRAO, divergencias=(divergencia("R09/F1"),)
+                INDICE_PADRAO, divergencias=(divergencia("R40/F1"),)
             ),
         )
     elif cenario == "c7":
         resultado = decidir(
             interpretacao=interpretacao_de(pergunta(PRECO)),
-            mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+            mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
             consistencia=consistencia_de(
-                INDICE_PADRAO, indisponiveis=(indisponivel("R09/F1"),)
+                INDICE_PADRAO, indisponiveis=(indisponivel("R40/F1"),)
             ),
         )
     elif cenario == "zero_grupos":
@@ -805,12 +809,12 @@ def test_toda_causa_do_eixo_b_e_acessoria(cenario: str) -> None:
 def test_campo_indisponivel_leva_o_caminho_em_caminho_yaml() -> None:
     consistencia = consistencia_de(
         INDICE_PADRAO,
-        indisponiveis=(indisponivel("R09/F1", "RENDERIZADO", "bloco.campo_x"),),
+        indisponiveis=(indisponivel("R40/F1", "RENDERIZADO", "bloco.campo_x"),),
     )
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
         consistencia=consistencia,
     )
 
@@ -833,16 +837,16 @@ def test_sem_resposta_aprovada_emitivel_nao_leva_caminho() -> None:
 def test_causa_nunca_carrega_rxx() -> None:
     consistencia = consistencia_de(
         INDICE_PADRAO,
-        indisponiveis=(indisponivel("R09/F1", "RENDERIZADO", "bloco.campo_x"),),
+        indisponiveis=(indisponivel("R40/F1", "RENDERIZADO", "bloco.campo_x"),),
     )
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
         consistencia=consistencia,
     )
 
-    assert "R09" not in repr(resultado.causas_e09)
+    assert "R40" not in repr(resultado.causas_e09)
 
 
 def test_deduplicacao_considera_a_classificacao() -> None:
@@ -863,11 +867,11 @@ def test_deduplicacao_colapsa_causa_identica_e_preserva_ordem() -> None:
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO), pergunta(CAPACIDADE)),
         mapa=mapa_de(
-            (PRECO, grupos(("R09/F1",), ("R09/F1",))),
+            (PRECO, grupos(("R40/F1",), ("R40/F1",))),
             (CAPACIDADE, grupos()),
         ),
-        indice=indice_de(("R09", (("F1", BLOQUEADO),))),
-        consistencia=consistencia_de(indice_de(("R09", (("F1", BLOQUEADO),)))),
+        indice=indice_de(("R40", (("F1", BLOQUEADO),))),
+        consistencia=consistencia_de(indice_de(("R40", (("F1", BLOQUEADO),)))),
     )
 
     assert resultado.causas_e09 == (
@@ -992,7 +996,7 @@ def test_runtime_fora_do_contrato_arbitrado_fecha() -> None:
     indice = {
         "respostas": [
             {
-                "id": "R09",
+                "id": "R40",
                 "fragmentos": [
                     {
                         "id": "F1",
@@ -1043,7 +1047,7 @@ def test_indice_invalido_propaga_intacto() -> None:
 
 def test_projecao_de_identidade_invalida_propaga_intacta() -> None:
     """`F01` passa por `validar_indice`, mas `C-A5-I3` o recusa."""
-    indice = indice_de(("R09", (("F01", APROVADO),)))
+    indice = indice_de(("R40", (("F01", APROVADO),)))
 
     with pytest.raises(ProjecaoDeIdentidadeInvalida):
         decidir(indice=indice, consistencia=consistencia_de(indice))
@@ -1073,7 +1077,7 @@ def test_consistencia_incompleta_fecha() -> None:
         divergencias=(),
         referentes_indisponiveis=(),
         tokens_divergentes=(),
-        status_por_fragmento=(("R09/F1", APROVADO),),
+        status_por_fragmento=(("R40/F1", APROVADO),),
         bindings_runtime_nao_avaliados=(),
     )
 
@@ -1102,7 +1106,7 @@ def test_consistencia_com_token_fora_do_dominio_fecha() -> None:
 def test_tokens_divergentes_incoerente_fecha() -> None:
     consistencia = consistencia_de(INDICE_PADRAO)
     incoerente = ResultadoConsistencia(
-        divergencias=(divergencia("R09/F1"),),
+        divergencias=(divergencia("R40/F1"),),
         referentes_indisponiveis=(),
         tokens_divergentes=(),
         status_por_fragmento=consistencia.status_por_fragmento,
@@ -1144,7 +1148,7 @@ def test_status_duplicado_fecha() -> None:
         status_por_fragmento=tuple(
             (token, APROVADO) for token in tokens_do(INDICE_PADRAO)
         )
-        + (("R09/F1", APROVADO),),
+        + (("R40/F1", APROVADO),),
         bindings_runtime_nao_avaliados=(),
     )
 
@@ -1218,7 +1222,7 @@ def test_pendencias_resposta_preserva_a_ordem_original() -> None:
 
     resultado = decidir(
         interpretacao=interpretacao_de(p1, p2, p3),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
     )
 
     assert resultado.pendencias_resposta == (p1, p3)
@@ -1227,7 +1231,7 @@ def test_pendencias_resposta_preserva_a_ordem_original() -> None:
 def test_pendencias_resposta_vazia_quando_tudo_coberto() -> None:
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
     )
 
     assert resultado.pendencias_resposta == ()
@@ -1272,12 +1276,12 @@ def test_repr_nao_carrega_pergunta() -> None:
 def test_causa_nao_carrega_texto_nem_valor() -> None:
     consistencia = consistencia_de(
         INDICE_PADRAO,
-        indisponiveis=(indisponivel("R09/F1", "RENDERIZADO", "bloco.preco"),),
+        indisponiveis=(indisponivel("R40/F1", "RENDERIZADO", "bloco.preco"),),
     )
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
         consistencia=consistencia,
     )
 
@@ -1286,7 +1290,7 @@ def test_causa_nao_carrega_texto_nem_valor() -> None:
 
 def test_entradas_nao_sao_mutadas() -> None:
     indice = copy.deepcopy(INDICE_PADRAO)
-    mapa = mapa_de((PRECO, grupos(("R09/F1", "R09/F2"))))
+    mapa = mapa_de((PRECO, grupos(("R40/F1", "R40/F2"))))
     consistencia = consistencia_de(indice)
     fatos = {"consulta_calendario_valida": True, "data_disponivel": True}
     antes = (
@@ -1309,7 +1313,7 @@ def test_entradas_nao_sao_mutadas() -> None:
 def test_decisao_e_deterministica() -> None:
     argumentos = {
         "interpretacao": interpretacao_de(pergunta(PRECO), pergunta(CAPACIDADE)),
-        "mapa": mapa_de((PRECO, grupos(("R09/F1",)))),
+        "mapa": mapa_de((PRECO, grupos(("R40/F1",)))),
     }
 
     assert decidir(**argumentos) == decidir(**argumentos)
@@ -1323,14 +1327,14 @@ def test_fragmentos_autorizados_alimentam_o_projetor() -> None:
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO), pergunta(CAPACIDADE)),
         mapa=mapa_de(
-            (PRECO, grupos(("R09/F1",))),
-            (CAPACIDADE, grupos(("R09/F1",), ("R14/F1",))),
+            (PRECO, grupos(("R40/F1",))),
+            (CAPACIDADE, grupos(("R40/F1",), ("R41/F1",))),
         ),
     )
 
     assert projetar_fragmentos_para_emissao(
         resultado.fragmentos_autorizados, ()
-    ) == ("R09/F1", "R14/F1")
+    ) == ("R40/F1", "R41/F1")
 
 
 def test_projecao_vazia_tambem_e_aceita_pelo_projetor() -> None:
@@ -1437,11 +1441,11 @@ def test_registro_runtime_tem_a_forma_token_ponto_nome() -> None:
 
 def test_tokens_divergentes_reordenado_fecha() -> None:
     """A comparação é **literal**, nunca por conjunto."""
-    divergencias = (divergencia("R09/F1"), divergencia("R14/F1"))
+    divergencias = (divergencia("R40/F1"), divergencia("R41/F1"))
     consistencia = consistencia_de(
         INDICE_PADRAO,
         divergencias=divergencias,
-        tokens_divergentes=("R14/F1", "R09/F1"),
+        tokens_divergentes=("R41/F1", "R40/F1"),
     )
 
     with pytest.raises(DecisaoCoberturaNaoAvaliavel) as erro:
@@ -1454,13 +1458,13 @@ def test_tokens_divergentes_reordenado_fecha() -> None:
 
 def test_tokens_divergentes_na_ordem_de_primeira_ocorrencia_e_aceito() -> None:
     divergencias = (
-        divergencia("R14/F1"),
-        divergencia("R09/F1"),
-        divergencia("R14/F1", CategoriaDivergencia.FORMATO_INAPLICAVEL),
+        divergencia("R41/F1"),
+        divergencia("R40/F1"),
+        divergencia("R41/F1", CategoriaDivergencia.FORMATO_INAPLICAVEL),
     )
     consistencia = consistencia_de(INDICE_PADRAO, divergencias=divergencias)
 
-    assert consistencia.tokens_divergentes == ("R14/F1", "R09/F1")
+    assert consistencia.tokens_divergentes == ("R41/F1", "R40/F1")
     assert decidir(consistencia=consistencia).causas_e09 == ()
 
 
@@ -1472,14 +1476,14 @@ def test_dois_referentes_indisponiveis_preservam_os_dois_caminhos() -> None:
     consistencia = consistencia_de(
         INDICE_PADRAO,
         indisponiveis=(
-            indisponivel("R09/F1", "RENDERIZADO", "bloco.primeiro"),
-            indisponivel("R09/F1", "RENDERIZADO", "bloco.segundo"),
+            indisponivel("R40/F1", "RENDERIZADO", "bloco.primeiro"),
+            indisponivel("R40/F1", "RENDERIZADO", "bloco.segundo"),
         ),
     )
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
         consistencia=consistencia,
     )
 
@@ -1492,13 +1496,13 @@ def test_dois_referentes_indisponiveis_preservam_os_dois_caminhos() -> None:
 def test_divergencia_e_c7_no_mesmo_token_produzem_os_dois_motivos() -> None:
     consistencia = consistencia_de(
         INDICE_PADRAO,
-        divergencias=(divergencia("R09/F1"),),
-        indisponiveis=(indisponivel("R09/F1", "RENDERIZADO", "bloco.campo"),),
+        divergencias=(divergencia("R40/F1"),),
+        indisponiveis=(indisponivel("R40/F1", "RENDERIZADO", "bloco.campo"),),
     )
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1",)))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
         consistencia=consistencia,
     )
 
@@ -1516,20 +1520,20 @@ def test_alternativa_segura_no_mesmo_grupo_descarta_todas_as_causas() -> None:
     """D8-L2 é absoluto: grupo coberto não fabrica causa alguma."""
     consistencia = consistencia_de(
         INDICE_PADRAO,
-        divergencias=(divergencia("R09/F1"),),
+        divergencias=(divergencia("R40/F1"),),
         indisponiveis=(
-            indisponivel("R09/F1", "RENDERIZADO", "bloco.primeiro"),
-            indisponivel("R09/F1", "RENDERIZADO", "bloco.segundo"),
+            indisponivel("R40/F1", "RENDERIZADO", "bloco.primeiro"),
+            indisponivel("R40/F1", "RENDERIZADO", "bloco.segundo"),
         ),
     )
 
     resultado = decidir(
         interpretacao=interpretacao_de(pergunta(PRECO)),
-        mapa=mapa_de((PRECO, grupos(("R09/F1", "R09/F2")))),
+        mapa=mapa_de((PRECO, grupos(("R40/F1", "R40/F2")))),
         consistencia=consistencia,
     )
 
-    assert resultado.fragmentos_autorizados == ("R09/F2",)
+    assert resultado.fragmentos_autorizados == ("R40/F2",)
     assert resultado.causas_e09 == ()
 
 
@@ -1569,6 +1573,235 @@ def test_caso_normal_com_f1_f2_f3_continua_sem_causa() -> None:
 
         assert len(resultado.fragmentos_autorizados) == 1
         assert resultado.causas_e09 == ()
+
+
+# --------------------------------------------------------------------------
+# 11-quinquies. D8-G — gate de candidatura de preco
+
+
+INDICE_R09 = indice_de(("R09", (("F1", APROVADO), ("F2", APROVADO))))
+
+# As duas faixas sao **grupos singleton**: nunca substitutas uma da outra.
+MAPA_PRECO = mapa_de((PRECO, grupos(("R09/F1",), ("R09/F2",))))
+
+
+def contexto_preco(
+    *,
+    aplicabilidade: Any,
+    indice: Any = None,
+    consistencia: Any = None,
+) -> ResultadoS2D8:
+    indice = INDICE_R09 if indice is None else indice
+    return decidir(
+        interpretacao=interpretacao_de(pergunta(PRECO)),
+        indice=indice,
+        mapa=MAPA_PRECO,
+        consistencia=consistencia_de(indice) if consistencia is None else consistencia,
+        aplicabilidade=aplicabilidade,
+    )
+
+
+def test_indeterminado_exige_as_duas_faixas() -> None:
+    resultado = contexto_preco(
+        aplicabilidade=AplicabilidadePacote.INDETERMINADO
+    )
+
+    assert resultado.fragmentos_autorizados == ("R09/F1", "R09/F2")
+    assert resultado.resposta_aprovada_disponivel is True
+    assert resultado.causas_e09 == ()
+
+
+def test_indeterminado_com_f1_nao_emitivel_descobre_o_assunto() -> None:
+    """Nunca só F2: as faixas não se substituem."""
+    indice = indice_de(("R09", (("F1", BLOQUEADO), ("F2", APROVADO))))
+
+    resultado = contexto_preco(
+        aplicabilidade=AplicabilidadePacote.INDETERMINADO, indice=indice
+    )
+
+    assert resultado.fragmentos_autorizados == ()
+    assert resultado.resposta_aprovada_disponivel is False
+    assert resultado.causas_e09 == (sem_resposta(PRECO),)
+
+
+def test_indeterminado_com_f2_nao_emitivel_descobre_o_assunto() -> None:
+    """Nunca só F1."""
+    indice = indice_de(("R09", (("F1", APROVADO), ("F2", BLOQUEADO))))
+
+    resultado = contexto_preco(
+        aplicabilidade=AplicabilidadePacote.INDETERMINADO, indice=indice
+    )
+
+    assert resultado.fragmentos_autorizados == ()
+    assert resultado.resposta_aprovada_disponivel is False
+    assert resultado.causas_e09 == (sem_resposta(PRECO),)
+
+
+def test_faixa_inferior_elege_somente_f1() -> None:
+    resultado = contexto_preco(
+        aplicabilidade=AplicabilidadePacote.FAIXA_INFERIOR
+    )
+
+    assert resultado.fragmentos_autorizados == ("R09/F1",)
+    assert resultado.causas_e09 == ()
+
+
+def test_faixa_inferior_sem_f1_emitivel_nao_cai_em_f2() -> None:
+    indice = indice_de(("R09", (("F1", BLOQUEADO), ("F2", APROVADO))))
+
+    resultado = contexto_preco(
+        aplicabilidade=AplicabilidadePacote.FAIXA_INFERIOR, indice=indice
+    )
+
+    assert resultado.fragmentos_autorizados == ()
+    assert resultado.resposta_aprovada_disponivel is False
+    assert resultado.causas_e09 == (sem_resposta(PRECO),)
+
+
+def test_faixa_superior_elege_somente_f2() -> None:
+    resultado = contexto_preco(
+        aplicabilidade=AplicabilidadePacote.FAIXA_SUPERIOR
+    )
+
+    assert resultado.fragmentos_autorizados == ("R09/F2",)
+    assert resultado.causas_e09 == ()
+
+
+def test_faixa_superior_sem_f2_emitivel_nao_cai_em_f1() -> None:
+    indice = indice_de(("R09", (("F1", APROVADO), ("F2", BLOQUEADO))))
+
+    resultado = contexto_preco(
+        aplicabilidade=AplicabilidadePacote.FAIXA_SUPERIOR, indice=indice
+    )
+
+    assert resultado.fragmentos_autorizados == ()
+    assert resultado.resposta_aprovada_disponivel is False
+    assert resultado.causas_e09 == (sem_resposta(PRECO),)
+
+
+def test_nenhum_aplicavel_descobre_o_assunto() -> None:
+    """D8-L4: zero grupos aplicáveis não é cobertura vazia verdadeira."""
+    resultado = contexto_preco(
+        aplicabilidade=AplicabilidadePacote.NENHUM_APLICAVEL
+    )
+
+    assert resultado.fragmentos_autorizados == ()
+    assert resultado.resposta_aprovada_disponivel is False
+    assert resultado.causas_e09 == (sem_resposta(PRECO),)
+    assert resultado.pendencias_resposta != ()
+
+
+def test_aplicabilidade_ausente_com_r09_avaliado_e_classe_i() -> None:
+    with pytest.raises(DecisaoCoberturaNaoAvaliavel) as erro:
+        contexto_preco(aplicabilidade=None)
+
+    assert str(erro.value) == "campo_ausente: aplicabilidade"
+
+
+def test_aplicabilidade_ausente_sem_r09_no_ciclo_e_legitimo() -> None:
+    resultado = decidir(
+        interpretacao=interpretacao_de(pergunta(PRECO)),
+        mapa=mapa_de((PRECO, grupos(("R40/F1",)))),
+        aplicabilidade=None,
+    )
+
+    assert resultado.fragmentos_autorizados == ("R40/F1",)
+
+
+@pytest.mark.parametrize(
+    "valor", ["FAIXA_INFERIOR", 0, 1, object(), ["FAIXA_INFERIOR"]]
+)
+def test_aplicabilidade_de_tipo_invalido_e_classe_i(valor: object) -> None:
+    with pytest.raises(DecisaoCoberturaNaoAvaliavel) as erro:
+        decidir(aplicabilidade=valor)
+
+    assert str(erro.value) == "tipo_invalido: aplicabilidade"
+
+
+def test_r05_permanece_inalterado_com_o_gate_de_preco() -> None:
+    """Regressão: o gate de preço não toca o caminho de `R05`."""
+    for fatos, esperado in (
+        ({"consulta_calendario_valida": False}, "R05/F1"),
+        (
+            {"consulta_calendario_valida": True, "data_disponivel": True},
+            "R05/F2",
+        ),
+        (
+            {"consulta_calendario_valida": True, "data_disponivel": False},
+            "R05/F3",
+        ),
+    ):
+        resultado = contexto_r05(fatos=fatos)
+
+        assert resultado.fragmentos_autorizados == (esperado,)
+        assert resultado.causas_e09 == ()
+
+
+def test_gate_nao_alcanca_token_fora_dos_cinco_autorizados() -> None:
+    """Qualquer outro token do corpus continua candidato por padrão."""
+    resultado = decidir(
+        interpretacao=interpretacao_de(pergunta(PRECO)),
+        mapa=mapa_de((PRECO, grupos(("R40/F1", "R41/F1")))),
+    )
+
+    assert resultado.fragmentos_autorizados == ("R40/F1",)
+
+
+# --------------------------------------------------------------------------
+# 11-sexies. D8-L4 — grupos aplicaveis
+
+
+def test_grupo_inaplicavel_sai_da_avaliacao_sem_causa() -> None:
+    """Um grupo sem candidata não é coberto nem descoberto."""
+    indice = indice_de(
+        ("R09", (("F1", APROVADO), ("F2", APROVADO))),
+        ("R40", (("F1", APROVADO),)),
+    )
+
+    resultado = decidir(
+        interpretacao=interpretacao_de(pergunta(PRECO)),
+        indice=indice,
+        mapa=mapa_de((PRECO, grupos(("R09/F2",), ("R40/F1",)))),
+        consistencia=consistencia_de(indice),
+        aplicabilidade=AplicabilidadePacote.FAIXA_INFERIOR,
+    )
+
+    assert resultado.fragmentos_autorizados == ("R40/F1",)
+    assert resultado.resposta_aprovada_disponivel is True
+    assert resultado.causas_e09 == ()
+
+
+def test_grupo_parcialmente_candidato_preserva_a_semantica() -> None:
+    """Com uma candidata segura no grupo, o grupo é coberto por ela."""
+    indice = indice_de(("R09", (("F1", APROVADO), ("F2", APROVADO))))
+
+    resultado = decidir(
+        interpretacao=interpretacao_de(pergunta(PRECO)),
+        indice=indice,
+        mapa=mapa_de((PRECO, grupos(("R09/F1", "R09/F2")))),
+        consistencia=consistencia_de(indice),
+        aplicabilidade=AplicabilidadePacote.FAIXA_SUPERIOR,
+    )
+
+    assert resultado.fragmentos_autorizados == ("R09/F2",)
+    assert resultado.causas_e09 == ()
+
+
+def test_todos_os_grupos_inaplicaveis_produz_causa() -> None:
+    resultado = contexto_preco(
+        aplicabilidade=AplicabilidadePacote.NENHUM_APLICAVEL
+    )
+
+    assert resultado.causas_e09 == (sem_resposta(PRECO),)
+
+
+def test_grupo_inaplicavel_nao_torna_assunto_verdadeiro_por_vacuidade() -> None:
+    """Zero grupos aplicáveis nunca vira cobertura."""
+    resultado = contexto_preco(
+        aplicabilidade=AplicabilidadePacote.NENHUM_APLICAVEL
+    )
+
+    assert resultado.resposta_aprovada_disponivel is False
 
 
 # --------------------------------------------------------------------------
@@ -1615,6 +1848,7 @@ def test_importa_somente_o_necessario() -> None:
         "casa77_sdr.coverage_map",
         "casa77_sdr.identity",
         "casa77_sdr.interpretation",
+        "casa77_sdr.pricing_applicability",
         "casa77_sdr.qualification",
         "casa77_sdr.response_assertion",
         "casa77_sdr.response_consistency",
@@ -1714,7 +1948,7 @@ def test_unicos_rxx_citados_sao_os_do_gate_arbitrado() -> None:
         for valor in literais
         if len(valor) == 3 and valor[0] == "R" and valor[1:].isdigit()
     }
-    assert suspeitos == {"R05"}
+    assert suspeitos == {"R05", "R09"}
 
 
 def test_nao_e_exportado_pelo_init() -> None:
@@ -1735,7 +1969,3 @@ def test_api_publica_e_minima() -> None:
         "ResultadoS2D8",
         "decidir_pendencias_e_cobertura",
     ]
-
-
-def test_mapa_fisico_reservado_continua_inexistente() -> None:
-    assert not (RAIZ / "knowledge" / "mapa-cobertura.yaml").exists()

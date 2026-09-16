@@ -31,7 +31,8 @@ máquina **não mudam** (**Q1-c**).
 **Eixo B — cobertura.** Consome **somente** `PerguntaComercial` de confiança
 **`ALTA`** (**D8-B1**); a chave semântica é o **`AssuntoComercial`** (**D8-B2**),
 **nunca o texto**. Por assunto: a **primeira ocorrência efetiva** define a ordem
-(**SF-D4-7**); **todos** os grupos são avaliados (**SF-D4-5**); vale
+(**SF-D4-7**); **todos os grupos aplicáveis** são avaliados (**SF-D4-5**,
+**SF-D4-5a**, **D8-L4**); vale
 **conjunção entre grupos** e **disjunção dentro do grupo** (**R2-4**); o
 ***witness*** é a **primeira alternativa emitível na ordem declarada**
 (**SF-D4-3**); e **qualquer grupo descoberto zera os tokens daquele assunto** —
@@ -58,6 +59,23 @@ operacional própria**. Sobre o corpus atual, o fato runtime sustenta
 **exclusivamente** `ASSERTIVA` (**C-A2-V**) e vive **somente** em `R05/F2` e
 `R05/F3`; *binding* `RUNTIME_AUTORITATIVO` **fora desse contrato** exige **nova
 arbitragem** e **fecha** aqui.
+
+**Gate de candidatura de preço — `D8-G`.** Antes de **D8-F**, e **independente
+da ordem declarada em `R2`**, a **aplicabilidade de pacote** (§4.4.4) decide a
+candidatura de `R09/F1` e `R09/F2`, que são **faixas distintas e nunca
+substitutas**: `FAIXA_INFERIOR` deixa **só `R09/F1`** candidato;
+`FAIXA_SUPERIOR`, **só `R09/F2`**; `INDETERMINADO` deixa **os dois**, porque a
+resposta correta ainda depende do que falta saber; `NENHUM_APLICAVEL` deixa
+**nenhum**. Quando um desses dois tokens é **efetivamente avaliado** e a
+aplicabilidade **não chega** — ou chega com tipo inválido —, a fronteira
+**fecha** como **Classe I**: adivinhar faixa seria inventar preço.
+
+**Grupos aplicáveis — `D8-L4`.** Um grupo é **aplicável** no ciclo quando tem
+**ao menos uma alternativa candidata**. Grupo **sem nenhuma** candidata **não é
+coberto nem descoberto**: ele **não produz *witness*, não produz causa** e fica
+**fora da avaliação daquele ciclo**. Mas um assunto **com grupos declarados** e
+**zero grupos aplicáveis** **não é respondível** e produz
+`SEM_RESPOSTA_APROVADA_EMITIVEL` — **nunca** verdadeiro por vacuidade.
 
 **Gate de candidatura de `R05`.** Antes de **D8-F**, e **independente da ordem
 futura das alternativas em `R2`**: `R05/F1` é candidato **somente** quando
@@ -124,6 +142,7 @@ from casa77_sdr.interpretation import (
     Interpretacao,
     PerguntaComercial,
 )
+from casa77_sdr.pricing_applicability import AplicabilidadePacote
 from casa77_sdr.qualification import Qualificacao
 from casa77_sdr.response_assertion import avaliar_assertiva
 from casa77_sdr.response_consistency import (
@@ -301,10 +320,18 @@ _TOKENS_COM_GATE = frozenset(
 )
 _TOKENS_COM_RUNTIME = frozenset({_R05_DISPONIVEL, _R05_INDISPONIVEL})
 
+# Gate de candidatura de preco — `D8-G`. `R09/F1` e `R09/F2` sao **faixas
+# distintas**, nunca substitutas: nenhuma delas cobre o grupo da outra. Sao
+# identificadores estruturais, como `R05` acima e `R03/F1` em §4.1.5.
+_R09_FAIXA_INFERIOR = f"R09{_SEPARADOR}F1"
+_R09_FAIXA_SUPERIOR = f"R09{_SEPARADOR}F2"
+_TOKENS_COM_GATE_PRECO = frozenset({_R09_FAIXA_INFERIOR, _R09_FAIXA_SUPERIOR})
+
+_APLICABILIDADE = "aplicabilidade"
+
 # Desfechos internos da avaliacao de uma alternativa. Sentinelas privadas: o
 # vocabulario publico de motivo e `MotivoE09`, e ele nao descreve alternativa.
 _EMITIVEL = object()
-_NAO_CANDIDATO = object()
 
 _AUSENTE = object()
 
@@ -316,11 +343,17 @@ def decidir_pendencias_e_cobertura(
     indice: object,
     consistencia: object,
     fatos_runtime: object,
+    aplicabilidade: object = None,
 ) -> ResultadoS2D8:
     """Decide pendências e cobertura **antes da etapa 7**, e nada além disso.
 
     Todas as entradas chegam **já carregadas**: esta fronteira **não abre
     arquivo algum**, **não consulta calendário** e **não chama LLM**.
+
+    `aplicabilidade` é o veredito de **§4.4.4**, já decidido a montante. Ela é
+    **opcional**: um ciclo em que **nenhum token de preço** é avaliado não
+    precisa dela. Mas quando `R09/F1` ou `R09/F2` **é efetivamente avaliado** e
+    ela **não chega**, a fronteira **fecha** — **D8-G**.
 
     A ordem é **fixa**: **1.** as formas das entradas; **2.** o índice
     (`validar_indice`); **3.** o mapa e as suas referências
@@ -343,6 +376,10 @@ def decidir_pendencias_e_cobertura(
         raise _nao_avaliavel(_TIPO_INVALIDO, _QUALIFICACAO)
 
     fatos = _validar_fatos_runtime(fatos_runtime)
+    if aplicabilidade is not None and (
+        type(aplicabilidade) is not AplicabilidadePacote
+    ):
+        raise _nao_avaliavel(_TIPO_INVALIDO, _APLICABILIDADE)
 
     # Classe I por fronteira de origem: as excecoes atravessam intactas.
     validar_indice(indice)
@@ -389,6 +426,7 @@ def decidir_pendencias_e_cobertura(
             indisponiveis,
             runtime_por_token,
             fatos,
+            aplicabilidade,
         )
         if witnesses is None:
             nao_respondiveis.add(assunto)
@@ -437,13 +475,19 @@ def _avaliar_assunto(
     indisponiveis: dict[str, tuple[str, str]],
     runtime_por_token: dict[str, tuple[tuple[str, str], ...]],
     fatos: dict[str, bool],
+    aplicabilidade: object,
 ) -> tuple[list[str] | None, list[CausaE09]]:
     """Avalia **um** assunto: `None` de *witnesses* significa não respondível.
 
     **R2-6**: `ASSUNTO_NAO_CLASSIFICADO` tem **zero grupos por definição** e
     **não é respondível**. **R2-5**: um assunto é respondível quando possui ao
     menos um grupo e **todos** os seus grupos possuem ao menos uma alternativa
-    emitível agora.
+    emitível agora — lido agora sobre os **grupos aplicáveis** (**R2-5a**).
+
+    **D8-L4.** Grupo **sem nenhuma alternativa candidata** é **inaplicável**:
+    fica **fora da avaliação** do ciclo, sem *witness* e sem causa. Assunto com
+    grupos declarados e **zero grupos aplicáveis** **não é respondível** e
+    produz `SEM_RESPOSTA_APROVADA_EMITIVEL` — **nunca** verdadeiro por vacuidade.
     """
     if assunto is AssuntoComercial.ASSUNTO_NAO_CLASSIFICADO:
         return None, [_sem_resposta(assunto)]
@@ -455,14 +499,27 @@ def _avaliar_assunto(
     witnesses: list[str] = []
     causas: list[CausaE09] = []
     coberto = True
+    aplicaveis = 0
 
     for grupo in grupos:
+        # D8-L4: a candidatura e decidida **antes**, e um grupo sem nenhuma
+        # alternativa candidata sai inteiro da avaliacao deste ciclo.
+        candidatas = [
+            f"{alternativa['rxx']}{_SEPARADOR}{alternativa['fragmento']}"
+            for alternativa in grupo["alternativas"]
+        ]
+        candidatas = [
+            token
+            for token in candidatas
+            if _e_candidato(token, fatos, aplicabilidade)
+        ]
+        if not candidatas:
+            continue
+        aplicaveis += 1
+
         witness: str | None = None
         causas_do_grupo: list[CausaE09] = []
-        for alternativa in grupo["alternativas"]:
-            token = (
-                f"{alternativa['rxx']}{_SEPARADOR}{alternativa['fragmento']}"
-            )
+        for token in candidatas:
             desfecho = _avaliar_alternativa(
                 token,
                 assunto,
@@ -477,20 +534,21 @@ def _avaliar_assunto(
                 # declarada, sem qualquer criterio implicito de desempate.
                 witness = token
                 break
-            if desfecho is not _NAO_CANDIDATO:
-                causas_do_grupo.extend(desfecho)
+            causas_do_grupo.extend(desfecho)
         if witness is None:
             # D8-L1/D8-L3: so o **grupo inteiro descoberto** produz causa.
             coberto = False
             if not causas_do_grupo:
-                # Grupo cujas alternativas foram **todas nao candidatas**:
-                # descoberto, e mesmo assim sem causa estrutural propria.
-                # Grupo descoberto **nunca fica silencioso**.
+                # Guarda defensiva: grupo descoberto **nunca fica silencioso**.
                 causas_do_grupo.append(_sem_resposta(assunto))
             causas.extend(causas_do_grupo)
         else:
             witnesses.append(witness)
 
+    if aplicaveis == 0:
+        # D8-L4: grupos declarados, nenhum aplicavel. Nao e cobertura vazia
+        # verdadeira — e ausencia de resposta.
+        return None, [_sem_resposta(assunto)]
     if not coberto:
         return None, causas
     return witnesses, []
@@ -505,12 +563,15 @@ def _avaliar_alternativa(
     runtime_por_token: dict[str, tuple[tuple[str, str], ...]],
     fatos: dict[str, bool],
 ) -> object:
-    """Devolve `_EMITIVEL`, `_NAO_CANDIDATO` ou a **lista** de causas.
+    """Devolve `_EMITIVEL` ou a **lista** de causas da alternativa.
 
-    A ordem é **fixa**: **gate de candidatura** → **D8-F1** (status) →
-    **Classe II** (divergência já conferida) → **C-7**, na ordem física
-    recebida → **`ASSERTIVA` de runtime**. Ela existe para que a sequência de
-    causas seja **determinística**.
+    A alternativa recebida **já é candidata**: o *gate* de candidatura corre
+    **antes**, em `_avaliar_assunto`, porque é ele que decide quais grupos são
+    **aplicáveis** (**D8-L4**).
+
+    A ordem é **fixa**: **D8-F1** (status) → **Classe II** (divergência já
+    conferida) → **C-7**, na ordem física recebida → **`ASSERTIVA` de runtime**.
+    Ela existe para que a sequência de causas seja **determinística**.
 
     **Todas as causas estruturais da alternativa são coletadas** (**D8-E4**):
     um fragmento com vários `ReferenteIndisponivel` produz **uma causa por
@@ -518,9 +579,6 @@ def _avaliar_alternativa(
     distintos produz **os dois motivos**. O status não emitível é a exceção:
     ali o fragmento **sequer é aprovado**, e o veredito é único.
     """
-    if not _e_candidato(token, fatos):
-        return _NAO_CANDIDATO
-
     if status_por_token[token] != _APROVADO:
         # D8-F1/D8-F4: `AGUARDA_APROVACAO` e `BLOQUEADO` nao habilitam.
         return [_sem_resposta(assunto)]
@@ -565,13 +623,29 @@ def _sem_resposta(assunto: AssuntoComercial) -> CausaE09:
     )
 
 
-def _e_candidato(token: str, fatos: dict[str, bool]) -> bool:
-    """Gate de candidatura de `R05`, aplicado **antes** de `D8-F`.
+def _e_candidato(
+    token: str, fatos: dict[str, bool], aplicabilidade: object
+) -> bool:
+    """Gates de candidatura, aplicados **antes** de `D8-F`.
 
-    Ele torna o caminho de *fallback* independente da ordem futura das
-    alternativas em `R2`: `R05/F1` só é candidato sem consulta válida, e
+    São **dois**, e alcançam **cinco** tokens estruturais — nenhum outro:
+
+    **`D8-G`, preço.** `R09/F1` e `R09/F2` são **faixas distintas e nunca
+    substitutas**. `FAIXA_INFERIOR` deixa só `R09/F1` candidato;
+    `FAIXA_SUPERIOR`, só `R09/F2`; `INDETERMINADO` deixa **os dois**, porque a
+    faixa ainda depende do que falta saber; `NENHUM_APLICAVEL` deixa **nenhum**.
+    Aplicabilidade **ausente** quando um desses tokens é avaliado é **Classe I**.
+
+    **`R05`, disponibilidade.** Ele torna o caminho de *fallback* independente
+    da ordem declarada em `R2`: `R05/F1` só é candidato sem consulta válida, e
     `R05/F2`/`R05/F3` só com consulta válida. **Ausência não é `False`.**
+
+    Qualquer outro token do corpus **é candidato por padrão**: nenhum *gate*
+    genérico é criado.
     """
+    if token in _TOKENS_COM_GATE_PRECO:
+        return _e_candidato_por_faixa(token, aplicabilidade)
+
     if token not in _TOKENS_COM_GATE:
         return True
 
@@ -589,6 +663,29 @@ def _e_candidato(token: str, fatos: dict[str, bool]) -> bool:
             _CAMPO_AUSENTE, f"{_FATOS_RUNTIME}.{_DATA_DISPONIVEL}"
         )
     return True
+
+
+def _e_candidato_por_faixa(token: str, aplicabilidade: object) -> bool:
+    """`D8-G`: a faixa aplicável decide qual token de preço é candidato.
+
+    A tabela é **estrutural e fechada** — `R09/F1` ↔ faixa inferior, `R09/F2` ↔
+    faixa superior —, e **não** carrega limite, valor ou qualquer dado
+    comercial. **Nenhum dos dois é *fallback* do outro**: com a faixa decidida,
+    o grupo do outro token simplesmente **não é aplicável** neste ciclo.
+    """
+    if aplicabilidade is None:
+        # Adivinhar faixa seria inventar preco: fecha antes da etapa 7.
+        raise _nao_avaliavel(_CAMPO_AUSENTE, _APLICABILIDADE)
+    if type(aplicabilidade) is not AplicabilidadePacote:
+        raise _nao_avaliavel(_TIPO_INVALIDO, _APLICABILIDADE)
+
+    if aplicabilidade is AplicabilidadePacote.INDETERMINADO:
+        return True
+    if aplicabilidade is AplicabilidadePacote.NENHUM_APLICAVEL:
+        return False
+    if aplicabilidade is AplicabilidadePacote.FAIXA_INFERIOR:
+        return token == _R09_FAIXA_INFERIOR
+    return token == _R09_FAIXA_SUPERIOR
 
 
 def _validar_fatos_runtime(fatos_runtime: object) -> dict[str, bool]:

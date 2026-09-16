@@ -32,14 +32,13 @@ exclusivamente em `knowledge/casa77.yaml`.
   **`ValidadorResposta`** — o *gate* final de integridade textual sobre a emissão já montada.
   O bloco segue na **integração das capacidades dependentes ainda ausentes**. `C` **não**
   está integralmente operacional.
-- **Fora de `C`**, a **infraestrutura estrutural do mapa de cobertura `R2`** —
-  esqueleto fechado, **totalidade** do vocabulário, validação estrutural, carregamento
-  estrito e conferência de identidade — está **materializada** (`docs/07` §4.4.2), e o
-  **produtor determinístico de S2-D8** também (`docs/07` §4.4.3): eixos **A** e **B**,
-  **`D8-F`**, cobertura, **escolha do *witness*** e projeção de `fragmentos_autorizados`.
-  Mas o **conteúdo do mapa NÃO existe** — `knowledge/mapa-cobertura.yaml` **não foi
-  criado** e **nenhuma associação `AssuntoComercial → Rxx/Fxx` foi estabelecida** —, de
-  modo que `R2` **não está completo** e a **cobertura real continua não operacional**.
+- **Fora de `C`**, o **mapa de cobertura `R2`** está **completo**: a infraestrutura
+  estrutural (`docs/07` §4.4.2), o **produtor determinístico de S2-D8** (§4.4.3), a
+  **aplicabilidade determinística de pacote** (§4.4.4) e o **artefato físico**
+  `knowledge/mapa-cobertura.yaml`, com a **associação total dos 54 `AssuntoComercial`** —
+  **33** com cobertura declarada e **21** com `grupos: []`. Dadas as entradas estruturadas,
+  S2-D8 **opera sobre o mapa real**. Mas a **cobertura não está integrada *end-to-end***:
+  o **`OrquestradorMotor` permanece ausente**.
 - Etapa 4 permanece **absorvida pela Etapa 3B**; etapas 5 a 10 permanecem futuras
   (`docs/05-roadmap.md`).
 
@@ -47,48 +46,44 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-Commit funcional `1a237deafb22d7d07d0baf4a7c2dfc028e174503`.
+Commit funcional `e9e7ede464c76cc2e5b8a4b1db20f3e296625090`.
 
-**Produtor determinístico de S2-D8 materializado** em
-`src/casa77_sdr/coverage_decision.py`, com os cenários dedicados em
-`tests/test_coverage_decision.py` e o contrato vivo em `docs/07` §4.4.3
-(`D8P-1`–`D8P-16`). A API pública é `decidir_pendencias_e_cobertura`, e o
-resultado é `ResultadoS2D8`. Ela **não é um 15º componente** e **não pertence à
-máquina**.
+**Cobertura comercial real de `R2` materializada.** O artefato
+`knowledge/mapa-cobertura.yaml` passou a existir, com a **associação total dos 54
+`AssuntoComercial`**: **33** declaram cobertura e **21** declaram `grupos: []`.
+O mapa guarda **referência estrutural** — `rxx` + `fragmento` — e nada além
+dela: zero `priority`, predicado, status, *binding* ou valor.
 
-O **eixo A** está materializado **sob `Q1`**: no schema e no corpus atuais ele
-produz **sempre** `pendencia_impeditiva = False` e `pendencias_impeditivas = ()`,
-e **zero causa** — `D8-T2f` permanece legitimamente inalcançável, e **`Q2` não é
-implementada**. O **eixo B** também está materializado: consome apenas
-`PerguntaComercial` de confiança **`ALTA`**, usa o **`AssuntoComercial`** como
-chave e **nunca o texto**, e ordena pela **primeira ocorrência efetiva**.
+A admissibilidade de cada associação passou a ter norma própria, **`R2-8`**
+(**`R2-SUF`**): um assunto só recebe cobertura quando os fragmentos aprovados
+respondem **integralmente** à sua extensão semântica; sem isso, ele declara
+**zero grupos**. É regra de **autoria e auditoria**, nunca heurística de runtime.
 
-**`D8-F` está materializado** — status `APROVADO`, zero referente indisponível e
-toda `ASSERTIVA` aplicável verdadeira —, com **Classe II bloqueando o fragmento**
-e **Classe I fechando antes da etapa 7**, sem resultado parcial. O ***gate* de
-candidatura de runtime de `R05/F1`, `R05/F2` e `R05/F3`** está materializado: a
-fotografia `fatos_runtime` é **recebida**, nunca consultada, e o caminho de
-*fallback* **não depende da ordem declarada em `R2`**.
+**Aplicabilidade determinística de pacote materializada** em
+`src/casa77_sdr/pricing_applicability.py`, com o contrato vivo em `docs/07`
+§4.4.4 (`AP-1`–`AP-12`). Ela decide **qual faixa comporta o evento**, a partir de
+duas autoridades **separadas** — a capacidade e o limite declarado de cada
+pacote —, com vocabulário fechado em quatro valores e ***fail-closed*** quando as
+duas faixas não são inequívocas. Ela **não conhece `Rxx`**, **não conhece
+`AssuntoComercial`** e **não decide cobertura**.
 
-A **cobertura** está materializada com **conjunção entre grupos** e **disjunção
-dentro do grupo**, e a **escolha determinística do *witness*** é a **primeira
-alternativa emitível na ordem declarada**. Saem daí **`fragmentos_autorizados`**
-— já deduplicados pela primeira ocorrência —, **`pendencias_resposta`** e as
-**causas estruturadas** de `E09`, com os **dois** motivos e a classificação
-**impeditiva × acessória**.
+S2-D8 ganhou o ***gate* de candidatura de preço `D8-G`** (§4.4.1), que **consome**
+esse veredito: as duas faixas de preço são **grupos singleton**, **nunca
+substitutas**, e **nenhuma é *fallback* da outra**. Com faixa indeterminada, **as
+duas** são exigidas. Ganhou também **`D8-L4`**: só **grupos aplicáveis** entram na
+avaliação, e assunto com grupos declarados e **zero grupos aplicáveis** **não é
+respondível** — **nunca verdadeiro por vacuidade**.
 
-**S2-D8 não cria nem confirma `Evento.E09`**: ela produz **causas** que podem
-confirmá-lo, e a conversão pertence à integração posterior.
-
-**O conteúdo real de `R2` continua ausente**: `knowledge/mapa-cobertura.yaml`
-**não existe** e **nenhuma associação `AssuntoComercial → Rxx/Fxx` foi
-estabelecida**. O **`OrquestradorMotor` continua não integrado**. Portanto a
-**cobertura real ainda não funciona *end-to-end***.
+**A cobertura real é decidível por S2-D8** quando ela recebe as entradas
+estruturadas do ciclo. A **integração *end-to-end* continua pendente**: o
+`OrquestradorMotor` **não existe**, e é ele quem faria a decisão correr **dentro
+do ciclo** e converteria **causa** em **`Evento.E09`**.
 
 Permanecem fatos vigentes: **30 `Rxx`**, **37 fragmentos emitíveis**, **118
-*bindings***, **19 *templates*** e **18 fragmentos estáticos**. **Zero
-alteração** em `knowledge/**`, em prompt, em dado comercial e em módulo
-existente de `src/`.
+*bindings***, **19 *templates*** e **18 fragmentos estáticos**.
+`knowledge/casa77.yaml`, `knowledge/indice-respostas-aprovadas.yaml`,
+`knowledge/respostas-aprovadas.md` e `prompts/**` permanecem **inalterados**; o
+novo conteúdo versionado de `R2` vive em `knowledge/mapa-cobertura.yaml`.
 
 ---
 
@@ -98,7 +93,7 @@ existente de `src/`.
 materializada, **não** uma execução desta atualização:
 
 - Python **3.14.5**;
-- **`6760 passed`**, sob **`-W error`**;
+- **`6966 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings.
 
 CI configurada em GitHub Actions, em `.github/workflows/ci.yml`, com Python **3.13** e **3.14**.
@@ -116,9 +111,10 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
 - **Cadeia vigente**, com as fronteiras separadas e nenhuma acumulando papel de outra:
   - `ValidadorConsistenciaBase` → **consistência** — **materializado**;
   - **S2-D8** / `R2` → **candidatura, emissibilidade, cobertura e escolha do *witness***, que
-    projeta os fragmentos autorizados — **materializados**: a **infraestrutura estrutural de
-    `R2`** (`docs/07` §4.4.2) e o **produtor determinístico** (`docs/07` §4.4.3). Continuam
-    **ausentes** o **conteúdo real do mapa** e a **integração pelo `OrquestradorMotor`**;
+    projeta os fragmentos autorizados — **materializados**: infraestrutura estrutural
+    (`docs/07` §4.4.2), **produtor determinístico** (§4.4.3), **aplicabilidade de pacote**
+    (§4.4.4) e o **artefato físico do mapa**. Continua **ausente** a **integração pelo
+    `OrquestradorMotor`**;
   - `MaquinaEstados` → **ações semânticas** — **materializada**;
   - **`ProjetorEmissao`** → ***witnesses*** **e ações** → **tokens destinados à emissão** —
     **materializado**;
@@ -166,11 +162,11 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   - **não renderiza *template* algum**.
 - A regra de escolha determinística do ***witness*** está **arbitrada** — a **primeira
   alternativa emitível na ordem declarada do grupo** (`docs/07` §4.4.1, `SF-D4`) — **e
-  materializada no produtor** (`docs/07` §4.4.3). O **produtor determinístico de S2-D8 está
-  materializado**, assim como a **infraestrutura estrutural de `R2`** (`docs/07` §4.4.2). O
-  que continua inexistente é o artefato **`knowledge/mapa-cobertura.yaml` com conteúdo
-  aprovado**; **sem esse conteúdo, a seleção real *end-to-end* ainda não funciona**, e a
-  **integração pelo `OrquestradorMotor` continua pendente**.
+  materializada no produtor** (§4.4.3), agora sobre o **mapa real**. Duas regras novas a
+  acompanham: **`D8-G`**, o *gate* de candidatura de preço, que traduz a **aplicabilidade de
+  pacote** (§4.4.4) em candidatura das **duas faixas**, e **`D8-L4`**, que só avalia **grupos
+  aplicáveis** e **nunca** deixa um assunto verdadeiro por vacuidade. O que continua pendente
+  é a **integração pelo `OrquestradorMotor`**: a seleção **não corre dentro do ciclo**.
 - Existe **fronteira determinística operacional de composição por fragmento**
   (`src/casa77_sdr/response_composition.py`; contrato em `docs/07` §4.1.4). Ela **não é um
   15º componente**: §4.1 permanece com **14**. Ela:
@@ -334,10 +330,10 @@ código; o contrato vive em `docs/07` §2.3.
 | Pendência | Situação atual | Impacto / bloqueio | Fonte |
 |---|---|---|---|
 | **B** — colisão conceitual de nome `RegistroAtendimento` | aberta; nenhum referente renomeado ou unificado | bloqueia implementar o componente `RegistroAtendimento` | `docs/07` §4.1.1, §12 item 21 |
-| **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`ProjetorEmissao`**, **`SeletorFatos`**, **compositor determinístico por fragmento**, a **montagem canônica de uma emissão**, o **`ValidadorResposta`**, a **infraestrutura estrutural de `R2`** (`docs/07` §4.4.2) e o **produtor determinístico S2-D8** (`docs/07` §4.4.3; ver a linha própria de **S2-D8**). **Pendentes**: o **artefato `knowledge/mapa-cobertura.yaml` com conteúdo aprovado**, **integração *end-to-end* da etapa 10**, **superfícies conversacionais sem unidade aprovada**, as **ações produzidas por chamadas posteriores da `MaquinaEstados`**, a **evolução futura do `ProjetorEmissao`** para essas fases e a **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice à **emissão montada numa única mensagem**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §4.1.6, §4.1.7, §12 itens 19, 10 e 22 |
+| **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`ProjetorEmissao`**, **`SeletorFatos`**, **compositor determinístico por fragmento**, a **montagem canônica de uma emissão**, o **`ValidadorResposta`**, a **infraestrutura estrutural de `R2`** (`docs/07` §4.4.2) e o **produtor determinístico S2-D8** (`docs/07` §4.4.3; ver a linha própria de **S2-D8**). **Pendentes**: **integração *end-to-end* da etapa 10**, **superfícies conversacionais sem unidade aprovada**, as **ações produzidas por chamadas posteriores da `MaquinaEstados`**, a **evolução futura do `ProjetorEmissao`** para essas fases e a **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice à **emissão montada numa única mensagem**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §4.1.6, §4.1.7, §12 itens 19, 10 e 22 |
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
-| **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado. **Materializados**: a **infraestrutura estrutural de `R2`** (`src/casa77_sdr/coverage_map.py`, `src/casa77_sdr/coverage_map_load.py`; `docs/07` §4.4.2) e o **produtor determinístico** (`src/casa77_sdr/coverage_decision.py`; `docs/07` §4.4.3) — eixos **A** e **B**, **`D8-F`**, **Classe I/II consumida**, *gate* de candidatura de `R05`, cobertura, ***witnesses***, `fragmentos_autorizados`, `pendencias_resposta` e **causas** de `E09`. **Ainda ausentes**: o **artefato físico com conteúdo aprovado** — `knowledge/mapa-cobertura.yaml` é **caminho reservado** e **não existe** —, o **conteúdo humano de cobertura** e a **integração pelo `OrquestradorMotor`**, que é quem converte causa em **`Evento.E09`**. **Sem o conteúdo do mapa, a cobertura real não funciona** | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §4.4.1, §4.4.2, §4.4.3, §12 item 10; `docs/06` §11 |
+| **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado e **materializado**: infraestrutura estrutural de `R2` (`coverage_map.py`, `coverage_map_load.py`; §4.4.2), **produtor determinístico** (`coverage_decision.py`; §4.4.3), **aplicabilidade de pacote** (`pricing_applicability.py`; §4.4.4) e o **artefato físico** `knowledge/mapa-cobertura.yaml`, com **54/54** assuntos — **33** com cobertura e **21** vazios. Cobertos os eixos **A** e **B**, **`D8-F`**, Classe I/II, os *gates* de **`R05`** e de **preço (`D8-G`)**, **`D8-L4`**, ***witnesses***, `fragmentos_autorizados`, `pendencias_resposta` e **causas** de `E09`. O **conteúdo de `R2` foi concluído nesta capacidade**, e S2-D8 + `R2` **decidem cobertura** quando recebem as entradas estruturadas. **Ainda ausente**: a **integração do ciclo**, externa a esta pendência, que converte causa em **`Evento.E09`** e faz a decisão correr **dentro do ciclo** | **deixou de bloquear**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4.1, §4.4.2, §4.4.3, §4.4.4, §12 item 10; `docs/06` §11 |
 | **S3-D1** — produtor da condição `motivo_encerramento` | produtor **não atribuído** | impede completar a **condição 8 de `CondicoesCiclo`** e os fluxos que dependem dela na integração completa | `docs/07` §4.4, §12 item 10 |
 | **E1** — conversa × atendimento × lead | não arbitrada; atravessa identidade, persistência e registro de leads | não bloqueia a especificação vigente | `docs/07` §12 item 13 |
 | **E3** — evento novo durante atendimento ativo | aberta; contrato vigente é conservador (`AMBIGUA`) | não bloqueia | `docs/07` §12 item 14 |
@@ -360,22 +356,15 @@ Pendências comerciais e lacunas da base **não são replicadas aqui**:
 
 Bloqueiam o `OrquestradorMotor` e o pipeline completo:
 
-- **S2-D8** — a **infraestrutura estrutural de `R2`** (`docs/07` §4.4.2) e o **produtor
-  determinístico** (`docs/07` §4.4.3) **já existem**. O bloqueio restante é o **conteúdo
-  aprovado do mapa** — `knowledge/mapa-cobertura.yaml` **não existe** — e a **integração
-  pelo `OrquestradorMotor`**, que é quem converte **causa** em **`Evento.E09`**. **Sem o
-  conteúdo do mapa, a cobertura real não funciona**;
 - **C** — índice físico, *templates*, **autoridade de status**, ***lookup* operacional**,
   **`ValidadorConsistenciaBase`**, o **`ProjetorEmissao`**, o **`SeletorFatos`**, o
   **compositor determinístico por fragmento**, a **montagem canônica de uma emissão** e o
   **`ValidadorResposta`** **já concluídos** — a **ausência do *gate* final de integridade
   textual deixou de ser lacuna**. O bloqueio restante é **conectar as capacidades dependentes
-  ainda ausentes**. O **produtor S2-D8 já está concluído** (`docs/07` §4.4.3): o bloqueio
-  restante relacionado a `R2` é o **artefato com conteúdo aprovado**, sem o qual não há
-  fragmentos autorizados reais. Permanecem também as **superfícies textuais sem unidade
-  aprovada**, a **integração residual da etapa 10**, as **ações produzidas por chamadas
-  posteriores da `MaquinaEstados`** e a **integração completa pelo `OrquestradorMotor`**
-  (`docs/07` §12, item 22);
+  ainda ausentes** — as **superfícies textuais sem unidade aprovada**, a **integração
+  residual da etapa 10**, as **ações produzidas por chamadas posteriores da
+  `MaquinaEstados`** e a **integração completa pelo `OrquestradorMotor`** (`docs/07` §12,
+  item 22);
 - **S3-D1** — produtor de `motivo_encerramento` ainda não atribuído; impede completar a
   **condição 8 de `CondicoesCiclo`** e os fluxos que dependem dela;
 - **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL`;
@@ -383,6 +372,11 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
 - **N-a** — integração operacional da etapa 13, tratamento dos bloqueios S4/S5 e destino do
   alerta operacional;
 - **limiar temporal** — valor e mecanismo de carga.
+
+**Concluído, e por isso fora da lista acima**: **S2-D8** e **`R2`** — infraestrutura
+estrutural (`docs/07` §4.4.2), produtor determinístico (§4.4.3), aplicabilidade de pacote
+(§4.4.4) e o **artefato físico do mapa**, com os 54 assuntos associados. Eles **deixaram de
+ser bloqueadores**: dadas as entradas estruturadas, a cobertura é decidida.
 
 Bloqueia o **uso real** em canal, à parte da integração: **persistência operacional não
 volátil**.
@@ -397,22 +391,19 @@ eventos confirmados e condições já estruturadas.
 
 ## 7. Próxima ação
 
-**Registrar o conteúdo aprovado do mapa de cobertura em
-`knowledge/mapa-cobertura.yaml` — a associação `AssuntoComercial → grupos → Rxx/Fxx` —, que
-depende de decisão humana e ainda não foi tomada.**
+**Fechar os pré-requisitos ainda bloqueadores do `OrquestradorMotor`, antes da integração do
+ciclo.**
 
-A **infraestrutura estrutural de `R2`** (`docs/07` §4.4.2) e o **produtor determinístico de
-S2-D8** (`docs/07` §4.4.3) **já estão materializados**: dado um mapa com conteúdo, o produtor
-avalia os dois eixos, aplica **`D8-F`**, decide cobertura, escolhe os ***witnesses*** e
-projeta `fragmentos_autorizados`, `pendencias_resposta` e as **causas** de `E09`. O artefato
-físico, porém, **não existe**: com o mapa vazio de grupos, **nenhum assunto é respondível** e
-a **cobertura real não funciona**.
-
-Essa decisão é **humana e comercial** — quais unidades aprovadas cobrem quais assuntos —, e
-**não deve ser inventada por execução técnica**. Só depois dela a etapa seguinte fica
-disponível: a **integração pelo `OrquestradorMotor`**, que liga interpretação, qualificação,
-cobertura, seleção, composição, montagem e validação, e que é quem converte **causa
+A cadeia determinística já vai do índice à emissão validada, e **S2-D8** e **`R2`** decidem
+cobertura sobre o artefato aprovado. O que falta é o **ciclo**: ninguém liga interpretação,
+qualificação, cobertura, seleção, composição, montagem e validação, e ninguém converte **causa
 estruturada** em **`Evento.E09`**.
 
-Esta decisão **não é tomada aqui** — este arquivo é snapshot — e cada frente será aberta por
-**novo mandato específico**.
+**Integrar não é a próxima ação imediata**, porque a integração depende de pendências que
+**este mesmo snapshot** ainda registra como abertas em §5 e §6 — entre elas **N-b**, **E4**,
+**S3-D1**, as matérias residuais de **N-a** e o **limiar temporal**, o **destino do alerta
+operacional**, as **superfícies conversacionais sem unidade aprovada** e, para uso em canal
+real, a **persistência operacional não volátil**.
+
+**A ordem em que elas serão fechadas não é decidida aqui** — este arquivo é snapshot, não
+plano —, e cada frente será aberta por **novo mandato específico**.

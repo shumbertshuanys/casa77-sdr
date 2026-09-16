@@ -929,8 +929,9 @@ Ela **não materializa AJ2** e **não materializa C** — o contrato de cada uma
 `docs/00-estado-atual.md`, **não aqui** —, **não cria nem confirma `Evento.E09`**, **não
 fecha `N-b-RES2`**, que **continua ABERTO**, **não implementa o `OrquestradorMotor`**, **não
 cria o índice `knowledge/indice-respostas-aprovadas.yaml`**, **não cria o conteúdo do mapa de
-grupos de cobertura** — `knowledge/mapa-cobertura.yaml` **continua inexistente**, e sem ele a
-cobertura real **não é operacional *end-to-end*** —, **não resolve** `S3-D1`, `E4`, `E1`,
+grupos de cobertura** — `knowledge/mapa-cobertura.yaml` é **conteúdo aprovado**, decidido fora
+dela, e a cobertura só é operacional **dentro do ciclo** quando o `OrquestradorMotor` a
+integrar —, **não resolve** `S3-D1`, `E4`, `E1`,
 `E3`, `B`, `S2-D5` nem `S2-D7`, e **não cria a 3B.8**, que **continua não existindo**.
 
 ---

@@ -1,0 +1,236 @@
+# Mapa de grupos de cobertura — R2.
+#
+# Autoridade: docs/07 §4.4.1 (R2-1–R2-8) e §4.4.2 (R2F-1–R2F-15).
+# Mapeamento TOTAL: os 54 AssuntoComercial de AJ2, cada um exatamente uma vez.
+#
+# Este artefato guarda REFERENCIA ESTRUTURAL — `rxx` + `fragmento` — e nada
+# mais: sem priority, texto, status, binding, caminho_yaml, predicado,
+# formato ou valor comercial. Conjuncao entre grupos, disjuncao dentro do
+# grupo. `grupos: []` diz **sem cobertura aprovada**, de proposito.
+#
+# R2-8 (R2-SUF): uma associacao so e admissivel quando os fragmentos
+# aprovados respondem INTEGRALMENTE a extensao semantica do assunto.
+assuntos:
+  - assunto: preco_locacao
+    grupos:
+      - alternativas:
+          - rxx: R09
+            fragmento: F1
+      - alternativas:
+          - rxx: R09
+            fragmento: F2
+  - assunto: preco_hora_adicional
+    grupos:
+      - alternativas:
+          - rxx: R09
+            fragmento: F1
+      - alternativas:
+          - rxx: R09
+            fragmento: F2
+  - assunto: preco_variacao_por_dia_da_semana
+    grupos: []
+  - assunto: preco_variacao_por_temporada
+    grupos: []
+  - assunto: preco_suite_da_noiva
+    grupos: []
+  - assunto: desconto
+    grupos:
+      - alternativas:
+          - rxx: R04
+            fragmento: F1
+  - assunto: pagamento_e_parcelamento
+    grupos:
+      - alternativas:
+          - rxx: R19
+            fragmento: F1
+  - assunto: caucao
+    grupos:
+      - alternativas:
+          - rxx: R19
+            fragmento: F1
+  - assunto: validade_da_proposta
+    grupos:
+      - alternativas:
+          - rxx: R29
+            fragmento: F1
+  - assunto: reajuste_de_preco
+    grupos: []
+  - assunto: parceria_ou_permuta
+    grupos: []
+  - assunto: multas_e_penalidades
+    grupos: []
+  - assunto: tipo_de_evento
+    grupos:
+      - alternativas:
+          - rxx: R16
+            fragmento: F1
+  - assunto: data_bloqueada
+    grupos:
+      - alternativas:
+          - rxx: R18
+            fragmento: F1
+  - assunto: disponibilidade_de_data
+    grupos:
+      - alternativas:
+          - rxx: R05
+            fragmento: F1
+          - rxx: R05
+            fragmento: F2
+          - rxx: R05
+            fragmento: F3
+  - assunto: capacidade_maxima_e_formato
+    grupos:
+      - alternativas:
+          - rxx: R10
+            fragmento: F1
+  - assunto: capacidade_minima
+    grupos:
+      - alternativas:
+          - rxx: R10
+            fragmento: F1
+  - assunto: horario_limite_e_duracao
+    grupos:
+      - alternativas:
+          - rxx: R11
+            fragmento: F1
+  - assunto: montagem_e_desmontagem
+    grupos:
+      - alternativas:
+          - rxx: R11
+            fragmento: F2
+  - assunto: contratacao
+    grupos:
+      - alternativas:
+          - rxx: R07
+            fragmento: F1
+  - assunto: cancelamento
+    grupos:
+      - alternativas:
+          - rxx: R20
+            fragmento: F1
+  - assunto: alteracao_de_data
+    grupos:
+      - alternativas:
+          - rxx: R21
+            fragmento: F1
+  - assunto: localizacao
+    grupos:
+      - alternativas:
+          - rxx: R13
+            fragmento: F1
+  - assunto: estacionamento
+    grupos:
+      - alternativas:
+          - rxx: R14
+            fragmento: F1
+  - assunto: acessibilidade
+    grupos:
+      - alternativas:
+          - rxx: R26
+            fragmento: F1
+  - assunto: banheiros
+    grupos:
+      - alternativas:
+          - rxx: R27
+            fragmento: F1
+  - assunto: cozinha
+    grupos:
+      - alternativas:
+          - rxx: R25
+            fragmento: F1
+  - assunto: suite_da_noiva
+    grupos:
+      - alternativas:
+          - rxx: R28
+            fragmento: F1
+  - assunto: mobiliario
+    grupos: []
+  - assunto: climatizacao
+    grupos: []
+  - assunto: espaco_infantil
+    grupos:
+      - alternativas:
+          - rxx: R30
+            fragmento: F1
+  - assunto: cobertura_e_plano_de_chuva
+    grupos:
+      - alternativas:
+          - rxx: R22
+            fragmento: F1
+  - assunto: som_e_iluminacao
+    grupos:
+      - alternativas:
+          - rxx: R25
+            fragmento: F2
+  - assunto: gerador_e_energia
+    grupos: []
+  - assunto: itens_inclusos
+    grupos:
+      - alternativas:
+          - rxx: R12
+            fragmento: F1
+      - alternativas:
+          - rxx: R12
+            fragmento: F2
+  - assunto: equipe_e_limpeza
+    grupos:
+      - alternativas:
+          - rxx: R12
+            fragmento: F1
+      - alternativas:
+          - rxx: R12
+            fragmento: F2
+  - assunto: fornecedor_proprio
+    grupos:
+      - alternativas:
+          - rxx: R24
+            fragmento: F1
+  - assunto: fornecedor_recomendado
+    grupos: []
+  - assunto: restricao_uso_de_area
+    grupos:
+      - alternativas:
+          - rxx: R23
+            fragmento: F1
+  - assunto: restricao_fogos
+    grupos:
+      - alternativas:
+          - rxx: R23
+            fragmento: F1
+  - assunto: restricao_animais
+    grupos:
+      - alternativas:
+          - rxx: R23
+            fragmento: F1
+  - assunto: restricao_velas
+    grupos: []
+  - assunto: restricao_drones
+    grupos: []
+  - assunto: restricao_decoracao
+    grupos:
+      - alternativas:
+          - rxx: R23
+            fragmento: F2
+  - assunto: visita
+    grupos:
+      - alternativas:
+          - rxx: R06
+            fragmento: F1
+  - assunto: prazo_de_retorno
+    grupos: []
+  - assunto: horario_de_atendimento
+    grupos: []
+  - assunto: material_fotos
+    grupos: []
+  - assunto: material_videos
+    grupos: []
+  - assunto: material_planta
+    grupos: []
+  - assunto: material_portfolio
+    grupos: []
+  - assunto: material_apresentacao_comercial
+    grupos: []
+  - assunto: link_de_mapa
+    grupos: []
+  - assunto: assunto_nao_classificado
+    grupos: []
