@@ -1,9 +1,10 @@
-"""Testes da fronteira de leitura do futuro mapa de grupos de cobertura — `R2`.
+"""Testes da fronteira de leitura do mapa de grupos de cobertura — `R2`.
 
-Nenhum teste cria `knowledge/mapa-cobertura.yaml` e nenhum teste altera arquivo
-do repositório: todo artefato lido nasce em `tmp_path`. Os *fixtures* são
-**sintéticos** — os `Rxx` e os fragmentos são inventados — e **nenhuma
-associação real de cobertura** aparece como conteúdo ou como expectativa.
+Nenhum teste escreve em `knowledge/**`: todo artefato lido aqui nasce em
+`tmp_path`. Os *fixtures* são **sintéticos** — os `Rxx` e os fragmentos são
+inventados — e **nenhuma associação aprovada** aparece como conteúdo ou como
+expectativa; o artefato real é auditado em
+`tests/test_mapa_cobertura_corpus.py`.
 
 A prova de que o carregador não abre fonte comercial paralela, não conhece
 caminho padrão e não carrega mapa embutido é feita sobre a **AST do módulo de
@@ -27,7 +28,6 @@ from casa77_sdr.interpretation import AssuntoComercial
 RAIZ = Path(__file__).resolve().parents[1]
 MODULO = RAIZ / "src" / "casa77_sdr" / "coverage_map_load.py"
 MODULO_INIT = RAIZ / "src" / "casa77_sdr" / "__init__.py"
-MAPA_RESERVADO = RAIZ / "knowledge" / "mapa-cobertura.yaml"
 
 PRECO = AssuntoComercial.PRECO_LOCACAO.value
 
@@ -522,16 +522,15 @@ def test_api_publica_e_minima() -> None:
     ]
 
 
-# 7. O artefato reservado continua ausente
+# 7. Caminho ausente
 
 
-def test_mapa_reservado_nao_existe_no_repositorio() -> None:
-    assert not MAPA_RESERVADO.exists()
+def test_caminho_ausente_falha_como_arquivo_ausente(tmp_path: Path) -> None:
+    """Caminho comprovadamente ausente fecha como `arquivo_ausente`."""
+    ausente = tmp_path / "mapa-cobertura.yaml"
 
-
-def test_caminho_reservado_falha_como_arquivo_ausente() -> None:
-    """Passar o caminho reservado não faz o artefato existir."""
+    assert not ausente.exists()
     with pytest.raises(MapaCoberturaIlegivel) as erro:
-        carregar_mapa_cobertura(MAPA_RESERVADO)
+        carregar_mapa_cobertura(ausente)
 
     assert categoria_de(erro) == "arquivo_ausente"

@@ -1,15 +1,15 @@
-"""Validação estrutural pura do futuro mapa de grupos de cobertura — `R2`.
+"""Validação estrutural pura do mapa de grupos de cobertura — `R2`.
 
-Este módulo valida a **forma** de uma estrutura já analisada que pretende ser o
-artefato futuro do **caminho reservado** `knowledge/mapa-cobertura.yaml`. Ele
+Este módulo valida a **forma** de uma estrutura já analisada que representa o
+artefato de `R2`, cujo caminho canônico é `knowledge/mapa-cobertura.yaml`. Ele
 **não cria** esse arquivo, **não o lê**, **não o descobre** e **não conhece
 caminho algum**: a entrada é uma estrutura Python já em memória.
 
-**O conteúdo do mapa NÃO existe e NÃO é criado aqui.** Esta fronteira materializa
-**apenas a representação estrutural genérica** de `R2-1`–`R2-7` (§4.4.1). Ela
-**não** associa nenhum `AssuntoComercial` a nenhum `Rxx`/`Fxx`, **não** decide
-grupo, **não** decide ordem concreta e **não** contém uma única linha de mapa. A
-associação real depende de **decisão humana futura** e permanece ausente.
+**O conteúdo do mapa não é decidido aqui.** Esta fronteira materializa **apenas
+a representação estrutural** de `R2-1`–`R2-8` (§4.4.1). Ela **não** associa
+nenhum `AssuntoComercial` a nenhum `Rxx`/`Fxx`, **não** decide grupo e **não**
+decide ordem: a associação é **conteúdo aprovado**, decidido fora daqui, e esta
+fronteira apenas **confere a forma** dele.
 
 A forma validada é esta, e somente esta::
 
@@ -57,7 +57,7 @@ consomem no futuro; o desempate é a própria ordem, nunca um campo novo.
 
 **Semântica é de quem consome.** `R2-4` — **conjunção entre grupos**,
 **disjunção dentro do grupo** — e `R2-5` — respondibilidade — **não são
-avaliadas aqui**. Elas pertencem ao produtor **S2-D8**, que **não existe**.
+avaliadas aqui**. Elas pertencem ao produtor **S2-D8** (§4.4.3).
 
 **O que esta fronteira deliberadamente NÃO faz.** Ela **não** consulta status
 (**D8-F1**), **não** resolve *binding*, **não** aplica formatador, **não**
@@ -94,7 +94,7 @@ do fragmento — e **não julga** `status`, *bindings*, `itera_sobre`, `formato`
 índice **defeituoso fora dessa projeção** atravessa esta fronteira **sem ser
 julgado**, e isso é correto: aqui se prova **existência da referência**, não
 validade do índice. A **validação estrutural integral do índice**, que é o que
-`D8-CI2` exige, pertence à **futura cadeia de S2-D8** e deve **reutilizar
+`D8-CI2` exige, pertence à **cadeia de S2-D8** e deve **reutilizar
 `validar_indice`** — esta fronteira **não a substitui e não a prova**.
 
 ***Fail-closed*, sem resultado parcial.** A **primeira** violação encerra e nada
@@ -235,7 +235,7 @@ def conferir_referencias(mapa: object, indice: object) -> None:
     `ProjecaoDeIdentidadeInvalida` **atravessa intacta**: o defeito é do índice,
     não do mapa, e o chamador precisa distinguir os dois. Isso **não prova
     `D8-CI2`**: a **validação estrutural integral do índice** que `D8-CI2` exige
-    pertence à **futura cadeia de S2-D8** e deve **reutilizar `validar_indice`**.
+    pertence à **cadeia de S2-D8** e deve **reutilizar `validar_indice`**.
 
     Esta conferência **não** julga status, *binding*, `ASSERTIVA`, formato,
     emissibilidade (**D8-F**) nem cobertura (**R2-5**). Existência da referência,
@@ -333,8 +333,8 @@ def _percorrer_alternativas(mapa: Any) -> list[tuple[str, str, str]]:
     """Percorre as alternativas **na ordem física declarada**, sem alterar nada.
 
     A travessia é privada de propósito: **nenhuma projeção é exportada**. Quem
-    consome alternativa é o produtor **S2-D8**, que não existe, e antecipar a
-    sua entrada seria implementar cobertura nesta fronteira.
+    consome alternativa é o produtor **S2-D8** (§4.4.3), e exportar a sua
+    entrada daqui seria implementar cobertura nesta fronteira.
     """
     encontradas: list[tuple[str, str, str]] = []
     for posicao, item in enumerate(mapa["assuntos"]):

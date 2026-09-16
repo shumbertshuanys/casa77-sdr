@@ -1,11 +1,10 @@
-"""Carregamento fail-closed do futuro mapa de grupos de cobertura — `R2`.
+"""Carregamento fail-closed do mapa de grupos de cobertura — `R2`.
 
-Este módulo é a **fronteira de leitura** do artefato que pretende ocupar o
-**caminho reservado** `knowledge/mapa-cobertura.yaml`. Ele **não cria** esse
-arquivo, **não o descobre** e **não conhece caminho algum**: o caminho chega
-sempre por argumento explícito. **Não há caminho padrão**, descoberta
-automática, *glob* ou variável de ambiente — nada aqui pode dar a impressão de
-que o artefato já existe. **Ele não existe.**
+Este módulo é a **fronteira de leitura** do artefato de `R2`, cujo caminho
+canônico é `knowledge/mapa-cobertura.yaml`. Ele **não cria** esse arquivo,
+**não o descobre** e **não conhece caminho algum**: o caminho chega sempre por
+argumento explícito. **Não há caminho padrão**, descoberta automática, *glob* ou
+variável de ambiente — quem lê **diz de onde**, sempre.
 
 A divisão de trabalho é estrita, e segue o precedente da fronteira de leitura do
 índice de `C`. Aqui mora apenas o que separa um artefato **ilegível** de um
@@ -24,7 +23,8 @@ declarada**.
 **Zero regra comercial e zero conteúdo de mapa.** Este módulo não conhece
 `AssuntoComercial`, `Rxx`, fragmento, grupo, cobertura, status, preço ou
 qualquer associação: ele não carrega mapa embutido, não completa mapa e não
-sugere mapa. **A associação real depende de decisão humana futura.**
+sugere mapa. **A associação é conteúdo aprovado, e vive no artefato**, nunca
+aqui.
 
 Falha é ***fail-closed***: nenhum caminho de erro devolve `None`, estrutura
 parcial, estrutura vazia de recurso ou valor presumido. A mensagem de
@@ -113,9 +113,9 @@ def carregar_mapa_cobertura(path: str | Path) -> dict[str, Any]:
     analisado, e `MapaCoberturaInvalido` quando ele é legível mas não satisfaz o
     contrato. O arquivo nunca é criado, escrito, movido ou removido.
 
-    **Passar o caminho reservado não faz o artefato existir.** Enquanto o mapa
-    aprovado não for criado por decisão humana, a chamada correspondente falha
-    como `arquivo_ausente` — e esse é o comportamento correto.
+    **O caminho é do chamador, e a existência é um fato do disco.** Caminho
+    que não aponte para um arquivo legível falha como `arquivo_ausente` — e esse
+    é o comportamento correto.
     """
     caminho = Path(path)
 

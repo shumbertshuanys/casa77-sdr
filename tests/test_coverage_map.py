@@ -1,15 +1,14 @@
-"""Testes da validação estrutural do futuro mapa de grupos de cobertura — `R2`.
+"""Testes da validação estrutural do mapa de grupos de cobertura — `R2`.
 
 Todo mapa usado aqui é **sintético**: os `Rxx`, os fragmentos e os agrupamentos
-são inventados para exercitar a **forma**, e **nenhum deles é mapeamento real de
-cobertura**. Nenhum teste cria `knowledge/mapa-cobertura.yaml`, nenhum teste
-abre `knowledge/**` e nenhum valor comercial aparece como conteúdo ou como
-expectativa.
+são inventados para exercitar a **forma**, e **nenhum deles é o mapeamento
+aprovado**. Nenhum teste escreve em `knowledge/**` e nenhum valor comercial
+aparece como conteúdo ou como expectativa. O **conteúdo real** do mapa é
+auditado em `tests/test_mapa_cobertura_corpus.py`, e não aqui.
 
 Os `AssuntoComercial` empregados são membros reais do enum de **AJ2** porque o
 vocabulário é reutilizado, nunca duplicado — mas a **associação** entre um
-assunto e um `Rxx`/`Fxx` continua **inexistente no projeto** e não é criada nem
-sugerida por estes testes.
+assunto e um `Rxx`/`Fxx` é **conteúdo aprovado**, decidido fora destes testes.
 
 A prova de que a fronteira não conhece LLM, rede, relógio, `filesystem` e
 conteúdo de mapa é feita sobre a **AST do módulo de produção**, seguindo o
@@ -717,7 +716,7 @@ def test_projecao_de_identidade_invalida_propaga_intacta() -> None:
     """Defeito **da projeção de identidade** não é defeito do mapa.
 
     Isto **não** prova `D8-CI2`: a validação estrutural integral do índice
-    pertence à futura cadeia de S2-D8 e deve reutilizar `validar_indice`.
+    pertence à cadeia de S2-D8 e deve reutilizar `validar_indice`.
     """
     estrutura = total(assunto(PRECO, grupo(alternativa("R09", "F1"))))
 
@@ -731,7 +730,7 @@ def test_defeito_fora_da_projecao_de_identidade_nao_e_julgado_aqui() -> None:
     O índice abaixo tem `status` fora do vocabulário, *binding* deformado e
     chave desconhecida — defeitos que **`validar_indice` recusaria** e que
     `derivar_tokens_do_indice` **não lê**. Aqui eles passam, e é correto: quem
-    exige a validação integral é `D8-CI2`, na futura cadeia de S2-D8.
+    exige a validação integral é `D8-CI2`, na cadeia de S2-D8.
     """
     indice_deformado = {
         "respostas": [
@@ -1019,6 +1018,6 @@ def test_api_publica_e_minima() -> None:
     ]
 
 
-def test_mapa_fisico_reservado_nao_existe() -> None:
-    """A PR-A não cria o artefato: o conteúdo depende de decisão humana."""
-    assert not (RAIZ / "knowledge" / "mapa-cobertura.yaml").exists()
+def test_mapa_fisico_existe_e_e_um_arquivo() -> None:
+    """O artefato aprovado existe; o seu conteúdo é provado no teste de corpus."""
+    assert (RAIZ / "knowledge" / "mapa-cobertura.yaml").is_file()
