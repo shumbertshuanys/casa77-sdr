@@ -45,8 +45,15 @@ exclusivamente em `knowledge/casa77.yaml`.
   (`src/casa77_sdr/interpretation_anthropic.py`) e o *prompt* especializado
   (`prompts/prompt-interpretacao.md`), com o contrato vivo em `docs/07` §6.3
   (`M-PN1`–`M-PN12`). Texto livre passa por **saída estruturada** e **canonicalização
-  obrigatória**, terminando em `Interpretacao`. A
-  **integração da etapa 4 continua pendente** e **`N-b-RES2` continua aberto**.
+  obrigatória**, terminando em `Interpretacao`. A **integração da etapa 4 no ciclo
+  continua pendente**.
+- **Fora de `C`**, o **produtor determinístico de eventos derivados da `Interpretacao`**
+  — o residual **`N-b-RES2`** — está **materializado e versionado** em
+  `src/casa77_sdr/interpretation_events.py`, com o contrato vivo em `docs/07` §6.3
+  (`RES2-1`–`RES2-12`). Ele converte sinal interpretado em **evento confirmado**, com
+  saída **fechada** em `E02`/`E03`/`E04`/`E05`/`E06`/`E10` e `ALTA` confirmando,
+  `BAIXA` não. **`E09`, `E11`, `E17` e `E18` permanecem fora dele**, e ele **não faz a
+  integração do ciclo**, que **continua pendente**.
 - Etapa 4 permanece **absorvida pela Etapa 3B**; etapas 5 a 10 permanecem futuras
   (`docs/05-roadmap.md`).
 
@@ -54,44 +61,46 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-Commit funcional `70814d7a3c61407d0ad020b7c874acac36fc348c`.
+Commit funcional `8c9b80d76655db05b73ab59230fdfe49e8b34b25`.
 
-**Cobertura comercial real de `R2` materializada.** O artefato
-`knowledge/mapa-cobertura.yaml` passou a existir, com a **associação total dos 54
-`AssuntoComercial`**: **33** declaram cobertura e **21** declaram `grupos: []`.
-O mapa guarda **referência estrutural** — `rxx` + `fragmento` — e nada além
-dela: zero `priority`, predicado, status, *binding* ou valor.
+**`N-b-RES2` materializado** — o produtor determinístico de **eventos derivados
+da `Interpretacao`**, em `src/casa77_sdr/interpretation_events.py`, com o
+contrato vivo em `docs/07` §6.3 (`RES2-1`–`RES2-12`). O residual que a
+arbitragem N-b registrava **sem produtor concreto** passou a ter produtor.
 
-A admissibilidade de cada associação passou a ter norma própria, **`R2-8`**
-(**`R2-SUF`**): um assunto só recebe cobertura quando os fragmentos aprovados
-respondem **integralmente** à sua extensão semântica; sem isso, ele declara
-**zero grupos**. É regra de **autoria e auditoria**, nunca heurística de runtime.
+Ele ocorre **depois da etapa 4 e fora dela**: a **etapa 4 continua sem emitir
+`Exx`** e continua terminando em `Interpretacao`. A entrada é uma
+**`Interpretacao` canônica**, e a canonicidade é verificada **reutilizando** a
+validação já existente da fronteira N-b — **nenhum validador paralelo** e
+**nenhuma regra copiada**. Entrada inválida bloqueia, **sem saída parcial**.
 
-**Aplicabilidade determinística de pacote materializada** em
-`src/casa77_sdr/pricing_applicability.py`, com o contrato vivo em `docs/07`
-§4.4.4 (`AP-1`–`AP-12`). Ela decide **qual faixa comporta o evento**, a partir de
-duas autoridades **separadas** — a capacidade e o limite declarado de cada
-pacote —, com vocabulário fechado em quatro valores e ***fail-closed*** quando as
-duas faixas não são inequívocas. Ela **não conhece `Rxx`**, **não conhece
-`AssuntoComercial`** e **não decide cobertura**.
+A saída é **fechada em seis eventos** — `E02`, `E03`, `E04`, `E05`, `E06` e
+`E10` —, em ordem canônica, sem duplicata, e a **tupla vazia é resultado
+legítimo**. **`ALTA` confirma; `BAIXA` não confirma**, sem exceção: a exceção
+única de `pedido_de_humano` pertence ao caminho do `DetectorHandoff` e não
+atravessa esta fronteira. `E06` é **um** evento, qualquer que seja a quantidade
+de perguntas ou o assunto — **cobertura não é consultada**.
 
-S2-D8 ganhou o ***gate* de candidatura de preço `D8-G`** (§4.4.1), que **consome**
-esse veredito: as duas faixas de preço são **grupos singleton**, **nunca
-substitutas**, e **nenhuma é *fallback* da outra**. Com faixa indeterminada, **as
-duas** são exigidas. Ganhou também **`D8-L4`**: só **grupos aplicáveis** entram na
-avaliação, e assunto com grupos declarados e **zero grupos aplicáveis** **não é
-respondível** — **nunca verdadeiro por vacuidade**.
+**`E09`, `E11`, `E17` e `E18` ficam fora de RES2**, e com eles `E01`, `E07`,
+`E08` e `E12`–`E16`: as causas de `E09` pertencem a **S2-D8**, `E11`/`E17`
+continuam reduzidos a `E18` pelo **`DetectorHandoff`**, `E07`/`E08` pertencem à
+qualificação e ao ciclo, e `E14` permanece em **`S3-D1`**. A fronteira é **pura**
+— zero I/O, rede, relógio, YAML, LLM, SDK, persistência, cache ou retry — e
+**não é** componente novo: §4.1 permanece com **14**.
 
-**A cobertura real é decidível por S2-D8** quando ela recebe as entradas
-estruturadas do ciclo. A **integração *end-to-end* continua pendente**: o
-`OrquestradorMotor` **não existe**, e é ele quem faria a decisão correr **dentro
-do ciclo** e converteria **causa** em **`Evento.E09`**.
+`src/casa77_sdr/interpretation.py`, `src/casa77_sdr/state_machine.py`,
+`src/casa77_sdr/__init__.py`, `tests/test_interpretation.py` e
+`tests/test_state_machine.py` permanecem **inalterados**; nada da fronteira é
+exportado pelo pacote. **`knowledge/**` e `prompts/**` permanecem inalterados.**
 
-Permanecem fatos vigentes: **30 `Rxx`**, **37 fragmentos emitíveis**, **118
-*bindings***, **19 *templates*** e **18 fragmentos estáticos**.
-`knowledge/casa77.yaml`, `knowledge/indice-respostas-aprovadas.yaml`,
-`knowledge/respostas-aprovadas.md` e `prompts/**` permanecem **inalterados**; o
-novo conteúdo versionado de `R2` vive em `knowledge/mapa-cobertura.yaml`.
+A **integração do ciclo continua pendente**: quem **une** os eventos de
+produtores distintos é o **`OrquestradorMotor`**, que **continua ausente**.
+
+Permanecem fatos vigentes de entregas anteriores: o **produtor não
+determinístico de `N-b`** (`M-PN1`–`M-PN12`), **30 `Rxx`**, **37 fragmentos
+emitíveis**, **118 *bindings***, **19 *templates***, **18 fragmentos estáticos**
+e o mapa `knowledge/mapa-cobertura.yaml` com a associação total dos **54**
+`AssuntoComercial` — **33** com cobertura e **21** com `grupos: []`.
 
 ---
 
@@ -101,15 +110,15 @@ novo conteúdo versionado de `R2` vive em `knowledge/mapa-cobertura.yaml`.
 materializada:
 
 - Python **3.14.5**;
-- **`7112 passed`**, sob **`-W error`**;
+- **`7978 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings, zero skips.
 
-O salto de **`6966`** para **`7112`** vem da materialização local do produtor
-não determinístico de `N-b`: **92** cenários da fronteira agnóstica e **54** do
-adaptador Anthropic, todos **offline** — sem rede, sem credencial e com guarda
-de socket ativa nos testes do adaptador. `tests/test_interpretation.py`
-permanece **inalterado** e continua a autoridade dos estados de domínio
-construíveis diretamente.
+O baseline anterior era **`7112`**. O acréscimo de **866** vem de **`N-b-RES2`**, e a
+maior parte dele é a matriz de compatibilidade com a `MaquinaEstados`: **63**
+subconjuntos não vazios dos seis eventos **× 8** estados = **504** combinações,
+mais os cenários de mapeamento, de canonicidade, de eventos proibidos e de
+pureza. `tests/test_interpretation.py` e `tests/test_state_machine.py` permanecem
+**inalterados** e continuam as autoridades das suas próprias fronteiras.
 
 CI configurada em GitHub Actions, em `.github/workflows/ci.yml`, com Python **3.13** e **3.14**.
 Resultados de execução são evidência do GitHub e não são acumulados neste snapshot.
@@ -355,7 +364,7 @@ código; o contrato vive em `docs/07` §2.3.
 | **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL` | aberta; o ciclo encerra sem transição | bloqueia o `OrquestradorMotor` | `docs/07` §12 item 15 |
 | **N-a** — integração operacional residual | especificação concluída e fronteiras `M-T`/`M-E`/`M-C`/`M-DT`/`M-AE` materializadas; integração da etapa 13 no pipeline pendente, com bloqueios S4/S5 sem tratamento operacional | bloqueia o pipeline completo | `docs/07` §6.2, §12 item 11 |
 | **Limiar temporal de recência** | valor numérico e mecanismo de carga indefinidos; não é dado comercial | bloqueia a integração operacional de `N-a` e o `OrquestradorMotor` | `docs/07` §12 item 18 |
-| **N-b** — `N-b-RES2` e integração da etapa 4 | contrato arbitrado; fronteira determinística materializada; **produtor não determinístico versionado** (`docs/07` §6.3, `M-PN1`–`M-PN12`) — Anthropic / `claude-sonnet-5`, saída estruturada, canonicalização obrigatória, zero retry, exercitado **offline** pela suíte. os **evals semânticos** e o **smoke** existem e **não foram executados**. **Pendentes**: a **integração da etapa 4** no ciclo e **`N-b-RES2`**, que exige arbitragem própria | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §6.3, §12 item 12 |
+| **N-b** — integração da etapa 4 | contrato arbitrado; fronteira determinística materializada; **produtor não determinístico versionado** (`docs/07` §6.3, `M-PN1`–`M-PN12`) — Anthropic / `claude-sonnet-5`, saída estruturada, canonicalização obrigatória, zero retry, exercitado **offline** pela suíte; os **evals semânticos** e o **smoke** existem e **não foram executados**. **`N-b-RES2` deixou de ser residual**: o produtor de eventos derivados está **materializado e versionado** (`RES2-1`–`RES2-12`), com saída fechada em `E02`/`E03`/`E04`/`E05`/`E06`/`E10`; `E09`, `E18`, `E07`/`E08` e `E14` **continuam fora dele**. **Pendente**: a **integração da etapa 4** no ciclo | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §6.3, §12 item 12 |
 | **Unicidade geral de `id_atendimento`** | não decidida entre candidatos não identificados | não bloqueia o bloco corrente de materialização de `C` | `docs/07` §12 item 17 |
 | **Retorno do controle ao bot** | não existe transição inversa de `T31` | não bloqueia | `docs/07` §12 item 16 |
 | **Persistência operacional não volátil** | contrato arbitrado; implementação volátil não sustenta operação real; nenhuma tecnologia escolhida | bloqueia qualquer uso em canal real | `docs/07` §7.3, §7.4, §12 item 2a |
@@ -383,10 +392,12 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
 - **S3-D1** — produtor de `motivo_encerramento` ainda não atribuído; impede completar a
   **condição 8 de `CondicoesCiclo`** e os fluxos que dependem dela;
 - **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL`;
-- **N-b** — **`N-b-RES2`** e a **integração da etapa 4** no ciclo. O **produtor não
-  determinístico deixou de ser a lacuna**: ele está versionado
-  (`docs/07` §6.3, `M-PN1`–`M-PN12`), e **não** converte
-  sinal interpretado em evento confirmado;
+- **N-b** — a **integração da etapa 4** no ciclo. Nem o produtor não determinístico
+  nem **`N-b-RES2`** são mais a lacuna: **ambos estão versionados** (`docs/07` §6.3,
+  `M-PN1`–`M-PN12` e `RES2-1`–`RES2-12`). Continuam **ausentes os demais produtores
+  de evento** — `E09` a partir das causas de S2-D8, `E18` pelo `DetectorHandoff`,
+  `E07`/`E08` pela qualificação e pelo ciclo, `E14` por `S3-D1` — e continua ausente
+  quem **une** eventos de produtores distintos;
 - **N-a** — integração operacional da etapa 13, tratamento dos bloqueios S4/S5 e destino do
   alerta operacional;
 - **limiar temporal** — valor e mecanismo de carga.
