@@ -415,6 +415,49 @@ SINAIS_SEM_EVENTO: dict[str, dict[str, Any]] = {
             IntencaoConversacional.ACEITACAO_DE_INCOMPATIBILIDADE, ALTA
         )
     },
+    # Os oito sinais de handoff de **AJ4** são **neutros em RES2**: quem os
+    # consome é o **`DetectorHandoff`**, fronteira posterior e separada
+    # (`RES2-10`) — e `E18` continua proibido aqui.
+    "pedido_de_condicao_especial": {
+        "intencoes_autonomas": autonoma(
+            IntencaoConversacional.PEDIDO_DE_CONDICAO_ESPECIAL, ALTA
+        )
+    },
+    "pedido_de_confirmacao_de_visita": {
+        "intencoes_autonomas": autonoma(
+            IntencaoConversacional.PEDIDO_DE_CONFIRMACAO_DE_VISITA, ALTA
+        )
+    },
+    "pedido_de_reserva": {
+        "intencoes_autonomas": autonoma(
+            IntencaoConversacional.PEDIDO_DE_RESERVA, ALTA
+        )
+    },
+    "intencao_de_contratar": {
+        "intencoes_autonomas": autonoma(
+            IntencaoConversacional.INTENCAO_DE_CONTRATAR, ALTA
+        )
+    },
+    "pedido_de_cancelamento": {
+        "intencoes_autonomas": autonoma(
+            IntencaoConversacional.PEDIDO_DE_CANCELAMENTO, ALTA
+        )
+    },
+    "pedido_de_alteracao_de_data": {
+        "intencoes_autonomas": autonoma(
+            IntencaoConversacional.PEDIDO_DE_ALTERACAO_DE_DATA, ALTA
+        )
+    },
+    "assunto_juridico_ou_contratual": {
+        "intencoes_autonomas": autonoma(
+            IntencaoConversacional.ASSUNTO_JURIDICO_OU_CONTRATUAL, ALTA
+        )
+    },
+    "reclamacao_ou_tom_hostil": {
+        "intencoes_autonomas": autonoma(
+            IntencaoConversacional.RECLAMACAO_OU_TOM_HOSTIL, ALTA
+        )
+    },
     "continuidade_declarada": {
         "intencoes_autonomas": autonoma(
             IntencaoConversacional.CONTINUIDADE_DE_EVENTO_DECLARADA, ALTA
@@ -639,6 +682,81 @@ def test_sinal_de_encerramento_e_neutro_em_res2(
     )
     assert resultado == ()
     assert Evento.E14 not in resultado
+
+
+#: Os oito sinais de handoff acrescentados ao grupo **A2** por **AJ4**.
+SINAIS_DE_HANDOFF = (
+    IntencaoConversacional.PEDIDO_DE_CONDICAO_ESPECIAL,
+    IntencaoConversacional.PEDIDO_DE_CONFIRMACAO_DE_VISITA,
+    IntencaoConversacional.PEDIDO_DE_RESERVA,
+    IntencaoConversacional.INTENCAO_DE_CONTRATAR,
+    IntencaoConversacional.PEDIDO_DE_CANCELAMENTO,
+    IntencaoConversacional.PEDIDO_DE_ALTERACAO_DE_DATA,
+    IntencaoConversacional.ASSUNTO_JURIDICO_OU_CONTRATUAL,
+    IntencaoConversacional.RECLAMACAO_OU_TOM_HOSTIL,
+)
+
+
+@pytest.mark.parametrize("codigo", SINAIS_DE_HANDOFF, ids=lambda c: c.value)
+@pytest.mark.parametrize("confianca", [ALTA, BAIXA])
+def test_sinal_de_handoff_e_neutro_em_res2(
+    codigo: IntencaoConversacional, confianca: Confianca
+) -> None:
+    """`RES2-10`: `E18` pertence ao `DetectorHandoff`; RES2 não muda por AJ4."""
+    resultado = produzir_eventos_da_interpretacao(
+        interpretacao(intencoes_autonomas=autonoma(codigo, confianca))
+    )
+    assert resultado == ()
+    for proibido in (Evento.E18, Evento.E11, Evento.E17, Evento.E14):
+        assert proibido not in resultado
+
+
+def test_os_oito_sinais_de_handoff_juntos_nao_produzem_evento_algum() -> None:
+    resultado = produzir_eventos_da_interpretacao(
+        interpretacao(
+            intencoes_autonomas=tuple(
+                IntencaoAutonomaRecebida(codigo=codigo, confianca=ALTA)
+                for codigo in SINAIS_DE_HANDOFF
+            )
+        )
+    )
+    assert resultado == ()
+
+
+def test_sinal_de_handoff_nao_altera_os_seis_eventos_produzidos() -> None:
+    """Os sinais de AJ4 são **aditivos e inertes**: a saída não muda."""
+    base = interpretacao(
+        dados_extraidos=DadosExtraidos(
+            tipo_evento="festa fictícia", confianca_tipo_evento=ALTA
+        ),
+        perguntas_comerciais=(pergunta(),),
+    )
+    com_sinais = interpretacao(
+        dados_extraidos=DadosExtraidos(
+            tipo_evento="festa fictícia", confianca_tipo_evento=ALTA
+        ),
+        perguntas_comerciais=(pergunta(),),
+        intencoes_autonomas=tuple(
+            IntencaoAutonomaRecebida(codigo=codigo, confianca=ALTA)
+            for codigo in SINAIS_DE_HANDOFF
+        ),
+    )
+    assert produzir_eventos_da_interpretacao(com_sinais) == (
+        produzir_eventos_da_interpretacao(base)
+    )
+
+
+def test_pedido_de_humano_continua_neutro_em_res2_apos_aj4() -> None:
+    """A exceção de N-b-PH3 pertence ao `DetectorHandoff`, não a RES2."""
+    for confianca in (ALTA, BAIXA):
+        assert (
+            produzir_eventos_da_interpretacao(
+                interpretacao(
+                    pedido_de_humano=True, confianca_pedido_de_humano=confianca
+                )
+            )
+            == ()
+        )
 
 
 def test_os_quatro_sinais_juntos_nao_produzem_evento_algum() -> None:

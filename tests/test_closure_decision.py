@@ -350,6 +350,86 @@ def test_os_outros_tres_motivos_nao_dependem_da_qualificacao(
 
 
 # --------------------------------------------------------------------------
+# D-bis. Os sinais de handoff de AJ4 são neutros em S3-D1
+# --------------------------------------------------------------------------
+
+#: Os oito sinais de handoff acrescentados ao grupo **A2** por **AJ4**.
+SINAIS_DE_HANDOFF = (
+    IntencaoConversacional.PEDIDO_DE_CONDICAO_ESPECIAL,
+    IntencaoConversacional.PEDIDO_DE_CONFIRMACAO_DE_VISITA,
+    IntencaoConversacional.PEDIDO_DE_RESERVA,
+    IntencaoConversacional.INTENCAO_DE_CONTRATAR,
+    IntencaoConversacional.PEDIDO_DE_CANCELAMENTO,
+    IntencaoConversacional.PEDIDO_DE_ALTERACAO_DE_DATA,
+    IntencaoConversacional.ASSUNTO_JURIDICO_OU_CONTRATUAL,
+    IntencaoConversacional.RECLAMACAO_OU_TOM_HOSTIL,
+)
+
+
+@pytest.mark.parametrize("codigo", SINAIS_DE_HANDOFF, ids=lambda c: c.value)
+@pytest.mark.parametrize("confianca", [ALTA, BAIXA])
+@pytest.mark.parametrize("resultado_q", list(ResultadoQualificacao), ids=lambda r: r.value)
+def test_sinal_de_handoff_nao_produz_encerramento(
+    codigo: IntencaoConversacional,
+    confianca: Confianca,
+    resultado_q: ResultadoQualificacao,
+) -> None:
+    """AJ4 não toca S3-D1: `E14` continua vindo só dos quatro sinais de AJ3."""
+    assert decidir_encerramento(com_sinais((codigo, confianca)), resultado_q) is None
+
+
+def test_os_oito_sinais_de_handoff_juntos_nao_encerram() -> None:
+    alvo = com_sinais(*((codigo, ALTA) for codigo in SINAIS_DE_HANDOFF))
+    assert decidir_encerramento(alvo, INCOMPATIVEL) is None
+
+
+@pytest.mark.parametrize("sinal", SINAIS, ids=lambda c: c.value)
+def test_sinal_de_handoff_nao_conta_no_conjunto_de_encerramento(
+    sinal: IntencaoConversacional,
+) -> None:
+    """Os oito não entram em `S`: um único sinal de AJ3 continua resolvendo."""
+    alvo = com_sinais(
+        (sinal, ALTA), *((codigo, ALTA) for codigo in SINAIS_DE_HANDOFF)
+    )
+    resultado = decidir_encerramento(alvo, INCOMPATIVEL)
+    assert resultado is not None
+    assert resultado.motivo is MOTIVO_ESPERADO[sinal]
+
+
+def test_sinal_de_handoff_nao_altera_o_conflito_fail_closed() -> None:
+    """Dois sinais de AJ3 continuam fail-closed, com ou sem os de AJ4."""
+    base = com_sinais((DESINTERESSE, ALTA), (SPAM, ALTA))
+    com_handoff = com_sinais(
+        (DESINTERESSE, ALTA),
+        (SPAM, ALTA),
+        *((codigo, ALTA) for codigo in SINAIS_DE_HANDOFF),
+    )
+    assert decidir_encerramento(base, INCOMPATIVEL) is None
+    assert decidir_encerramento(com_handoff, INCOMPATIVEL) is None
+
+
+@pytest.mark.parametrize("resultado_q", NAO_INCOMPATIVEIS, ids=lambda r: r.value)
+def test_sinal_de_handoff_nao_altera_o_gate_de_incompatibilidade(
+    resultado_q: ResultadoQualificacao,
+) -> None:
+    """O *gate* continua exigindo `INCOMPATIVEL`, com ou sem sinais de AJ4."""
+    alvo = com_sinais(
+        (ACEITACAO, ALTA), *((codigo, ALTA) for codigo in SINAIS_DE_HANDOFF)
+    )
+    assert decidir_encerramento(alvo, resultado_q) is None
+    assert decidir_encerramento(alvo, INCOMPATIVEL) is not None
+
+
+def test_pedido_de_humano_nao_produz_encerramento() -> None:
+    """A exceção de N-b-PH3 pertence ao `DetectorHandoff`, não a S3-D1."""
+    for confianca in (ALTA, BAIXA):
+        alvo = interpretacao(
+            pedido_de_humano=True, confianca_pedido_de_humano=confianca
+        )
+        assert decidir_encerramento(alvo, INCOMPATIVEL) is None
+
+
+# --------------------------------------------------------------------------
 # E. Validação e erros (S3D1-4)
 # --------------------------------------------------------------------------
 

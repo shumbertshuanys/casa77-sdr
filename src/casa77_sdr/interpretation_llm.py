@@ -91,10 +91,10 @@ _CAMPOS: tuple[str, ...] = tuple(
 #: Os **54** valores de `AssuntoComercial` (AJ2, M-AJ2-1), em ordem documental.
 _ASSUNTOS: tuple[str, ...] = tuple(item.value for item in AssuntoComercial)
 
-#: Os **nove** códigos admissíveis no slot autônomo (AJ1-3, ampliado por
-#: **AJ3**: seis **A2** e três **B**). Derivados do conjunto fechado do domínio e
-#: ordenados pela declaração do enum, para que o schema não possa divergir da
-#: partição A1 / A2 / B.
+#: Os **dezessete** códigos admissíveis no slot autônomo (AJ1-3, ampliado por
+#: **AJ3** e por **AJ4**: quatorze **A2** e três **B**). Derivados do conjunto
+#: fechado do domínio e ordenados pela declaração do enum, para que o schema não
+#: possa divergir da partição A1 / A2 / B.
 _AUTONOMOS: tuple[str, ...] = tuple(
     item.value
     for item in IntencaoConversacional
@@ -237,11 +237,12 @@ def gerar_schema_interpretacao() -> dict[str, Any]:
     confiança.
 
     Os enums são **derivados do domínio em tempo de importação** — 2 confianças,
-    2 formatos, 6 campos, 54 assuntos e 9 códigos autônomos —, nunca escritos à
-    mão: o schema não pode divergir do vocabulário aprovado. A ampliação **AJ3**
-    do slot autônomo, de cinco para nove códigos, **não altera** a estrutura: as
-    **11** uniões, os **13** `ConfidenceSlot`, as **nove** propriedades da raiz e
-    a profundidade **5** permanecem — só a **cardinalidade do enum** muda.
+    2 formatos, 6 campos, 54 assuntos e 17 códigos autônomos —, nunca escritos à
+    mão: o schema não pode divergir do vocabulário aprovado. As ampliações do slot
+    autônomo — **AJ3**, de cinco para nove códigos, e **AJ4**, de nove para
+    dezessete — **não alteram** a estrutura: as **11** uniões, os **13**
+    `ConfidenceSlot`, as **nove** propriedades da raiz e a profundidade **5**
+    permanecem — só a **cardinalidade do enum** muda.
     """
     dados: dict[str, Any] = {}
     for campo in _CAMPOS:
