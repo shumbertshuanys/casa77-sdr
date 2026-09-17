@@ -187,6 +187,28 @@ Consequências:
   qualificação, e reconfirmar um resultado já vigente não é mutação;
 - `E07` é **consumido uma única vez por ciclo** (§4.2, família C8).
 
+**Produtor de `E07`.** A semântica acima **não muda**, e agora ela tem produtor
+determinístico concreto: `src/casa77_sdr/cycle_events.py`, com o contrato vivo em
+`docs/07` §6.3 (`CIE-1`–`CIE-10`). Ele ocorre **depois** da qualificação, **fora** dela,
+e apenas **converte** os dois fatos já decididos — o booleano
+`insumo_qualificacao_atualizado` (§4.1) e o `resultado_qualificacao` — no evento. Ele
+**não decide a mutação** e **não recalcula a qualificação**. A precedência do §4 e o
+consumo único da §4.2 **continuam sendo da máquina**.
+
+#### `E08` — regra incompatível detectada
+
+`E08` chega à máquina **pronto**: a incompatibilidade objetiva **já foi calculada** pelo
+`Qualificador`, e a máquina **lê a classificação, não a recalcula** (I20).
+
+**Produtor de `E08`.** Ele tem produtor determinístico concreto no mesmo
+`src/casa77_sdr/cycle_events.py` (`docs/07` §6.3, `CIE-1`–`CIE-10`), a partir da
+`Qualificacao`: o evento é confirmado **se e somente se** o
+`resultado_qualificacao` for `incompativel`. O produtor **não relê o YAML**, **não
+recalcula incompatibilidade**, **não cria `Violacao`** e **não classifica** o motivo entre
+**T05/T22** e **T06/T23** — essa **precedência entre classes** continua sendo da máquina
+(§3, arbitragem S3), e **nenhum sinal adicional** de "incompatibilidade detectada" é
+criado.
+
 #### `E09` — pendência determinística já confirmada
 
 `E09` chega à máquina **pronto**: pendência determinística **já detectada e já
@@ -202,10 +224,22 @@ pendência.
 O produtor das **causas** de `E09` é **S2-D8** (§11; `docs/07` §4.4.1, §4.4.3), **já
 materializado** em `src/casa77_sdr/coverage_decision.py`. Ele **não** é o `CarregadorYaml`,
 **não** é o `ValidadorYaml`, **não** é o `SeletorFatos` e **não** é o `Qualificador`.
-**S2-D8 não cria nem confirma `Evento.E09`**: ela produz **causas estruturadas** que
-**podem** confirmá-lo, e a **conversão em evento** permanece **pendente** da integração
-futura pelo `OrquestradorMotor`. O estado de materialização vive em
-`docs/00-estado-atual.md`, confrontado com a `main`.
+**S2-D8 continua não criando nem confirmando `Evento.E09`**: ela produz **causas
+estruturadas** que **podem** confirmá-lo.
+
+A **conversão das causas em `Evento.E09`** tem produtor determinístico concreto:
+`src/casa77_sdr/cycle_events.py` (`docs/07` §6.3, `CIE-1`–`CIE-10`), fronteira
+**posterior e separada** de S2-D8. Ela confirma **um único** `E09` **se e somente se** as
+causas forem **não vazias** — `resposta_aprovada_disponivel` falso **não basta**, e
+`pendencia_impeditiva` verdadeiro **não basta** sem causa correspondente. Ela **não
+reconstrói, não deduplica e não reinterpreta** causa alguma.
+
+A **classificação impeditiva × acessória** continua sendo produzida por **S2-D8** e chega
+à máquina **separadamente**, como a condição estruturada `pendencia_impeditiva` — as
+`causas_e09` **não a acompanham** e **não integram `CondicoesCiclo`**. A **montagem** de
+`CondicoesCiclo` e a **união** dos eventos de produtores distintos continuam **pendentes**
+do `OrquestradorMotor`. O estado de materialização vive em `docs/00-estado-atual.md`,
+confrontado com a `main`.
 
 **Os dois eixos que compõem `E09`** (arbitragem S2-D8). Os dois casos (a) e (b) acima
 correspondem a **dois eixos semanticamente independentes**, avaliados **a montante**:
@@ -818,7 +852,7 @@ caminhos **distintos e não concorrentes**:
 
 | Gatilhos do doc 04 | Caminho | Produtor |
 |---|---|---|
-| 1–2 — pergunta sem resposta aprovada; campo `null`/`pendente` | `E09`, já classificado em impeditivo × acessório | **S2-D8** (§11): o contrato existe, com os **eixos A e B**, e o **produtor determinístico está materializado** em `src/casa77_sdr/coverage_decision.py`. Ele produz as **causas** que podem confirmar `E09`; **confirmar o evento** pertence à **integração futura**, ainda pendente |
+| 1–2 — pergunta sem resposta aprovada; campo `null`/`pendente` | `E09`, já classificado em impeditivo × acessório | **S2-D8** (§11): o contrato existe, com os **eixos A e B**, e o **produtor determinístico está materializado** em `src/casa77_sdr/coverage_decision.py`. Ele produz as **causas** que podem confirmar `E09`; **confirmar o evento** pertence à fronteira **posterior e separada** `src/casa77_sdr/cycle_events.py` (§2.2; `docs/07` §6.3, `CIE-1`–`CIE-10`), hoje **materializada**. A **integração ao ciclo** continua pendente |
 | 3–10 — desconto/condição especial, **confirmação de visita**, **confirmação de reserva**, contratação, cancelamento, alteração de data, assunto jurídico ou contratual, pedido explícito de humano, reclamação ou tom hostil | `E18` com motivo (§2.1) | `DetectorHandoff` |
 | 11–12 — `qualificado_com_ressalva` ou `indefinido`; coleta concluída e lead qualificado | **transições da §3**: T08, T13, T21, T40 e os caminhos de `E09` aplicáveis | `MaquinaEstados` |
 
@@ -905,7 +939,7 @@ Escopo do contrato, agora **arbitrado**:
 | detectar ausência de resposta aprovada |
 | classificar a pendência em **impeditiva × acessória** |
 | fornecer os identificadores técnicos ao `Qualificador` (`pendencias_impeditivas`) |
-| produzir as **causas estruturadas** que **podem** confirmar `E09` — **sem** criar nem confirmar o evento |
+| produzir as **causas estruturadas** que **podem** confirmar `E09` — **sem** criar nem confirmar o evento, que é convertido pela fronteira posterior `src/casa77_sdr/cycle_events.py` (§2.2) |
 | fornecer à `MaquinaEstados` a condição estruturada `resposta_aprovada_disponivel` (ampliação S3) |
 
 ### Os dois eixos
