@@ -32,7 +32,9 @@ própria — `Exx`, `Txx`, `Rxx`, `Qualificacao`, `Violacao`, `Estado`, pendênc
 §4.4 **produzida aqui**. As condições **2** e **4** pertencem a **S2-D8**
 (§4.4.1, eixos **A** e **B**), cujo produtor vive em **fronteira própria e
 separada**: **nada neste módulo as produz**, e este módulo **não** a conhece
-operacionalmente. A condição **8** continua **NÃO ATRIBUÍDA** (**S3-D1**).
+operacionalmente. A condição **8** tem produtor em **S3-D1**
+(`closure_decision.py`), fronteira **posterior e separada**: **nada neste módulo
+a produz**, e este módulo **não** a conhece.
 
 Erros de contrato **bloqueiam na fronteira**: nenhuma `Interpretacao` canônica é
 produzida e nenhuma projeção existe. As duas famílias são **distintas**: **tipo
@@ -42,6 +44,20 @@ mensagem. Daí a separação entre **ausência** e **tipo**: confiança ausente 
 ela é exigida é `E-Nb-1` — e `confianca_global` ausente é `E-Nb-4` —, enquanto
 uma confiança de **tipo errado** é `TypeError`. **Nenhuma exceção pública nova é
 criada** (AJ1).
+
+**Extensão AJ3 materializada.** `IntencaoConversacional` passa de **11** para
+**15** valores: o grupo **A2** vai de **dois** para **seis** com
+`DESINTERESSE_DECLARADO`, `CONTATO_POR_ENGANO`, `MENSAGEM_NAO_SOLICITADA` e
+`ACEITACAO_DE_INCOMPATIBILIDADE`, e o **slot autônomo** passa de **cinco** para
+**nove** códigos. `_CODIGOS_A1` **não muda**; **A1 = 6**, **A2 = 6**, **B = 3**.
+Os quatro sinais são intenções autônomas **normais** — confiança obrigatória,
+`ALTA` e `BAIXA` admitidas, validação vigente, ordem canônica, **sem payload
+paralelo** e **sem campo novo** em `Interpretacao`. **Nenhuma exclusão mútua
+nova** é criada: uma `Interpretacao` canônica pode conter mais de um deles, e o
+conflito é resolvido **fora daqui**, em **S3-D1**. **Nenhum `E-Nb` novo**,
+nenhuma exceção pública nova, e `ProjecaoInterpretacao` continua com **sete**
+campos. A etapa 4 continua **proibida** de produzir `E14` e
+`motivo_encerramento`.
 
 **Delta AJ2 materializado.** `PerguntaComercial` tem **três** campos — `texto`,
 `confianca` e `assunto` —, com `assunto` **obrigatório** do vocabulário fechado
@@ -95,15 +111,26 @@ __all__ = [
 
 
 class IntencaoConversacional(StrEnum):
-    """Vocabulário conceitual **fechado em 11 valores** (N-b-c, N-b-X6).
+    """Vocabulário conceitual **fechado em 15 valores** (N-b-c, N-b-X6, AJ3).
 
     A ordem de declaração é a **ordem canônica** de `intencoes_detectadas` e
     existe **apenas para auditabilidade**: ela **não** estabelece precedência
     semântica alguma (AJ1-A1e).
 
     Partição obrigatória: **A1** — seis códigos **derivados** dos payloads
-    autoritativos; **A2** — dois autônomos mapeáveis a evento; **B** — três
+    autoritativos; **A2** — seis autônomos mapeáveis a evento; **B** — três
     autônomos não mapeáveis diretamente a evento.
+
+    **AJ3** amplia **somente** o grupo **A2**, de dois para seis, com os quatro
+    sinais de **encerramento originados da interpretação do interessado**. Eles
+    são intenções autônomas **normais**: entram pelo slot autônomo vigente,
+    carregam confiança, aceitam `ALTA` e `BAIXA` e obedecem à validação vigente.
+    **`_CODIGOS_A1` não muda** e **nenhum código A1 passa a ser autônomo**.
+
+    Relatar o sinal **não é** decidir o encerramento: a etapa 4 continua
+    **proibida** de produzir `E14` e `motivo_encerramento` (N-b-G2, E-Nb-19).
+    Quem decide é a fronteira **posterior e separada** **S3-D1**
+    (`closure_decision.py`), que este módulo **não** conhece.
     """
 
     # A1 — derivados (6)
@@ -113,9 +140,13 @@ class IntencaoConversacional(StrEnum):
     FORMATO_INFORMADO = "formato_informado"
     PERGUNTA_COMERCIAL = "pergunta_comercial"
     PEDIDO_DE_HUMANO = "pedido_de_humano"
-    # A2 — autônomos mapeáveis a evento (2)
+    # A2 — autônomos mapeáveis a evento (6)
     INTERESSE_EM_VISITA = "interesse_em_visita"
     EXCECAO_SOLICITADA = "excecao_solicitada"
+    DESINTERESSE_DECLARADO = "desinteresse_declarado"
+    CONTATO_POR_ENGANO = "contato_por_engano"
+    MENSAGEM_NAO_SOLICITADA = "mensagem_nao_solicitada"
+    ACEITACAO_DE_INCOMPATIBILIDADE = "aceitacao_de_incompatibilidade"
     # B — autônomos não mapeáveis diretamente a evento (3)
     INTERESSE_CONFIRMAR_DISPONIBILIDADE = "interesse_confirmar_disponibilidade"
     CONTINUIDADE_DE_EVENTO_DECLARADA = "continuidade_de_evento_declarada"
@@ -134,11 +165,17 @@ _CODIGOS_A1: frozenset[IntencaoConversacional] = frozenset(
     }
 )
 
-#: Vocabulário fechado admissível no **slot de intenções autônomas** (AJ1-3).
+#: Vocabulário fechado admissível no **slot de intenções autônomas** (AJ1-3,
+#: ampliado por **AJ3** de cinco para **nove**): os **seis** códigos **A2** mais
+#: os **três** códigos **B**. Nenhum código **A1** entra aqui.
 _CODIGOS_AUTONOMOS: frozenset[IntencaoConversacional] = frozenset(
     {
         IntencaoConversacional.INTERESSE_EM_VISITA,
         IntencaoConversacional.EXCECAO_SOLICITADA,
+        IntencaoConversacional.DESINTERESSE_DECLARADO,
+        IntencaoConversacional.CONTATO_POR_ENGANO,
+        IntencaoConversacional.MENSAGEM_NAO_SOLICITADA,
+        IntencaoConversacional.ACEITACAO_DE_INCOMPATIBILIDADE,
         IntencaoConversacional.INTERESSE_CONFIRMAR_DISPONIBILIDADE,
         IntencaoConversacional.CONTINUIDADE_DE_EVENTO_DECLARADA,
         IntencaoConversacional.EVENTO_NOVO_DECLARADO,
@@ -363,10 +400,10 @@ class TrechoAmbiguoRecebido:
 class IntencaoAutonomaRecebida:
     """Intenção **autônoma** como recebida do produtor não determinístico.
 
-    O slot aceita **exatamente** os cinco códigos **A2/B** (AJ1-3). Apresentar
-    um código **A1** aqui é rejeitado: **com** confiança declarada → `E-Nb-3`;
-    **sem** confiança → `E-Nb-5` (AJ1, casos A e B). Isso **não** torna `A1`
-    entrada válida — ambos bloqueiam antes da canonicalização.
+    O slot aceita **exatamente** os nove códigos **A2/B** (AJ1-3, ampliado por
+    **AJ3**). Apresentar um código **A1** aqui é rejeitado: **com** confiança
+    declarada → `E-Nb-3`; **sem** confiança → `E-Nb-5` (AJ1, casos A e B). Isso
+    **não** torna `A1` entrada válida — ambos bloqueiam antes da canonicalização.
     """
 
     codigo: IntencaoConversacional
@@ -1160,7 +1197,7 @@ def decidir_interesse_confirmar_disponibilidade(
 
     Esta é a **única** condição de §4.4 produzida por este módulo (N-b-G3). As
     condições **2** e **4** pertencem à fronteira **S2-D8**; a condição **8**
-    permanece **não atribuída** (**S3-D1**).
+    pertence a **S3-D1**, fronteira posterior e separada.
 
     Quando não é `None`, a `Interpretacao` é **verificada como canônica válida**
     antes de produzir a condição: uma instância inválida **não atravessa** e

@@ -54,6 +54,16 @@ exclusivamente em `knowledge/casa77.yaml`.
   saída **fechada** em `E02`/`E03`/`E04`/`E05`/`E06`/`E10` e `ALTA` confirmando,
   `BAIXA` não. **`E09`, `E11`, `E17` e `E18` permanecem fora dele**, e ele **não faz a
   integração do ciclo**, que **continua pendente**.
+- **Fora de `C`**, o **produtor determinístico de `E14` e do `motivo_encerramento`**
+  — **`S3-D1`** — está **materializado LOCALMENTE nesta entrega candidata**, **ainda
+  não versionado**, em `src/casa77_sdr/closure_decision.py`, com o contrato vivo em
+  `docs/07` §6.3 (`S3D1-1`–`S3D1-12`) e a extensão semântica **AJ3**. Ele converte os
+  **quatro sinais de encerramento interpretados** em `E14` mais um dos **quatro**
+  motivos de T35, **somente** quando existe **um único** sinal de confiança `ALTA` —
+  dois ou mais são **fail-closed** —, e `INCOMPATIBILIDADE_ACEITA` exige
+  **cumulativamente** `ResultadoQualificacao.INCOMPATIVEL`. A fronteira é **agnóstica
+  ao estado**, **não conhece `E18`** e **não faz a integração do ciclo**, que
+  **continua pendente**.
 - Etapa 4 permanece **absorvida pela Etapa 3B**; etapas 5 a 10 permanecem futuras
   (`docs/05-roadmap.md`).
 
@@ -62,6 +72,10 @@ exclusivamente em `knowledge/casa77.yaml`.
 ## 2. Última entrega funcional relevante
 
 Commit funcional `8c9b80d76655db05b73ab59230fdfe49e8b34b25`.
+
+**A última entrega funcional VERSIONADA continua sendo `N-b-RES2`.** A materialização de
+**`S3-D1`** descrita em §1 é **local e candidata**: ela **não possui commit** e, portanto,
+**não é estado versionado do projeto** enquanto não for auditada e integrada.
 
 **`N-b-RES2` materializado** — o produtor determinístico de **eventos derivados
 da `Interpretacao`**, em `src/casa77_sdr/interpretation_events.py`, com o
@@ -110,14 +124,16 @@ e o mapa `knowledge/mapa-cobertura.yaml` com a associação total dos **54**
 materializada:
 
 - Python **3.14.5**;
-- **`7978 passed`**, sob **`-W error`**;
-- zero failures, zero errors, zero warnings, zero skips.
+- **`8234 passed`**, sob **`-W error`**;
+- zero failures, zero errors, zero warnings, zero skips, zero xfails.
 
-O baseline anterior era **`7112`**. O acréscimo de **866** vem de **`N-b-RES2`**, e a
-maior parte dele é a matriz de compatibilidade com a `MaquinaEstados`: **63**
-subconjuntos não vazios dos seis eventos **× 8** estados = **504** combinações,
-mais os cenários de mapeamento, de canonicidade, de eventos proibidos e de
-pureza. `tests/test_interpretation.py` e `tests/test_state_machine.py` permanecem
+Este é o **baseline local da entrega candidata `S3-D1`**, ainda **não versionado**. O
+baseline **versionado** é o de `N-b-RES2`: **`7978 passed`**. O acréscimo de **256** vem
+de **`S3-D1`** e de **AJ3**: os cenários de `tests/test_closure_decision.py` — mapeamento,
+cardinalidade fail-closed, *gate* de incompatibilidade, invariante de `E14`, pureza e
+composição com a `MaquinaEstados` —, mais a ampliação das parametrizações já existentes
+sobre o slot autônomo, que passou de **cinco** para **nove** códigos.
+`tests/test_state_machine.py` e `tests/test_interpretation_anthropic.py` permanecem
 **inalterados** e continuam as autoridades das suas próprias fronteiras.
 
 CI configurada em GitHub Actions, em `.github/workflows/ci.yml`, com Python **3.13** e **3.14**.
@@ -358,7 +374,7 @@ código; o contrato vive em `docs/07` §2.3.
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
 | **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado e **materializado**: infraestrutura estrutural de `R2` (`coverage_map.py`, `coverage_map_load.py`; §4.4.2), **produtor determinístico** (`coverage_decision.py`; §4.4.3), **aplicabilidade de pacote** (`pricing_applicability.py`; §4.4.4) e o **artefato físico** `knowledge/mapa-cobertura.yaml`, com **54/54** assuntos — **33** com cobertura e **21** vazios. Cobertos os eixos **A** e **B**, **`D8-F`**, Classe I/II, os *gates* de **`R05`** e de **preço (`D8-G`)**, **`D8-L4`**, ***witnesses***, `fragmentos_autorizados`, `pendencias_resposta` e **causas** de `E09`. O **conteúdo de `R2` foi concluído nesta capacidade**, e S2-D8 + `R2` **decidem cobertura** quando recebem as entradas estruturadas. **Ainda ausente**: a **integração do ciclo**, externa a esta pendência, que converte causa em **`Evento.E09`** e faz a decisão correr **dentro do ciclo** | **deixou de bloquear**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4.1, §4.4.2, §4.4.3, §4.4.4, §12 item 10; `docs/06` §11 |
-| **S3-D1** — produtor da condição `motivo_encerramento` | produtor **não atribuído** | impede completar a **condição 8 de `CondicoesCiclo`** e os fluxos que dependem dela na integração completa | `docs/07` §4.4, §12 item 10 |
+| **S3-D1** — produtor da condição `motivo_encerramento` | produtor **atribuído e materializado LOCALMENTE nesta entrega candidata**, **não versionado**: `src/casa77_sdr/closure_decision.py`, contrato vivo em `docs/07` §6.3 (`S3D1-1`–`S3D1-12`), com a extensão semântica **AJ3**. **Pendente**: a **integração ao ciclo**, que liga `E14` e o motivo produzidos à `MaquinaEstados` | **deixou de ser a ausência de produtor**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4, §6.3, §12 itens 10 e 23 |
 | **E1** — conversa × atendimento × lead | não arbitrada; atravessa identidade, persistência e registro de leads | não bloqueia a especificação vigente | `docs/07` §12 item 13 |
 | **E3** — evento novo durante atendimento ativo | aberta; contrato vigente é conservador (`AMBIGUA`) | não bloqueia | `docs/07` §12 item 14 |
 | **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL` | aberta; o ciclo encerra sem transição | bloqueia o `OrquestradorMotor` | `docs/07` §12 item 15 |
@@ -389,15 +405,18 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
   residual da etapa 10**, as **ações produzidas por chamadas posteriores da
   `MaquinaEstados`** e a **integração completa pelo `OrquestradorMotor`** (`docs/07` §12,
   item 22);
-- **S3-D1** — produtor de `motivo_encerramento` ainda não atribuído; impede completar a
-  **condição 8 de `CondicoesCiclo`** e os fluxos que dependem dela;
+- **S3-D1** — o **produtor** deixou de ser a lacuna: ele está **materializado localmente**
+  nesta entrega candidata e **ainda não versionado**. O bloqueio restante é a
+  **integração ao ciclo**, que converte o `E14` e o `motivo_encerramento` produzidos em
+  insumo efetivo da `MaquinaEstados`;
 - **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL`;
 - **N-b** — a **integração da etapa 4** no ciclo. Nem o produtor não determinístico
   nem **`N-b-RES2`** são mais a lacuna: **ambos estão versionados** (`docs/07` §6.3,
   `M-PN1`–`M-PN12` e `RES2-1`–`RES2-12`). Continuam **ausentes os demais produtores
   de evento** — `E09` a partir das causas de S2-D8, `E18` pelo `DetectorHandoff`,
-  `E07`/`E08` pela qualificação e pelo ciclo, `E14` por `S3-D1` — e continua ausente
-  quem **une** eventos de produtores distintos;
+  `E07`/`E08` pela qualificação e pelo ciclo. **`E14` deixou de faltar**: o seu produtor
+  — **`S3-D1`** — está materializado **localmente**, e **continua ausente** quem **une**
+  eventos de produtores distintos;
 - **N-a** — integração operacional da etapa 13, tratamento dos bloqueios S4/S5 e destino do
   alerta operacional;
 - **limiar temporal** — valor e mecanismo de carga.
@@ -430,9 +449,9 @@ estruturada** em **`Evento.E09`**.
 
 **Integrar não é a próxima ação imediata**, porque a integração depende de pendências que
 **este mesmo snapshot** ainda registra como abertas em §5 e §6 — entre elas **N-b**, **E4**,
-**S3-D1**, as matérias residuais de **N-a** e o **limiar temporal**, o **destino do alerta
-operacional**, as **superfícies conversacionais sem unidade aprovada** e, para uso em canal
-real, a **persistência operacional não volátil**.
+a **integração ao ciclo de `S3-D1`**, as matérias residuais de **N-a** e o **limiar
+temporal**, o **destino do alerta operacional**, as **superfícies conversacionais sem
+unidade aprovada** e, para uso em canal real, a **persistência operacional não volátil**.
 
 **A ordem em que elas serão fechadas não é decidida aqui** — este arquivo é snapshot, não
 plano —, e cada frente será aberta por **novo mandato específico**.

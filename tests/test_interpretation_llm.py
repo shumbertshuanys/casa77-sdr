@@ -272,9 +272,71 @@ def test_todo_objeto_fecha_additional_properties() -> None:
 
 
 def test_uniao_tem_exatamente_onze_parametros_e_cabe_no_teto() -> None:
+    """**11 uniões** é estrutura de *union types*, não cardinalidade de intenção."""
     unioes = [no for no in nos(gerar_schema_interpretacao()) if e_uniao(no)]
     assert len(unioes) == 11
     assert len(unioes) <= 16
+
+
+def test_as_onze_unioes_nao_sao_a_cardinalidade_de_intencao_conversacional() -> None:
+    """Os dois conceitos são distintos: 11 uniões × 15 `IntencaoConversacional`."""
+    schema = gerar_schema_interpretacao()
+    unioes = [no for no in nos(schema) if e_uniao(no)]
+    assert len(unioes) == 11
+    assert len(list(IntencaoConversacional)) == 15
+    assert len(unioes) != len(list(IntencaoConversacional))
+    # Ampliar o enum autônomo **não** move a estrutura: nenhuma união vive na
+    # posição do código autônomo.
+    codigo = schema["properties"]["intencoes_autonomas"]["items"]["properties"][
+        "codigo"
+    ]
+    assert not e_uniao(codigo)
+    assert len(codigo["enum"]) == 9
+
+
+def test_o_enum_autonomo_e_derivado_do_dominio_e_nao_redigitado() -> None:
+    """AJ3-7: o schema deriva `_CODIGOS_AUTONOMOS`, em ordem de declaração."""
+    from casa77_sdr import interpretation as dominio
+
+    codigo = gerar_schema_interpretacao()["properties"]["intencoes_autonomas"][
+        "items"
+    ]["properties"]["codigo"]["enum"]
+    esperado = [
+        item.value
+        for item in IntencaoConversacional
+        if item in dominio._CODIGOS_AUTONOMOS
+    ]
+    assert codigo == esperado
+    assert len(codigo) == len(dominio._CODIGOS_AUTONOMOS) == 9
+
+    # Nenhum literal do vocabulário autônomo é escrito à mão no módulo.
+    fonte = (
+        Path(__file__).resolve().parents[1]
+        / "src"
+        / "casa77_sdr"
+        / "interpretation_llm.py"
+    ).read_text(encoding="utf-8")
+    for valor in esperado:
+        assert f'"{valor}"' not in fonte
+
+
+def test_os_quatro_sinais_de_encerramento_entram_pelo_slot_autonomo() -> None:
+    """AJ3-2/AJ3-3: eles são autônomos, e nenhum código A1 vira autônomo."""
+    from casa77_sdr import interpretation as dominio
+
+    codigo = set(
+        gerar_schema_interpretacao()["properties"]["intencoes_autonomas"]["items"][
+            "properties"
+        ]["codigo"]["enum"]
+    )
+    novos = {
+        IntencaoConversacional.DESINTERESSE_DECLARADO.value,
+        IntencaoConversacional.CONTATO_POR_ENGANO.value,
+        IntencaoConversacional.MENSAGEM_NAO_SOLICITADA.value,
+        IntencaoConversacional.ACEITACAO_DE_INCOMPATIBILIDADE.value,
+    }
+    assert novos <= codigo
+    assert codigo.isdisjoint({item.value for item in dominio._CODIGOS_A1})
 
 
 def test_as_onze_unioes_estao_nas_posicoes_nomeadas() -> None:
@@ -374,7 +436,7 @@ def test_tamanho_dos_vocabularios_derivados() -> None:
         )
         == 54
     )
-    assert len(props["intencoes_autonomas"]["items"]["properties"]["codigo"]["enum"]) == 5
+    assert len(props["intencoes_autonomas"]["items"]["properties"]["codigo"]["enum"]) == 9
 
 
 def test_o_schema_nao_possui_slot_de_codigos_a1() -> None:

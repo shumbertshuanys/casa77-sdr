@@ -364,8 +364,14 @@ Notas:
   **despedida** existe **somente** para `SEM_INTERESSE`; para `ENGANO`, `SPAM` e
   `INCOMPATIBILIDADE_ACEITA`, T35 encerra **sem obrigar despedida automática**. O texto de
   despedida permanece fora desta máquina e continua dependendo de aprovação humana — nada
-  em `knowledge/` é alterado para resolver isso. O produtor do motivo **não é atribuído**:
-  ver a pendência **S3-D1** em `docs/00-estado-atual.md`.
+  em `knowledge/` é alterado para resolver isso. O produtor do motivo **deixou de estar não
+  atribuído**: a fronteira concreta é **S3-D1** (`docs/07` §4.4, §6.3), que produz `E14` e o
+  motivo estruturado a partir da interpretação do interessado. Ela ocorre **depois da etapa
+  4 e fora dela** — a **etapa 4 não produz `E14` nem `motivo_encerramento`** —, e **nada
+  nesta máquina muda por causa disso**: estados, `E01`–`E18`, `T01`–`T41`, guardas,
+  `P1`–`P6`, `N1`–`N4`, ações e precedências permanecem exatamente como estão. A máquina
+  continua **recebendo** o motivo já estruturado. O estado corrente da materialização vive
+  em `docs/00-estado-atual.md`.
 
 ## 4. Ordem de processamento de uma mensagem
 

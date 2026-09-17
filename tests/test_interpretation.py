@@ -173,39 +173,201 @@ def agregacao_de_referencia(confiancas: tuple[Confianca, ...]) -> Confianca:
 
 
 # --------------------------------------------------------------------------
-# A. Vocabulário — IntencaoConversacional com exatamente 11 valores
+# A. Vocabulário — IntencaoConversacional com exatamente 15 valores (AJ3)
 # --------------------------------------------------------------------------
 
+#: Partição documental de `docs/07` §6.3 após **AJ3**: **A1 = 6**, **A2 = 6**,
+#: **B = 3**. A ordem abaixo é a **ordem documental**, e é ela que a ordem de
+#: declaração do enum precisa reproduzir.
+A1_DOCUMENTAL = [
+    IntencaoConversacional.TIPO_EVENTO_INFORMADO,
+    IntencaoConversacional.DATA_INFORMADA,
+    IntencaoConversacional.CONVIDADOS_INFORMADOS,
+    IntencaoConversacional.FORMATO_INFORMADO,
+    IntencaoConversacional.PERGUNTA_COMERCIAL,
+    IntencaoConversacional.PEDIDO_DE_HUMANO,
+]
+A2_DOCUMENTAL = [
+    IntencaoConversacional.INTERESSE_EM_VISITA,
+    IntencaoConversacional.EXCECAO_SOLICITADA,
+    IntencaoConversacional.DESINTERESSE_DECLARADO,
+    IntencaoConversacional.CONTATO_POR_ENGANO,
+    IntencaoConversacional.MENSAGEM_NAO_SOLICITADA,
+    IntencaoConversacional.ACEITACAO_DE_INCOMPATIBILIDADE,
+]
+B_DOCUMENTAL = [
+    IntencaoConversacional.INTERESSE_CONFIRMAR_DISPONIBILIDADE,
+    IntencaoConversacional.CONTINUIDADE_DE_EVENTO_DECLARADA,
+    IntencaoConversacional.EVENTO_NOVO_DECLARADO,
+]
 
-def test_intencao_conversacional_tem_exatamente_onze_valores() -> None:
-    assert len(list(IntencaoConversacional)) == 11
+#: Os quatro sinais que **AJ3** acrescenta ao grupo **A2**.
+SINAIS_DE_ENCERRAMENTO = [
+    IntencaoConversacional.DESINTERESSE_DECLARADO,
+    IntencaoConversacional.CONTATO_POR_ENGANO,
+    IntencaoConversacional.MENSAGEM_NAO_SOLICITADA,
+    IntencaoConversacional.ACEITACAO_DE_INCOMPATIBILIDADE,
+]
+
+
+def test_intencao_conversacional_tem_exatamente_quinze_valores() -> None:
+    """AJ3-1: o vocabulário passa de 11 para 15, e continua fechado."""
+    assert len(list(IntencaoConversacional)) == 15
 
 
 def test_particao_a1_a2_b_e_fechada_e_exata() -> None:
-    a1 = [
-        IntencaoConversacional.TIPO_EVENTO_INFORMADO,
-        IntencaoConversacional.DATA_INFORMADA,
-        IntencaoConversacional.CONVIDADOS_INFORMADOS,
-        IntencaoConversacional.FORMATO_INFORMADO,
-        IntencaoConversacional.PERGUNTA_COMERCIAL,
-        IntencaoConversacional.PEDIDO_DE_HUMANO,
-    ]
-    a2 = [
+    assert len(A1_DOCUMENTAL) == 6
+    assert len(A2_DOCUMENTAL) == 6
+    assert len(B_DOCUMENTAL) == 3
+    assert list(IntencaoConversacional) == (
+        A1_DOCUMENTAL + A2_DOCUMENTAL + B_DOCUMENTAL
+    )
+
+
+def test_os_tres_grupos_sao_disjuntos_e_cobrem_o_enum() -> None:
+    grupos = [set(A1_DOCUMENTAL), set(A2_DOCUMENTAL), set(B_DOCUMENTAL)]
+    assert set.union(*grupos) == set(IntencaoConversacional)
+    assert sum(len(grupo) for grupo in grupos) == len(set(IntencaoConversacional))
+
+
+def test_a1_nao_muda_com_aj3() -> None:
+    """AJ3-3: `_CODIGOS_A1` continua exatamente igual — seis códigos."""
+    assert interpretation._CODIGOS_A1 == frozenset(A1_DOCUMENTAL)
+    assert len(interpretation._CODIGOS_A1) == 6
+
+
+def test_o_slot_autonomo_tem_nove_codigos_seis_a2_e_tres_b() -> None:
+    """AJ3-3: o slot autônomo passa de cinco para nove — A2 + B, nunca A1."""
+    autonomos = interpretation._CODIGOS_AUTONOMOS
+    assert len(autonomos) == 9
+    assert autonomos == frozenset(A2_DOCUMENTAL + B_DOCUMENTAL)
+    assert autonomos.isdisjoint(interpretation._CODIGOS_A1)
+
+
+def test_os_quatro_sinais_de_encerramento_estao_em_a2_depois_dos_dois_atuais() -> None:
+    """AJ3-2: os quatro entram em A2, **depois** dos dois já existentes."""
+    assert A2_DOCUMENTAL[:2] == [
         IntencaoConversacional.INTERESSE_EM_VISITA,
         IntencaoConversacional.EXCECAO_SOLICITADA,
     ]
-    b = [
-        IntencaoConversacional.INTERESSE_CONFIRMAR_DISPONIBILIDADE,
-        IntencaoConversacional.CONTINUIDADE_DE_EVENTO_DECLARADA,
-        IntencaoConversacional.EVENTO_NOVO_DECLARADO,
-    ]
-    assert len(a1) == 6 and len(a2) == 2 and len(b) == 3
-    assert list(IntencaoConversacional) == a1 + a2 + b
+    assert A2_DOCUMENTAL[2:] == SINAIS_DE_ENCERRAMENTO
 
 
-def test_nao_existe_decimo_segundo_valor() -> None:
+def test_nao_existe_decimo_sexto_valor() -> None:
     with pytest.raises(ValueError):
         IntencaoConversacional("intencao_inexistente")
+
+
+def test_a_interpretacao_nao_ganha_categoria_nova_com_aj3() -> None:
+    """AJ3: nenhuma categoria nova em `Interpretacao`; as nove permanecem."""
+    assert [campo.name for campo in dataclasses.fields(Interpretacao)] == [
+        "intencoes_detectadas",
+        "dados_extraidos",
+        "correcoes",
+        "perguntas_comerciais",
+        "pedido_de_humano",
+        "confianca_pedido_de_humano",
+        "referencias_evento_anterior",
+        "confianca_global",
+        "trechos_ambiguos",
+    ]
+
+
+@pytest.mark.parametrize("codigo", SINAIS_DE_ENCERRAMENTO, ids=lambda c: c.value)
+def test_sinal_de_encerramento_nao_cria_campo_nem_payload_paralelo(
+    codigo: IntencaoConversacional,
+) -> None:
+    """AJ3-4: o sinal vive **somente** em `intencoes_detectadas`."""
+    resultado = canonicalizar_interpretacao(
+        entrada(intencoes_autonomas=autonoma(codigo, ALTA))
+    )
+    assert confianca_de(resultado, codigo) is ALTA
+    assert resultado.dados_extraidos == DadosExtraidos()
+    assert resultado.correcoes == ()
+    assert resultado.perguntas_comerciais == ()
+    assert resultado.referencias_evento_anterior == ()
+    assert resultado.trechos_ambiguos == ()
+    assert resultado.pedido_de_humano is False
+
+
+def test_os_quatro_sinais_podem_coexistir_numa_interpretacao_canonica() -> None:
+    """AJ3-5: nenhuma exclusão mútua nova — o conflito é resolvido em S3-D1."""
+    resultado = canonicalizar_interpretacao(
+        entrada(
+            intencoes_autonomas=tuple(
+                IntencaoAutonomaRecebida(codigo=codigo, confianca=ALTA)
+                for codigo in SINAIS_DE_ENCERRAMENTO
+            )
+        )
+    )
+    presentes = {item.codigo for item in resultado.intencoes_detectadas}
+    assert presentes == set(SINAIS_DE_ENCERRAMENTO)
+
+
+def test_os_quatro_sinais_respeitam_a_ordem_canonica() -> None:
+    """AJ3-4: eles participam da ordem canônica, que é só auditabilidade."""
+    resultado = canonicalizar_interpretacao(
+        entrada(
+            intencoes_autonomas=tuple(
+                IntencaoAutonomaRecebida(codigo=codigo, confianca=ALTA)
+                for codigo in reversed(SINAIS_DE_ENCERRAMENTO)
+            )
+        )
+    )
+    assert [item.codigo for item in resultado.intencoes_detectadas] == (
+        SINAIS_DE_ENCERRAMENTO
+    )
+
+
+@pytest.mark.parametrize("codigo", SINAIS_DE_ENCERRAMENTO, ids=lambda c: c.value)
+@pytest.mark.parametrize("confianca", [ALTA, BAIXA])
+def test_sinal_de_encerramento_nao_altera_a_projecao_de_identidade(
+    codigo: IntencaoConversacional, confianca: Confianca
+) -> None:
+    """AJ3-8: os quatro sinais **não** participam da resolução de identidade."""
+    neutra = projetar_para_identidade(canonicalizar_interpretacao(entrada()))
+    com_sinal = projetar_para_identidade(
+        canonicalizar_interpretacao(
+            entrada(intencoes_autonomas=autonoma(codigo, confianca))
+        )
+    )
+    assert com_sinal == neutra
+    assert com_sinal.intencao_identidade is IntencaoIdentidade.NAO_DISCRIMINANTE
+
+
+@pytest.mark.parametrize("codigo", SINAIS_DE_ENCERRAMENTO, ids=lambda c: c.value)
+@pytest.mark.parametrize(
+    "declarada",
+    [
+        IntencaoConversacional.CONTINUIDADE_DE_EVENTO_DECLARADA,
+        IntencaoConversacional.EVENTO_NOVO_DECLARADO,
+    ],
+    ids=lambda c: c.value,
+)
+def test_sinal_de_encerramento_nao_altera_continuidade_nem_evento_novo(
+    codigo: IntencaoConversacional, declarada: IntencaoConversacional
+) -> None:
+    """AJ3-8: continuidade e evento novo continuam decidindo sozinhos."""
+    sem_sinal = projetar_para_identidade(
+        canonicalizar_interpretacao(
+            entrada(intencoes_autonomas=autonoma(declarada, ALTA))
+        )
+    )
+    com_sinal = projetar_para_identidade(
+        canonicalizar_interpretacao(
+            entrada(
+                intencoes_autonomas=(
+                    IntencaoAutonomaRecebida(codigo=declarada, confianca=ALTA),
+                    IntencaoAutonomaRecebida(codigo=codigo, confianca=ALTA),
+                )
+            )
+        )
+    )
+    assert com_sinal == sem_sinal
+
+
+def test_a_projecao_continua_com_sete_campos_apos_aj3() -> None:
+    assert len(dataclasses.fields(ProjecaoInterpretacao)) == 7
 
 
 # --------------------------------------------------------------------------
