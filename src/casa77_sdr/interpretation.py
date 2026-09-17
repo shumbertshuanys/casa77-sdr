@@ -45,19 +45,28 @@ ela é exigida é `E-Nb-1` — e `confianca_global` ausente é `E-Nb-4` —, enq
 uma confiança de **tipo errado** é `TypeError`. **Nenhuma exceção pública nova é
 criada** (AJ1).
 
-**Extensão AJ3 materializada.** `IntencaoConversacional` passa de **11** para
-**15** valores: o grupo **A2** vai de **dois** para **seis** com
+**Extensões AJ3 e AJ4 materializadas.** `IntencaoConversacional` é hoje
+**fechada em 23 valores**: **A1 = 6**, **A2 = 14**, **B = 3**, com **17** códigos
+no **slot autônomo**. **AJ3** levou o vocabulário de **11** para **15**,
+acrescentando a **A2** os quatro **sinais de encerramento** —
 `DESINTERESSE_DECLARADO`, `CONTATO_POR_ENGANO`, `MENSAGEM_NAO_SOLICITADA` e
-`ACEITACAO_DE_INCOMPATIBILIDADE`, e o **slot autônomo** passa de **cinco** para
-**nove** códigos. `_CODIGOS_A1` **não muda**; **A1 = 6**, **A2 = 6**, **B = 3**.
-Os quatro sinais são intenções autônomas **normais** — confiança obrigatória,
-`ALTA` e `BAIXA` admitidas, validação vigente, ordem canônica, **sem payload
-paralelo** e **sem campo novo** em `Interpretacao`. **Nenhuma exclusão mútua
-nova** é criada: uma `Interpretacao` canônica pode conter mais de um deles, e o
-conflito é resolvido **fora daqui**, em **S3-D1**. **Nenhum `E-Nb` novo**,
-nenhuma exceção pública nova, e `ProjecaoInterpretacao` continua com **sete**
-campos. A etapa 4 continua **proibida** de produzir `E14` e
-`motivo_encerramento`.
+`ACEITACAO_DE_INCOMPATIBILIDADE`. **AJ4** levou de **15** para **23**,
+acrescentando a **A2** os oito **sinais de handoff** —
+`PEDIDO_DE_CONDICAO_ESPECIAL`, `PEDIDO_DE_CONFIRMACAO_DE_VISITA`,
+`PEDIDO_DE_RESERVA`, `INTENCAO_DE_CONTRATAR`, `PEDIDO_DE_CANCELAMENTO`,
+`PEDIDO_DE_ALTERACAO_DE_DATA`, `ASSUNTO_JURIDICO_OU_CONTRATUAL` e
+`RECLAMACAO_OU_TOM_HOSTIL`.
+
+`_CODIGOS_A1` **não muda** em nenhuma das duas, e **B** continua com os mesmos
+três membros. Todos os doze acrescentados são intenções autônomas **normais** —
+confiança obrigatória, `ALTA` e `BAIXA` admitidas, validação vigente, ordem
+canônica, **sem payload paralelo** e **sem campo novo** em `Interpretacao`.
+**Nenhuma exclusão mútua nova** é criada: uma `Interpretacao` canônica pode
+conter vários deles, e a resolução pertence às fronteiras **posteriores** —
+**S3-D1** para o encerramento e o **`DetectorHandoff`** para o *handoff*.
+**Nenhum `E-Nb` novo**, nenhuma exceção pública nova, e `ProjecaoInterpretacao`
+continua com **sete** campos. A etapa 4 continua **proibida** de produzir `E14`,
+`motivo_encerramento` e `E18`.
 
 **Delta AJ2 materializado.** `PerguntaComercial` tem **três** campos — `texto`,
 `confianca` e `assunto` —, com `assunto` **obrigatório** do vocabulário fechado
@@ -111,26 +120,28 @@ __all__ = [
 
 
 class IntencaoConversacional(StrEnum):
-    """Vocabulário conceitual **fechado em 15 valores** (N-b-c, N-b-X6, AJ3).
+    """Vocabulário conceitual **fechado em 23 valores** (N-b-c, N-b-X6, AJ4).
 
     A ordem de declaração é a **ordem canônica** de `intencoes_detectadas` e
     existe **apenas para auditabilidade**: ela **não** estabelece precedência
     semântica alguma (AJ1-A1e).
 
     Partição obrigatória: **A1** — seis códigos **derivados** dos payloads
-    autoritativos; **A2** — seis autônomos mapeáveis a evento; **B** — três
+    autoritativos; **A2** — quatorze autônomos mapeáveis a evento; **B** — três
     autônomos não mapeáveis diretamente a evento.
 
-    **AJ3** amplia **somente** o grupo **A2**, de dois para seis, com os quatro
-    sinais de **encerramento originados da interpretação do interessado**. Eles
-    são intenções autônomas **normais**: entram pelo slot autônomo vigente,
-    carregam confiança, aceitam `ALTA` e `BAIXA` e obedecem à validação vigente.
-    **`_CODIGOS_A1` não muda** e **nenhum código A1 passa a ser autônomo**.
+    **AJ3** e **AJ4** ampliam **somente** o grupo **A2**: AJ3 de dois para seis,
+    com os quatro sinais de **encerramento**; AJ4 de seis para quatorze, com os
+    oito sinais de **handoff**. Todos são intenções autônomas **normais**: entram
+    pelo slot autônomo vigente, carregam confiança, aceitam `ALTA` e `BAIXA` e
+    obedecem à validação vigente. **`_CODIGOS_A1` não muda**, **B não muda** e
+    **nenhum código A1 passa a ser autônomo**.
 
-    Relatar o sinal **não é** decidir o encerramento: a etapa 4 continua
-    **proibida** de produzir `E14` e `motivo_encerramento` (N-b-G2, E-Nb-19).
-    Quem decide é a fronteira **posterior e separada** **S3-D1**
-    (`closure_decision.py`), que este módulo **não** conhece.
+    Relatar o sinal **não é** decidir: a etapa 4 continua **proibida** de produzir
+    `E14`, `motivo_encerramento` e `E18` (N-b-G2, E-Nb-19). Quem decide são as
+    fronteiras **posteriores e separadas** — **S3-D1** (`closure_decision.py`) e o
+    **`DetectorHandoff`** (`handoff_detection.py`) —, que este módulo **não**
+    conhece.
     """
 
     # A1 — derivados (6)
@@ -140,13 +151,23 @@ class IntencaoConversacional(StrEnum):
     FORMATO_INFORMADO = "formato_informado"
     PERGUNTA_COMERCIAL = "pergunta_comercial"
     PEDIDO_DE_HUMANO = "pedido_de_humano"
-    # A2 — autônomos mapeáveis a evento (6)
+    # A2 — autônomos mapeáveis a evento (14)
     INTERESSE_EM_VISITA = "interesse_em_visita"
     EXCECAO_SOLICITADA = "excecao_solicitada"
+    # A2, sinais de encerramento (AJ3)
     DESINTERESSE_DECLARADO = "desinteresse_declarado"
     CONTATO_POR_ENGANO = "contato_por_engano"
     MENSAGEM_NAO_SOLICITADA = "mensagem_nao_solicitada"
     ACEITACAO_DE_INCOMPATIBILIDADE = "aceitacao_de_incompatibilidade"
+    # A2, sinais de handoff (AJ4)
+    PEDIDO_DE_CONDICAO_ESPECIAL = "pedido_de_condicao_especial"
+    PEDIDO_DE_CONFIRMACAO_DE_VISITA = "pedido_de_confirmacao_de_visita"
+    PEDIDO_DE_RESERVA = "pedido_de_reserva"
+    INTENCAO_DE_CONTRATAR = "intencao_de_contratar"
+    PEDIDO_DE_CANCELAMENTO = "pedido_de_cancelamento"
+    PEDIDO_DE_ALTERACAO_DE_DATA = "pedido_de_alteracao_de_data"
+    ASSUNTO_JURIDICO_OU_CONTRATUAL = "assunto_juridico_ou_contratual"
+    RECLAMACAO_OU_TOM_HOSTIL = "reclamacao_ou_tom_hostil"
     # B — autônomos não mapeáveis diretamente a evento (3)
     INTERESSE_CONFIRMAR_DISPONIBILIDADE = "interesse_confirmar_disponibilidade"
     CONTINUIDADE_DE_EVENTO_DECLARADA = "continuidade_de_evento_declarada"
@@ -166,8 +187,9 @@ _CODIGOS_A1: frozenset[IntencaoConversacional] = frozenset(
 )
 
 #: Vocabulário fechado admissível no **slot de intenções autônomas** (AJ1-3,
-#: ampliado por **AJ3** de cinco para **nove**): os **seis** códigos **A2** mais
-#: os **três** códigos **B**. Nenhum código **A1** entra aqui.
+#: ampliado por **AJ3** de cinco para nove e por **AJ4** de nove para
+#: **dezessete**): os **quatorze** códigos **A2** mais os **três** códigos **B**.
+#: Nenhum código **A1** entra aqui.
 _CODIGOS_AUTONOMOS: frozenset[IntencaoConversacional] = frozenset(
     {
         IntencaoConversacional.INTERESSE_EM_VISITA,
@@ -176,6 +198,14 @@ _CODIGOS_AUTONOMOS: frozenset[IntencaoConversacional] = frozenset(
         IntencaoConversacional.CONTATO_POR_ENGANO,
         IntencaoConversacional.MENSAGEM_NAO_SOLICITADA,
         IntencaoConversacional.ACEITACAO_DE_INCOMPATIBILIDADE,
+        IntencaoConversacional.PEDIDO_DE_CONDICAO_ESPECIAL,
+        IntencaoConversacional.PEDIDO_DE_CONFIRMACAO_DE_VISITA,
+        IntencaoConversacional.PEDIDO_DE_RESERVA,
+        IntencaoConversacional.INTENCAO_DE_CONTRATAR,
+        IntencaoConversacional.PEDIDO_DE_CANCELAMENTO,
+        IntencaoConversacional.PEDIDO_DE_ALTERACAO_DE_DATA,
+        IntencaoConversacional.ASSUNTO_JURIDICO_OU_CONTRATUAL,
+        IntencaoConversacional.RECLAMACAO_OU_TOM_HOSTIL,
         IntencaoConversacional.INTERESSE_CONFIRMAR_DISPONIBILIDADE,
         IntencaoConversacional.CONTINUIDADE_DE_EVENTO_DECLARADA,
         IntencaoConversacional.EVENTO_NOVO_DECLARADO,
@@ -400,10 +430,11 @@ class TrechoAmbiguoRecebido:
 class IntencaoAutonomaRecebida:
     """Intenção **autônoma** como recebida do produtor não determinístico.
 
-    O slot aceita **exatamente** os nove códigos **A2/B** (AJ1-3, ampliado por
-    **AJ3**). Apresentar um código **A1** aqui é rejeitado: **com** confiança
-    declarada → `E-Nb-3`; **sem** confiança → `E-Nb-5` (AJ1, casos A e B). Isso
-    **não** torna `A1` entrada válida — ambos bloqueiam antes da canonicalização.
+    O slot aceita **exatamente** os dezessete códigos **A2/B** (AJ1-3, ampliado
+    por **AJ3** e **AJ4**). Apresentar um código **A1** aqui é rejeitado: **com**
+    confiança declarada → `E-Nb-3`; **sem** confiança → `E-Nb-5` (AJ1, casos A e
+    B). Isso **não** torna `A1` entrada válida — ambos bloqueiam antes da
+    canonicalização.
     """
 
     codigo: IntencaoConversacional

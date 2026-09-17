@@ -62,10 +62,24 @@ exclusivamente em `knowledge/casa77.yaml`.
   **somente** quando existe **um único** sinal de confiança `ALTA` — dois ou mais são
   **fail-closed** —, e `INCOMPATIBILIDADE_ACEITA` exige **cumulativamente**
   `ResultadoQualificacao.INCOMPATIVEL`. **AJ3** ampliou `IntencaoConversacional` de
-  **11** para **15** valores — **A1 = 6**, **A2 = 6**, **B = 3**, autônomos = **9** —,
-  preservando a partição e sem criar categoria, erro ou exceção nova. A fronteira é
+  **11** para **15** valores à sua época, preservando a partição e sem criar categoria,
+  erro ou exceção nova; a **cardinalidade vigente é 23**, fixada depois por **AJ4**. A fronteira é
   **agnóstica ao estado**, **não conhece `E18`** e **não faz a integração do ciclo**,
   que **continua pendente**.
+- **Fora de `C`**, a **semântica completa de handoff** e o **`DetectorHandoff`** estão
+  **materializados LOCALMENTE nesta entrega candidata**, **ainda não versionados**. A
+  extensão **AJ4** amplia `IntencaoConversacional` de **15** para **23** valores —
+  **A1 = 6**, **A2 = 14**, **B = 3**, autônomos = **17** —, acrescentando a **A2** os
+  **oito sinais de handoff**. O **`DetectorHandoff`**, em
+  `src/casa77_sdr/handoff_detection.py`, com o contrato vivo em `docs/07` §6.3
+  (`DH-1`–`DH-12`), deixa de ser conceitual: ele converte os sinais interpretados em
+  **um único `E18`** carregando os **motivos** do vocabulário **fechado de dez** de
+  `docs/06` §2.1, **sem precedência** e **sem motivo principal**. **`ALTA` confirma;
+  `BAIXA` não confirma**, com a **única exceção vigente** de `pedido_de_humano`. Os
+  gatilhos **1–2** continuam chegando como `E09` e os **11–12** por transição;
+  **visita** e **reserva** são handoff, e **disponibilidade** permanece nas condições
+  **5/6** e em **T14/T15/T25**. Ele **não faz a integração do ciclo**, que **continua
+  pendente**.
 - Etapa 4 permanece **absorvida pela Etapa 3B**; etapas 5 a 10 permanecem futuras
   (`docs/05-roadmap.md`).
 
@@ -74,6 +88,11 @@ exclusivamente em `knowledge/casa77.yaml`.
 ## 2. Última entrega funcional relevante
 
 Commit funcional `47d72ee97ba391ed77925620407402ec6a47ce79`.
+
+**A última entrega funcional VERSIONADA continua sendo `S3-D1`.** A **semântica completa
+de handoff** e o **`DetectorHandoff`** descritos em §1 são **locais e candidatos**: eles
+**não possuem commit** e, portanto, **não são estado versionado do projeto** enquanto não
+forem auditados e integrados.
 
 **`S3-D1` materializado** — o produtor determinístico de **`E14`** e do
 **`motivo_encerramento`** originados da **interpretação do interessado**, em
@@ -91,10 +110,11 @@ validador paralelo** e **nenhuma regra copiada**. Entrada inválida bloqueia, **
 saída parcial**.
 
 A extensão semântica **AJ3** ampliou `IntencaoConversacional` de **11** para
-**15** valores, acrescentando ao grupo **A2** os **quatro sinais de encerramento**
-— `DESINTERESSE_DECLARADO`, `CONTATO_POR_ENGANO`, `MENSAGEM_NAO_SOLICITADA` e
-`ACEITACAO_DE_INCOMPATIBILIDADE`. A partição é preservada: **A1 = 6**, **A2 = 6**,
-**B = 3**, e o **slot autônomo** passa de **cinco** para **nove** códigos.
+**15** valores **à sua época**, acrescentando ao grupo **A2** os **quatro sinais de
+encerramento** — `DESINTERESSE_DECLARADO`, `CONTATO_POR_ENGANO`,
+`MENSAGEM_NAO_SOLICITADA` e `ACEITACAO_DE_INCOMPATIBILIDADE`. A partição é preservada, e a
+**cardinalidade vigente é 23** — **A1 = 6**, **A2 = 14**, **B = 3**, autônomos = **17** —,
+fixada depois por **AJ4** (§1).
 `_CODIGOS_A1` **não muda**, nenhum código A1 vira autônomo, e os quatro sinais são
 intenções autônomas **normais**: sem payload paralelo, **sem campo novo** em
 `Interpretacao`, **sem `E-Nb` novo** e **sem exceção pública nova**. A lista de
@@ -142,8 +162,17 @@ determinístico de `N-b`** (`M-PN1`–`M-PN12`), o **produtor de eventos derivad
 materializada:
 
 - Python **3.14.5**;
-- **`8234 passed`**, sob **`-W error`**;
+- **`8606 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings, zero skips, zero xfails.
+
+Este é o **baseline local da entrega candidata** de handoff, ainda **não versionado**. O
+baseline **versionado** é o de `S3-D1`: **`8234 passed`**. O acréscimo de **372** vem de
+**AJ4** e do **`DetectorHandoff`**: os cenários de `tests/test_handoff_detection.py` — as
+dez famílias de gatilho, a exceção de `pedido_de_humano`, a multiplicidade sem
+precedência, os invariantes do DTO e a pureza —, mais as provas de **neutralidade** dos
+oito sinais novos em **RES2**, em **S3-D1** e na **identidade**, e a ampliação das
+parametrizações já existentes sobre o slot autônomo, que passou de **nove** para
+**dezessete** códigos.
 
 O baseline **anterior** era **`7978`**. O acréscimo de **256** vem de **`S3-D1`** e de
 **AJ3**: os cenários de `tests/test_closure_decision.py` — mapeamento, cardinalidade
@@ -391,6 +420,7 @@ código; o contrato vive em `docs/07` §2.3.
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
 | **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado e **materializado**: infraestrutura estrutural de `R2` (`coverage_map.py`, `coverage_map_load.py`; §4.4.2), **produtor determinístico** (`coverage_decision.py`; §4.4.3), **aplicabilidade de pacote** (`pricing_applicability.py`; §4.4.4) e o **artefato físico** `knowledge/mapa-cobertura.yaml`, com **54/54** assuntos — **33** com cobertura e **21** vazios. Cobertos os eixos **A** e **B**, **`D8-F`**, Classe I/II, os *gates* de **`R05`** e de **preço (`D8-G`)**, **`D8-L4`**, ***witnesses***, `fragmentos_autorizados`, `pendencias_resposta` e **causas** de `E09`. O **conteúdo de `R2` foi concluído nesta capacidade**, e S2-D8 + `R2` **decidem cobertura** quando recebem as entradas estruturadas. **Ainda ausente**: a **integração do ciclo**, externa a esta pendência, que converte causa em **`Evento.E09`** e faz a decisão correr **dentro do ciclo** | **deixou de bloquear**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4.1, §4.4.2, §4.4.3, §4.4.4, §12 item 10; `docs/06` §11 |
+| **Semântica de handoff + `DetectorHandoff`** | **materializados LOCALMENTE nesta entrega candidata**, **não versionados**: `src/casa77_sdr/handoff_detection.py`, contrato vivo em `docs/07` §6.3 (`DH-1`–`DH-12`), com a extensão semântica **AJ4**. Cobre os **gatilhos 3–10** de `docs/04`. **Pendente**: a **integração ao ciclo**, que liga o `E18` e os motivos produzidos à `MaquinaEstados` | **`E18` deixa de carecer de produtor quando a entrega for versionada**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §6.3, §12 item 24; `docs/06` §2.1, §9 |
 | **S3-D1** — produtor da condição `motivo_encerramento` | produtor **atribuído e materializado**: `src/casa77_sdr/closure_decision.py`, contrato vivo em `docs/07` §6.3 (`S3D1-1`–`S3D1-12`), com a extensão semântica **AJ3**. **Pendente**: a **integração ao ciclo**, que liga `E14` e o motivo produzidos à `MaquinaEstados` | **deixou de ser a ausência de produtor**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4, §6.3, §12 itens 10 e 23 |
 | **E1** — conversa × atendimento × lead | não arbitrada; atravessa identidade, persistência e registro de leads | não bloqueia a especificação vigente | `docs/07` §12 item 13 |
 | **E3** — evento novo durante atendimento ativo | aberta; contrato vigente é conservador (`AMBIGUA`) | não bloqueia | `docs/07` §12 item 14 |
@@ -431,8 +461,10 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
   `M-PN1`–`M-PN12` e `RES2-1`–`RES2-12`). Continuam **ausentes os demais produtores
   de evento** — `E09` a partir das causas de S2-D8, `E18` pelo `DetectorHandoff`,
   `E07`/`E08` pela qualificação e pelo ciclo. **`E14` deixou de faltar**: o seu produtor
-  — **`S3-D1`** — está **materializado**, e **continua ausente** quem **une** eventos de
-  produtores distintos;
+  — **`S3-D1`** — está **materializado e versionado**. **`E18` deixou de faltar
+  localmente**: o `DetectorHandoff` está **materializado** nesta entrega candidata e
+  **passa a contar como produtor quando ela for versionada**. **Continua ausente** quem
+  **une** eventos de produtores distintos;
 - **N-a** — integração operacional da etapa 13, tratamento dos bloqueios S4/S5 e destino do
   alerta operacional;
 - **limiar temporal** — valor e mecanismo de carga.
@@ -465,9 +497,11 @@ estruturada** em **`Evento.E09`**.
 
 **Integrar não é a próxima ação imediata**, porque a integração depende de pendências que
 **este mesmo snapshot** ainda registra como abertas em §5 e §6 — entre elas **N-b**, **E4**,
-a **integração ao ciclo de `S3-D1`**, as matérias residuais de **N-a** e o **limiar
-temporal**, o **destino do alerta operacional**, as **superfícies conversacionais sem
-unidade aprovada** e, para uso em canal real, a **persistência operacional não volátil**.
+a **integração ao ciclo de `S3-D1`** e a do **`DetectorHandoff`**, **`E07`/`E08`/`E09`**
+e a **agregação** dos eventos de produtores distintos, as matérias residuais de **N-a** e
+o **limiar temporal**, o **destino do alerta operacional**, `calendario_integrado`, as
+**superfícies conversacionais sem unidade aprovada** e, para uso em canal real, a
+**persistência operacional não volátil**.
 
 **A ordem em que elas serão fechadas não é decidida aqui** — este arquivo é snapshot, não
 plano —, e cada frente será aberta por **novo mandato específico**.

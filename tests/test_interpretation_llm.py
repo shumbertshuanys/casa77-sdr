@@ -1,8 +1,9 @@
 """Testes da fronteira agnóstica do produtor não determinístico da etapa 4.
 
 **Camada B.** `tests/test_interpretation.py` permanece a autoridade de **todos**
-os estados de domínio construíveis diretamente (Camada A) e **não é alterado**.
-Este módulo cobre **somente** o que o transporte real torna representável:
+os estados de domínio construíveis diretamente (**Camada A**). Este módulo não o
+substitui nem o duplica: ele cobre **somente** o que o transporte real torna
+representável (**Camada B**):
 
 * as **provas estruturais do schema** — contagens, profundidade,
   `additionalProperties`, `required`, `ConfidenceSlot` e ausência de deriva
@@ -13,10 +14,13 @@ Este módulo cobre **somente** o que o transporte real torna representável:
 * as **falhas do produtor**, família separada e sanitizada;
 * o **encadeamento obrigatório** para `canonicalizar_interpretacao`.
 
-Estados que o schema **impede** — 55º assunto, código autônomo fora dos cinco,
-campo de correção fora dos seis, formato fora do enum no campo principal e tipos
-JSON proibidos — continuam cobertos **apenas** na Camada A: forçá-los aqui seria
-fabricar entrada que o transporte real não produz.
+Estados que o schema **impede** — 55º assunto, código autônomo **fora do
+vocabulário autônomo vigente**, campo de correção fora dos seis, formato fora do
+enum no campo principal e tipos JSON proibidos — continuam cobertos **apenas** na
+Camada A: forçá-los aqui seria fabricar entrada que o transporte real não produz.
+A cardinalidade desse vocabulário **não é redigitada aqui**: ela é derivada de
+`_CODIGOS_AUTONOMOS` e conferida por
+`test_o_enum_autonomo_e_derivado_do_dominio_e_nao_redigitado`.
 
 Todas as fixtures são **fictícias e genéricas**: zero PII, zero conversa real,
 zero valor comercial. Nenhum teste toca rede, credencial, `knowledge/**` ou YAML.
@@ -279,11 +283,11 @@ def test_uniao_tem_exatamente_onze_parametros_e_cabe_no_teto() -> None:
 
 
 def test_as_onze_unioes_nao_sao_a_cardinalidade_de_intencao_conversacional() -> None:
-    """Os dois conceitos são distintos: 11 uniões × 15 `IntencaoConversacional`."""
+    """Os dois conceitos são distintos: 11 uniões × 23 `IntencaoConversacional`."""
     schema = gerar_schema_interpretacao()
     unioes = [no for no in nos(schema) if e_uniao(no)]
     assert len(unioes) == 11
-    assert len(list(IntencaoConversacional)) == 15
+    assert len(list(IntencaoConversacional)) == 23
     assert len(unioes) != len(list(IntencaoConversacional))
     # Ampliar o enum autônomo **não** move a estrutura: nenhuma união vive na
     # posição do código autônomo.
@@ -291,7 +295,17 @@ def test_as_onze_unioes_nao_sao_a_cardinalidade_de_intencao_conversacional() -> 
         "codigo"
     ]
     assert not e_uniao(codigo)
-    assert len(codigo["enum"]) == 9
+    assert len(codigo["enum"]) == 17
+
+
+def test_a_estrutura_do_schema_nao_muda_com_aj4() -> None:
+    """AJ4 muda **só** a cardinalidade do enum autônomo."""
+    schema = gerar_schema_interpretacao()
+    assert len(schema["properties"]) == 9
+    assert len([no for no in nos(schema) if e_uniao(no)]) == 11
+    assert contar_refs(schema["properties"]) == 13
+    assert profundidade(schema, definicoes(schema)) == 5
+    assert set(definicoes(schema)) == {"ConfidenceSlot"}
 
 
 def test_o_enum_autonomo_e_derivado_do_dominio_e_nao_redigitado() -> None:
@@ -307,7 +321,7 @@ def test_o_enum_autonomo_e_derivado_do_dominio_e_nao_redigitado() -> None:
         if item in dominio._CODIGOS_AUTONOMOS
     ]
     assert codigo == esperado
-    assert len(codigo) == len(dominio._CODIGOS_AUTONOMOS) == 9
+    assert len(codigo) == len(dominio._CODIGOS_AUTONOMOS) == 17
 
     # Nenhum literal do vocabulário autônomo é escrito à mão no módulo.
     fonte = (
@@ -337,6 +351,39 @@ def test_os_quatro_sinais_de_encerramento_entram_pelo_slot_autonomo() -> None:
     }
     assert novos <= codigo
     assert codigo.isdisjoint({item.value for item in dominio._CODIGOS_A1})
+
+
+def test_os_oito_sinais_de_handoff_entram_pelo_slot_autonomo() -> None:
+    """AJ4-2/AJ4-3: eles são autônomos, e nenhum código A1 vira autônomo."""
+    from casa77_sdr import interpretation as dominio
+
+    codigo = set(
+        gerar_schema_interpretacao()["properties"]["intencoes_autonomas"]["items"][
+            "properties"
+        ]["codigo"]["enum"]
+    )
+    novos = {
+        IntencaoConversacional.PEDIDO_DE_CONDICAO_ESPECIAL.value,
+        IntencaoConversacional.PEDIDO_DE_CONFIRMACAO_DE_VISITA.value,
+        IntencaoConversacional.PEDIDO_DE_RESERVA.value,
+        IntencaoConversacional.INTENCAO_DE_CONTRATAR.value,
+        IntencaoConversacional.PEDIDO_DE_CANCELAMENTO.value,
+        IntencaoConversacional.PEDIDO_DE_ALTERACAO_DE_DATA.value,
+        IntencaoConversacional.ASSUNTO_JURIDICO_OU_CONTRATUAL.value,
+        IntencaoConversacional.RECLAMACAO_OU_TOM_HOSTIL.value,
+    }
+    assert novos <= codigo
+    assert len(novos) == 8
+    assert codigo.isdisjoint({item.value for item in dominio._CODIGOS_A1})
+
+
+def test_o_schema_nao_carrega_vocabulario_de_handoff_proibido() -> None:
+    """A etapa 4 relata o sinal; `E18` e os motivos não vivem no transporte."""
+    import json as _json
+
+    texto = _json.dumps(gerar_schema_interpretacao())
+    for proibido in ("E18", "motivos_handoff", "handoff_obrigatorio_detectado"):
+        assert proibido not in texto
 
 
 def test_as_onze_unioes_estao_nas_posicoes_nomeadas() -> None:
@@ -436,7 +483,7 @@ def test_tamanho_dos_vocabularios_derivados() -> None:
         )
         == 54
     )
-    assert len(props["intencoes_autonomas"]["items"]["properties"]["codigo"]["enum"]) == 9
+    assert len(props["intencoes_autonomas"]["items"]["properties"]["codigo"]["enum"]) == 17
 
 
 def test_o_schema_nao_possui_slot_de_codigos_a1() -> None:

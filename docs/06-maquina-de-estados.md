@@ -129,19 +129,32 @@ retorno de integração.
 
 ### 2.1 `E18` — `handoff_obrigatorio_detectado`
 
-Evento interno emitido quando qualquer gatilho obrigatório de
-`docs/04-handoff-humano.md` é detectado. Carrega sempre um **motivo** enumerado ou
-textual aprovado:
+Evento interno emitido quando um gatilho obrigatório de
+`docs/04-handoff-humano.md` do caminho `E18` é detectado. Carrega sempre ao menos
+um **motivo** do vocabulário **fechado** do `DetectorHandoff`, que materializa os
+**gatilhos 3–10** (§9):
 
-- `pedido_humano`;
-- `pedido_desconto`;
-- `contratacao`;
-- `cancelamento`;
-- `alteracao_data`;
-- `interpretacao_contratual`;
-- `informacao_pendente`;
-- `excecao_solicitada`;
-- outro gatilho presente em `docs/04-handoff-humano.md`.
+| Motivo | Gatilho de `docs/04` |
+|---|---|
+| `pedido_humano` | 9 — pedido explícito de falar com uma pessoa |
+| `pedido_desconto` | 3 — desconto, condição especial ou parcelamento diferente |
+| `excecao_solicitada` | 3 — pedido de exceção ou contestação de regra |
+| `confirmacao_visita` | 4, ramo **visita** — marcar/confirmar visita |
+| `confirmacao_reserva` | 4, ramo **reserva** — reservar, segurar ou bloquear data |
+| `contratacao` | 5 — fechamento de contrato |
+| `cancelamento` | 6 |
+| `alteracao_data` | 7 |
+| `interpretacao_contratual` | 8 — jurídico, contratual, fiscal, multa ou seguro |
+| `reclamacao_ou_tom_hostil` | 10 |
+
+**São dez motivos, e não existe décimo primeiro.** Uma mesma mensagem pode
+disparar **vários** deles: o resultado é **um único `E18`** carregando **todos**
+os motivos reconhecidos, sem duplicata. A ordem dos motivos existe **apenas para
+auditabilidade** e **não estabelece precedência**: não há "motivo principal".
+
+`informacao_pendente` **não pertence a esse vocabulário**. Ele continua
+**registrável no resumo e na auditoria** do caminho de pendência, mas os gatilhos
+**1–2** chegam à máquina como **`E09`** e **não são reemitidos** como `E18` (§9).
 
 `E18` **não duplica regras comerciais**: apenas registra o motivo e consulta o
 documento de handoff, que continua sendo a fonte dos gatilhos.
@@ -806,7 +819,7 @@ caminhos **distintos e não concorrentes**:
 | Gatilhos do doc 04 | Caminho | Produtor |
 |---|---|---|
 | 1–2 — pergunta sem resposta aprovada; campo `null`/`pendente` | `E09`, já classificado em impeditivo × acessório | **S2-D8** (§11): o contrato existe, com os **eixos A e B**, e o **produtor determinístico está materializado** em `src/casa77_sdr/coverage_decision.py`. Ele produz as **causas** que podem confirmar `E09`; **confirmar o evento** pertence à **integração futura**, ainda pendente |
-| 3–10 — desconto/condição especial, confirmação de data/visita/reserva, contratação, cancelamento, alteração de data, assunto jurídico ou contratual, pedido explícito de humano, reclamação ou tom hostil | `E18` com motivo (§2.1) | `DetectorHandoff` |
+| 3–10 — desconto/condição especial, **confirmação de visita**, **confirmação de reserva**, contratação, cancelamento, alteração de data, assunto jurídico ou contratual, pedido explícito de humano, reclamação ou tom hostil | `E18` com motivo (§2.1) | `DetectorHandoff` |
 | 11–12 — `qualificado_com_ressalva` ou `indefinido`; coleta concluída e lead qualificado | **transições da §3**: T08, T13, T21, T40 e os caminhos de `E09` aplicáveis | `MaquinaEstados` |
 
 Regras:
@@ -818,6 +831,26 @@ Regras:
 - o `DetectorHandoff` **não recebe `Qualificacao`**, **não recalcula regra comercial**,
   **não recalcula pendência** e **não recalcula qualificação**. Ele reconhece os gatilhos
   3–10 e emite `E18` com o motivo correspondente.
+
+**O gatilho 4 separa três matérias, e só duas são handoff.** `docs/04` já as trata como
+**distintas**, e elas **não compartilham a mesma regra**:
+
+| Matéria | Caminho | Observação |
+|---|---|---|
+| **Visita** — pedido de **marcar, confirmar ou fechar** dia/horário | `E18`, motivo `confirmacao_visita` | confirmação é **humana**; o bot nunca confirma visita |
+| **Reserva** — pedido de **reservar, segurar, bloquear ou efetivar** | `E18`, motivo `confirmacao_reserva` | ato **humano**, proibido ao bot em qualquer cenário |
+| **Disponibilidade de data** | **condições 5 e 6** de `docs/07` §4.4 e as transições **T14**, **T15** e **T25** | **não** passa pelo `DetectorHandoff` |
+
+**Interesse simples em visita não é handoff.** Querer conhecer o espaço continua sendo
+`E10` e segue por **T16**. Só o pedido de **confirmação** produz `E18`.
+
+**Disponibilidade não tem sinal universal de `E18`.** Havendo decisão determinística
+válida, o bot **pode comunicar** a disponibilidade — isso **não** é reserva, *hold* nem
+bloqueio de data. Sem consulta autoritativa válida, o desfecho segue o contrato vigente de
+`R05 F1` e das transições acima. O **motivo estruturado** de T15/T25 permanece **residual
+não resolvido** e **não é decidido aqui**.
+
+**Nenhuma transição é criada, removida ou alterada por esta seção.**
 
 ## 10. Handoff registrado × entrega confirmada
 

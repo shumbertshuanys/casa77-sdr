@@ -173,10 +173,10 @@ def agregacao_de_referencia(confiancas: tuple[Confianca, ...]) -> Confianca:
 
 
 # --------------------------------------------------------------------------
-# A. Vocabulário — IntencaoConversacional com exatamente 15 valores (AJ3)
+# A. Vocabulário — IntencaoConversacional com exatamente 23 valores (AJ4)
 # --------------------------------------------------------------------------
 
-#: Partição documental de `docs/07` §6.3 após **AJ3**: **A1 = 6**, **A2 = 6**,
+#: Partição documental de `docs/07` §6.3 após **AJ4**: **A1 = 6**, **A2 = 14**,
 #: **B = 3**. A ordem abaixo é a **ordem documental**, e é ela que a ordem de
 #: declaração do enum precisa reproduzir.
 A1_DOCUMENTAL = [
@@ -190,10 +190,20 @@ A1_DOCUMENTAL = [
 A2_DOCUMENTAL = [
     IntencaoConversacional.INTERESSE_EM_VISITA,
     IntencaoConversacional.EXCECAO_SOLICITADA,
+    # AJ3 — sinais de encerramento
     IntencaoConversacional.DESINTERESSE_DECLARADO,
     IntencaoConversacional.CONTATO_POR_ENGANO,
     IntencaoConversacional.MENSAGEM_NAO_SOLICITADA,
     IntencaoConversacional.ACEITACAO_DE_INCOMPATIBILIDADE,
+    # AJ4 — sinais de handoff
+    IntencaoConversacional.PEDIDO_DE_CONDICAO_ESPECIAL,
+    IntencaoConversacional.PEDIDO_DE_CONFIRMACAO_DE_VISITA,
+    IntencaoConversacional.PEDIDO_DE_RESERVA,
+    IntencaoConversacional.INTENCAO_DE_CONTRATAR,
+    IntencaoConversacional.PEDIDO_DE_CANCELAMENTO,
+    IntencaoConversacional.PEDIDO_DE_ALTERACAO_DE_DATA,
+    IntencaoConversacional.ASSUNTO_JURIDICO_OU_CONTRATUAL,
+    IntencaoConversacional.RECLAMACAO_OU_TOM_HOSTIL,
 ]
 B_DOCUMENTAL = [
     IntencaoConversacional.INTERESSE_CONFIRMAR_DISPONIBILIDADE,
@@ -209,15 +219,27 @@ SINAIS_DE_ENCERRAMENTO = [
     IntencaoConversacional.ACEITACAO_DE_INCOMPATIBILIDADE,
 ]
 
+#: Os oito sinais que **AJ4** acrescenta ao grupo **A2**.
+SINAIS_DE_HANDOFF = [
+    IntencaoConversacional.PEDIDO_DE_CONDICAO_ESPECIAL,
+    IntencaoConversacional.PEDIDO_DE_CONFIRMACAO_DE_VISITA,
+    IntencaoConversacional.PEDIDO_DE_RESERVA,
+    IntencaoConversacional.INTENCAO_DE_CONTRATAR,
+    IntencaoConversacional.PEDIDO_DE_CANCELAMENTO,
+    IntencaoConversacional.PEDIDO_DE_ALTERACAO_DE_DATA,
+    IntencaoConversacional.ASSUNTO_JURIDICO_OU_CONTRATUAL,
+    IntencaoConversacional.RECLAMACAO_OU_TOM_HOSTIL,
+]
 
-def test_intencao_conversacional_tem_exatamente_quinze_valores() -> None:
-    """AJ3-1: o vocabulário passa de 11 para 15, e continua fechado."""
-    assert len(list(IntencaoConversacional)) == 15
+
+def test_intencao_conversacional_tem_exatamente_vinte_e_tres_valores() -> None:
+    """AJ4-1: o vocabulário passa de 15 para 23, e continua fechado."""
+    assert len(list(IntencaoConversacional)) == 23
 
 
 def test_particao_a1_a2_b_e_fechada_e_exata() -> None:
     assert len(A1_DOCUMENTAL) == 6
-    assert len(A2_DOCUMENTAL) == 6
+    assert len(A2_DOCUMENTAL) == 14
     assert len(B_DOCUMENTAL) == 3
     assert list(IntencaoConversacional) == (
         A1_DOCUMENTAL + A2_DOCUMENTAL + B_DOCUMENTAL
@@ -236,30 +258,48 @@ def test_a1_nao_muda_com_aj3() -> None:
     assert len(interpretation._CODIGOS_A1) == 6
 
 
-def test_o_slot_autonomo_tem_nove_codigos_seis_a2_e_tres_b() -> None:
-    """AJ3-3: o slot autônomo passa de cinco para nove — A2 + B, nunca A1."""
+def test_o_slot_autonomo_tem_dezessete_codigos_quatorze_a2_e_tres_b() -> None:
+    """AJ4-3: o slot autônomo passa de nove para dezessete — A2 + B, nunca A1."""
     autonomos = interpretation._CODIGOS_AUTONOMOS
-    assert len(autonomos) == 9
+    assert len(autonomos) == 17
     assert autonomos == frozenset(A2_DOCUMENTAL + B_DOCUMENTAL)
     assert autonomos.isdisjoint(interpretation._CODIGOS_A1)
 
 
-def test_os_quatro_sinais_de_encerramento_estao_em_a2_depois_dos_dois_atuais() -> None:
-    """AJ3-2: os quatro entram em A2, **depois** dos dois já existentes."""
+def test_b_nao_muda_com_aj4() -> None:
+    """AJ4: o grupo **B** continua com exatamente os mesmos três membros."""
+    assert B_DOCUMENTAL == [
+        IntencaoConversacional.INTERESSE_CONFIRMAR_DISPONIBILIDADE,
+        IntencaoConversacional.CONTINUIDADE_DE_EVENTO_DECLARADA,
+        IntencaoConversacional.EVENTO_NOVO_DECLARADO,
+    ]
+    assert len(B_DOCUMENTAL) == 3
+
+
+def test_a_ordem_documental_de_a2_empilha_aj3_e_depois_aj4() -> None:
+    """AJ3 entra depois dos dois originais; AJ4 entra depois de AJ3."""
     assert A2_DOCUMENTAL[:2] == [
         IntencaoConversacional.INTERESSE_EM_VISITA,
         IntencaoConversacional.EXCECAO_SOLICITADA,
     ]
-    assert A2_DOCUMENTAL[2:] == SINAIS_DE_ENCERRAMENTO
+    assert A2_DOCUMENTAL[2:6] == SINAIS_DE_ENCERRAMENTO
+    assert A2_DOCUMENTAL[6:] == SINAIS_DE_HANDOFF
 
 
-def test_nao_existe_decimo_sexto_valor() -> None:
+def test_os_oito_sinais_de_handoff_sao_autonomos_e_nenhum_e_a1() -> None:
+    """AJ4-2/AJ4-3: os oito entram em A2; `_CODIGOS_A1` continua com seis."""
+    assert set(SINAIS_DE_HANDOFF) <= interpretation._CODIGOS_AUTONOMOS
+    assert set(SINAIS_DE_HANDOFF).isdisjoint(interpretation._CODIGOS_A1)
+    assert len(interpretation._CODIGOS_A1) == 6
+
+
+def test_nao_existe_vigesimo_quarto_valor() -> None:
     with pytest.raises(ValueError):
         IntencaoConversacional("intencao_inexistente")
 
 
-def test_a_interpretacao_nao_ganha_categoria_nova_com_aj3() -> None:
-    """AJ3: nenhuma categoria nova em `Interpretacao`; as nove permanecem."""
+def test_a_interpretacao_nao_ganha_categoria_nova_com_aj3_nem_aj4() -> None:
+    """AJ3/AJ4: nenhuma categoria nova em `Interpretacao`; as nove permanecem."""
     assert [campo.name for campo in dataclasses.fields(Interpretacao)] == [
         "intencoes_detectadas",
         "dados_extraidos",
@@ -366,8 +406,178 @@ def test_sinal_de_encerramento_nao_altera_continuidade_nem_evento_novo(
     assert com_sinal == sem_sinal
 
 
-def test_a_projecao_continua_com_sete_campos_apos_aj3() -> None:
+def test_a_projecao_continua_com_sete_campos_apos_aj3_e_aj4() -> None:
     assert len(dataclasses.fields(ProjecaoInterpretacao)) == 7
+
+
+@pytest.mark.parametrize("codigo", SINAIS_DE_HANDOFF, ids=lambda c: c.value)
+@pytest.mark.parametrize("confianca", [ALTA, BAIXA])
+def test_sinal_de_handoff_entra_pelo_slot_autonomo(
+    codigo: IntencaoConversacional, confianca: Confianca
+) -> None:
+    """AJ4-4: intenção autônoma normal — aceita `ALTA` e `BAIXA`."""
+    resultado = canonicalizar_interpretacao(
+        entrada(intencoes_autonomas=autonoma(codigo, confianca))
+    )
+    assert confianca_de(resultado, codigo) is confianca
+
+
+@pytest.mark.parametrize("codigo", SINAIS_DE_HANDOFF, ids=lambda c: c.value)
+def test_sinal_de_handoff_sem_confianca_e_e_nb_1(
+    codigo: IntencaoConversacional,
+) -> None:
+    """A confiança continua obrigatória para todo autônomo (N-b-G6)."""
+    with pytest.raises(ValueError, match="E-Nb-1"):
+        canonicalizar_interpretacao(entrada(intencoes_autonomas=autonoma(codigo, None)))
+
+
+@pytest.mark.parametrize("codigo", SINAIS_DE_HANDOFF, ids=lambda c: c.value)
+def test_sinal_de_handoff_duplicado_continua_e_nb_6(
+    codigo: IntencaoConversacional,
+) -> None:
+    """`E-Nb-6` continua significando **somente** código repetido."""
+    with pytest.raises(ValueError, match="E-Nb-6"):
+        canonicalizar_interpretacao(
+            entrada(
+                intencoes_autonomas=(
+                    IntencaoAutonomaRecebida(codigo=codigo, confianca=ALTA),
+                    IntencaoAutonomaRecebida(codigo=codigo, confianca=BAIXA),
+                )
+            )
+        )
+
+
+@pytest.mark.parametrize("codigo", SINAIS_DE_HANDOFF, ids=lambda c: c.value)
+def test_sinal_de_handoff_nao_cria_campo_nem_payload_paralelo(
+    codigo: IntencaoConversacional,
+) -> None:
+    """AJ4-4: o sinal vive **somente** em `intencoes_detectadas`."""
+    resultado = canonicalizar_interpretacao(
+        entrada(intencoes_autonomas=autonoma(codigo, ALTA))
+    )
+    assert confianca_de(resultado, codigo) is ALTA
+    assert resultado.dados_extraidos == DadosExtraidos()
+    assert resultado.correcoes == ()
+    assert resultado.perguntas_comerciais == ()
+    assert resultado.referencias_evento_anterior == ()
+    assert resultado.trechos_ambiguos == ()
+    assert resultado.pedido_de_humano is False
+
+
+def test_os_oito_sinais_de_handoff_podem_coexistir() -> None:
+    """AJ4-5: nenhuma exclusão mútua nova — o conflito não existe aqui."""
+    resultado = canonicalizar_interpretacao(
+        entrada(
+            intencoes_autonomas=tuple(
+                IntencaoAutonomaRecebida(codigo=codigo, confianca=ALTA)
+                for codigo in SINAIS_DE_HANDOFF
+            )
+        )
+    )
+    presentes = {item.codigo for item in resultado.intencoes_detectadas}
+    assert presentes == set(SINAIS_DE_HANDOFF)
+
+
+def test_os_doze_sinais_de_aj3_e_aj4_podem_coexistir() -> None:
+    """Encerramento e handoff convivem na etapa 4; quem resolve é a jusante."""
+    todos = SINAIS_DE_ENCERRAMENTO + SINAIS_DE_HANDOFF
+    resultado = canonicalizar_interpretacao(
+        entrada(
+            intencoes_autonomas=tuple(
+                IntencaoAutonomaRecebida(codigo=codigo, confianca=ALTA)
+                for codigo in todos
+            )
+        )
+    )
+    assert {item.codigo for item in resultado.intencoes_detectadas} == set(todos)
+
+
+def test_os_sinais_de_handoff_respeitam_a_ordem_canonica() -> None:
+    resultado = canonicalizar_interpretacao(
+        entrada(
+            intencoes_autonomas=tuple(
+                IntencaoAutonomaRecebida(codigo=codigo, confianca=ALTA)
+                for codigo in reversed(SINAIS_DE_HANDOFF)
+            )
+        )
+    )
+    assert [item.codigo for item in resultado.intencoes_detectadas] == (
+        SINAIS_DE_HANDOFF
+    )
+
+
+@pytest.mark.parametrize("codigo", SINAIS_DE_HANDOFF, ids=lambda c: c.value)
+@pytest.mark.parametrize("confianca", [ALTA, BAIXA])
+def test_sinal_de_handoff_nao_altera_a_projecao_de_identidade(
+    codigo: IntencaoConversacional, confianca: Confianca
+) -> None:
+    """AJ4: os oito sinais são **não discriminantes** para identidade."""
+    neutra = projetar_para_identidade(canonicalizar_interpretacao(entrada()))
+    com_sinal = projetar_para_identidade(
+        canonicalizar_interpretacao(
+            entrada(intencoes_autonomas=autonoma(codigo, confianca))
+        )
+    )
+    assert com_sinal == neutra
+    assert com_sinal.intencao_identidade is IntencaoIdentidade.NAO_DISCRIMINANTE
+
+
+@pytest.mark.parametrize("codigo", SINAIS_DE_HANDOFF, ids=lambda c: c.value)
+@pytest.mark.parametrize(
+    "declarada",
+    [
+        IntencaoConversacional.CONTINUIDADE_DE_EVENTO_DECLARADA,
+        IntencaoConversacional.EVENTO_NOVO_DECLARADO,
+    ],
+    ids=lambda c: c.value,
+)
+def test_sinal_de_handoff_nao_altera_continuidade_nem_evento_novo(
+    codigo: IntencaoConversacional, declarada: IntencaoConversacional
+) -> None:
+    sem_sinal = projetar_para_identidade(
+        canonicalizar_interpretacao(
+            entrada(intencoes_autonomas=autonoma(declarada, ALTA))
+        )
+    )
+    com_sinal = projetar_para_identidade(
+        canonicalizar_interpretacao(
+            entrada(
+                intencoes_autonomas=(
+                    IntencaoAutonomaRecebida(codigo=declarada, confianca=ALTA),
+                    IntencaoAutonomaRecebida(codigo=codigo, confianca=ALTA),
+                )
+            )
+        )
+    )
+    assert com_sinal == sem_sinal
+
+
+def test_os_oito_sinais_juntos_nao_alteram_a_projecao_de_identidade() -> None:
+    neutra = projetar_para_identidade(canonicalizar_interpretacao(entrada()))
+    todos = projetar_para_identidade(
+        canonicalizar_interpretacao(
+            entrada(
+                intencoes_autonomas=tuple(
+                    IntencaoAutonomaRecebida(codigo=codigo, confianca=ALTA)
+                    for codigo in SINAIS_DE_HANDOFF
+                )
+            )
+        )
+    )
+    assert todos == neutra
+
+
+def test_a_condicao_5_nao_muda_com_os_sinais_de_handoff() -> None:
+    """A única condição de §4.4 produzida aqui continua dependendo só de B."""
+    alvo = canonicalizar_interpretacao(
+        entrada(
+            intencoes_autonomas=tuple(
+                IntencaoAutonomaRecebida(codigo=codigo, confianca=ALTA)
+                for codigo in SINAIS_DE_HANDOFF
+            )
+        )
+    )
+    assert decidir_interesse_confirmar_disponibilidade(alvo) is False
 
 
 # --------------------------------------------------------------------------
