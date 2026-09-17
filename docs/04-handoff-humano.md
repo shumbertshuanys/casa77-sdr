@@ -38,6 +38,25 @@ Horário de atendimento (`processo_comercial.horario_atendimento`):
 - Interessado diz que não tem mais interesse.
 - Conversa sem relação com locação (engano, spam).
 
+Definições aprovadas dos três casos acima:
+
+- **Sem interesse** — o interessado manifesta **explicitamente** que não deseja
+  continuar. Não se conclui de silêncio, demora, ausência de nova mensagem, baixa
+  interação, simples fim de uma pergunta ou ambiguidade.
+- **Engano** — contato sem relação com locação porque o interessado procurou a
+  Casa 77 **por equívoco**: destinatário errado, empresa errada ou contato
+  acidental. **Não** são engano: correção de dado, alteração de data, declaração
+  de evento novo, desistência e spam.
+- **Spam** — conteúdo não solicitado, promocional, automatizado ou massificado,
+  **sem intenção real** de contratar ou consultar a Casa 77.
+
+**Política conservadora de spam.** A classificação automática é **semântica** e só
+ocorre quando a evidência é **inequívoca**. Caso ambíguo, dúvida entre spam e
+contato legítimo, ou evidência insuficiente **não encerram** a conversa.
+
+Encerrar não é atender: nestes casos **não** há handoff, e **nenhuma decisão
+humana reservada ao responsável comercial é tomada pelo bot**.
+
 ## Conteúdo do resumo entregue
 
 ```

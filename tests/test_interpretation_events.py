@@ -393,6 +393,28 @@ SINAIS_SEM_EVENTO: dict[str, dict[str, Any]] = {
             IntencaoConversacional.INTERESSE_CONFIRMAR_DISPONIBILIDADE, ALTA
         )
     },
+    # Os quatro sinais de encerramento de **AJ3** são **neutros em RES2**: quem
+    # os consome é **S3-D1**, fronteira posterior e separada (`RES2-10`).
+    "desinteresse_declarado": {
+        "intencoes_autonomas": autonoma(
+            IntencaoConversacional.DESINTERESSE_DECLARADO, ALTA
+        )
+    },
+    "contato_por_engano": {
+        "intencoes_autonomas": autonoma(
+            IntencaoConversacional.CONTATO_POR_ENGANO, ALTA
+        )
+    },
+    "mensagem_nao_solicitada": {
+        "intencoes_autonomas": autonoma(
+            IntencaoConversacional.MENSAGEM_NAO_SOLICITADA, ALTA
+        )
+    },
+    "aceitacao_de_incompatibilidade": {
+        "intencoes_autonomas": autonoma(
+            IntencaoConversacional.ACEITACAO_DE_INCOMPATIBILIDADE, ALTA
+        )
+    },
     "continuidade_declarada": {
         "intencoes_autonomas": autonoma(
             IntencaoConversacional.CONTINUIDADE_DE_EVENTO_DECLARADA, ALTA
@@ -595,6 +617,72 @@ def test_nenhum_sinal_de_handoff_produz_e11_e17_ou_e18(nome: str) -> None:
     assert Evento.E11 not in resultado
     assert Evento.E17 not in resultado
     assert Evento.E18 not in resultado
+
+
+#: Os quatro sinais de encerramento acrescentados ao grupo **A2** por **AJ3**.
+SINAIS_DE_ENCERRAMENTO = (
+    IntencaoConversacional.DESINTERESSE_DECLARADO,
+    IntencaoConversacional.CONTATO_POR_ENGANO,
+    IntencaoConversacional.MENSAGEM_NAO_SOLICITADA,
+    IntencaoConversacional.ACEITACAO_DE_INCOMPATIBILIDADE,
+)
+
+
+@pytest.mark.parametrize("codigo", SINAIS_DE_ENCERRAMENTO, ids=lambda c: c.value)
+@pytest.mark.parametrize("confianca", [ALTA, BAIXA])
+def test_sinal_de_encerramento_e_neutro_em_res2(
+    codigo: IntencaoConversacional, confianca: Confianca
+) -> None:
+    """`RES2-10`: `E14` pertence a **S3-D1**, e RES2 não muda por causa dela."""
+    resultado = produzir_eventos_da_interpretacao(
+        interpretacao(intencoes_autonomas=autonoma(codigo, confianca))
+    )
+    assert resultado == ()
+    assert Evento.E14 not in resultado
+
+
+def test_os_quatro_sinais_juntos_nao_produzem_evento_algum() -> None:
+    resultado = produzir_eventos_da_interpretacao(
+        interpretacao(
+            intencoes_autonomas=tuple(
+                IntencaoAutonomaRecebida(codigo=codigo, confianca=ALTA)
+                for codigo in SINAIS_DE_ENCERRAMENTO
+            )
+        )
+    )
+    assert resultado == ()
+
+
+def test_sinal_de_encerramento_nao_altera_os_seis_eventos_produzidos() -> None:
+    """Os sinais novos são **aditivos e inertes**: a saída não muda."""
+    base = interpretacao(
+        dados_extraidos=DadosExtraidos(
+            tipo_evento="festa fictícia", confianca_tipo_evento=ALTA
+        ),
+        perguntas_comerciais=(pergunta(),),
+    )
+    com_sinais = interpretacao(
+        dados_extraidos=DadosExtraidos(
+            tipo_evento="festa fictícia", confianca_tipo_evento=ALTA
+        ),
+        perguntas_comerciais=(pergunta(),),
+        intencoes_autonomas=tuple(
+            IntencaoAutonomaRecebida(codigo=codigo, confianca=ALTA)
+            for codigo in SINAIS_DE_ENCERRAMENTO
+        ),
+    )
+    assert produzir_eventos_da_interpretacao(com_sinais) == (
+        produzir_eventos_da_interpretacao(base)
+    )
+    assert Evento.E14 not in produzir_eventos_da_interpretacao(com_sinais)
+
+
+def test_res2_continua_fechado_nos_seis_eventos_apos_aj3() -> None:
+    """`E14` continua **fora** de RES2, e nenhum evento novo aparece."""
+    fonte = MODULO_RES2.read_text(encoding="utf-8")
+    assert "E14" not in fonte.split('"""', 2)[2]
+    assert Evento.E14 in PROIBIDOS
+    assert len(SEIS) == 6
 
 
 def test_pedido_de_humano_e_excecao_juntos_nao_produzem_evento_algum() -> None:

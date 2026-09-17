@@ -671,8 +671,9 @@ def test_vocabulario_de_assunto_continua_com_54() -> None:
     assert len(list(AssuntoComercial)) == 54
 
 
-def test_vocabulario_de_intencao_continua_com_11() -> None:
-    assert len(list(IntencaoConversacional)) == 11
+def test_vocabulario_de_intencao_continua_com_15() -> None:
+    """A proteção permanece; a autoridade passou de 11 para 15 por **AJ3**."""
+    assert len(list(IntencaoConversacional)) == 15
 
 
 def test_vocabulario_de_acao_continua_com_20() -> None:
