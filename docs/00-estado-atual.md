@@ -93,6 +93,24 @@ exclusivamente em `knowledge/casa77.yaml`.
   **S2-D8 continua não criando nem confirmando `E09`.** Ele **não agrega** produtores,
   **não monta `CondicoesCiclo`** e **não faz a integração do ciclo**, que **continua
   pendente**.
+- **Fora de `C`**, a **etapa 6** — o **`AtualizadorDadosAtendimento`** — está
+  **materializada LOCALMENTE nesta entrega candidata**, **ainda não versionada**, em
+  `src/casa77_sdr/data_update.py`, com o contrato vivo em `docs/07` §4.1.8
+  (`AD-1`–`AD-12`). Ela recebe os **dados vigentes de qualificação** e a
+  **`Interpretacao` canônica**, e devolve os **dados atualizados**, as **correções
+  registradas**, os **campos em conflito** e o sinal **`insumo_qualificacao_atualizado`**
+  — a **condição 1** de `docs/07` §4.4, que passa a ter **produtor concreto**. Somente
+  **`ALTA`** é efetiva; **correção explícita sobrescreve**; **contradição sem correção
+  não grava** e fica registrada; a igualdade é **estrita de domínio**, reutilizando
+  `interpretation._mesmo_valor`; e a mutação é apurada **campo a campo**. A fronteira
+  **não persiste** — a escrita física continua na **etapa 13** —, **não agrega**
+  produtores e **não monta `CondicoesCiclo`**.
+- A **pendência `B`** — colisão do nome `RegistroAtendimento` — está **ARBITRADA
+  LOCALMENTE nesta mesma entrega** (`docs/07` §4.1.1, `B-1`–`B-5`): o **componente de
+  comportamento** de §4.1 passa a se chamar **`AtualizadorDadosAtendimento`** e a
+  **dataclass** de `src/casa77_sdr/persistence.py` **preserva** nome, semântica, campos e
+  exportação. **Zero renomeação de código preexistente**, **zero alias**, **zero terceira
+  abstração**, e §4.1 continua com **14** componentes.
 - Etapa 4 permanece **absorvida pela Etapa 3B**; etapas 5 a 10 permanecem futuras
   (`docs/05-roadmap.md`).
 
@@ -101,6 +119,11 @@ exclusivamente em `knowledge/casa77.yaml`.
 ## 2. Última entrega funcional relevante
 
 Commit funcional `09ed65eff8da792844704cdc9e287dfc4a11988a`.
+
+**A última entrega funcional VERSIONADA continua sendo o produtor determinístico de
+`E07`/`E08`/`E09`.** A **etapa 6** e a **arbitragem da pendência `B`** descritas em §1 são
+**locais e candidatas**: elas **não possuem commit** e, portanto, **não são estado
+versionado do projeto** enquanto não forem auditadas e integradas.
 
 **Produtor determinístico dos eventos internos do ciclo materializado** — a fronteira que
 converte a **qualificação** e o **resultado de S2-D8** em **`E07`**, **`E08`** e
@@ -255,8 +278,15 @@ Permanecem igualmente vigentes: o **produtor não determinístico de `N-b`**
 materializada:
 
 - Python **3.14.5**;
-- **`8723 passed`**, sob **`-W error`**;
+- **`8874 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings, zero skips, zero xfails.
+
+Este é o **baseline local da entrega candidata** da **etapa 6**, ainda **não versionado**.
+O baseline **versionado** é o do produtor de `E07`/`E08`/`E09`: **`8723 passed`**. O
+acréscimo de **151** vem dos cenários de `tests/test_data_update.py` — a política dos seis
+campos, as correções, os conflitos, a igualdade estrita de domínio, a definição de mutação,
+a fronteira entre os dois `contato`, a pureza, os erros e a **integração contratual** que
+compõe `data_update` → `avaliar_regras` → `qualificar` → `cycle_events` **nos testes**.
 
 O baseline **anterior** era o da semântica de handoff: **`8606 passed`**. O acréscimo de
 **117** vem dos cenários de
@@ -513,12 +543,13 @@ código; o contrato vive em `docs/07` §2.3.
 
 | Pendência | Situação atual | Impacto / bloqueio | Fonte |
 |---|---|---|---|
-| **B** — colisão conceitual de nome `RegistroAtendimento` | aberta; nenhum referente renomeado ou unificado | bloqueia implementar o componente `RegistroAtendimento` | `docs/07` §4.1.1, §12 item 21 |
+| **B** — colisão conceitual de nome `RegistroAtendimento` | **ARBITRADA LOCALMENTE nesta entrega candidata**, **não versionada** (`docs/07` §4.1.1, `B-1`–`B-5`): o **referente comportamental** recebe o nome **`AtualizadorDadosAtendimento`**; a **dataclass** de `persistence.py` é **preservada**; **zero renomeação de código preexistente**, zero alias, zero terceira abstração | **deixou de bloquear** a implementação do componente, que está materializado localmente | `docs/07` §4.1.1, §4.1.8, §12 itens 21 e 26 |
 | **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`ProjetorEmissao`**, **`SeletorFatos`**, **compositor determinístico por fragmento**, a **montagem canônica de uma emissão**, o **`ValidadorResposta`**, a **infraestrutura estrutural de `R2`** (`docs/07` §4.4.2) e o **produtor determinístico S2-D8** (`docs/07` §4.4.3; ver a linha própria de **S2-D8**). **Pendentes**: **integração *end-to-end* da etapa 10**, **superfícies conversacionais sem unidade aprovada**, as **ações produzidas por chamadas posteriores da `MaquinaEstados`**, a **evolução futura do `ProjetorEmissao`** para essas fases e a **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice à **emissão montada numa única mensagem**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §4.1.6, §4.1.7, §12 itens 19, 10 e 22 |
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
 | **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado e **materializado**: infraestrutura estrutural de `R2` (`coverage_map.py`, `coverage_map_load.py`; §4.4.2), **produtor determinístico** (`coverage_decision.py`; §4.4.3), **aplicabilidade de pacote** (`pricing_applicability.py`; §4.4.4) e o **artefato físico** `knowledge/mapa-cobertura.yaml`, com **54/54** assuntos — **33** com cobertura e **21** vazios. Cobertos os eixos **A** e **B**, **`D8-F`**, Classe I/II, os *gates* de **`R05`** e de **preço (`D8-G`)**, **`D8-L4`**, ***witnesses***, `fragmentos_autorizados`, `pendencias_resposta` e **causas** de `E09`. O **conteúdo de `R2` foi concluído nesta capacidade**, e S2-D8 + `R2` **decidem cobertura** quando recebem as entradas estruturadas. **Já materializada e versionada**, fora desta pendência: a **conversão** das causas em **um único `Evento.E09`**, por `src/casa77_sdr/cycle_events.py` (`docs/07` §6.3, `CIE-1`–`CIE-10`). **Ainda ausentes**: a **integração desse evento ao ciclo**, a **agregação** dos produtores distintos, a **montagem de `CondicoesCiclo`** e a execução **dentro do futuro `OrquestradorMotor`** | **deixou de bloquear**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4.1, §4.4.2, §4.4.3, §4.4.4, §12 item 10; `docs/06` §11 |
-| **Produtor de `E07`/`E08`/`E09`** | **materializado e versionado**: `src/casa77_sdr/cycle_events.py`, contrato vivo em `docs/07` §6.3 (`CIE-1`–`CIE-10`). **Pendentes**: a **agregação** dos eventos de produtores distintos, a **montagem de `CondicoesCiclo`** e a **etapa 6**, que produz `insumo_qualificacao_atualizado` | **`E07`, `E08` e `E09` deixaram de carecer de produtor**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §6.3, §12 item 25; `docs/06` §2.2, §9, §11 |
+| **Etapa 6 — `AtualizadorDadosAtendimento`** | **materializada LOCALMENTE nesta entrega candidata**, **não versionada**: `src/casa77_sdr/data_update.py`, contrato vivo em `docs/07` §4.1.8 (`AD-1`–`AD-12`). A **condição 1** de §4.4 passa a ter produtor. **Pendentes**: a **agregação** dos eventos de produtores distintos, a **montagem de `CondicoesCiclo`** e a **integração ao ciclo** | **`insumo_qualificacao_atualizado` deixa de carecer de produtor quando a entrega for versionada**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.1.8, §4.4, §5, §12 item 26 |
+| **Produtor de `E07`/`E08`/`E09`** | **materializado e versionado**: `src/casa77_sdr/cycle_events.py`, contrato vivo em `docs/07` §6.3 (`CIE-1`–`CIE-10`). **Pendentes**: a **agregação** dos eventos de produtores distintos, a **montagem de `CondicoesCiclo`** e a **integração ao ciclo** | **`E07`, `E08` e `E09` deixaram de carecer de produtor**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §6.3, §12 item 25; `docs/06` §2.2, §9, §11 |
 | **Semântica de handoff + `DetectorHandoff`** | **materializados e versionados**: `src/casa77_sdr/handoff_detection.py`, contrato vivo em `docs/07` §6.3 (`DH-1`–`DH-12`), com a extensão semântica **AJ4**. Cobre os **gatilhos 3–10** de `docs/04`. **Pendente**: a **integração ao ciclo**, que liga o `E18` e os motivos produzidos à `MaquinaEstados` | **`E18` deixou de carecer de produtor**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §6.3, §12 item 24; `docs/06` §2.1, §9 |
 | **S3-D1** — produtor da condição `motivo_encerramento` | produtor **atribuído e materializado**: `src/casa77_sdr/closure_decision.py`, contrato vivo em `docs/07` §6.3 (`S3D1-1`–`S3D1-12`), com a extensão semântica **AJ3**. **Pendente**: a **integração ao ciclo**, que liga `E14` e o motivo produzidos à `MaquinaEstados` | **deixou de ser a ausência de produtor**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4, §6.3, §12 itens 10 e 23 |
 | **E1** — conversa × atendimento × lead | não arbitrada; atravessa identidade, persistência e registro de leads | não bloqueia a especificação vigente | `docs/07` §12 item 13 |
@@ -561,8 +592,10 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
   de evento**. **`E14`, `E18`, `E07`, `E08` e `E09` deixaram de faltar**: os seus
   produtores — **`S3-D1`**, o **`DetectorHandoff`** e `src/casa77_sdr/cycle_events.py` —
   estão **materializados e versionados**. **Continuam ausentes** quem **une** eventos de
-  produtores distintos, quem **monta `CondicoesCiclo`** e o produtor de
-  **`insumo_qualificacao_atualizado`** (**etapa 6**);
+  produtores distintos e quem **monta `CondicoesCiclo`**. O produtor de
+  **`insumo_qualificacao_atualizado`** — a **etapa 6** — **deixou de faltar
+  localmente**: ele está **materializado** nesta entrega candidata e **passa a contar
+  quando ela for versionada**;
 - **N-a** — integração operacional da etapa 13, tratamento dos bloqueios S4/S5 e destino do
   alerta operacional;
 - **limiar temporal** — valor e mecanismo de carga.
@@ -575,8 +608,13 @@ ser bloqueadores**: dadas as entradas estruturadas, a cobertura é decidida.
 Bloqueia o **uso real** em canal, à parte da integração: **persistência operacional não
 volátil**.
 
-**Não são bloqueadores** — abertas, porém sem condicionar a integração vigente: **B**, **E1**,
-**E3**, **S2-D5**, **S2-D7**, unicidade geral de `id_atendimento` e retorno do controle ao bot.
+**Não são bloqueadores** — **ainda abertas**, porém sem condicionar a integração vigente:
+**E1**, **E3**, **S2-D5**, **S2-D7**, unicidade geral de `id_atendimento` e retorno do
+controle ao bot.
+
+**`B` não está mais aberta**: ela foi **arbitrada LOCALMENTE nesta entrega candidata**
+(`docs/07` §4.1.1, `B-1`–`B-5`) e, como o restante da entrega, **ainda não está
+versionada**.
 
 A `MaquinaEstados` **não depende** dessas pendências para o contrato já definido: recebe
 eventos confirmados e condições já estruturadas.
@@ -591,15 +629,17 @@ ciclo.**
 A cadeia determinística já vai do índice à emissão validada, **S2-D8** e **`R2`** decidem
 cobertura sobre o artefato aprovado, e a **conversão** de **causa estruturada** em
 **`Evento.E09`** já está **materializada localmente** (§1) — junto com `E07` e `E08`.
-O que falta é o **ciclo**: ninguém **liga** interpretação, qualificação, cobertura, seleção,
-composição, montagem e validação; ninguém **agrega** os eventos dos produtores distintos;
-ninguém **monta `CondicoesCiclo`**; e nenhuma decisão **percorre** o pipeline.
+A **etapa 6** também já está materializada localmente (§1), e com ela o produtor de
+`insumo_qualificacao_atualizado`. O que falta é o **ciclo**: ninguém **liga** interpretação,
+qualificação, cobertura, seleção, composição, montagem e validação; ninguém **agrega** os
+eventos dos produtores distintos; ninguém **monta `CondicoesCiclo`**; e nenhuma decisão
+**percorre** o pipeline.
 
 **Integrar não é a próxima ação imediata**, porque a integração depende de pendências que
 **este mesmo snapshot** ainda registra como abertas em §5 e §6 — entre elas **N-b**, **E4**,
 a **integração ao ciclo** dos produtores já materializados — **`S3-D1`**, o
 **`DetectorHandoff`** e o de **`E07`/`E08`/`E09`** —, a **agregação** dos eventos de
-produtores distintos, a **montagem de `CondicoesCiclo`**, a **etapa 6**, as matérias
+produtores distintos, a **montagem de `CondicoesCiclo`**, as matérias
 residuais de **N-a** e o **limiar temporal**, o **destino do alerta operacional**,
 `calendario_integrado`, as **superfícies conversacionais sem unidade aprovada** e, para
 uso em canal real, a **persistência operacional não volátil**.
