@@ -205,7 +205,7 @@ pelo pacote. **`knowledge/**` permanece inalterado.**
 A **integração do ciclo continua pendente**: continuam **ausentes** quem **agrega** os
 eventos de produtores distintos, quem **monta `CondicoesCiclo`** e o próprio
 **`OrquestradorMotor`**. O produtor de **`insumo_qualificacao_atualizado`** — a **etapa
-6** — também continua **ausente**.
+6** — **não está entre eles**: ele está **materializado e versionado**.
 
 Permanecem igualmente vigentes: a **semântica completa de handoff + `DetectorHandoff`** — o produtor
 determinístico de **`E18`** e dos **motivos de handoff** originados da **interpretação
@@ -586,7 +586,7 @@ código; o contrato vive em `docs/07` §2.3.
 
 | Pendência | Situação atual | Impacto / bloqueio | Fonte |
 |---|---|---|---|
-| **B** — colisão conceitual de nome `RegistroAtendimento` | **ARBITRADA e versionada** (`docs/07` §4.1.1, `B-1`–`B-5`): o **referente comportamental** recebe o nome **`AtualizadorDadosAtendimento`**; a **dataclass** de `persistence.py` é **preservada**; **zero renomeação de código preexistente**, zero alias, zero terceira abstração | **deixou de bloquear** a implementação do componente, que está materializado localmente | `docs/07` §4.1.1, §4.1.8, §12 itens 21 e 26 |
+| **B** — colisão conceitual de nome `RegistroAtendimento` | **ARBITRADA e versionada** (`docs/07` §4.1.1, `B-1`–`B-5`): o **referente comportamental** recebe o nome **`AtualizadorDadosAtendimento`**; a **dataclass** de `persistence.py` é **preservada**; **zero renomeação de código preexistente**, zero alias, zero terceira abstração | **deixou de bloquear** a implementação do componente, que está **materializado e versionado** | `docs/07` §4.1.1, §4.1.8, §12 itens 21 e 26 |
 | **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`ProjetorEmissao`**, **`SeletorFatos`**, **compositor determinístico por fragmento**, a **montagem canônica de uma emissão**, o **`ValidadorResposta`**, a **infraestrutura estrutural de `R2`** (`docs/07` §4.4.2) e o **produtor determinístico S2-D8** (`docs/07` §4.4.3; ver a linha própria de **S2-D8**). **Pendentes**: **integração *end-to-end* da etapa 10**, **superfícies conversacionais sem unidade aprovada**, as **ações produzidas por chamadas posteriores da `MaquinaEstados`**, a **evolução futura do `ProjetorEmissao`** para essas fases e a **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice à **emissão montada numa única mensagem**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §4.1.6, §4.1.7, §12 itens 19, 10 e 22 |
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
@@ -671,8 +671,8 @@ ciclo.**
 
 A cadeia determinística já vai do índice à emissão validada, **S2-D8** e **`R2`** decidem
 cobertura sobre o artefato aprovado, e a **conversão** de **causa estruturada** em
-**`Evento.E09`** já está **materializada localmente** (§1) — junto com `E07` e `E08`.
-A **etapa 6** também já está materializada localmente (§1), e com ela o produtor de
+**`Evento.E09`** já está **materializada e versionada** (§1) — junto com `E07` e `E08`.
+A **etapa 6** também já está **materializada e versionada** (§1), e com ela o produtor de
 `insumo_qualificacao_atualizado`. O que falta é o **ciclo**: ninguém **liga** interpretação,
 qualificação, cobertura, seleção, composição, montagem e validação; ninguém **agrega** os
 eventos dos produtores distintos; ninguém **monta `CondicoesCiclo`**; e nenhuma decisão
