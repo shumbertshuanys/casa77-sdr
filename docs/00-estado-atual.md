@@ -81,9 +81,9 @@ exclusivamente em `knowledge/casa77.yaml`.
   **5/6** e em **T14/T15/T25**. Ele **não faz a integração do ciclo**, que **continua
   pendente**.
 - **Fora de `C`**, o **produtor determinístico dos eventos internos do ciclo** —
-  **`E07`**, **`E08`** e **`E09`** — está **materializado LOCALMENTE nesta entrega
-  candidata**, **ainda não versionado**, em `src/casa77_sdr/cycle_events.py`, com o
-  contrato vivo em `docs/07` §6.3 (`CIE-1`–`CIE-10`). Ele é **posterior** à qualificação
+  **`E07`**, **`E08`** e **`E09`** — está **materializado e versionado** em
+  `src/casa77_sdr/cycle_events.py`, com o contrato vivo em `docs/07` §6.3
+  (`CIE-1`–`CIE-10`). Ele é **posterior** à qualificação
   e a **S2-D8**, e **fora de ambas**: recebe a `Qualificacao` já calculada, o booleano
   `insumo_qualificacao_atualizado` e o `ResultadoS2D8`, e devolve **apenas** os três
   eventos, em ordem canônica **sem precedência**. `E07` exige **as duas** condições de
@@ -100,14 +100,47 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-Commit funcional `e414ca424c6ddafd740d8691dd615185b5efd4f4`.
+Commit funcional `09ed65eff8da792844704cdc9e287dfc4a11988a`.
 
-**A última entrega funcional VERSIONADA continua sendo a semântica completa de handoff +
-`DetectorHandoff`.** O **produtor dos eventos internos do ciclo** descrito em §1 é **local
-e candidato**: ele **não possui commit** e, portanto, **não é estado versionado do
-projeto** enquanto não for auditado e integrado.
+**Produtor determinístico dos eventos internos do ciclo materializado** — a fronteira que
+converte a **qualificação** e o **resultado de S2-D8** em **`E07`**, **`E08`** e
+**`E09`**, em `src/casa77_sdr/cycle_events.py`, com o contrato vivo em `docs/07` §6.3
+(`CIE-1`–`CIE-10`). **`E07`, `E08` e a conversão `causas_e09` → `Evento.E09` deixaram de
+carecer de produtor.**
 
-**Semântica completa de handoff + `DetectorHandoff` materializados** — o produtor
+Ela ocorre **depois** da qualificação e **depois** de S2-D8, e **fora de ambas**. A
+entrada é a `Qualificacao` já calculada, o booleano `insumo_qualificacao_atualizado` e o
+`ResultadoS2D8` — nunca texto, `Interpretacao`, `Estado`, `SituacaoTakeover` ou
+`CondicoesCiclo`. A saída é **fechada** em três eventos, em ordem canônica **apenas para
+auditabilidade**, e a **tupla vazia é resultado legítimo**.
+
+`E07` exige **as duas** condições de `docs/06` §2.2 — insumo atualizado **e** resultado
+`QUALIFICADO` ou `QUALIFICADO_COM_RESSALVA` — e a fronteira **não decide a mutação**, que
+chega já decidida. `E08` é confirmado **se e somente se** o resultado for `INCOMPATIVEL`,
+sem reler YAML, sem recriar `Violacao` e **sem** escolher a classe **T05/T22 × T06/T23**,
+que continua na máquina. `E09` vem **das causas** de S2-D8: `resposta_aprovada_disponivel`
+falso **não basta** e `pendencia_impeditiva` verdadeiro **não basta** sem causa
+correspondente; qualquer quantidade de causas confirma **um único** evento, e elas **não
+são reconstruídas, deduplicadas nem reinterpretadas**. **S2-D8 continua não criando nem
+confirmando `E09`.**
+
+A fronteira é **pura** — zero I/O, rede, relógio, YAML, `knowledge/**`, LLM, SDK,
+persistência, logging, cache ou retry —, **não agrega** produtores, **não monta
+`CondicoesCiclo`**, **não a importa**, **não chama `decidir(...)`** e **não é** componente
+novo: §4.1 permanece com **14**.
+
+`src/casa77_sdr/qualification.py`, `src/casa77_sdr/coverage_decision.py`,
+`src/casa77_sdr/state_machine.py`, `src/casa77_sdr/interpretation_events.py`,
+`src/casa77_sdr/handoff_detection.py`, `src/casa77_sdr/closure_decision.py` e
+`src/casa77_sdr/__init__.py` permanecem **inalterados**; nada da fronteira é exportado
+pelo pacote. **`knowledge/**` permanece inalterado.**
+
+A **integração do ciclo continua pendente**: continuam **ausentes** quem **agrega** os
+eventos de produtores distintos, quem **monta `CondicoesCiclo`** e o próprio
+**`OrquestradorMotor`**. O produtor de **`insumo_qualificacao_atualizado`** — a **etapa
+6** — também continua **ausente**.
+
+Permanecem igualmente vigentes: a **semântica completa de handoff + `DetectorHandoff`** — o produtor
 determinístico de **`E18`** e dos **motivos de handoff** originados da **interpretação
 do interessado**, em `src/casa77_sdr/handoff_detection.py`, com o contrato vivo em
 `docs/07` §6.3 (`DH-1`–`DH-12`). O `DetectorHandoff`, que `docs/06` §9 já atribuía aos
@@ -225,9 +258,8 @@ materializada:
 - **`8723 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings, zero skips, zero xfails.
 
-Este é o **baseline local da entrega candidata** do produtor de `E07`/`E08`/`E09`, ainda
-**não versionado**. O baseline **versionado** é o da semântica de handoff:
-**`8606 passed`**. O acréscimo de **117** vem dos cenários de
+O baseline **anterior** era o da semântica de handoff: **`8606 passed`**. O acréscimo de
+**117** vem dos cenários de
 `tests/test_cycle_events.py` — as regras dos três eventos, as **seis** composições
 válidas, a ordem canônica, os tipos inválidos, a pureza e a composição com a
 `MaquinaEstados`, mais as provas de preservação das fronteiras já aprovadas.
@@ -485,8 +517,8 @@ código; o contrato vive em `docs/07` §2.3.
 | **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`ProjetorEmissao`**, **`SeletorFatos`**, **compositor determinístico por fragmento**, a **montagem canônica de uma emissão**, o **`ValidadorResposta`**, a **infraestrutura estrutural de `R2`** (`docs/07` §4.4.2) e o **produtor determinístico S2-D8** (`docs/07` §4.4.3; ver a linha própria de **S2-D8**). **Pendentes**: **integração *end-to-end* da etapa 10**, **superfícies conversacionais sem unidade aprovada**, as **ações produzidas por chamadas posteriores da `MaquinaEstados`**, a **evolução futura do `ProjetorEmissao`** para essas fases e a **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice à **emissão montada numa única mensagem**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §4.1.6, §4.1.7, §12 itens 19, 10 e 22 |
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
-| **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado e **materializado**: infraestrutura estrutural de `R2` (`coverage_map.py`, `coverage_map_load.py`; §4.4.2), **produtor determinístico** (`coverage_decision.py`; §4.4.3), **aplicabilidade de pacote** (`pricing_applicability.py`; §4.4.4) e o **artefato físico** `knowledge/mapa-cobertura.yaml`, com **54/54** assuntos — **33** com cobertura e **21** vazios. Cobertos os eixos **A** e **B**, **`D8-F`**, Classe I/II, os *gates* de **`R05`** e de **preço (`D8-G`)**, **`D8-L4`**, ***witnesses***, `fragmentos_autorizados`, `pendencias_resposta` e **causas** de `E09`. O **conteúdo de `R2` foi concluído nesta capacidade**, e S2-D8 + `R2` **decidem cobertura** quando recebem as entradas estruturadas. **Já materializada LOCALMENTE nesta entrega candidata**, fora desta pendência: a **conversão** das causas em **um único `Evento.E09`**, por `src/casa77_sdr/cycle_events.py` (`docs/07` §6.3, `CIE-1`–`CIE-10`) — **ainda não versionada**. **Ainda ausentes**: a **integração desse evento ao ciclo**, a **agregação** dos produtores distintos, a **montagem de `CondicoesCiclo`** e a execução **dentro do futuro `OrquestradorMotor`** | **deixou de bloquear**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4.1, §4.4.2, §4.4.3, §4.4.4, §12 item 10; `docs/06` §11 |
-| **Produtor de `E07`/`E08`/`E09`** | **materializado LOCALMENTE nesta entrega candidata**, **não versionado**: `src/casa77_sdr/cycle_events.py`, contrato vivo em `docs/07` §6.3 (`CIE-1`–`CIE-10`). **Pendentes**: a **agregação** dos eventos de produtores distintos, a **montagem de `CondicoesCiclo`** e a **etapa 6** | **`E07`/`E08`/`E09` deixam de carecer de produtor quando a entrega for versionada**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §6.3, §12 item 25; `docs/06` §2.2, §9, §11 |
+| **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado e **materializado**: infraestrutura estrutural de `R2` (`coverage_map.py`, `coverage_map_load.py`; §4.4.2), **produtor determinístico** (`coverage_decision.py`; §4.4.3), **aplicabilidade de pacote** (`pricing_applicability.py`; §4.4.4) e o **artefato físico** `knowledge/mapa-cobertura.yaml`, com **54/54** assuntos — **33** com cobertura e **21** vazios. Cobertos os eixos **A** e **B**, **`D8-F`**, Classe I/II, os *gates* de **`R05`** e de **preço (`D8-G`)**, **`D8-L4`**, ***witnesses***, `fragmentos_autorizados`, `pendencias_resposta` e **causas** de `E09`. O **conteúdo de `R2` foi concluído nesta capacidade**, e S2-D8 + `R2` **decidem cobertura** quando recebem as entradas estruturadas. **Já materializada e versionada**, fora desta pendência: a **conversão** das causas em **um único `Evento.E09`**, por `src/casa77_sdr/cycle_events.py` (`docs/07` §6.3, `CIE-1`–`CIE-10`). **Ainda ausentes**: a **integração desse evento ao ciclo**, a **agregação** dos produtores distintos, a **montagem de `CondicoesCiclo`** e a execução **dentro do futuro `OrquestradorMotor`** | **deixou de bloquear**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4.1, §4.4.2, §4.4.3, §4.4.4, §12 item 10; `docs/06` §11 |
+| **Produtor de `E07`/`E08`/`E09`** | **materializado e versionado**: `src/casa77_sdr/cycle_events.py`, contrato vivo em `docs/07` §6.3 (`CIE-1`–`CIE-10`). **Pendentes**: a **agregação** dos eventos de produtores distintos, a **montagem de `CondicoesCiclo`** e a **etapa 6**, que produz `insumo_qualificacao_atualizado` | **`E07`, `E08` e `E09` deixaram de carecer de produtor**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §6.3, §12 item 25; `docs/06` §2.2, §9, §11 |
 | **Semântica de handoff + `DetectorHandoff`** | **materializados e versionados**: `src/casa77_sdr/handoff_detection.py`, contrato vivo em `docs/07` §6.3 (`DH-1`–`DH-12`), com a extensão semântica **AJ4**. Cobre os **gatilhos 3–10** de `docs/04`. **Pendente**: a **integração ao ciclo**, que liga o `E18` e os motivos produzidos à `MaquinaEstados` | **`E18` deixou de carecer de produtor**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §6.3, §12 item 24; `docs/06` §2.1, §9 |
 | **S3-D1** — produtor da condição `motivo_encerramento` | produtor **atribuído e materializado**: `src/casa77_sdr/closure_decision.py`, contrato vivo em `docs/07` §6.3 (`S3D1-1`–`S3D1-12`), com a extensão semântica **AJ3**. **Pendente**: a **integração ao ciclo**, que liga `E14` e o motivo produzidos à `MaquinaEstados` | **deixou de ser a ausência de produtor**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4, §6.3, §12 itens 10 e 23 |
 | **E1** — conversa × atendimento × lead | não arbitrada; atravessa identidade, persistência e registro de leads | não bloqueia a especificação vigente | `docs/07` §12 item 13 |
@@ -526,11 +558,11 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
 - **N-b** — a **integração da etapa 4** no ciclo. Nem o produtor não determinístico
   nem **`N-b-RES2`** são mais a lacuna: **ambos estão versionados** (`docs/07` §6.3,
   `M-PN1`–`M-PN12` e `RES2-1`–`RES2-12`). Continuam **ausentes os demais produtores
-  de evento**. **`E14` e `E18` deixaram de faltar**: os seus produtores — **`S3-D1`** e o
-  **`DetectorHandoff`** — estão **materializados e versionados**. **`E07`, `E08` e `E09`
-  deixaram de faltar localmente**: o produtor está **materializado** nesta entrega
-  candidata e **passa a contar quando ela for versionada**. **Continuam ausentes** quem
-  **une** eventos de produtores distintos e quem **monta `CondicoesCiclo`**;
+  de evento**. **`E14`, `E18`, `E07`, `E08` e `E09` deixaram de faltar**: os seus
+  produtores — **`S3-D1`**, o **`DetectorHandoff`** e `src/casa77_sdr/cycle_events.py` —
+  estão **materializados e versionados**. **Continuam ausentes** quem **une** eventos de
+  produtores distintos, quem **monta `CondicoesCiclo`** e o produtor de
+  **`insumo_qualificacao_atualizado`** (**etapa 6**);
 - **N-a** — integração operacional da etapa 13, tratamento dos bloqueios S4/S5 e destino do
   alerta operacional;
 - **limiar temporal** — valor e mecanismo de carga.
