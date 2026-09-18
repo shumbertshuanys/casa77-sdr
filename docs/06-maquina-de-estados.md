@@ -695,7 +695,7 @@ qualquer chamada da `MaquinaEstados`**. São **quatro** casos, conforme doc 07 �
 |---|---|---|
 | 1 | **contexto inválido** | **etapa 3** — a recuperação de contexto bloqueia (doc 07 §7.1, S1–S8). Não é produzido pelo `ResolvedorIdentidade`: a etapa 5 nem chega a ser executada (S7) |
 | 2 | **`Identidade.AMBIGUA`** | **etapa 5** — a cascata conclui ambiguidade e aplica A1–A7 (doc 07 §7.1) |
-| 3 | **`SEM_CANDIDATO_ELEGIVEL`** | **etapa 5** — enquanto a pendência **E4** estiver aberta (tabela G1–G7, abaixo) |
+| 3 | **`SEM_CANDIDATO_ELEGIVEL`** | **etapa 5** — com o tratamento fechado pelo **contrato E4** (doc 07 §7.1, `E4-1`–`E4-14`; tabela G1–G7, abaixo) |
 | 4 | **`situacao_takeover == HUMANO_MULTIPLO`** | **etapa 5** — **sem alvo**, `identidade = None`, a **`MaquinaEstados` não é chamada**, **zero emissão automática** (doc 07 §7.1, R5-P0) |
 
 **`HUMANO_UNICO` não pertence a esta lista.** Ele **não** encerra o ciclo: a máquina **é
@@ -716,7 +716,7 @@ Ele encerra a resolução **sem transição**, e as seguintes negações são no
 | G4 | **Não autoriza T01.** Nenhum atendimento é criado por causa dele. |
 | G5 | **Não autoriza T37.** Nova solicitação é decisão positiva da cascata, não consequência de conjunto vazio. |
 | G6 | **Não é passado silenciosamente à `MaquinaEstados`.** A máquina não é chamada com esse resultado como se fosse `NOVO`. |
-| G7 | O tratamento pelo `OrquestradorMotor` permanece **pendente em E4** (`docs/07` §12). Enquanto **E4** não for arbitrada, esse resultado **não autoriza avanço de integração**. |
+| G7 | O tratamento deste resultado está **arbitrado** pelo **contrato E4** (`docs/07` §7.1, `E4-1`–`E4-14`): preservar o processamento pendente, **tentar** o alerta operacional, marcar a chave de idempotência e **encerrar sem transição**, sem emissão e sem handoff. A **coordenação** desse branch no pipeline continua sendo do `OrquestradorMotor`, que permanece **ausente**. |
 
 Também **não é erro**: contexto íntegro e ausência de candidatos elegíveis são estados
 válidos e distintos de contexto ausente ou corrompido, que continua bloqueado na etapa 3
@@ -928,7 +928,7 @@ confrontado com a `main`, e **também não é duplicado aqui**.
 | 2 | **o produtor é uma fronteira própria e separada** — não é o `CarregadorYaml`, não é o `ValidadorYaml`, não é o `SeletorFatos` e não é o `Qualificador` |
 | 3 | **nenhum estado, evento, transição, efeito paralelo, inércia, ação ou invariante novo** é criado nesta máquina |
 | 4 | **S2-D8 não bloqueia** a implementação isolada da `MaquinaEstados`, que recebe `E09` e as condições estruturadas já prontos |
-| 5 | **S2-D8 continua bloqueando** o `OrquestradorMotor` e a integração completa do pipeline |
+| 5 | **a coordenação de S2-D8 dentro do ciclo pertence ao `OrquestradorMotor`** — S2-D8 **não executa** a `MaquinaEstados` e **não transfere** a ela a responsabilidade de detectar ou classificar pendências |
 | 6 | **nenhuma subetapa foi criada — a 3B.8 não existe** |
 
 Escopo do contrato, agora **arbitrado**:

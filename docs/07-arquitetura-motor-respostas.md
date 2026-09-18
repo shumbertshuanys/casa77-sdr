@@ -2832,7 +2832,8 @@ construir o objeto `CondicoesCiclo` com os **oito** campos — está **materiali
 `src/casa77_sdr/cycle_inputs.py` (§4.1.9, `IC-1`–`IC-12`), fronteira **pura**, **posterior**
 a todos os produtores e **anterior** à máquina, que **não cria componente**: §4.1 permanece
 com **14**. A **coordenação do pipeline** — decidir **quando** cada etapa roda, **com que
-dados vigentes**, o que fazer com **`SEM_CANDIDATO_ELEGIVEL`** (**E4**, item 15) e como
+dados vigentes**, **coordenar o branch E4** de **`SEM_CANDIDATO_ELEGIVEL`** (§7.1,
+`E4-1`–`E4-14`) e como
 tratar as chamadas da máquina **não** originadas de mensagem nova — **continua ausente** e
 **continua sendo** papel do `OrquestradorMotor`. A montagem cobre a **primeira chamada** de
 um ciclo de **nova mensagem**, na qual **`E01` é obrigatório**; os demais caminhos de
@@ -3167,7 +3168,7 @@ Continuam **verdadeiras e inalteradas**, sem atenuação:
 
 #### D8-X — fora do escopo de S2-D8
 
-Permanecem **fora do escopo de S2-D8** e **não resolvidas por ela**: **`N-b-RES2`** — cujo produtor concreto está **materializado** em `src/casa77_sdr/interpretation_events.py` (§6.3, `RES2-1`–`RES2-12`), com a **integração do ciclo ainda pendente** — e **S3-D1**, cujo produtor concreto está **materializado** em `src/casa77_sdr/closure_decision.py` (§6.3, `S3D1-1`–`S3D1-12`), igualmente **fora de S2-D8** e com a **integração do ciclo ainda pendente**. Permanecem **abertas e inalteradas**: **E4**; **E1**; **E3**;
+Permanecem **fora do escopo de S2-D8** e **não resolvidas por ela**: **`N-b-RES2`** — cujo produtor concreto está **materializado** em `src/casa77_sdr/interpretation_events.py` (§6.3, `RES2-1`–`RES2-12`), com a **integração do ciclo ainda pendente** — e **S3-D1**, cujo produtor concreto está **materializado** em `src/casa77_sdr/closure_decision.py` (§6.3, `S3D1-1`–`S3D1-12`), igualmente **fora de S2-D8** e com a **integração do ciclo ainda pendente**. Permanecem **abertas e inalteradas**: **E1**; **E3**;
 **B**; **C** (§2.3); **S2-D5**; **S2-D7**; **`Q53`**/**`Q54`** (**AJ2-E4**); o **valor do
 limiar** e seu **mecanismo de carga**; o **destino do alerta operacional**; **S4**/**S5**;
 e o **`OrquestradorMotor`**. S2-D8 **não cria** o índice de C, **não cria** o mapa R2,
@@ -3374,7 +3375,7 @@ adivinhar.
 | 2 | Verificar idempotência | mensagem normalizada + metadados | chave de idempotência (§4.3) + veredito duplicada/nova | duplicata → encerrar o ciclo sem efeito (doc 06 §4 passo 1); sem identificador de canal → chave composta, marcada como heurística no log |
 | 3 | **Recuperar contexto persistido** | canal + contato + identificador do atendimento, quando houver + **instante de referência do ciclo** — o campo "data e hora" de §6.1 — + **limiar temporal de recência**, argumento explícito de configuração operacional (§6.2, N-a-L1–N-a-L6) | contexto recuperado (§6.2), com **duas projeções distintas** para a identidade: **(A)** o **conjunto elegível fechado** do contato, produzido pela política **N-a** — **arbitrada** em §6.2, nunca o histórico inteiro; e **(B)** **`ids_em_atendimento_humano`** — o conjunto **H**, os IDs dos atendimentos recuperados cujo estado é `atendimento_humano`. **(B) não passa por N-a**: nenhuma política de elegibilidade ou recência pode remover um atendimento humano de H (H2). Além disso: estado, dados, qualificação, pendências, motivos | atendimento indicado e **não recuperado** → erro operacional: bloquear, preservar, alertar. Estado corrompido → bloqueio (§7.1). **Marco temporal exigido ausente** ou **projeção incoerente do registro recuperado** → bloqueio de **integridade** por **E5/S7** (§7.1, **S9**, **S11**); **limiar ausente, de tipo inválido ou não positivo** → bloqueio por **erro de contrato da configuração** (§7.1, **S10**) — mesmo tratamento observável, atribuição normativa distinta. **Nunca criar atendimento novo por não encontrar o indicado** |
 | 4 | Interpretar e extrair — **fronteira da etapa 4** (arbitragem N-b, §6.3) | mensagem normalizada | **`Interpretacao`**: as **oito** categorias de §6.3 preservadas, com **`IntencaoConversacional`** fechada em **23** códigos (partição A1/A2/B, com **A2 = 14** após **AJ4**), confiança **binária** por item e `confianca_global` sempre presente. Derivadas **deterministicamente dentro da própria fronteira**: a **projeção estruturada** consumida pela etapa 5 (N-b-K1–N-b-K7) e a condição **`interesse_confirmar_disponibilidade`** de §4.4 (N-b-CD1–N-b-CD4). **A etapa 4 não emite `Exx`, `Txx`, `Rxx`, qualificação, violação, estado, pendência nem `motivo_encerramento`** (N-b-G2) | produtor indisponível → **nenhuma `Interpretacao`** e **nenhuma projeção**; a etapa 5 não executa e `interesse_confirmar_disponibilidade = None` (N-b-M1–N-b-M8, §7). **Erro de contrato** (E-Nb-1–E-Nb-19) **bloqueia na fronteira da etapa 4**, sem projeção e **nunca** convertido em `Identidade.AMBIGUA`. Confiança `BAIXA` **não é erro**: é **ausência para consumo estruturado**, com a **única exceção** de `pedido_de_humano` (N-b-PH3, N-b-PH4) |
-| 5 | **Resolver identidade do atendimento** | conjunto elegível fechado (3) + **conjunto H — `ids_em_atendimento_humano`** (3) + projeção estruturada da interpretação (4) + veredito do identificador já validado (§6.1.1) + **`id_atendimento_validado`** (3) — o **ID técnico opaco** do atendimento identificado, **obrigatório** quando o veredito é `ENCONTRADO` e **`None`** quando é `NAO_INFORMADO` (§6.1.1, §6.2; pré-condições **P-I1–P-I5** de §7.1) + `havia_estado_esperado` (§6.2) | **primeiro** `situacao_takeover` (§6.3); se `SEM_TAKEOVER`, um de **seis** resultados conceituais: `ATENDIMENTO_ATIVO`, `MESMA_SOLICITACAO` (T36), `NOVA_SOLICITACAO` (T37), `AMBIGUA`, `PRIMEIRO_CONTATO_COMPROVADO` (identidade `None`) e `SEM_CANDIDATO_ELEGIVEL` (identidade `None`) — sempre com `criterio` do vocabulário fechado de §7.1 | ambíguo → **não decidir**: pedir esclarecimento, sem herdar nem sobrescrever dado algum (§7.1, A1–A7); persistir o processamento pendente quando possível. `SEM_CANDIDATO_ELEGIVEL` → **encerra sem transição**; tratamento pelo orquestrador **bloqueado pela pendência E4**. `situacao_takeover != SEM_TAKEOVER` → **D0–D6 não executam** e a identidade **não é calculada** (R5, abaixo) |
+| 5 | **Resolver identidade do atendimento** | conjunto elegível fechado (3) + **conjunto H — `ids_em_atendimento_humano`** (3) + projeção estruturada da interpretação (4) + veredito do identificador já validado (§6.1.1) + **`id_atendimento_validado`** (3) — o **ID técnico opaco** do atendimento identificado, **obrigatório** quando o veredito é `ENCONTRADO` e **`None`** quando é `NAO_INFORMADO` (§6.1.1, §6.2; pré-condições **P-I1–P-I5** de §7.1) + `havia_estado_esperado` (§6.2) | **primeiro** `situacao_takeover` (§6.3); se `SEM_TAKEOVER`, um de **seis** resultados conceituais: `ATENDIMENTO_ATIVO`, `MESMA_SOLICITACAO` (T36), `NOVA_SOLICITACAO` (T37), `AMBIGUA`, `PRIMEIRO_CONTATO_COMPROVADO` (identidade `None`) e `SEM_CANDIDATO_ELEGIVEL` (identidade `None`) — sempre com `criterio` do vocabulário fechado de §7.1 | ambíguo → **não decidir**: pedir esclarecimento, sem herdar nem sobrescrever dado algum (§7.1, A1–A7); persistir o processamento pendente quando possível. `SEM_CANDIDATO_ELEGIVEL` → **encerra sem transição**, com o tratamento fechado pelo **contrato E4** (§7.1, `E4-1`–`E4-14`): o ciclo **não prossegue** para a etapa 6. `situacao_takeover != SEM_TAKEOVER` → **D0–D6 não executam** e a identidade **não é calculada** (R5, abaixo) |
 | 6 | Registrar dados e correções — **`AtualizadorDadosAtendimento`** (§4.1.8), materializado em `src/casa77_sdr/data_update.py` | **dados vigentes de qualificação** — fornecidos pelo chamador a partir do atendimento já resolvido em (5) — + **`Interpretacao` canônica** (4). Ela **não recebe** identidade, estado, *takeover*, qualificação, YAML nem identificador de atendimento | **dados atualizados** + **correções registradas** + **campos em conflito** + **`insumo_qualificacao_atualizado`** (doc 06 §4.1) | conflito entre mensagem e estado → §7: contradição **sem** correção explícita **não grava** e fica registrada em `campos_em_conflito`; dado incerto (`BAIXA`) nunca é gravado; identidade ambígua → nada é registrado no atendimento anterior. **Esta etapa não persiste**: a escrita física continua na **etapa 13** |
 | 7 | Executar a ordem determinística do doc 06 §4 — **primeira decisão determinística do ciclo** | dados + eventos + avaliação comercial feita **a montante** contra o YAML (`RegrasComerciais`, `Qualificador`) + **todas as condições estruturadas de §4.4** já determinadas — `insumo_qualificacao_atualizado`, classificação de `E09`, `resposta_aprovada_disponivel`, `interesse_confirmar_disponibilidade`, `calendario_integrado`, `identidade`, `motivos_handoff` e `motivo_encerramento`. A `MaquinaEstados` recebe tudo já estruturado e **não lê o YAML** (doc 06 I23) | eventos confirmados, violações, motivos, qualificação recalculada e o **estado intermediário** resultante da **primeira chamada da `MaquinaEstados`** — caminho percorrido (uma ou mais `Txx`, doc 06 §4.2), ainda sujeito ao fechamento da etapa 12 | `E07`, `E08`, `E09` e `E18` são **recebidos/confirmados a partir das saídas determinísticas a montante**, não fabricados aqui; violação da precedência (ex.: `E07` sobre incompatibilidade) é erro de programa, não caso de negócio → bloquear envio. A **classificação que fundamenta `E09`** pertence ao contrato **S2-D8** (§4.4.1); a **transformação dos sinais em eventos confirmados** deve respeitar **`N-b-RES2`** (doc 06 §11) |
 | 8 | **Projetar os insumos já decididos a montante** — a tupla de cobertura passa antes pelo **`ProjetorEmissao`** (§4.1.5), que a junta às **ações da primeira decisão** da máquina e devolve os **fragmentos destinados à emissão**; a etapa 8 **transporta** essa tupla — a fotografia factual carregada e a projeção **`fragmentos_autorizados`** produzida pelo eixo B de S2-D8 (**SF-D4**, §4.4.1) | resultado de 7 — em especial as **ações** — + a tupla de cobertura de S2-D8 + índice de `C` + YAML carregado + textos canônicos | os insumos transportados para a etapa 9, incluindo a tupla **já projetada** de fragmentos destinados à emissão | **Nenhuma disponibilidade ou cobertura é descoberta aqui.** Campo `null`/`pendente` e ausência de resposta aprovada **já foram avaliados antes da etapa 7** e, quando fizeram falta, **já foram confirmados como `E09` na etapa 7** (gatilhos 1–2 do doc 04, doc 06 §9). **Nenhuma condição necessária à etapa 7 nasce aqui**, e esta etapa **não produz condição consumida pela etapa 7** |
@@ -3431,8 +3432,10 @@ Regras do pipeline:
 - as etapas 3 e 5 podem terminar o ciclo sem produzir transição, em **quatro** situações:
   1. **contexto inválido** — a etapa 3 bloqueia (§7.1, S1–S8);
   2. **`Identidade.AMBIGUA`** — a etapa 5 termina sem transição e aplica **A1–A7**;
-  3. **`SEM_CANDIDATO_ELEGIVEL`** — a etapa 5 termina sem transição enquanto a pendência
-     **E4** estiver aberta. O que acontece depois **não é decidido aqui**;
+  3. **`SEM_CANDIDATO_ELEGIVEL`** — a etapa 5 termina sem transição, e o que acontece
+     depois está arbitrado pelo **contrato E4** (§7.1, `E4-1`–`E4-14`): processamento
+     pendente preservado, **tentativa** de alerta operacional, chave de idempotência
+     marcada e **zero emissão automática**;
   4. **`situacao_takeover == HUMANO_MULTIPLO`** — a etapa 5 termina sem transição: **sem
      alvo**, `identidade = None`, a **`MaquinaEstados` não é chamada**, processamento
      pendente preservado, **alerta operacional** e **zero emissão automática** (R5-P0).
@@ -3480,7 +3483,7 @@ governa se a cascata sequer executa:
 | `NOVA_SOLICITACAO` (T37) | resolvida | alvo `None`; novo atendimento **sem reutilizar dado comercial** do anterior (I15) |
 | `AMBIGUA` | ambígua | **não transicionar**; pedir **esclarecimento objetivo**; **nada é herdado**; **A1–A7 continuam valendo integralmente** |
 | `PRIMEIRO_CONTATO_COMPROVADO` | `None` | **resultado legítimo**, não falha: nenhum atendimento anterior é alvo; compatível **futuramente** com o fluxo `NOVO`/T01, que não é acionado por esta etapa |
-| `SEM_CANDIDATO_ELEGIVEL` | `None` | há **histórico anterior conhecido** e **zero candidatos elegíveis**. **Não equivale a primeiro contato**; **não autoriza chamar a `MaquinaEstados` como `NOVO`**; o tratamento de integração está **bloqueado pela pendência E4** (§12; doc 06 §4.5, G1–G7) |
+| `SEM_CANDIDATO_ELEGIVEL` | `None` | há **histórico anterior conhecido** e **zero candidatos elegíveis**. **Não equivale a primeiro contato**; **não autoriza chamar a `MaquinaEstados` como `NOVO`**; o tratamento está **arbitrado** pelo **contrato E4** (§7.1, `E4-1`–`E4-14`; doc 06 §4.5, G1–G7) |
 
 ---
 
@@ -3603,8 +3606,8 @@ Coerentemente, `ENCONTRADO` implica **`havia_estado_esperado = true`** (**N-I-3*
 **N-a-F1 permanece intacta e prevalece sobre N-a.** A elegibilidade dos **demais**
 candidatos, a definição de recência, o marco temporal, o limiar, a composição do conjunto e a
 ordem de entrega estão **fechados pela arbitragem N-a** (subseção seguinte). Continuam **abertos**: o **valor numérico** do limiar, a **consulta
-concreta** à persistência, a **unicidade geral** de `id_atendimento` entre candidatos não
-identificados e **E4** (§12).
+concreta** à persistência e a **unicidade geral** de `id_atendimento` entre candidatos não
+identificados (§12).
 
 #### N-a — política de produção do conjunto elegível da etapa 3 (arbitragem N-a)
 
@@ -3901,7 +3904,7 @@ alterados e nenhum critério novo é criado**:
 | N-a-X1 | contexto **inválido** | **bloqueio ANTES do `ResolvedorIdentidade`** (E5/S7) |
 | N-a-X2 | integridade OK + **H ≠ vazio** | **R5-P0**; **D0–D6 não executam** |
 | N-a-X3 | integridade OK + H vazio + `vinculo == DECLARACAO_CONTRADITORIA` | **D0** → `AMBIGUA` / `AMBIGUIDADE_SINAIS_CONTRADITORIOS`, **independentemente de E estar vazio** |
-| N-a-X4 | integridade OK + H vazio + D0 não decidiu + **E vazio** + `havia_estado_esperado == true` | **D1** → `SEM_CANDIDATO_ELEGIVEL`. **E4 continua ABERTA** |
+| N-a-X4 | integridade OK + H vazio + D0 não decidiu + **E vazio** + `havia_estado_esperado == true` | **D1** → `SEM_CANDIDATO_ELEGIVEL`. Tratamento pelo **contrato E4** (§7.1, `E4-1`–`E4-14`) |
 | N-a-X5 | integridade OK + H vazio + D0 não decidiu + **E vazio** + `havia_estado_esperado == false` | **D1** → `PRIMEIRO_CONTATO_COMPROVADO` |
 | N-a-X6 | **E não vazio**, sem decisão anterior | **D2–D6** normalmente |
 
@@ -3945,9 +3948,10 @@ política N-a:
 
 **O que N-a não fecha.** Permanecem **abertas**: o **valor numérico do limiar**, o
 **mecanismo de carga** da configuração, a **consulta concreta** à persistência, a
-**implementação** do campo temporal, a **unicidade geral** de `id_atendimento` entre
-candidatos não identificados e **E4** — o tratamento de `SEM_CANDIDATO_ELEGIVEL` pelo
-`OrquestradorMotor` (§12). **Nenhuma implementação é autorizada por esta arbitragem.**
+**implementação** do campo temporal e a **unicidade geral** de `id_atendimento` entre
+candidatos não identificados (§12). O tratamento de `SEM_CANDIDATO_ELEGIVEL` **deixou de ser
+lacuna**: ele está arbitrado pelo **contrato E4** (§7.1, `E4-1`–`E4-14`).
+**Nenhuma implementação é autorizada por esta arbitragem.**
 
 #### Conjunto H — `ids_em_atendimento_humano` (arbitragem R-H)
 
@@ -5011,7 +5015,7 @@ Exatamente **três** valores. Fronteiras obrigatórias:
 | pendências de resposta | perguntas sem resposta aprovada, com o campo pendente correspondente |
 | motivo de incompatibilidade | motivo objetivo + campo do YAML violado (I04) |
 | motivo de handoff | motivo enumerado do doc 06 §2.1, ou lista de motivos |
-| próximo estado | decisão única (I19). Pode ser **"sem transição"** quando a etapa 3 ou a 5 termina o ciclo, nos **quatro** casos de §5: contexto inválido, `Identidade.AMBIGUA`, `SEM_CANDIDATO_ELEGIVEL` enquanto **E4** estiver aberta, e `situacao_takeover == HUMANO_MULTIPLO`. **`HUMANO_UNICO` não está entre eles** — o ciclo segue para a máquina e resolve por T33 |
+| próximo estado | decisão única (I19). Pode ser **"sem transição"** quando a etapa 3 ou a 5 termina o ciclo, nos **quatro** casos de §5: contexto inválido, `Identidade.AMBIGUA`, `SEM_CANDIDATO_ELEGIVEL` com o tratamento do **contrato E4** (§7.1), e `situacao_takeover == HUMANO_MULTIPLO`. **`HUMANO_UNICO` não está entre eles** — o ciclo segue para a máquina e resolve por T33 |
 | `identidade` | `Identidade \| None` — atendimento ativo, mesma solicitação (T36), nova solicitação (T37) ou **ambígua**; `None` quando a cascata conclui `PRIMEIRO_CONTATO_COMPROVADO` ou `SEM_CANDIDATO_ELEGIVEL`, **e também** quando `situacao_takeover != SEM_TAKEOVER` e a cascata não executa (R5, tabela abaixo). Quando ambígua, nenhum dado anterior é herdado ou sobrescrito (§7.1). **`Identidade` permanece com os mesmos quatro membros** — nenhum valor novo é criado no enum |
 | `id_atendimento_alvo` | `str \| None` — **qual** atendimento a decisão aponta. Separar o alvo da relação é o que permite `NOVA_SOLICITACAO` e `AMBIGUA` conviverem com alvo `None` sem ambiguidade de leitura |
 | `criterio` | `CriterioIdentidade \| None` — **por que** a decisão foi essa, do vocabulário fechado de **12 códigos** de §7.1. **Obrigatório** (um dos 12) quando `situacao_takeover == SEM_TAKEOVER`, porque a cascata executou; **`None`** quando `situacao_takeover != SEM_TAKEOVER`, porque D0–D6 não executaram. **Nenhum código novo é criado para representar essa ausência** — os 12 permanecem os mesmos |
@@ -5577,15 +5581,15 @@ dado comercial, coerente com §6.6.
 
 **`SEM_CANDIDATO_ELEGIVEL` não pertence a nenhuma das três**: não é erro, não é ambiguidade
 e não é primeiro contato. É um **quarto desfecho** — resolução concluída sem alvo, com
-histórico conhecido — cujo tratamento a jusante está **bloqueado pela pendência E4**
-(doc 06 §4.5, G1–G7).
+histórico conhecido — cujo tratamento a jusante está **arbitrado** pelo **contrato E4**
+(`E4-1`–`E4-14`, adiante; doc 06 §4.5, G1–G7).
 
 **A semântica de `SEM_CANDIDATO_ELEGIVEL` é preservada pela arbitragem R-I e não é
 reutilizada para "identificado ausente".** Ele continua significando **histórico conhecido +
 zero candidatos elegíveis** e, por **consequência** das pré-condições, só é alcançável com
 `veredito_identificador == NAO_INFORMADO` (P-I2 e P-I5). Identificado **ausente** do conjunto
 elegível **não** é `SEM_CANDIDATO_ELEGIVEL`: é **erro de contrato classe II** por **P-I5**.
-**E4 continua aberta** (§12).
+O tratamento deste desfecho é o **contrato E4** (`E4-1`–`E4-14`, adiante).
 
 #### Ambiguidade entre T36 (mesmo evento) e T37 (nova solicitação)
 
@@ -5626,6 +5630,32 @@ do evento errado.
 Motivo: tratar estado perdido como conversa nova apaga silenciosamente o histórico, faz o bot
 repetir perguntas já respondidas (violando I16) e pode entregar um resumo incompleto como se
 fosse completo. É preferível o atendimento parar e alguém ser avisado.
+
+#### Contrato E4 — tratamento de `SEM_CANDIDATO_ELEGIVEL`
+
+Arbitragem do **quarto desfecho** isolado acima, que o doc 06 §4.5 enumera como o **caso 3**
+dos quatro encerramentos sem transição. O contrato é **normativo e conceitual**: ele **não
+cria componente** — §4.1 permanece com **14** —, **não cria seção arquitetural nova**, **não
+cria arquivo** em `src/`, **não altera** `persistence.py` e **não autoriza implementação**. A
+**coordenação** deste branch no pipeline continua sendo do `OrquestradorMotor`, que permanece
+**ausente**.
+
+| # | Contrato E4 |
+|---|---|
+| E4-1 | **Gatilho.** E4 ocorre **exclusivamente** quando a **etapa 5** devolve uma decisão com `situacao_takeover == SEM_TAKEOVER`, `criterio == SEM_CANDIDATO_ELEGIVEL`, `identidade == None` e `id_atendimento_alvo == None` — a combinação já fixada em §6.4 —, com **histórico anterior conhecido** (`havia_estado_esperado == true`) e **zero candidatos elegíveis** no conjunto **E** deste ciclo (§6.2, **N-a-X4**). As pré-condições de identidade **P-I1**–**P-I5** permanecem **intactas**: por **P-I2** e **P-I5**, o desfecho só é alcançável com `veredito_identificador == NAO_INFORMADO`, e identificado **ausente** do conjunto elegível continua sendo **erro de contrato classe II**. Esta arbitragem **não reimplementa** o `ResolvedorIdentidade` e **não altera** a cascata **D0–D6**. |
+| E4-2 | **Negações preservadas.** As regras **G1**–**G6** do doc 06 §4.5 continuam **literais**: não é `Identidade.AMBIGUA`; não é primeiro contato; não é `Estado.NOVO` e não estabelece estado algum; não autoriza **T01**; não autoriza **T37**; e **não é passado à `MaquinaEstados`**. Também **não é erro**: contexto íntegro com conjunto elegível vazio é estado válido, distinto do bloqueio de integridade da etapa 3 (**S7**, **S9**–**S11**). |
+| E4-3 | **Posição do branch.** O tratamento ocorre **imediatamente após a etapa 5**, no chamador. Executaram as etapas **1**, **2**, **3**, **4** e **5**. **Não executam** as etapas **6**, **7**, **8**, **9**, **10**, **11**, **12**, **13** e **14**. Logo: a **etapa 6** não executa e `insumo_qualificacao_atualizado` permanece `None`; a **composição dos insumos da primeira decisão** (§4.1.9) **não executa**; a **`MaquinaEstados` não é chamada**; **S2-D8 não é consumida** neste ciclo; e **nenhum texto emitível é montado ou validado**. |
+| E4-4 | **Desfecho.** O ciclo encerra **sem transição**. **Não existe estado final produzido por E4**: ele não devolve `Estado` algum. E4 **não cria** `Estado` novo, `Evento` novo, `Txx`, inércia, efeito paralelo, motivo de *handoff* nem condição de `CondicoesCiclo`. Os casos que encerram **antes** da máquina continuam sendo exatamente **quatro** (§5; doc 06 §4.5): E4 **é** o caso 3, não um quinto. |
+| E4-5 | **Emissão e handoff — fechados.** `deve_responder = false`, `deve_fazer_handoff = false`, **texto ausente** e **resumo ausente**. **Zero emissão automática** ao interessado e **zero handoff comercial**. Nada é afirmado sobre atendimento criado, atendimento reaberto, Douglas notificado, Douglas ter recebido, mensagem entregue ou retorno garantido. **Nenhum texto novo é aprovado por E4**: ele não introduz resposta, fragmento nem `Rxx`. |
+| E4-6 | **Processamento pendente.** O branch **preserva** o processamento como `ProcessamentoPendente(canal, contato, conteudo)`, com **exatamente os três campos existentes** de `src/casa77_sdr/persistence.py`. **Nenhum campo novo**, **nenhuma alteração** em `persistence.py`, **nenhum DTO novo**. E4 **não cria** e **não grava** `RegistroAtendimento`: não há atendimento a criar nem alvo a gravar. |
+| E4-7 | **Alerta operacional — tentativa exigida.** E4 **exige gerar / tentar emitir** um alerta operacional, em **caminho separado da conversa** (coerente com **S5** e **Q5**). E4 **não define** destino, canal, provedor, transporte, DTO nem confirmação de entrega: a obrigação é de **tentativa operacional**, **não** de garantia de recebimento. A correlação auditável deve ser suficiente para identificar o critério **`SEM_CANDIDATO_ELEGIVEL`**, o **processamento preservado** e uma **chave ou correlação sanitizada** quando aplicável — **sem** texto integral da mensagem, **sem** dado comercial e **sem** nome próprio desnecessário (§6.6). O **item 3a** de §12 permanece **ABERTO**. |
+| E4-8 | **Ordem normativa.** Quando a **etapa 2** considerou a chave **nova** e a **etapa 5** produziu E4, a ordem é: **1.** preservar o processamento pendente; **2.** gerar / tentar emitir o alerta operacional; **3.** marcar a chave de idempotência; **4.** encerrar sem transição. `marcar_chave_processada` **já existe** no contrato da persistência: **nenhuma API nova** é criada. Esta marcação ocorre **fora da etapa 13**, porque E4 **encerra antes dela** — o que é consistente com **M-AE7**, que atribui a **marcação de idempotência** e a **preservação de pendente** ao **chamador** coordenado pelo `OrquestradorMotor`, **fora** da fronteira M-AE, e com §4.3, que **não condiciona** a marcação à existência de transição. |
+| E4-9 | **Idempotência depois da conclusão.** Uma vez que o pendente foi preservado, a tentativa de alerta foi realizada e a chave foi marcada, uma **reentrega técnica** com a **mesma chave** é encerrada na **etapa 2** (doc 06 §4, passo 1): **zero** novo pendente, **zero** nova tentativa de alerta pelo branch E4 e **zero** novo efeito. O branch E4 **não é alcançado** nessa reentrega. |
+| E4-10 | **Ressalva — sem garantia impossível.** **Não** é invariante desta arbitragem que uma mensagem produza no máximo um alerta **sob qualquer falha**: isso **não é garantível** com a persistência vigente. O contrato correto é: **a não duplicação de pendente e de alerta por reentrega técnica é garantida depois que o tratamento E4 conclui e a chave é marcada.** Antes disso, o comportamento é de **tentativa *at-least-once***, escolhido deliberadamente para priorizar **não perder a mensagem**. A **atomicidade** e a **deduplicação** em persistência não volátil permanecem requisito do **item 2a**. |
+| E4-11 | **Falha ao preservar o processamento pendente.** Se a **preservação do processamento pendente falhar**: a chave **não é marcada**; **zero emissão**; **zero atendimento**; **zero handoff**; o **alerta operacional é tentado** conforme o caminho de falha; e o **tratamento E4 não é considerado concluído**. Consequentemente, uma **reentrega técnica pode repetir o tratamento** — e **uma nova tentativa de alerta pode ocorrer** —, porque a mensagem **ainda não foi protegida**. Isso **não é sucesso de E4**. Esta arbitragem **não escolhe classe de exceção**, **não cria exceção** e **não altera** o contrato executável da persistência. |
+| E4-12 | **Falha da tentativa de alerta.** Se o pendente **já foi preservado** e a **tentativa de alerta falhar**: **nenhuma resposta** ao interessado; **nenhum atendimento**; **nenhum handoff**; **nenhuma fila, retry ou status inventado**; a chave **é marcada**; e o ciclo **encerra sem transição**. O fundamento é que **a mensagem já está protegida** pelo pendente. A **reentrega do canal não é mecanismo de retry** para o alerta operacional. Em resumo: **alerta exigido = tentativa exigida; a entrega do alerta não é garantida por E4**. |
+| E4-13 | **Reentrega técnica × reprocessamento deliberado.** São coisas distintas. A **reentrega técnica** origina-se do canal, de retentativa ou de reinício e **reapresenta a mesma mensagem**: ela passa pela **etapa 2** e, com a chave já marcada, **encerra sem efeito**. O **reprocessamento deliberado do pendente** é operação **futura** sobre o `ProcessamentoPendente` **já preservado**, e **não** deve ser descrito como nova entrega externa do canal. O **mecanismo concreto** de recuperação, disparo, *scheduling*, retry e consumidor **não é definido por E4**, e **nenhum executor desse tipo é afirmado como existente**. |
+| E4-14 | **Interações e limites.** E4 **não reexecuta N-a**, **não recalcula recência**, **não exige causa da exclusão dos candidatos**, **não reinterpreta N-b**, **não usa a `Interpretacao` para criar atendimento**, **não consome** a composição dos insumos da primeira decisão (§4.1.9), **não chama a `MaquinaEstados`** e **não atualiza** `instante_ultima_transicao` (**N-a-T6**, que já lista `SEM_CANDIDATO_ELEGIVEL` entre os ciclos sem mudança de estado). **Permanecem abertas**, fora de E4: o **destino do alerta operacional** (item 3a), o **limiar temporal** (item 18), a **persistência operacional não volátil** (item 2a), a **integração operacional do pipeline** e o **mecanismo concreto de replay** dos pendentes. |
 
 ### 7.2 Persistência e ordem de falhas
 
@@ -5727,7 +5757,7 @@ Regra obrigatória sobre o repositório em memória:
 | `ValidadorYaml` | detecta campo obrigatório ausente e aponta qual |
 | `ValidadorConsistenciaBase` | **teste obrigatório de divergência**: com um **fragmento emitível factualmente incompatível** com a base carregada — por exemplo, uma `ASSERTIVA` **avaliável e falsa**, ou um `RENDERIZADO` cujo **formato declarado não consegue representar** o fato corrente —, a divergência é detectada, o fragmento é **bloqueado estruturalmente**, o **referente** em conflito é identificado e **nenhum valor divergente é liberado** (F3–F5). Uma **mudança legítima de valor** de um *binding* `RENDERIZADO`, **permanecendo no domínio do formato declarado**, **não** é divergência (VCB-8) |
 | `NormalizadorEntrada` | identificador do canal produz a chave; sem identificador, a chave composta é usada e marcada como heurística; a mesma frase fora da janela temporal é mensagem nova, não duplicata (§4.3) |
-| `OrquestradorMotor` | executa as **14 etapas na ordem**, com **recuperação de contexto (3) antes da interpretação (4) e ambas antes da resolução de identidade (5)**; **estado enviado pelo adaptador é ignorado ou rejeitado** (E3); não emite antes de persistir (Q1); **termina o ciclo sem transição** nos **quatro** casos normativos — contexto inválido, `Identidade.AMBIGUA`, `SEM_CANDIDATO_ELEGIVEL` enquanto **E4** estiver aberta, e `situacao_takeover == HUMANO_MULTIPLO` (§5); e **distingue `HUMANO_UNICO`**, que **não** encerra sem transição — segue para a `MaquinaEstados` com `estado = atendimento_humano` e `identidade = None`, resolvendo por **T33** com zero emissão automática |
+| `OrquestradorMotor` | executa as **14 etapas na ordem**, com **recuperação de contexto (3) antes da interpretação (4) e ambas antes da resolução de identidade (5)**; **estado enviado pelo adaptador é ignorado ou rejeitado** (E3); não emite antes de persistir (Q1); **termina o ciclo sem transição** nos **quatro** casos normativos — contexto inválido, `Identidade.AMBIGUA`, `SEM_CANDIDATO_ELEGIVEL` com o tratamento do **contrato E4** (§7.1, `E4-1`–`E4-14`), e `situacao_takeover == HUMANO_MULTIPLO` (§5); e **distingue `HUMANO_UNICO`**, que **não** encerra sem transição — segue para a `MaquinaEstados` com `estado = atendimento_humano` e `identidade = None`, resolvendo por **T33** com zero emissão automática |
 | `ResolvedorIdentidade` | a **cascata D0–D6 é determinística** — mesmas entradas, mesma decisão, sem relógio, sem I/O e sem LLM; **alvo único** quando a cascata resolve, com `identidade` derivada do estado do alvo; **ambiguidade segura** — `AMBIGUA` sempre com alvo `None` e **sem herdar dado algum** (A1, A6); **primeiro contato** distinguido por `havia estado esperado?` = não; **`SEM_CANDIDATO_ELEGIVEL`** produzido quando há histórico conhecido e zero candidatos elegíveis, **sem virar primeiro contato, sem virar `NOVO` e sem transição**; **o identificador apenas restringe o escopo** (N7) e nunca decide sozinho; **contexto inválido nunca é entrada normal** (S7) — é erro de contrato ou pré-condição bloqueada na etapa 3; **precedência de takeover** (R5-P0): com `situacao_takeover != SEM_TAKEOVER` a cascata **não executa**, `identidade` é `None` e nenhuma `AMBIGUA` é produzida; **o conjunto H é entrada separada** — `SituacaoTakeover` é derivada de `ids_em_atendimento_humano`, **nunca** de um filtro sobre os candidatos elegíveis, e o alvo de `HUMANO_UNICO` vem **direto de H** (§6.2, H1–H6) |
 | `RegrasComerciais` | tipo não aceito, data bloqueada e excesso de convidados produzem violação com motivo (I04) |
 | `MaquinaEstados` | as **41 transições** do doc 06 §3; a **ordem de avaliação** das famílias C0–C11 (§4.2), com o **caminho percorrido** auditável e **estado final único**; a **projeção `transicoes_que_mudaram_estado`** (§6.2) — subsequência ordenada de `caminho`, classificada contra o estado intermediário do instante da aplicação; o **fechamento** `E15` → `E12` pós-efeito, o teto de **três chamadas por ciclo** e a ausência de loop; os efeitos paralelos P1–P6 (§4.3) e as inércias N1–N4 (§4.4); evento não coberto por transição, efeito paralelo ou inércia é **erro de contrato** (§4.5); a máquina **não lê o YAML** e **não fabrica eventos** |
@@ -6151,7 +6181,7 @@ adaptador **chama** o motor, nunca o contrário (**D6**).
 
 | 13 | **E1** — distinção entre as entidades **conversa × atendimento × lead** | o contrato do motor trata **atendimento** como unidade única; a fronteira entre as três entidades **não está arbitrada**. Atravessa identidade, persistência e registro de leads. **NÃO ARBITRADA** | modelo de dados |
 | 14 | **E3** — **evento novo declarado durante atendimento ativo** | o contrato vigente é **conservador**: `AMBIGUA` / `AMBIGUIDADE_DIVERGENCIA_EM_ATENDIMENTO_ATIVO` (**D3**, §7.1). Se cabe abrir atendimento paralelo **não está arbitrado**, e **nenhuma transição** existe para isso. **ABERTA** | arbitragem específica |
-| 15 | **E4** — tratamento de **`SEM_CANDIDATO_ELEGIVEL`** pelo `OrquestradorMotor` | o resultado é auditável, mas **o que o orquestrador faz com ele não está arbitrado**. Enquanto aberta, o contrato manda **encerrar o ciclo sem transição** e **não autoriza avanço de integração** (doc 06 §4.5, G7). **ABERTA** | arbitragem específica, antes do `OrquestradorMotor` |
+| 15 | **E4** — tratamento de **`SEM_CANDIDATO_ELEGIVEL`** | **ARBITRADA** (§7.1, `E4-1`–`E4-14`; doc 06 §4.5, G1–G7). O branch executa as etapas **1**–**5** e encerra **sem transição**, com `deve_responder = false`, `deve_fazer_handoff = false`, **zero texto** e **zero resumo**; **preserva** o `ProcessamentoPendente` de três campos, **tenta** emitir o alerta operacional e **marca a chave de idempotência** — nessa ordem —, **fora da etapa 13**, porque E4 encerra antes dela. **Nenhum `Estado`, `Evento`, `Txx`, inércia, motivo de handoff ou condição de `CondicoesCiclo` é criado**, e os casos sem transição continuam **quatro**. A **idempotência fecha depois** que o tratamento conclui; se a **preservação do pendente falhar**, a chave **não é marcada** e a semântica é ***at-least-once***, por prioridade de **não perder a mensagem**. **Continuam abertos, fora de E4**: o **destino** do alerta (item 3a), a **persistência não volátil** (item 2a) e o **mecanismo concreto de replay** dos pendentes | a **coordenação** do branch pertence ao `OrquestradorMotor` |
 | 16 | **Retorno do controle ao bot** | **nenhuma transição inversa de T31** está especificada para devolver o canal ao atendimento automático sem passar por `E14`/T34. A partir de `atendimento_humano`, a saída especificada é o encerramento (T34); a partir de `encaminhado_humano`, T32. **ABERTA** | arbitragem futura — **não bloqueia** R5 |
 | 17 | **Duplicatas gerais de `id_atendimento` entre candidatos não identificados** | a arbitragem R-I exige unicidade **apenas do ID identificado** e **apenas** com `veredito_identificador == ENCONTRADO` (**P-I5**). **Não está decidido** se IDs duplicados entre candidatos **não identificados** constituem erro geral de contrato. **Nenhuma regra global de unicidade foi adicionada** | arbitragem específica futura — **não bloqueia** nenhuma entrega já autorizada |
 | 18 | **Valor numérico do limiar temporal de recência** e **mecanismo concreto de carga** da configuração (§6.2, N-a-L6) | o limiar é **argumento explícito e validado** das fronteiras que o consomem (N-a-L1–N-a-L6, M-E3, M-C3). **Nenhum número é definido** e **nenhuma tecnologia, variável de ambiente, arquivo ou serviço é escolhido**. Risco de calibração: curto demais descarta `encerrado` que **T36** deveria reabrir; longo demais devolve histórico antigo à cascata. **Não é dado comercial** — não entra em `knowledge/casa77.yaml`. **ABERTA** | aprovação específica de Douglas Bianchi + decisão operacional, **antes do `OrquestradorMotor`** |
@@ -6184,10 +6214,21 @@ resolução de identidade não produza um referente que contorne o silêncio já
 **E1** permanece aberta para eventual refinamento futuro da fronteira conversa × atendimento
 × lead.
 
-**Grafo de dependências.** O **`OrquestradorMotor`** depende de **S2-D8** (item 10), de
-**E4** (item 15), do **produtor não determinístico de `Interpretacao`** de **N-b** (item 12),
-da **configuração do limiar** de **N-a** (item 18), do **tratamento operacional dos bloqueios**
-(S4, S5) e do **destino do alerta** (item 3a). A **`MaquinaEstados` não depende** de nenhuma
+**Grafo de bloqueadores ainda abertos.** O **`OrquestradorMotor`** continua bloqueado pela
+**integração da etapa 4 no ciclo**, de **N-b** (item 12), pela **configuração do limiar** de
+**N-a** (item 18), pelo **tratamento operacional dos bloqueios** **S4**/**S5** e pelo
+**destino do alerta** (item 3a).
+
+**Deixaram de ser bloqueadoras.** **S2-D8** (item 10) — o contrato está **arbitrado** e os
+**produtores necessários materializados** (§4.4.1–§4.4.4). O **produtor não determinístico de
+`Interpretacao`** de **N-b** (item 12) — **materializado e versionado** (§6.3,
+`M-PN1`–`M-PN12`); o que permanece aberto naquele item é a **integração da etapa 4 no ciclo**,
+já listada acima. **E4** (item 15) — o tratamento de `SEM_CANDIDATO_ELEGIVEL` está
+**arbitrado** em §7.1 (`E4-1`–`E4-14`). Para **todas** elas, o que resta é a **coordenação**,
+que continua pertencendo ao **`OrquestradorMotor` futuro**; **nenhuma ordem de execução é
+decidida aqui**.
+
+A **`MaquinaEstados` não depende** de nenhuma
 dessas pendências para o seu contrato já definido: ela recebe eventos confirmados e condições
 já estruturadas. **E1** (item 13), **E3** (item 14), **B** (item 21), **S2-D5** e **S2-D7**
 (doc 06 §12) são fronteiras abertas que **não condicionam** a especificação já arbitrada; as
