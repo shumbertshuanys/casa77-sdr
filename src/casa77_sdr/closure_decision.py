@@ -57,8 +57,10 @@ O módulo é **puro e determinístico**: zero I/O, filesystem, rede, relógio, Y
 `knowledge/**`, LLM, SDK, persistência, logging, cache, retry ou *sleep*. Ele
 **não lê texto** da mensagem, **não recebe** `Estado`, `SituacaoTakeover`,
 contexto, `CondicoesCiclo`, `motivos_handoff`, cobertura ou `dict[str, Any]`, e
-**não muta** as entradas. Unir este `E14` aos eventos de produtores distintos é
-papel do **`OrquestradorMotor` futuro**, que continua **ausente**.
+**não muta** as entradas. Este módulo continua **somente** produzindo o
+encerramento: projetar o `E14` na primeira agregação é feito pela **composição
+dos insumos da primeira decisão** (`docs/07` §4.1.9). A coordenação completa
+permanece do **`OrquestradorMotor` futuro**, que continua **ausente**.
 """
 
 from __future__ import annotations

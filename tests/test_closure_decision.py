@@ -586,7 +586,12 @@ ESTADOS_DE_T35 = tuple(
 
 
 def condicoes_de(resultado: EncerramentoInterpretado) -> CondicoesCiclo:
-    """O que o futuro `OrquestradorMotor` faria: repassar o motivo produzido."""
+    """Projeta o `motivo_encerramento` produzido para as condições do ciclo.
+
+    Essa projeção pertence à **composição dos insumos da primeira decisão**
+    (`docs/07` §4.1.9) — **não** é o futuro `OrquestradorMotor` que a
+    materializa; a ele continua cabendo a **coordenação do pipeline**.
+    """
     return CondicoesCiclo(motivo_encerramento=resultado.motivo)
 
 

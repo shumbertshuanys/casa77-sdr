@@ -66,8 +66,11 @@ seleção de fato, composição de texto ou persistência**.
 
 O módulo é **puro e determinístico**: zero I/O, filesystem, rede, relógio, YAML,
 `knowledge/**`, LLM, SDK, persistência, logging, cache, retry ou *sleep*; ele
-**não muta** as entradas. Unir os eventos de **produtores distintos** e montar as
-condições do ciclo é papel do **`OrquestradorMotor` futuro**, que continua
+**não muta** as entradas. Unir os eventos de **produtores distintos** e montar
+fisicamente as condições do ciclo é feito pela **composição dos insumos da
+primeira decisão** (`docs/07` §4.1.9); este módulo continua **não agregando**,
+**não montando condições** e **não chamando** a máquina. A coordenação
+*end-to-end* permanece do **`OrquestradorMotor` futuro**, que continua
 **ausente**.
 """
 
