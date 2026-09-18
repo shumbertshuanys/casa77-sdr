@@ -671,7 +671,12 @@ def test_a_assinatura_recebe_somente_a_interpretacao() -> None:
 
 
 def test_o_detector_nao_constroi_condicoes_ciclo() -> None:
-    """§17 do contrato: projetar os motivos é papel do `OrquestradorMotor`."""
+    """§17 do contrato: o detector **não constrói** as condições do ciclo.
+
+    Projetar os motivos para a máquina pertence à **composição dos insumos da
+    primeira decisão** (`docs/07` §4.1.9). Ao futuro `OrquestradorMotor`
+    continua cabendo a **coordenação do pipeline**, não esta projeção.
+    """
     corpo = MODULO_DETECTOR.read_text(encoding="utf-8").split('"""', 2)[2]
     assert "CondicoesCiclo" not in corpo
     assert "motivos_handoff" not in corpo

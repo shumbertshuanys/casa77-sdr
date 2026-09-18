@@ -80,8 +80,11 @@ O módulo é **puro e determinístico**: zero I/O, filesystem, rede, relógio, Y
 e a saída é construída como objetos novos. Ele **não produz** `Evento`,
 `Qualificacao`, `Violacao`, `CondicoesCiclo`, ação, resposta ou persistência, e
 **não chama** `qualificar`, `avaliar_regras`,
-`produzir_eventos_internos_ciclo` nem `decidir`. Compor essas fronteiras é papel
-do **`OrquestradorMotor` futuro**, que continua **ausente**.
+`produzir_eventos_internos_ciclo` nem `decidir`. Projetar a **condição 1** e
+compor os insumos da primeira decisão é feito pela fronteira de **composição dos
+insumos da primeira decisão** (`docs/07` §4.1.9); decidir **quando** a etapa 6
+executa e coordenar o pipeline continuam sendo papel do **`OrquestradorMotor`
+futuro**, que continua **ausente**.
 """
 
 from __future__ import annotations

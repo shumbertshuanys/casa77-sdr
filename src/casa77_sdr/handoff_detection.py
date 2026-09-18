@@ -61,9 +61,12 @@ O módulo é **puro e determinístico**: zero I/O, filesystem, rede, relógio, Y
 **não lê o texto** da mensagem, **não usa palavra-chave, regex, score de
 sentimento ou contagem**, e **não recebe** `Qualificacao`, `Estado`,
 `SituacaoTakeover`, `CondicoesCiclo`, contexto, cobertura ou `dict[str, Any]`.
-Ele **não constrói `CondicoesCiclo`**: projetar os motivos para a máquina —
-`tuple(motivo.value for motivo in deteccao.motivos)` — é papel do
-**`OrquestradorMotor` futuro**, que continua **ausente**.
+Ele **não constrói `CondicoesCiclo`**: projetar os motivos para a máquina como
+identificadores textuais — `tuple(motivo.value for motivo in deteccao.motivos)`
+— é feito pela **composição dos insumos da primeira decisão** (`docs/07`
+§4.1.9), e o detector continua **somente** produzindo a `DeteccaoHandoff`.
+Coordenar o pipeline permanece sendo papel do **`OrquestradorMotor` futuro**,
+que continua **ausente**.
 """
 
 from __future__ import annotations

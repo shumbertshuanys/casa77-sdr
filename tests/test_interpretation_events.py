@@ -1068,9 +1068,10 @@ def test_d8_n1_e06_sem_resposta_aprovada_exige_e09_no_estado_condicionado() -> N
     """`E06` de RES2 **não basta** quando não há resposta aprovada.
 
     O `E09` exigido aqui **não é produzido por RES2**: as causas pertencem a
-    **S2-D8** e a confirmação do evento pertence à integração futura. Este teste
-    prova a **pré-condição de coerência** da máquina, não uma capacidade nova
-    desta fronteira.
+    **S2-D8** e a confirmação do evento pertence ao **produtor determinístico
+    posterior de `E07`/`E08`/`E09`** (`cycle_events.py`; `docs/07` §6.3,
+    `CIE-1`–`CIE-10`). Este teste prova a **pré-condição de coerência** da
+    máquina, não uma capacidade nova desta fronteira.
     """
     eventos = produzir_eventos_da_interpretacao(
         interpretacao(perguntas_comerciais=(pergunta(ALTA),))

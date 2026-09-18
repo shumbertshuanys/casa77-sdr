@@ -30,16 +30,19 @@ de `pedido_de_humano` (N-b-PH3) pertence ao caminho do `DetectorHandoff` e
 **O que esta fronteira nunca produz.** `E01`, `E07`, `E08`, `E09`, `E11`, `E12`,
 `E13`, `E14`, `E15`, `E16`, `E17` e `E18`. Em particular: `E11` e `E17`
 continuam **reduzidos a `E18` pelo `DetectorHandoff`** (`docs/06` §2.1, §9);
-as **causas** de `E09` pertencem a **S2-D8**, e confirmá-lo continua sendo da
-integração futura; `E07`/`E08` pertencem à qualificação e ao ciclo; `E14`
-permanece em **`S3-D1`**.
+as **causas** de `E09` pertencem a **S2-D8**, e confirmá-lo é do **produtor
+determinístico posterior de `E07`/`E08`/`E09`** (`docs/07` §6.3,
+`CIE-1`–`CIE-10`), já materializado; `E07`/`E08` pertencem à qualificação e ao
+ciclo; `E14` permanece em **`S3-D1`**.
 
 O módulo é **puro e determinístico**: zero I/O, rede, relógio, YAML,
 `knowledge/**`, LLM, SDK, persistência, logging, cache, retry ou *sleep*. Ele
 **não recebe** `Qualificacao`, `Estado`, `CondicoesCiclo`, resultado de S2-D8 ou
 contexto global, e **não produz** condição, qualificação, ação, resposta,
-*handoff* ou persistência. Unir eventos vindos de produtores distintos é papel
-do **`OrquestradorMotor` futuro**, que continua **ausente**.
+*handoff* ou persistência, e **não agrega** eventos: a sua saída é **consumida**
+pela **composição dos insumos da primeira decisão** (`docs/07` §4.1.9), que une
+as saídas dos produtores. Coordenar o pipeline continua sendo papel do
+**`OrquestradorMotor` futuro**, que continua **ausente**.
 """
 
 from __future__ import annotations
