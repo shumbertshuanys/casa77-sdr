@@ -126,6 +126,16 @@ exclusivamente em `knowledge/casa77.yaml`.
   **dataclass** de `src/casa77_sdr/persistence.py` **preserva** nome, semântica, campos e
   exportação. **Zero renomeação de código preexistente**, **zero alias**, **zero terceira
   abstração**, e §4.1 continua com **14** componentes.
+- **Fora de `C`**, o tratamento de **`SEM_CANDIDATO_ELEGIVEL`** — a pendência **E4** —
+  está **arbitrado e versionado nesta entrega**, com o contrato vivo em `docs/07` §7.1
+  (`E4-1`–`E4-14`) e o reflexo em
+  `docs/06` §4.5 (G7 e o caso 3). O branch executa as etapas **1** a **5** e encerra **sem
+  transição**: **zero emissão**, **zero handoff**, `ProcessamentoPendente` preservado,
+  **tentativa** de alerta operacional e chave de idempotência marcada **fora da etapa 13**.
+  **Nenhum componente, estado, evento, transição ou condição foi criado**, e **nenhum
+  código ou teste mudou**. A **coordenação** desse branch continua sendo do
+  `OrquestradorMotor`, que permanece **ausente**; o **destino do alerta**, a **persistência
+  não volátil** e o **mecanismo de replay** dos pendentes continuam **abertos**.
 - Etapa 4 permanece **absorvida pela Etapa 3B**; etapas 5 a 10 permanecem futuras
   (`docs/05-roadmap.md`).
 
@@ -641,10 +651,10 @@ código; o contrato vive em `docs/07` §2.3.
 | **Produtor de `E07`/`E08`/`E09`** | **materializado e versionado**: `src/casa77_sdr/cycle_events.py`, contrato vivo em `docs/07` §6.3 (`CIE-1`–`CIE-10`). A **agregação** e a **montagem de `CondicoesCiclo`** estão **materializadas e versionadas** (§4.1.9). **Pendente**: a **coordenação do pipeline** | **`E07`, `E08` e `E09` deixaram de carecer de produtor**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §6.3, §12 item 25; `docs/06` §2.2, §9, §11 |
 | **Semântica de handoff + `DetectorHandoff`** | **materializados e versionados**: `src/casa77_sdr/handoff_detection.py`, contrato vivo em `docs/07` §6.3 (`DH-1`–`DH-12`), com a extensão semântica **AJ4**. Cobre os **gatilhos 3–10** de `docs/04`. **Pendente**: a **integração ao ciclo**, que liga o `E18` e os motivos produzidos à `MaquinaEstados` | **`E18` deixou de carecer de produtor**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §6.3, §12 item 24; `docs/06` §2.1, §9 |
 | **S3-D1** — produtor da condição `motivo_encerramento` | produtor **atribuído e materializado**: `src/casa77_sdr/closure_decision.py`, contrato vivo em `docs/07` §6.3 (`S3D1-1`–`S3D1-12`), com a extensão semântica **AJ3**. **Pendente**: a **integração ao ciclo**, que liga `E14` e o motivo produzidos à `MaquinaEstados` | **deixou de ser a ausência de produtor**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4, §6.3, §12 itens 10 e 23 |
-| **Composição dos insumos da máquina** | **materializada e versionada**: `src/casa77_sdr/cycle_inputs.py`, contrato vivo em `docs/07` §4.1.9 (`IC-1`–`IC-12`). Cobre a **agregação** dos eventos de produtores distintos e a **montagem de `CondicoesCiclo`** na **primeira** chamada de um ciclo de **nova mensagem**. **Pendente**: a **coordenação do pipeline** — quando cada etapa roda, com que dados vigentes, o tratamento de **E4** e as chamadas da máquina **não** originadas de mensagem nova | **a agregação e a montagem deixaram de faltar**; o que resta é o `OrquestradorMotor`, registrado em §6 | `docs/07` §4.1.9, §4.4, §12 item 27 |
+| **Composição dos insumos da máquina** | **materializada e versionada**: `src/casa77_sdr/cycle_inputs.py`, contrato vivo em `docs/07` §4.1.9 (`IC-1`–`IC-12`). Cobre a **agregação** dos eventos de produtores distintos e a **montagem de `CondicoesCiclo`** na **primeira** chamada de um ciclo de **nova mensagem**. **Pendente**: a **coordenação do pipeline** — quando cada etapa roda, com que dados vigentes, a **coordenação do branch E4** já arbitrado e as chamadas da máquina **não** originadas de mensagem nova | **a agregação e a montagem deixaram de faltar**; o que resta é o `OrquestradorMotor`, registrado em §6 | `docs/07` §4.1.9, §4.4, §12 item 27 |
 | **E1** — conversa × atendimento × lead | não arbitrada; atravessa identidade, persistência e registro de leads | não bloqueia a especificação vigente | `docs/07` §12 item 13 |
 | **E3** — evento novo durante atendimento ativo | aberta; contrato vigente é conservador (`AMBIGUA`) | não bloqueia | `docs/07` §12 item 14 |
-| **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL` | aberta; o ciclo encerra sem transição | bloqueia o `OrquestradorMotor` | `docs/07` §12 item 15 |
+| **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL` | **ARBITRADA E VERSIONADA nesta entrega**: contrato vivo em `docs/07` §7.1 (`E4-1`–`E4-14`), com `docs/06` §4.5 reconciliado. Encerra **sem transição**, preserva o pendente, **tenta** o alerta e marca a chave fora da etapa 13. **Pendente**: a **coordenação** do branch pelo `OrquestradorMotor` | **deixou de bloquear** o `OrquestradorMotor`; o que resta é a coordenação, registrada em §6 | `docs/07` §7.1, §12 item 15; `docs/06` §4.5 |
 | **N-a** — integração operacional residual | especificação concluída e fronteiras `M-T`/`M-E`/`M-C`/`M-DT`/`M-AE` materializadas; integração da etapa 13 no pipeline pendente, com bloqueios S4/S5 sem tratamento operacional | bloqueia o pipeline completo | `docs/07` §6.2, §12 item 11 |
 | **Limiar temporal de recência** | valor numérico e mecanismo de carga indefinidos; não é dado comercial | bloqueia a integração operacional de `N-a` e o `OrquestradorMotor` | `docs/07` §12 item 18 |
 | **N-b** — integração da etapa 4 | contrato arbitrado; fronteira determinística materializada; **produtor não determinístico versionado** (`docs/07` §6.3, `M-PN1`–`M-PN12`) — Anthropic / `claude-sonnet-5`, saída estruturada, canonicalização obrigatória, zero retry, exercitado **offline** pela suíte; os **evals semânticos** e o **smoke** existem e **não foram executados**. **`N-b-RES2` deixou de ser residual**: o produtor de eventos derivados está **materializado e versionado** (`RES2-1`–`RES2-12`), com saída fechada em `E02`/`E03`/`E04`/`E05`/`E06`/`E10`; `E09`, `E18`, `E07`/`E08` e `E14` **continuam fora dele**. **Pendente**: a **integração da etapa 4** no ciclo | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §6.3, §12 item 12 |
@@ -675,7 +685,6 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
 - **S3-D1** — o **produtor** deixou de ser a lacuna: ele está **materializado**. O
   bloqueio restante é a **integração ao ciclo**, que converte o `E14` e o
   `motivo_encerramento` produzidos em insumo efetivo da `MaquinaEstados`;
-- **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL`;
 - **N-b** — a **integração da etapa 4** no ciclo. Nem o produtor não determinístico
   nem **`N-b-RES2`** são mais a lacuna: **ambos estão versionados** (`docs/07` §6.3,
   `M-PN1`–`M-PN12` e `RES2-1`–`RES2-12`). Continuam **ausentes os demais produtores
@@ -728,7 +737,7 @@ o **ciclo**: ninguém
 e nenhuma decisão **percorre** o pipeline.
 
 **Integrar não é a próxima ação imediata**, porque a integração depende de pendências que
-**este mesmo snapshot** ainda registra como abertas em §5 e §6 — entre elas **N-b**, **E4**,
+**este mesmo snapshot** ainda registra como abertas em §5 e §6 — entre elas **N-b**,
 a **integração ao ciclo** dos produtores já materializados — **`S3-D1`**, o
 **`DetectorHandoff`** e o de **`E07`/`E08`/`E09`** —, as matérias
 residuais de **N-a** e o **limiar temporal**, o **destino do alerta operacional**,
