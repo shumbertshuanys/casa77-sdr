@@ -290,8 +290,10 @@ pelo pacote. **`knowledge/**` permanece inalterado.** **`N-b-RES2` continua sem 
 `E18`**, **`S3-D1` continua sem produzir `E18`**, a **identidade** não muda, e os oito
 sinais novos são **neutros** em todas as três fronteiras.
 
-A **integração do ciclo continua pendente**: quem **une** os eventos de produtores
-distintos é o **`OrquestradorMotor`**, que **continua ausente**.
+A **integração do ciclo continua pendente**: a **composição dos insumos da primeira
+decisão** já **agrega** os eventos confirmados de produtores distintos (§1; `docs/07`
+§4.1.9), mas o **`OrquestradorMotor`** continua **ausente** e ainda precisa **coordenar o
+pipeline** e **chamar a máquina**.
 
 Permanecem fatos vigentes de entregas anteriores: **`S3-D1`** — o produtor determinístico
 de **`E14`** e do
