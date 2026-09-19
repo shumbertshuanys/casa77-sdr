@@ -399,20 +399,30 @@ Permanecem igualmente vigentes: o **produtor não determinístico de `N-b`**
 materializada:
 
 - Python **3.14.5**;
-- **`9173 passed`**, sob **`-W error`**;
+- **`9236 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings, zero skips, zero xfails.
 
-Este é o **baseline da entrega versionada** do ***owner* de emissão de T15**:
-**`9173 passed`** sob **`-W error`**. A **`main` de base** desta entrega registrava
-**`9157 passed`** — o baseline do ***gate* determinístico *fail-closed*** da **condição 6**.
-O acréscimo de **16** vem dos cenários
+Este é o **baseline da entrega versionada** da **primitiva única de emissibilidade**:
+**`9236 passed`** sob **`-W error`**. A **`main` de base** desta entrega registrava
+**`9173 passed`** — o baseline do ***owner* de emissão de T15**. O acréscimo de **63** vem,
+**integralmente**, dos cenários novos de
+`tests/test_fragment_emissibility.py` — fragmento emitível, os dois rótulos não emitíveis, o
+**curto-circuito** do status, Classe II, um e vários `ReferenteIndisponivel` na **ordem
+física**, o acúmulo de causas na **ordem fixa**, `ASSERTIVA` de runtime verdadeira e falsa, a
+**ausência de deduplicação interna**, a propagação intacta de `AssertivaNaoAvaliavel`, a
+**pureza por AST** e a prova de que os *gates* de **Classe I** e de **candidatura**
+**continuam** em S2-D8. A adaptação da *whitelist* **não cria teste novo**:
+`tests/test_coverage_decision.py` permanece com **177** itens, como na `main`.
+
+O baseline **precedente** era o do ***owner* de emissão de T15**: **`9173 passed`**. O
+acréscimo de **16** veio dos cenários
 de `tests/test_emission_projection.py` — os dois caminhos da dupla rota, a **preservação da
 posição** do token quando a cobertura é a *owner*, a **ação repetida** contribuindo uma só
 vez nas duas rotas, o ***fail-closed*** de **`R05/F2`** e **`R05/F3`** com a ação de T15 e a
 sua passagem livre **sem** ela, a **não contaminação** de **`R03/F1`**, e o *gate* de corpus
 agora exigindo **duas** unidades materializadas com **zero *bindings***.
 
-O baseline **precedente** era o do ***gate*** da **condição 6**: **`9157 passed`**. O
+O baseline **anterior** era o do ***gate*** da **condição 6**: **`9157 passed`**. O
 acréscimo de **7** veio dos cenários de
 `tests/test_state_machine.py` — `None` com interesse confirmado como **erro de contrato**,
 `None` legítimo com interesse **falso** e **não avaliado**, `None` legítimo **sem `E03`**
@@ -592,6 +602,30 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   condição 6** e **não toca os fatos de runtime**. **`T16`/`R06` continua fora do escopo** —
   `R06/F1` tem ***bindings*** e exige **arbitragem própria**. **`S2-D8`**, **`CAL6`**,
   **`D8P-11`** e `coverage_decision.py` **não foram tocados**.
+- **Fora de `C`**, a **primitiva única de emissibilidade de fragmento** está
+  **materializada e versionada nesta entrega**, em
+  `src/casa77_sdr/fragment_emissibility.py`, com o contrato vivo em `docs/07` §4.4.5
+  (`FE-1`–`FE-15`). **`D8-F` continua sendo UMA norma** — nada foi renumerado, ampliado ou
+  criado —, e o que passou a existir é **UMA implementação compartilhada** dela: dada a
+  **fotografia já recebida** de um fragmento **que já é candidato**, ela responde **se ele
+  está emitível agora**, na ordem fixa **`D8-F1`** → **Classe II** → **`C-7`** → **`ASSERTIVA`
+  de runtime**. Ela **não conhece** assunto, pergunta, `CausaE09`, `MotivoE09`, `R2`, grupo,
+  ***witness***, cobertura, pendência, evento, máquina, ação ou *handoff*, e **não produz
+  `E09`**. A **candidatura continua fora** — **`D8-G`** e o *gate* de **`R05`**
+  (**`D8P-11`**) permanecem em `coverage_decision.py`, porque **candidatura ≠
+  emissibilidade**. **`S2-D8` preserva o comportamento público**: nome, assinatura, defaults,
+  tipo de saída, ordem dos resultados, ordem das causas, deduplicação e exceções são os
+  **mesmos**, e os **177** cenários vigentes de `tests/test_coverage_decision.py` continuam
+  verdes **sem alteração comportamental alguma**. O arquivo recebeu apenas a **reconciliação
+  estrutural** da *whitelist* de `test_importa_somente_o_necessario` com a nova arquitetura:
+  **entra** `casa77_sdr.fragment_emissibility` e **sai** a dependência **direta**
+  `casa77_sdr.response_assertion`, agora consumida **exclusivamente** pela primitiva
+  compartilhada. A cadeia passa a ser `coverage_decision` → `fragment_emissibility` →
+  `response_assertion`, e **nenhum teste comportamental foi alterado**.
+  **`T16`/`R06` continua aberta**: nenhum *owner* de `R06/F1` foi implementado, o mapeamento
+  de `INFORMAR_CONDICOES_DE_VISITA` permanece `()` e **nenhum desfecho** para `R06` **não
+  emitível** foi decidido — nem *zero fragmento*, nem `E09`, nem *handoff*. **Nenhuma
+  superfície conversacional nova foi fechada.**
 - **Limites materiais do projetor nesta versão**: ele consome as ações da **primeira** decisão
   da máquina; **ações produzidas por chamadas posteriores da `MaquinaEstados` não entram nesta
   projeção**; somente **fragmentos mandatórios estáticos e previamente aprovados por *gate* de
@@ -720,7 +754,7 @@ código; o contrato vive em `docs/07` §2.3.
 | **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`ProjetorEmissao`**, **`SeletorFatos`**, **compositor determinístico por fragmento**, a **montagem canônica de uma emissão**, o **`ValidadorResposta`**, a **infraestrutura estrutural de `R2`** (`docs/07` §4.4.2) e o **produtor determinístico S2-D8** (`docs/07` §4.4.3; ver a linha própria de **S2-D8**). **Pendentes**: **integração *end-to-end* da etapa 10**, **superfícies conversacionais sem unidade aprovada** — **T15 deixou de estar entre elas** nesta entrega versionada (`docs/07` §4.1.5, `PE-13`/`PE-14`), e **T16/`R06` continua aberta** —, as **ações produzidas por chamadas posteriores da `MaquinaEstados`**, a **evolução futura do `ProjetorEmissao`** para essas fases e a **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice à **emissão montada numa única mensagem**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §4.1.6, §4.1.7, §12 itens 19, 10 e 22 |
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
-| **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado e **materializado**: infraestrutura estrutural de `R2` (`coverage_map.py`, `coverage_map_load.py`; §4.4.2), **produtor determinístico** (`coverage_decision.py`; §4.4.3), **aplicabilidade de pacote** (`pricing_applicability.py`; §4.4.4) e o **artefato físico** `knowledge/mapa-cobertura.yaml`, com **54/54** assuntos — **33** com cobertura e **21** vazios. Cobertos os eixos **A** e **B**, **`D8-F`**, Classe I/II, os *gates* de **`R05`** e de **preço (`D8-G`)**, **`D8-L4`**, ***witnesses***, `fragmentos_autorizados`, `pendencias_resposta` e **causas** de `E09`. O **conteúdo de `R2` foi concluído nesta capacidade**, e S2-D8 + `R2` **decidem cobertura** quando recebem as entradas estruturadas. **Já materializada e versionada**, fora desta pendência: a **conversão** das causas em **um único `Evento.E09`**, por `src/casa77_sdr/cycle_events.py` (`docs/07` §6.3, `CIE-1`–`CIE-10`). A **agregação** dos produtores distintos e a **montagem de `CondicoesCiclo`** estão **materializadas e versionadas** (`cycle_inputs.py`; §4.1.9). **Ainda ausente**: a execução **dentro do futuro `OrquestradorMotor`** | **deixou de bloquear**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4.1, §4.4.2, §4.4.3, §4.4.4, §12 item 10; `docs/06` §11 |
+| **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado e **materializado**: infraestrutura estrutural de `R2` (`coverage_map.py`, `coverage_map_load.py`; §4.4.2), **produtor determinístico** (`coverage_decision.py`; §4.4.3) — que nesta entrega passou a consumir a **primitiva única de emissibilidade** (`fragment_emissibility.py`; §4.4.5, `FE-1`–`FE-15`), **sem alteração de comportamento público** —, **aplicabilidade de pacote** (`pricing_applicability.py`; §4.4.4) e o **artefato físico** `knowledge/mapa-cobertura.yaml`, com **54/54** assuntos — **33** com cobertura e **21** vazios. Cobertos os eixos **A** e **B**, **`D8-F`**, Classe I/II, os *gates* de **`R05`** e de **preço (`D8-G`)**, **`D8-L4`**, ***witnesses***, `fragmentos_autorizados`, `pendencias_resposta` e **causas** de `E09`. O **conteúdo de `R2` foi concluído nesta capacidade**, e S2-D8 + `R2` **decidem cobertura** quando recebem as entradas estruturadas. **Já materializada e versionada**, fora desta pendência: a **conversão** das causas em **um único `Evento.E09`**, por `src/casa77_sdr/cycle_events.py` (`docs/07` §6.3, `CIE-1`–`CIE-10`). A **agregação** dos produtores distintos e a **montagem de `CondicoesCiclo`** estão **materializadas e versionadas** (`cycle_inputs.py`; §4.1.9). **Ainda ausente**: a execução **dentro do futuro `OrquestradorMotor`** | **deixou de bloquear**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4.1, §4.4.2, §4.4.3, §4.4.4, §12 item 10; `docs/06` §11 |
 | **Etapa 6 — `AtualizadorDadosAtendimento`** | **materializada e versionada**: `src/casa77_sdr/data_update.py`, contrato vivo em `docs/07` §4.1.8 (`AD-1`–`AD-12`). A **condição 1** de §4.4 tem produtor concreto. A **agregação** e a **montagem de `CondicoesCiclo`** estão **materializadas e versionadas** (§4.1.9). **Pendente**: a **coordenação do pipeline** | **`insumo_qualificacao_atualizado` deixou de carecer de produtor**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.1.8, §4.4, §5, §12 item 26 |
 | **Produtor de `E07`/`E08`/`E09`** | **materializado e versionado**: `src/casa77_sdr/cycle_events.py`, contrato vivo em `docs/07` §6.3 (`CIE-1`–`CIE-10`). A **agregação** e a **montagem de `CondicoesCiclo`** estão **materializadas e versionadas** (§4.1.9). **Pendente**: a **coordenação do pipeline** | **`E07`, `E08` e `E09` deixaram de carecer de produtor**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §6.3, §12 item 25; `docs/06` §2.2, §9, §11 |
 | **Semântica de handoff + `DetectorHandoff`** | **materializados e versionados**: `src/casa77_sdr/handoff_detection.py`, contrato vivo em `docs/07` §6.3 (`DH-1`–`DH-12`), com a extensão semântica **AJ4**. Cobre os **gatilhos 3–10** de `docs/04`. **Pendente**: a **integração ao ciclo**, que liga o `E18` e os motivos produzidos à `MaquinaEstados` | **`E18` deixou de carecer de produtor**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §6.3, §12 item 24; `docs/06` §2.1, §9 |
@@ -760,7 +794,11 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
   (`PE-13`, `PE-14`) —, e **T16/`R06`**, a **coleta**, o **formato**, a **retomada**, a
   **incompatibilidade dependente de motivo**, o **reforço de encaminhamento**, as **ações
   posteriores**, o **papel residual do LLM** e a **integração *end-to-end*** **continuam
-  abertos**. **`C` não está concluída**;
+  abertos**. **`C` não está concluída**. Nesta entrega, **`D8-F` ganhou implementação
+  única** (`docs/07` §4.4.5), o que **prepara** — e **não fecha** — a superfície de **T16**:
+  a **PR-2 continua dependendo de arbitragem** sobre o que acontece quando **`R06/F1` não é
+  emitível**, entre *zero fragmento* sob **`PE-7`**, `E09` ou *handoff*. **Nenhum** desses
+  desfechos foi decidido ou implementado;
 - **S3-D1** — o **produtor** deixou de ser a lacuna: ele está **materializado**. O
   bloqueio restante é a **integração ao ciclo**, que converte o `E14` e o
   `motivo_encerramento` produzidos em insumo efetivo da `MaquinaEstados`;
