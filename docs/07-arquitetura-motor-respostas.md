@@ -3302,6 +3302,35 @@ A API pública é `decidir_pendencias_e_cobertura`, e o resultado é `ResultadoS
 | AP-11 | **O consumo pertence a S2-D8**, pelo *gate* **D8-G** (§4.4.1). A fronteira **não sabe** que existe `R2`, e **não sabe** o que será feito do seu veredito. |
 | AP-12 | **Escopo isolado.** Materializá-la **não** integra a etapa 10 *end-to-end*, **não** implementa o `OrquestradorMotor`, **não** cria fragmento, texto ou regra comercial, e **não** altera `knowledge/casa77.yaml`. |
 
+### 4.4.5 Contrato vivo da primitiva única de emissibilidade de fragmento
+
+**Esta seção não altera §4.4.1 e não renumera `D8-F`.** **`D8-F` continua sendo UMA norma**;
+o que passa a existir é **UMA implementação compartilhada** dela, **já materializada** em
+`src/casa77_sdr/fragment_emissibility.py`, com os cenários em
+`tests/test_fragment_emissibility.py`. A API pública é `avaliar_emissibilidade`, sobre
+`FotografiaFragmento`, e o vocabulário estrutural é `ImpedimentoEmissao` /
+`ResultadoEmissibilidade`. **§4.1 permanece com 14 componentes** e §2 com **nove
+responsabilidades**; **nenhuma etapa nova é criada**, **nenhuma condição de §4.4 é criada ou
+alterada** e **nenhum evento novo existe**.
+
+| # | Contrato |
+|---|---|
+| FE-1 | **Uma pergunta, e só ela**: *este fragmento **candidato** está **emitível agora**?* A fronteira é **pura**, **determinística** e **estrutural**, e opera sobre uma **fotografia já recebida** — status, divergência de Classe II, caminhos de `C-7` e pares de `ASSERTIVA` de runtime com o valor **já resolvido**. |
+| FE-2 | **`D8-F` continua UMA norma.** Esta seção **não cria** condição de emissibilidade, **não amplia** `D8-F1`–`D8-F6`, **não** torna o formato uma quarta condição (**R2F-12**) e **não renumera** nada. Ela registra **onde a norma passa a ter implementação única**. |
+| FE-3 | **Ordem fixa**: **`D8-F1`** (status) → **Classe II** (**`D8-CII`**) → **`C-7`**, na **ordem física recebida** → **`ASSERTIVA` de runtime**. É a **mesma ordem** que S2-D8 aplicava antes da extração, e é o que torna a sequência de causas **determinística**. |
+| FE-4 | **Curto-circuito do status.** `status` diferente de `APROVADO` produz **exatamente um** impedimento **sem caminho**, e **nada mais é avaliado** — ali o fragmento **sequer é aprovado** (**`D8-F4`**). |
+| FE-5 | **Dois desfechos, e não existe um terceiro.** **Zero impedimentos** é *emitível*; **um ou mais** é *não emitível*. **Não há emissão parcial** (**`D8-F6`**) e **não há resultado parcial**. |
+| FE-6 | **Impedimento não é causa.** `ImpedimentoEmissao` tem **uma** variação — o `caminho_yaml`, presente em `C-7` e ausente nos demais. Ele **não** é `MotivoE09`, **não** é `ClassificacaoPendencia`, **não** carrega `AssuntoComercial`, valor de campo, texto de pergunta, PII ou `Rxx`. |
+| FE-7 | **A primitiva não conhece cobertura.** `AssuntoComercial`, `PerguntaComercial`, `CausaE09`, `MotivoE09`, `R2`, grupo, ***witness***, cobertura, pendência, evento, máquina, ação e *handoff* **não entram aqui**. Ela **não produz `E09`** e **não classifica impeditiva × acessória**. |
+| FE-8 | **Candidatura continua fora.** **`D8-G`** e o *gate* de **`R05`** (**`D8P-11`**) permanecem em S2-D8, porque são eles que decidem quais grupos são **aplicáveis** (**`D8-L4`**). A primitiva recebe **somente** token que **já é candidato**. **Candidatura ≠ emissibilidade.** |
+| FE-9 | **Zero deduplicação e zero ordenação lexical** aqui. Vários `ReferenteIndisponivel` produzem **um impedimento por referente** (**`D8-E4`**), e deduplicar é decisão da **projeção posterior** de S2-D8. |
+| FE-10 | **Pureza.** Zero I/O, *filesystem*, YAML, `knowledge/**`, rede, LLM, relógio, calendário, ambiente, *logging*, *cache* e mutação de entrada. Ela importa **apenas** `response_assertion`, e **`avaliar_assertiva` é reutilizada** — **nenhum avaliador ou predicado paralelo** é criado. |
+| FE-11 | **Sem exceção pública nova.** A primitiva é **total** sobre a fotografia recebida e **não valida forma**: a conferência já foi feita a montante. `AssertivaNaoAvaliavel` **atravessa intacta**, e `DecisaoCoberturaNaoAvaliavel` continua sendo a **única** exceção de composição de S2-D8, com as **mesmas** categorias, localizadores e mensagens. |
+| FE-12 | **S2-D8 continua responsável por cobertura e causas.** É lá que a **fotografia do token é montada**, que cada impedimento é **projetado** em `CausaE09` **com o assunto** — **com caminho** → `CAMPO_INDISPONIVEL`; **sem caminho** → `SEM_RESPOSTA_APROVADA_EMITIVEL`, ambos `ACESSORIA` (**`D8-E6`**) —, e que a **deduplicação** de **`D8-E4`** acontece. O comportamento público de `decidir_pendencias_e_cobertura` é **idêntico** ao anterior à extração. |
+| FE-13 | **A precedência de Classe I não se mudou.** A ordem observável de S2-D8 continua sendo `fatos_runtime` → `validar_indice` → `conferir_referencias` → coerência do `ResultadoConsistencia` → eixos A/B. A extração **não altera qual defeito fecha primeiro**. |
+| FE-14 | **Escopo isolado — `T16`/`R06` NÃO foi materializada.** Esta entrega **não** cria *owner* de `R06/F1`, **não** mapeia `INFORMAR_CONDICOES_DE_VISITA` — que permanece `()` (**PE-7**) — e **não decide** o desfecho de `R06` **não emitível**: nem *zero fragmento*, nem `E09`, nem *handoff*. Essa arbitragem **continua aberta**. Uma **futura rota de ação** poderá consumir **esta mesma autoridade**, e é para isso que ela passa a ser única. |
+| FE-15 | **Nada mais é integrado.** Materializá-la **não** integra a etapa 10 *end-to-end*, **não** implementa o `OrquestradorMotor`, **não** cria fragmento, texto ou regra comercial, e **não** altera `knowledge/**`. |
+
 ### 4.5 Contrato das ações da `MaquinaEstados`
 
 As "ações obrigatórias" devolvidas pela máquina são **vocabulário técnico fechado**:

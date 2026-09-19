@@ -136,6 +136,11 @@ from enum import StrEnum
 from typing import Any
 
 from casa77_sdr.coverage_map import conferir_referencias
+from casa77_sdr.fragment_emissibility import (
+    FotografiaFragmento,
+    ImpedimentoEmissao,
+    avaliar_emissibilidade,
+)
 from casa77_sdr.identity import Confianca
 from casa77_sdr.interpretation import (
     AssuntoComercial,
@@ -144,7 +149,6 @@ from casa77_sdr.interpretation import (
 )
 from casa77_sdr.pricing_applicability import AplicabilidadePacote
 from casa77_sdr.qualification import Qualificacao
-from casa77_sdr.response_assertion import avaliar_assertiva
 from casa77_sdr.response_consistency import (
     Divergencia,
     ReferenteIndisponivel,
@@ -569,9 +573,11 @@ def _avaliar_alternativa(
     **antes**, em `_avaliar_assunto`, porque é ele que decide quais grupos são
     **aplicáveis** (**D8-L4**).
 
-    A ordem é **fixa**: **D8-F1** (status) → **Classe II** (divergência já
-    conferida) → **C-7**, na ordem física recebida → **`ASSERTIVA` de runtime**.
-    Ela existe para que a sequência de causas seja **determinística**.
+    A **emissibilidade estrutural** em si — **D8-F1**, **Classe II**, **C-7** e
+    **`ASSERTIVA` de runtime**, nessa ordem fixa — pertence à **primitiva
+    compartilhada** de §4.4.5, que é **uma só implementação** de **D8-F**. Aqui
+    fica o que é **de S2-D8**: montar a fotografia do token e **projetar** cada
+    impedimento devolvido na `CausaE09` correspondente, **com o assunto**.
 
     **Todas as causas estruturais da alternativa são coletadas** (**D8-E4**):
     um fragmento com vários `ReferenteIndisponivel` produz **uma causa por
@@ -579,39 +585,51 @@ def _avaliar_alternativa(
     distintos produz **os dois motivos**. O status não emitível é a exceção:
     ali o fragmento **sequer é aprovado**, e o veredito é único.
     """
-    if status_por_token[token] != _APROVADO:
-        # D8-F1/D8-F4: `AGUARDA_APROVACAO` e `BLOQUEADO` nao habilitam.
-        return [_sem_resposta(assunto)]
-
-    causas: list[CausaE09] = []
-
-    if token in bloqueados:
-        # D8-CII: qualquer divergencia — inclusive `FORMATO_INAPLICAVEL` —
-        # bloqueia o fragmento. Nao ha quarta condicao de D8-F aqui (R2F-12).
-        causas.append(_sem_resposta(assunto))
-
-    for _, referente in indisponiveis.get(token, ()):
-        # D8-F2/D8-F3 pela via de `C-7`: o referente nao esta disponivel. O
-        # caminho ja conferido a montante e **transportado**, nunca resolvido
-        # de novo nem reinterpretado.
-        causas.append(
-            CausaE09(
-                MotivoE09.CAMPO_INDISPONIVEL,
-                ClassificacaoPendencia.ACESSORIA,
-                assunto,
-                referente,
-            )
+    resultado = avaliar_emissibilidade(
+        FotografiaFragmento(
+            status=status_por_token[token],
+            divergente=token in bloqueados,
+            # A ordem fisica dos referentes e preservada; o mecanismo nao entra
+            # na emissibilidade, so o caminho ja conferido a montante.
+            referentes_indisponiveis=tuple(
+                referente for _, referente in indisponiveis.get(token, ())
+            ),
+            # O valor do fato e resolvido **aqui**: a fotografia factual
+            # autoritativa e de S2-D8, e a primitiva so recebe o par ja pronto.
+            assertivas_runtime=tuple(
+                (predicado, fatos[fato])
+                for fato, predicado in runtime_por_token.get(token, ())
+            ),
         )
+    )
+    if resultado.emitivel:
+        return _EMITIVEL
+    return [
+        _projetar_causa(impedimento, assunto)
+        for impedimento in resultado.impedimentos
+    ]
 
-    for fato, predicado in runtime_por_token.get(token, ()):
-        # D8-F3 sobre a fotografia recebida. `avaliar_assertiva` e reutilizado:
-        # nenhum avaliador ou predicado paralelo e criado.
-        if not avaliar_assertiva(predicado, fatos[fato]):
-            causas.append(_sem_resposta(assunto))
 
-    if causas:
-        return causas
-    return _EMITIVEL
+def _projetar_causa(
+    impedimento: ImpedimentoEmissao, assunto: AssuntoComercial
+) -> CausaE09:
+    """Projeta **um** impedimento estrutural na causa de S2-D8 que lhe cabe.
+
+    É **aqui** que o vocabulário de **D8-E** entra, e **somente aqui**: a
+    primitiva **não** conhece `MotivoE09`, `ClassificacaoPendencia` nem
+    `AssuntoComercial`. **Impedimento com caminho** é `CAMPO_INDISPONIVEL`, com
+    o `caminho_yaml` **transportado literalmente**; **impedimento sem caminho**
+    é `SEM_RESPOSTA_APROVADA_EMITIVEL`. Ambos são do **eixo B**, logo
+    **`ACESSORIA`** (**D8-E6**), e **nenhum terceiro motivo é criado**.
+    """
+    if impedimento.caminho_yaml is None:
+        return _sem_resposta(assunto)
+    return CausaE09(
+        MotivoE09.CAMPO_INDISPONIVEL,
+        ClassificacaoPendencia.ACESSORIA,
+        assunto,
+        impedimento.caminho_yaml,
+    )
 
 
 def _sem_resposta(assunto: AssuntoComercial) -> CausaE09:
