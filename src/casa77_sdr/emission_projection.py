@@ -39,9 +39,26 @@ unidade aprovada canônica, a obrigação **permanece pendente** fora daqui.
 recebida**, seguidos dos mandatórios **na ordem das ações**. Nada é ordenado
 lexicalmente, nada é reordenado e nenhum identificador recebido é removido.
 
+**Dupla rota, uma só exceção fechada.** `R05/F1` satisfaz a mesma obrigação
+textual de **T15** por **duas** rotas: a cobertura de S2-D8 ou a ação de não
+confirmação de disponibilidade. Quando a cobertura já o trouxe, **ela é a
+owner** — o bloco mandatório não acrescenta segunda ocorrência e o token
+permanece na **posição original** de `fragmentos_autorizados`. Quando a
+cobertura não o trouxe, **a ação o completa**. Isso vale **somente** para esse
+par ação/token: **não existe deduplicação *cross-source* genérica**, e nenhum
+identificador futuro herda a exceção por analogia.
+
+**Variantes incompatíveis.** Com a ação de T15 presente, `R05/F2` ou `R05/F3`
+em `fragmentos_autorizados` são insumos **contraditórios** — elas sustentam uma
+resposta de disponibilidade a partir de consulta autoritativa válida, e T15
+ordena o *fallback* de **não** confirmação. Esta fronteira **não escolhe** qual
+origem está certa, **não corrige** a condição 6 e **não toca** os fatos de
+runtime: ela apenas **fecha**.
+
 ***Fail-closed*.** Forma inválida, repetição no bloco recebido, ação sem entrada
-na tabela e colisão entre as duas origens **fecham** — sem resultado parcial,
-sem correção silenciosa e sem composição improvisada.
+na tabela e colisão entre as duas origens — **fora** da dupla rota acima —
+**fecham**, assim como as variantes incompatíveis. Sem resultado parcial, sem
+correção silenciosa e sem composição improvisada.
 """
 
 from __future__ import annotations
@@ -83,12 +100,28 @@ _AUTORIZADOS_ITEM = "fragmentos_autorizados.item"
 _ACOES = "acoes"
 _ACOES_ITEM = "acoes.item"
 
-# Unico fragmento aprovado materializado como mandatorio nesta versao. Ele e
-# admissivel porque o corpus versionado prova mecanicamente — no teste de
+# Mandatorio PURO: ele so chega por esta fronteira, pela acao de lacuna, e nunca
+# por cobertura — colisao cross-source com ele continua fail-closed (PE-10). Ele
+# e admissivel porque o corpus versionado prova mecanicamente — no teste de
 # integracao, nunca aqui — que ele existe, que o seu rotulo canonico o admite e
 # que ele **nao tem binding algum**, de modo que nenhuma decisao factual de
 # runtime e necessaria para emiti-lo.
 _LACUNA = "R03/F1"
+
+# A UNICA dupla rota autorizada (PE-13). `R05/F1` satisfaz a mesma obrigacao
+# textual de T15 por duas rotas — cobertura de S2-D8 ou a acao de nao confirmacao
+# de disponibilidade — e o corpus versionado prova, no teste de integracao, que
+# ele tambem existe, e emitivel e tem **zero bindings**. A excecao vale SOMENTE
+# para este par acao/token: nenhum outro identificador a herda por analogia, e
+# `PE-10` continua fail-closed em toda colisao cross-source fora dela.
+_FALLBACK_DISPONIBILIDADE = "R05/F1"
+_ACAO_DUPLA_ROTA = AcaoMaquina.INFORMAR_NAO_CONFIRMACAO_DE_DISPONIBILIDADE
+
+# Variantes da MESMA superficie R05 que sustentam uma resposta de disponibilidade
+# a partir de consulta autoritativa valida. Com a acao de T15 presente, elas sao
+# contradicao estrutural (PE-14): T15 ordena o fallback de **nao** confirmacao.
+# Esta fronteira nao escolhe qual origem esta certa — ela so fecha.
+_VARIANTES_INCOMPATIVEIS: frozenset[str] = frozenset({"R05/F2", "R05/F3"})
 
 # Tabela TOTAL e LITERAL das 20 acoes de §4.5, na ordem do vocabulario fechado.
 # Escrita uma a uma de proposito: nada de compreensao, nada de valor padrao. Uma
@@ -107,7 +140,9 @@ _FRAGMENTOS_POR_ACAO: dict[AcaoMaquina, tuple[str, ...]] = {
     AcaoMaquina.INFORMAR_RESSALVA_DE_CAPACIDADE: (),
     AcaoMaquina.INFORMAR_CONDICOES_DE_VISITA: (),
     AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO: (_LACUNA,),
-    AcaoMaquina.INFORMAR_NAO_CONFIRMACAO_DE_DISPONIBILIDADE: (),
+    AcaoMaquina.INFORMAR_NAO_CONFIRMACAO_DE_DISPONIBILIDADE: (
+        _FALLBACK_DISPONIBILIDADE,
+    ),
     AcaoMaquina.DESPEDIR_SEM_CONTINUIDADE: (),
     AcaoMaquina.REFORCAR_ENCAMINHAMENTO: (),
     AcaoMaquina.EMITIR_MENSAGEM_DE_ENCAMINHAMENTO: (),
@@ -135,13 +170,20 @@ def projetar_fragmentos_para_emissao(
     `str` exatos, **sem repetição**; **2.** a forma das ações — `tuple` exata,
     itens do vocabulário fechado, **todos com entrada na tabela**; **3.** o
     bloco mandatório, percorrendo `acoes` na ordem recebida e acrescentando cada
-    identificador declarado **apenas na sua primeira ocorrência**; **4.** a
-    ausência de colisão entre as duas origens.
+    identificador declarado **apenas na sua primeira ocorrência**, com a **dupla
+    rota fechada** de `R05/F1` resolvida por *owner*; **4.** a ausência de
+    colisão entre as duas origens.
 
     Devolve `fragmentos_autorizados + mandatórios`: **todos** os identificadores
     recebidos primeiro, **na ordem recebida**, e então os mandatórios, **na
     ordem das ações**. Nenhum identificador se repete, nenhum é removido e
     nenhuma ordenação própria é aplicada.
+
+    Para a ação de não confirmação de disponibilidade, `R05/F1` chega por **uma**
+    de duas rotas: se a cobertura já o autorizou, ela é a **owner** e o token
+    mantém a sua posição; caso contrário, a ação o acrescenta como mandatório. A
+    presença de `R05/F2` ou `R05/F3` na cobertura, com essa ação, é contradição
+    estrutural e **fecha**.
 
     Levanta `ProjecaoEmissaoNaoAvaliavel` com `tipo_invalido`
     (`fragmentos_autorizados`, `fragmentos_autorizados.item`, `acoes`,
@@ -180,6 +222,19 @@ def projetar_fragmentos_para_emissao(
             raise _nao_avaliavel(_ACAO_SEM_MAPEAMENTO, _ACOES_ITEM)
 
         for token in _FRAGMENTOS_POR_ACAO[acao]:
+            if acao is _ACAO_DUPLA_ROTA and token == _FALLBACK_DISPONIBILIDADE:
+                # PE-14. `R05/F2` e `R05/F3` sustentam uma resposta de
+                # disponibilidade vinda de consulta autoritativa valida; a acao
+                # de T15 ordena o fallback de **nao** confirmacao. Juntas, sao
+                # insumos contraditorios: fecha, sem escolher variante alguma.
+                if recebidos & _VARIANTES_INCOMPATIVEIS:
+                    raise _nao_avaliavel(_CONFLITO_ORIGEM, _AUTORIZADOS_ITEM)
+                # PE-13. Quando a cobertura ja trouxe exatamente este token, ela
+                # e a **owner** da unidade neste ciclo: o bloco mandatorio nao
+                # acrescenta segunda ocorrencia, e o token permanece **na posicao
+                # original** de `fragmentos_autorizados` (PE-4, PE-8).
+                if token in recebidos:
+                    continue
             # Acao repetida, ou duas acoes que declarem o mesmo identificador,
             # contribuem **uma vez**: vence a primeira ocorrencia.
             if token in ja_mandatorios:
@@ -188,8 +243,10 @@ def projetar_fragmentos_para_emissao(
             mandatorios.append(token)
 
     for token in mandatorios:
-        # Zero deduplicacao entre as duas origens: um identificador que chegue
-        # pelas duas significa modelagem incoerente a montante.
+        # Zero deduplicacao cross-source generica: um identificador que chegue
+        # pelas duas origens significa modelagem incoerente a montante. A unica
+        # excecao e a dupla rota fechada de `PE-13`, e ela ja foi resolvida
+        # acima **por owner** — o token sequer entra neste bloco.
         if token in recebidos:
             raise _nao_avaliavel(_CONFLITO_ORIGEM, _AUTORIZADOS_ITEM)
 
