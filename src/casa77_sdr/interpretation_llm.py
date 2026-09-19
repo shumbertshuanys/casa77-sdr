@@ -606,7 +606,9 @@ def interpretar_mensagem(
 
     Esta capacidade termina em `Interpretacao`. Ela **não** produz `Exx`,
     `Txx`, `Rxx`, decisão comercial, estado, *handoff*, transição nem resposta
-    final, e **`N-b-RES2` permanece aberto**.
+    final: **`N-b-RES1` permanece literal**. **`N-b-RES2` é fronteira posterior
+    e separada**, hoje materializada em `interpretation_events.py` — esta função
+    **não a executa**.
 
     :raises FalhaProdutorInterpretacao: nenhuma `Interpretacao` neste ciclo.
     :raises TypeError: tipo runtime incompatível na fronteira determinística.

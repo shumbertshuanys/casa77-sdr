@@ -45,8 +45,22 @@ exclusivamente em `knowledge/casa77.yaml`.
   (`src/casa77_sdr/interpretation_anthropic.py`) e o *prompt* especializado
   (`prompts/prompt-interpretacao.md`), com o contrato vivo em `docs/07` §6.3
   (`M-PN1`–`M-PN12`). Texto livre passa por **saída estruturada** e **canonicalização
-  obrigatória**, terminando em `Interpretacao`. A **integração da etapa 4 no ciclo
+  obrigatória**, terminando em `Interpretacao`. A **coordenação da etapa 4 no ciclo
   continua pendente**.
+- **Fora de `C`**, a **fronteira operacional da cadeia N-b** está **materializada
+  e versionada nesta entrega**, em
+  `src/casa77_sdr/interpretation_stage.py`, com o contrato vivo em `docs/07` §6.3
+  (`EN4-1`–`EN4-12`). Ela **encadeia fisicamente** a produção da `Interpretacao` e as
+  **três** derivações que já existiam — **projeção para a identidade**, **condição 5** e
+  **`N-b-RES2`** —, devolvendo `ArtefatosInterpretacao`. **Cada invocação executa
+  `interpretar_mensagem(...)` exatamente uma vez**, sem laço, retry, *fallback*, cache ou
+  fila, e **a mesma instância** de `Interpretacao` atravessa as três derivações. A
+  **unicidade por ciclo** continua sendo obrigação do `OrquestradorMotor` futuro, que
+  deverá invocá-la **no máximo uma vez por ciclo de nova mensagem**. **Sem
+  `Interpretacao`** a falha **propaga intacta**, **nenhuma derivação executa** e **nenhum
+  DTO é construído**: a etapa 5 não executa e o ciclo **não alcança** as etapas 6 e 7. Ela
+  **não é** componente novo — §4.1 permanece com **14** —, **não é** etapa nova e **não
+  redefine a etapa 4**, que **continua não emitindo `Exx`**.
 - **Fora de `C`**, o **produtor determinístico de eventos derivados da `Interpretacao`**
   — o residual **`N-b-RES2`** — está **materializado e versionado** em
   `src/casa77_sdr/interpretation_events.py`, com o contrato vivo em `docs/07` §6.3
@@ -371,12 +385,21 @@ Permanecem igualmente vigentes: o **produtor não determinístico de `N-b`**
 materializada:
 
 - Python **3.14.5**;
-- **`9065 passed`**, sob **`-W error`**;
+- **`9150 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings, zero skips, zero xfails.
 
-Este é o **baseline versionado** da **composição dos insumos da primeira decisão**. O
-baseline **precedente** era o da **etapa 6**: **`8874 passed`**. O
-acréscimo de **191** vem dos cenários de `tests/test_cycle_inputs.py` — o contrato de `E01`,
+Este é o **baseline da entrega versionada** da **fronteira operacional da cadeia N-b**:
+**`9150 passed`** sob **`-W error`**. A **`main` de base** desta entrega registrava
+**`9065 passed`** — o baseline da **composição dos insumos da primeira decisão**. O
+acréscimo de **85** vem dos cenários de
+`tests/test_interpretation_stage.py` — a chamada única ao produtor **por invocação**, a
+identidade de objeto da `Interpretacao` nas três derivações, a forma do DTO, a ausência de
+PII no `repr`, a propagação intacta dos **nove** motivos de falha e dos erros de contrato,
+os limites de import e de chamada por AST e a prova de **encaixe estrutural** com
+`cycle_inputs` e a `MaquinaEstados`.
+
+O baseline **precedente** era o da **etapa 6**: **`8874 passed`**. O
+acréscimo de **191** veio dos cenários de `tests/test_cycle_inputs.py` — o contrato de `E01`,
 as combinações exigidas, os domínios fechados por slot, as duplicatas, a ordem canônica sem
 precedência, as oito condições, o par *all-or-none* de S2-D8, a projeção dos motivos, a
 composição com a `MaquinaEstados` **nos testes** e as provas de pureza por AST.
@@ -657,7 +680,7 @@ código; o contrato vive em `docs/07` §2.3.
 | **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL` | **ARBITRADA E VERSIONADA nesta entrega**: contrato vivo em `docs/07` §7.1 (`E4-1`–`E4-14`), com `docs/06` §4.5 reconciliado. Encerra **sem transição**, preserva o pendente, **tenta** o alerta e marca a chave fora da etapa 13. **Pendente**: a **coordenação** do branch pelo `OrquestradorMotor` | **deixou de bloquear** o `OrquestradorMotor`; o que resta é a coordenação, registrada em §6 | `docs/07` §7.1, §12 item 15; `docs/06` §4.5 |
 | **N-a** — integração operacional residual | especificação concluída e fronteiras `M-T`/`M-E`/`M-C`/`M-DT`/`M-AE` materializadas; integração da etapa 13 no pipeline pendente, com bloqueios S4/S5 sem tratamento operacional | bloqueia o pipeline completo | `docs/07` §6.2, §12 item 11 |
 | **Limiar temporal de recência** | valor numérico e mecanismo de carga indefinidos; não é dado comercial | bloqueia a integração operacional de `N-a` e o `OrquestradorMotor` | `docs/07` §12 item 18 |
-| **N-b** — integração da etapa 4 | contrato arbitrado; fronteira determinística materializada; **produtor não determinístico versionado** (`docs/07` §6.3, `M-PN1`–`M-PN12`) — Anthropic / `claude-sonnet-5`, saída estruturada, canonicalização obrigatória, zero retry, exercitado **offline** pela suíte; os **evals semânticos** e o **smoke** existem e **não foram executados**. **`N-b-RES2` deixou de ser residual**: o produtor de eventos derivados está **materializado e versionado** (`RES2-1`–`RES2-12`), com saída fechada em `E02`/`E03`/`E04`/`E05`/`E06`/`E10`; `E09`, `E18`, `E07`/`E08` e `E14` **continuam fora dele**. **Pendente**: a **integração da etapa 4** no ciclo | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §6.3, §12 item 12 |
+| **N-b** — integração da etapa 4 | contrato arbitrado; fronteira determinística materializada; **produtor não determinístico versionado** (`docs/07` §6.3, `M-PN1`–`M-PN12`) — Anthropic / `claude-sonnet-5`, saída estruturada, canonicalização obrigatória, zero retry, exercitado **offline** pela suíte; os **evals semânticos** e o **smoke** existem e **não foram executados**. **`N-b-RES2` deixou de ser residual**: o produtor de eventos derivados está **materializado e versionado** (`RES2-1`–`RES2-12`), com saída fechada em `E02`/`E03`/`E04`/`E05`/`E06`/`E10`; `E09`, `E18`, `E07`/`E08` e `E14` **continuam fora dele**. A **cadeia operacional** deixou de carecer de fronteira física única: produção, projeção, condição 5 e `N-b-RES2` estão **encadeadas** em `interpretation_stage.py` (`docs/07` §6.3, `EN4-1`–`EN4-12`), **materializadas e versionadas nesta entrega**. **Pendente**: a **coordenação da etapa 4** no ciclo, inclusive invocar essa fronteira **no máximo uma vez por ciclo** | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §6.3, §12 item 12 |
 | **Unicidade geral de `id_atendimento`** | não decidida entre candidatos não identificados | não bloqueia o bloco corrente de materialização de `C` | `docs/07` §12 item 17 |
 | **Retorno do controle ao bot** | não existe transição inversa de `T31` | não bloqueia | `docs/07` §12 item 16 |
 | **Persistência operacional não volátil** | contrato arbitrado; implementação volátil não sustenta operação real; nenhuma tecnologia escolhida | bloqueia qualquer uso em canal real | `docs/07` §7.3, §7.4, §12 item 2a |
@@ -685,9 +708,13 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
 - **S3-D1** — o **produtor** deixou de ser a lacuna: ele está **materializado**. O
   bloqueio restante é a **integração ao ciclo**, que converte o `E14` e o
   `motivo_encerramento` produzidos em insumo efetivo da `MaquinaEstados`;
-- **N-b** — a **integração da etapa 4** no ciclo. Nem o produtor não determinístico
+- **N-b** — a **coordenação da etapa 4** no ciclo. Nem o produtor não determinístico
   nem **`N-b-RES2`** são mais a lacuna: **ambos estão versionados** (`docs/07` §6.3,
-  `M-PN1`–`M-PN12` e `RES2-1`–`RES2-12`). Continuam **ausentes os demais produtores
+  `M-PN1`–`M-PN12` e `RES2-1`–`RES2-12`). A **cadeia operacional** também deixou de
+  faltar — produção, projeção, condição 5 e RES2 estão **fisicamente encadeadas**
+  (`interpretation_stage.py`; `docs/07` §6.3, `EN4-1`–`EN4-12`) — e ela está
+  **materializada e versionada nesta entrega**; o que resta é **quem a invoca, quando e no
+  máximo uma vez por ciclo**. Continuam **ausentes os demais produtores
   de evento**. **`E14`, `E18`, `E07`, `E08` e `E09` deixaram de faltar**: os seus
   produtores — **`S3-D1`**, o **`DetectorHandoff`** e `src/casa77_sdr/cycle_events.py` —
   estão **materializados e versionados**. Quem **une** eventos de produtores distintos e quem
@@ -731,7 +758,8 @@ cobertura sobre o artefato aprovado, e a **conversão** de **causa estruturada**
 **`Evento.E09`** já está **materializada e versionada** (§1) — junto com `E07` e `E08`.
 A **etapa 6** também já está **materializada e versionada** (§1), e com ela o produtor de
 `insumo_qualificacao_atualizado`. A **agregação** dos eventos de produtores distintos e a
-**montagem de `CondicoesCiclo`** estão **materializadas e versionadas** (§1). O que falta é
+**montagem de `CondicoesCiclo`** estão **materializadas e versionadas** (§1), e a **cadeia
+operacional de N-b** está **materializada e versionada** nesta entrega (§1). O que falta é
 o **ciclo**: ninguém
 **liga** interpretação, qualificação, cobertura, seleção, composição, montagem e validação;
 e nenhuma decisão **percorre** o pipeline.
