@@ -541,10 +541,21 @@ def _t09(p: _Percurso) -> bool:
 
 
 def _t14(p: _Percurso) -> bool:
-    return (
-        p.condicoes.interesse_confirmar_disponibilidade is True
-        and p.condicoes.calendario_integrado is True
-    )
+    # CAL6-5. Chegar a esta guarda já significa que C7 vai decidir a
+    # confirmação de disponibilidade: `_tentar` só chama aqui quando o estado
+    # intermediário ainda é `coletando_dados`, `E03` continua disponível e
+    # nenhuma família anterior resolveu o ciclo. Com interesse confirmado, a
+    # condição 6 **precisa** ter sido avaliada: `None` não é T14, não é T15 e
+    # não pode escorrer para T04 como se o pedido não existisse — disponibilidade
+    # nunca é presumida nem silenciosamente descartada (doc 06 §5 regra 4).
+    if p.condicoes.interesse_confirmar_disponibilidade is not True:
+        return False
+    if p.condicoes.calendario_integrado is None:
+        raise ValueError(
+            "A confirmação de disponibilidade exige calendario_integrado "
+            "avaliado quando C7 decide o caminho"
+        )
+    return p.condicoes.calendario_integrado is True
 
 
 def _t15(p: _Percurso) -> bool:
@@ -657,6 +668,8 @@ def decidir(
       na entrada, `E18` sem motivo, `E07` sem mutação efetiva ou sem resultado
       positivo, `E09` sem classificação, `E06` sem resposta aprovada nem `E09`,
       `E08` sem violação conhecida, T35 sem motivo, identidade ambígua);
+    - `ValueError` — `calendario_integrado` **não avaliado** quando C7
+      efetivamente decide a confirmação de disponibilidade (CAL6-5);
     - `TransicaoInexistente` — evento coerente que nenhuma `Txx`, `P` ou `N`
       resolveu (doc 06 §4.5). Não existe fallback genérico.
     """

@@ -30,7 +30,7 @@ Uma conversa está em exatamente **um** estado por vez.
 | `novo` | Conversa criada, nenhuma interação processada. |
 | `coletando_dados` | Bot coletando os campos obrigatórios de `docs/02-fluxo-comercial.md` §4. |
 | `respondendo_duvidas` | Bot respondendo pergunta com base em `knowledge/`. A saída deste estado ocorre **sempre por evento explicitamente declarado para ele na §3** — hoje `E15`, `E09`, `E08`, `E18`, `E01` (T39) e `E07` (T40). Não existe saída implícita, e a §3 é a lista completa: nenhuma enumeração menor é normativa. |
-| `aguardando_confirmacao_disponibilidade` | Data registrada, aguardando consulta de disponibilidade. **Só é alcançável quando existir integração de calendário** (`integracoes_planejadas.calendario.status` ≠ `pendente`). Enquanto pendente, a verificação vira handoff direto (R05). |
+| `aguardando_confirmacao_disponibilidade` | Data registrada, aguardando consulta de disponibilidade. **Só é alcançável quando a capacidade operacional de calendário deste ciclo estiver avaliada como disponível** — `calendario_integrado == True`. Avaliada como **indisponível** (`== False`), a verificação segue pelo ***fallback*** de **T15** (R05 + handoff). Alcançada **C7** com interesse em confirmar disponibilidade e `calendario_integrado == None`, é **erro de contrato** (`docs/07` §4.4, **`CAL6-5`**). |
 | `pronto_para_handoff` | **Estado intermediário do ciclo**: gatilho de handoff disparado e resumo **ainda em preparação**. Não afirma que o resumo já existe, que foi persistido nem que chegou a Douglas Bianchi. |
 | `encaminhado_humano` | **Handoff REGISTRADO**: resumo gerado (`E12`) e decisão de encaminhamento persistida. **Não** significa confirmação física de recebimento por Douglas Bianchi (§10). Bot em modo restrito (só respostas aprovadas + reforço de que Douglas dará sequência). |
 | `atendimento_humano` | Douglas assumiu a conversa; **resposta automática bloqueada**. |
@@ -319,7 +319,7 @@ linha.
 | T12 | `coletando_dados` | `E09` | pendência acessória (não impede a classificação) | `pronto_para_handoff` | aplicar R03; registrar a pergunta em `pendencias_resposta` | rebaixar a qualificação para `indefinido`; inventar | mantém |
 | T13 | `coletando_dados` | `E07` | todos os campos obrigatórios presentes e compatíveis, após as validações do §4 | `pronto_para_handoff` | classificar conforme `docs/02-fluxo-comercial.md` §6.1; preparar resumo | concluir contratação; confirmar data; sobrescrever incompatibilidade detectada | `qualificado` ou `qualificado_com_ressalva` conforme regras |
 | T14 | `coletando_dados` | `E03` | interessado quer confirmar disponibilidade **e** calendário integrado | `aguardando_confirmacao_disponibilidade` | registrar a data; consultar o calendário | afirmar livre/ocupado sem consulta | mantém |
-| T15 | `coletando_dados` | `E03` | interessado quer confirmar disponibilidade **e** calendário `pendente` | `pronto_para_handoff` | aplicar R05; registrar a data | presumir disponibilidade | mantém |
+| T15 | `coletando_dados` | `E03` | interessado quer confirmar disponibilidade **e** capacidade operacional de calendário avaliada como **indisponível** — `calendario_integrado == False` | `pronto_para_handoff` | aplicar R05; registrar a data | presumir disponibilidade | mantém |
 | T16 | `coletando_dados` | `E10` | — | `coletando_dados` | registrar interesse; informar pela resposta aprovada R06 a duração estimada (`processo_comercial.visitas.duracao_estimada_minutos`) e os papéis estruturais (`processo_comercial.visitas.realizada_pelo_responsavel_comercial`, `processo_comercial.visitas.confirmacao_horario_pelo_responsavel_comercial`), usando na emissão o tratamento estático "responsável comercial" | marcar, sugerir horário ou confirmar visita | mantém |
 | T17 | `respondendo_duvidas` | `E06` | resposta aprovada existe | `respondendo_duvidas` | responder com o YAML | estimar, comparar, opinar | mantém |
 | T18 | `respondendo_duvidas` | `E09` | a pendência impede a classificação do evento | `pronto_para_handoff` | aplicar R03; registrar em `pendencias_resposta` as **perguntas não respondidas do ciclo**, **quando houver causa de resposta associada** (§1.3) | inventar resposta; **fabricar pergunta** quando a causa é exclusivamente de qualificação/base | `indefinido` |
@@ -607,7 +607,7 @@ O consumo do evento como **gatilho** não apaga o que P1–P6 preservam: obriga�
 | C4 | humano assumiu | T31 | `E13` chega isolado, em ciclo próprio (§2.2) |
 | C5 | incompatibilidade | T05, T06, T22, T23 | — |
 | C6 | pendência impeditiva | T11, T18 | `E09` chega já classificado |
-| C7 | disponibilidade | T14, T15, T25 | precede a qualificação — ver P6 (§4.3) |
+| C7 | disponibilidade | T14, T15, T25 | precede a qualificação — ver P6 (§4.3). A **entrada** desta família é ***fail-closed*** quanto à capacidade de calendário — ver a regra abaixo |
 | C8 | qualificação | T08 → T13 → T40 | respeitando o estado de origem, a condição de cada linha e o **consumo único de `E07`** |
 | C9 | resposta comercial | T10, T17, T28 | — |
 | C10 | pendência acessória | T12, T19 | — |
@@ -622,6 +622,34 @@ precedências concretas**, cada uma restrita à disputa pelo mesmo evento na sua
 família. Elas **não** instituem princípio geral algum — não existe regra de "linha mais
 específica" ou equivalente neste documento, e **nenhuma colisão futura ganha solução
 automática por analogia**: cada caso novo exige arbitragem própria.
+
+#### C7 — capacidade de calendário não avaliada
+
+Quando a família **C7** é **efetivamente alcançada** — o estado intermediário vigente ainda
+é `coletando_dados`, **`E03` continua disponível** como gatilho e o interesse em confirmar
+disponibilidade é **verdadeiro** —, a capacidade de calendário **deve ter sido avaliada**.
+
+`calendario_integrado` **não avaliado** é **erro de contrato**: ele **não** é `T14`, **não**
+é `T15` e **nunca** escorre silenciosamente para `T04`, como se o pedido de confirmação não
+tivesse existido. **`True` mantém `T14`** e **`False` mantém `T15`**, sem qualquer alteração
+nas duas linhas. A regra é coerente com §5, regra 4 — **disponibilidade nunca é presumida** —
+e o seu complemento necessário: ela também **não é descartada em silêncio**.
+
+A exigência é **contextual**, nunca global. Ela **não** se aplica quando o interesse é falso
+ou não avaliado, quando **não há `E03` disponível** para o gatilho, ou quando uma família
+**anterior** a C7 já resolveu o estado — `E18` em **C2**, `E08` em **C5**, `E09` impeditivo
+em **C6**. Nesses caminhos `calendario_integrado` **permanece legitimamente não avaliado**.
+
+**Snapshot comercial × capacidade de runtime.** `integracoes_planejadas.calendario.status`
+em `knowledge/casa77.yaml` é **snapshot comercial/operacional** e documenta que **hoje
+nenhuma integração real existe**. Ele **não é o algoritmo** que produz `calendario_integrado`
+e **nenhuma derivação sua** — em particular `status != "pendente"` — decide a condição 6. A
+autoridade de runtime é a **raiz de composição / adaptador de calendário da etapa 6**, e o
+`OrquestradorMotor` **apenas transporta** o valor (`docs/07` §4.4, **`CAL6-6`**).
+
+**Nenhuma transição, evento, estado, ação, efeito paralelo ou inércia é criado, removido ou
+alterado por esta regra.** O contrato completo da condição está em `docs/07` §4.4,
+**`CAL6-1`**–**`CAL6-8`**.
 
 #### Fechamento do ciclo
 
@@ -837,7 +865,7 @@ Regras de aproveitamento:
 | I14 | Mensagens de um atendimento ativo não criam nem duplicam conversa. |
 | I15 | Retorno após `encerrado` é continuação (mesmo evento → reabre preservando dados) ou nova solicitação (novo atendimento, sem herdar dados comerciais do atendimento anterior). |
 | I16 | Nenhuma pergunta obrigatória é feita duas vezes quando o dado já foi registrado. |
-| I17 | `aguardando_confirmacao_disponibilidade` é inalcançável enquanto `integracoes_planejadas.calendario.status` for `pendente`. |
+| I17 | `aguardando_confirmacao_disponibilidade` **somente é alcançável** quando `calendario_integrado == True`. Com `calendario_integrado == False`, a confirmação de disponibilidade segue por **T15**. Com `calendario_integrado == None`, quando **C7** for efetivamente alcançada com `interesse_confirmar_disponibilidade == True`, a combinação é **erro de contrato** por **`CAL6-5`** (`docs/07` §4.4). |
 | I18 | `incompativel` não gera handoff automático universal: handoff ocorre somente por regra documentada específica ou por `E18` (pedido de humano, exceção/contestação ou outro gatilho obrigatório). |
 | I19 | Um ciclo **pode percorrer mais de uma `Txx`** e **pode envolver mais de uma chamada da `MaquinaEstados`** (§4.2), produzindo um **caminho auditável**; ainda assim produz e persiste **um único estado final**. Quem determina o resultado é a ordem das famílias C0–C11 (§4.2), **não** a ordem em que as intenções foram extraídas da mensagem. |
 | I20 | Incompatibilidade objetiva nunca é sobrescrita por `E07`; todo `E18` carrega um motivo registrado. |
@@ -1026,8 +1054,11 @@ contrato.
 **Não está decidido** se o caso exige transição própria ou se permanece, definitivamente,
 erro de contrato.
 
-O estado é hoje **inalcançável** por **`I17`** (§1.1, §8), enquanto a integração de calendário
-estiver pendente: a lacuna é real, mas não atingível em execução.
+O estado permanece **operacionalmente inalcançável** por **`I17`** (§1.1, §8) enquanto não
+existir **capacidade runtime de calendário** disponível para produzir
+`calendario_integrado == True`: a lacuna é real, mas não atingível em execução. Quando essa
+capacidade existir, **`S2-D5` passa a ser efetivamente alcançável** e **continua exigindo
+arbitragem própria**.
 
 **Onde se resolve:** **etapa 6**, com a integração de calendário — que é o que torna o estado
 alcançável e o caso exigível. **Não bloqueia** a `MaquinaEstados`.
