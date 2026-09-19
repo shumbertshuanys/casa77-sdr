@@ -40,9 +40,18 @@ A = "R97/F1"
 B = "R98/F1"
 C = "R99/F1"
 
-# O único mandatório materializado nesta versão. Ele é lido da própria tabela
-# privada, nunca copiado — ver `test_pe_t16`.
+# Os dois identificadores materializados nesta versão. Eles são lidos da própria
+# tabela privada, nunca copiados — ver `test_pe_t16`.
 LACUNA = "R03/F1"
+FALLBACK = "R05/F1"
+
+# A ação de T15, dona da única dupla rota autorizada (PE-13).
+ACAO_T15 = AcaoMaquina.INFORMAR_NAO_CONFIRMACAO_DE_DISPONIBILIDADE
+
+# Variantes da mesma superfície R05 que dependem da fotografia runtime e que,
+# com a ação de T15, são insumos contraditórios (PE-14).
+VARIANTE_DISPONIVEL = "R05/F2"
+VARIANTE_INDISPONIVEL = "R05/F3"
 
 
 def _tabela() -> dict[AcaoMaquina, tuple[str, ...]]:
@@ -141,6 +150,139 @@ def test_pe_t4_sem_a_acao_o_mesmo_identificador_nao_conflita() -> None:
     )
 
     assert resultado == (LACUNA,)
+
+
+# ---------------------------------------------------------------------------
+# PE-T19 — dupla rota fechada de `R05/F1` (PE-13)
+
+
+def test_pe_t19_cenario_a_acao_completa_quando_a_cobertura_nao_trouxe() -> None:
+    """Cenário A: sem cobertura, a ação de T15 é a *owner* da unidade."""
+    resultado = projetar_fragmentos_para_emissao((), (ACAO_T15,))
+
+    assert resultado == (FALLBACK,)
+
+
+def test_pe_t19_cobertura_comercial_anterior_recebe_o_fallback_ao_final() -> None:
+    resultado = projetar_fragmentos_para_emissao((A,), (ACAO_T15,))
+
+    assert resultado == (A, FALLBACK)
+
+
+def test_pe_t19_cenario_b_cobertura_e_owner_e_nao_duplica() -> None:
+    """Cenário B: a cobertura já trouxe o token — zero erro, zero duplicata."""
+    resultado = projetar_fragmentos_para_emissao((FALLBACK,), (ACAO_T15,))
+
+    assert resultado == (FALLBACK,)
+    assert resultado.count(FALLBACK) == 1
+
+
+def test_pe_t19_cobertura_owner_preserva_a_posicao_original() -> None:
+    """O token compartilhado **não** vai para o fim: PE-4 e PE-8 intactas."""
+    recebidos = ("R04/F1", FALLBACK, "R07/F1")
+
+    resultado = projetar_fragmentos_para_emissao(recebidos, (ACAO_T15,))
+
+    assert resultado == recebidos
+
+
+def test_pe_t19_acao_repetida_sem_cobertura_contribui_uma_vez() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (), (ACAO_T15, ACAO_T15, ACAO_T15)
+    )
+
+    assert resultado == (FALLBACK,)
+
+
+def test_pe_t19_acao_repetida_com_cobertura_continua_uma_ocorrencia() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (FALLBACK,), (ACAO_T15, ACAO_T15)
+    )
+
+    assert resultado == (FALLBACK,)
+
+
+# ---------------------------------------------------------------------------
+# PE-T20 — variantes incompatíveis da superfície R05 (PE-14)
+
+
+@pytest.mark.parametrize(
+    "variante",
+    [VARIANTE_DISPONIVEL, VARIANTE_INDISPONIVEL],
+    ids=["disponivel", "indisponivel"],
+)
+def test_pe_t20_variante_de_runtime_com_a_acao_de_t15_fecha(variante: str) -> None:
+    """T15 ordena o *fallback* de não confirmação: F2/F3 contradizem."""
+    with pytest.raises(ProjecaoEmissaoNaoAvaliavel) as erro:
+        projetar_fragmentos_para_emissao((variante,), (ACAO_T15,))
+
+    assert str(erro.value) == "conflito_origem: fragmentos_autorizados.item"
+
+
+@pytest.mark.parametrize(
+    "variante",
+    [VARIANTE_DISPONIVEL, VARIANTE_INDISPONIVEL],
+    ids=["disponivel", "indisponivel"],
+)
+def test_pe_t20_variante_sem_a_acao_de_t15_atravessa(variante: str) -> None:
+    """A incompatibilidade é **com a ação**, não uma proibição do token."""
+    resultado = projetar_fragmentos_para_emissao(
+        (variante,), (AcaoMaquina.RESPONDER_PERGUNTA_COMERCIAL,)
+    )
+
+    assert resultado == (variante,)
+
+
+def test_pe_t20_variante_fecha_mesmo_com_o_fallback_presente() -> None:
+    with pytest.raises(ProjecaoEmissaoNaoAvaliavel):
+        projetar_fragmentos_para_emissao(
+            (FALLBACK, VARIANTE_DISPONIVEL), (ACAO_T15,)
+        )
+
+
+def test_pe_t20_variante_nao_devolve_resultado_parcial() -> None:
+    resultado = None
+    with pytest.raises(ProjecaoEmissaoNaoAvaliavel):
+        resultado = projetar_fragmentos_para_emissao(
+            (A, VARIANTE_INDISPONIVEL, B), (ACAO_T15,)
+        )
+
+    assert resultado is None
+
+
+# ---------------------------------------------------------------------------
+# PE-T21 — a exceção de `R05/F1` não vaza (PE-10 por padrão)
+
+
+def test_pe_t21_lacuna_continua_fail_closed_cross_source() -> None:
+    """`R03/F1` **não** ganha dupla rota: colisão continua fechando."""
+    with pytest.raises(ProjecaoEmissaoNaoAvaliavel) as erro:
+        projetar_fragmentos_para_emissao(
+            (LACUNA,), (AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO,)
+        )
+
+    assert str(erro.value) == "conflito_origem: fragmentos_autorizados.item"
+
+
+def test_pe_t21_lacuna_fecha_mesmo_junto_da_dupla_rota_valida() -> None:
+    """Uma exceção fechada convivendo com a regra geral não a contamina."""
+    with pytest.raises(ProjecaoEmissaoNaoAvaliavel) as erro:
+        projetar_fragmentos_para_emissao(
+            (LACUNA, FALLBACK),
+            (ACAO_T15, AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO),
+        )
+
+    assert str(erro.value) == "conflito_origem: fragmentos_autorizados.item"
+
+
+def test_pe_t21_as_duas_rotas_convivem_quando_nao_ha_colisao() -> None:
+    """Lacuna aportada pela ação e *fallback* vindo da cobertura."""
+    resultado = projetar_fragmentos_para_emissao(
+        (FALLBACK,),
+        (ACAO_T15, AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO),
+    )
+
+    assert resultado == (FALLBACK, LACUNA)
 
 
 # ---------------------------------------------------------------------------
@@ -514,19 +656,32 @@ def test_pe_t15_tabela_e_literal_e_nao_gerada() -> None:
 # PE-T16 — exatamente uma contribuição materializada
 
 
-def test_pe_t16_somente_a_lacuna_contribui() -> None:
+def test_pe_t16_exatamente_duas_acoes_contribuem() -> None:
+    """Lacuna e *fallback* de T15 — e mais nenhuma das outras 18 ações."""
     tabela = _tabela()
     com_token = {acao: tokens for acao, tokens in tabela.items() if tokens}
 
-    assert list(com_token) == [AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO]
+    assert list(com_token) == [
+        AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO,
+        ACAO_T15,
+    ]
     assert com_token[AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO] == (LACUNA,)
+    assert com_token[ACAO_T15] == (FALLBACK,)
 
 
 @pytest.mark.parametrize(
     "nao_mapeado",
-    ["R01/F1", "R05/F1", "R06/F1", "R08/F1", "R15/F1"],
+    [
+        "R01/F1",
+        "R05/F2",
+        "R05/F3",
+        "R06/F1",
+        "R08/F1",
+        "R15/F1",
+    ],
 )
 def test_pe_t16_nenhum_outro_fragmento_e_mapeado(nao_mapeado: str) -> None:
+    """`R06/F1` tem *bindings*; `R05/F2` e `R05/F3` dependem do runtime."""
     declarados = {token for tokens in _tabela().values() for token in tokens}
 
     assert nao_mapeado not in declarados
@@ -586,11 +741,11 @@ def test_pe_t17_mandatorios_nao_tem_binding_algum(
         assert "itera_sobre" not in fragmento
 
 
-def test_pe_t17_hoje_existe_exatamente_um_mandatorio() -> None:
+def test_pe_t17_hoje_existem_exatamente_dois_materializados() -> None:
     declarados = [token for tokens in _tabela().values() for token in tokens]
 
-    assert len(declarados) == 1
-    assert len(set(declarados)) == 1
+    assert len(declarados) == 2
+    assert set(declarados) == {LACUNA, FALLBACK}
 
 
 # ---------------------------------------------------------------------------

@@ -399,19 +399,27 @@ Permanecem igualmente vigentes: o **produtor não determinístico de `N-b`**
 materializada:
 
 - Python **3.14.5**;
-- **`9157 passed`**, sob **`-W error`**;
+- **`9173 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings, zero skips, zero xfails.
 
-Este é o **baseline da entrega versionada** do ***gate* determinístico *fail-closed*** da
-**condição 6**: **`9157 passed`** sob **`-W error`**. A **`main` de base** desta entrega
-registrava **`9150 passed`** — o baseline da **fronteira operacional da cadeia N-b**. O
-acréscimo de **7** vem dos cenários de
+Este é o **baseline da entrega versionada** do ***owner* de emissão de T15**:
+**`9173 passed`** sob **`-W error`**. A **`main` de base** desta entrega registrava
+**`9157 passed`** — o baseline do ***gate* determinístico *fail-closed*** da **condição 6**.
+O acréscimo de **16** vem dos cenários
+de `tests/test_emission_projection.py` — os dois caminhos da dupla rota, a **preservação da
+posição** do token quando a cobertura é a *owner*, a **ação repetida** contribuindo uma só
+vez nas duas rotas, o ***fail-closed*** de **`R05/F2`** e **`R05/F3`** com a ação de T15 e a
+sua passagem livre **sem** ela, a **não contaminação** de **`R03/F1`**, e o *gate* de corpus
+agora exigindo **duas** unidades materializadas com **zero *bindings***.
+
+O baseline **precedente** era o do ***gate*** da **condição 6**: **`9157 passed`**. O
+acréscimo de **7** veio dos cenários de
 `tests/test_state_machine.py` — `None` com interesse confirmado como **erro de contrato**,
 `None` legítimo com interesse **falso** e **não avaliado**, `None` legítimo **sem `E03`**
 disponível para o gatilho, e a **preservação de precedência** quando `E18` (C2), `E09`
 impeditivo (C6) ou `E08` documentado (C5) resolvem o estado **antes** de C7.
 
-O baseline **precedente** era o da **cadeia operacional de N-b**: **`9150 passed`**. O
+O baseline **anterior** era o da **cadeia operacional de N-b**: **`9150 passed`**. O
 acréscimo de **85** veio dos cenários de
 `tests/test_interpretation_stage.py` — a chamada única ao produtor **por invocação**, a
 identidade de objeto da `Interpretacao` nas três derivações, a forma do DTO, a ausência de
@@ -419,7 +427,7 @@ PII no `repr`, a propagação intacta dos **nove** motivos de falha e dos erros 
 os limites de import e de chamada por AST e a prova de **encaixe estrutural** com
 `cycle_inputs` e a `MaquinaEstados`.
 
-O baseline **precedente** era o da **etapa 6**: **`8874 passed`**. O
+O baseline **anterior** era o da **etapa 6**: **`8874 passed`**. O
 acréscimo de **191** veio dos cenários de `tests/test_cycle_inputs.py` — o contrato de `E01`,
 as combinações exigidas, os domínios fechados por slot, as duplicatas, a ordem canônica sem
 precedência, as oito condições, o par *all-or-none* de S2-D8, a projeção dos motivos, a
@@ -554,14 +562,36 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   - **não abre** `knowledge/**`, **não carrega o índice em produção**, **não chama LLM**,
     **não monta texto**, **não toma decisão comercial** e **não executa ação alguma**.
 - **Ações sem mapeamento.** A **maioria das `AcaoMaquina` ainda não possui fragmento aprovado
-  materializado nesta fronteira**: nesta versão, **somente `INFORMAR_LACUNA_DE_INFORMACAO`
-  possui contribuição textual mandatória materializada**. Para as demais, **`()` significa
+  materializado nesta fronteira**: nesta versão, **exatamente duas** ações têm contribuição
+  textual materializada — **`INFORMAR_LACUNA_DE_INFORMACAO`** e
+  **`INFORMAR_NAO_CONFIRMACAO_DE_DISPONIBILIDADE`**. Para as outras **18**, **`()` significa
   zero fragmento acrescentado pelo `ProjetorEmissao`** — e **não** que a ação esteja
   resolvida: a **obrigação conversacional permanece**.
-- **`R03/F1`** é o **único fragmento mandatório atualmente materializado** pelo projetor. Um
-  ***gate* mecânico do corpus** comprova a sua **existência**, o status **`APROVADO`** e os
-  **zero *bindings***. Ele **não é reavaliado por S2-D8 nesta fronteira**, **não pertence a
-  `R2`** e **não torna a `MaquinaEstados` conhecedora de `Rxx`**.
+- **`R03/F1`** e **`R05/F1`** são os **dois fragmentos materializados** pelo projetor, com
+  **naturezas distintas**. Um ***gate* mecânico do corpus** comprova, para **ambos**, a
+  **existência**, o status **`APROVADO`** e os **zero *bindings***. **`R03/F1`** é
+  **mandatório puro**: ele **não pertence a `R2`**, chega **exclusivamente** pela ação de
+  lacuna, e a colisão ***cross-source*** com ele **continua *fail-closed***. **`R05/F1`**
+  **pertence a `R2`** — é alternativa do grupo de `disponibilidade_de_data` — e por isso
+  **pode chegar pela cobertura de S2-D8**, além de poder ser **exigido pela ação de T15**:
+  daí a **dupla rota fechada** por **`PE-13`**, com **cobertura presente → cobertura
+  *owner*** e **cobertura ausente → ação *owner***, sempre em **exatamente uma ocorrência**.
+  Nenhum dos dois é **reavaliado por S2-D8 nesta fronteira** e nenhum **torna a
+  `MaquinaEstados` conhecedora de `Rxx`**.
+- **Fora de `C`**, o ***owner* de emissão de T15** está **materializado e versionado nesta
+  entrega**, com o contrato vivo em `docs/07` §4.1.5
+  (**`PE-13`**, **`PE-14`**). **`R03/F1`** continua **mandatório puro** — só chega pela ação
+  de lacuna. **`R05/F1`** passou a ser **unidade de dupla rota** para **T15**: quando a
+  **cobertura** de S2-D8 já o autorizou, **ela é a *owner*** e o token **mantém a posição
+  original**, sem segunda ocorrência; quando a cobertura **não** o trouxe, **a ação o
+  completa**. É **exceção fechada** deste par ação/token: **`PE-10` continua *fail-closed***
+  por padrão — **`R03/F1`** por cobertura **mais** a ação de lacuna **continua fechando** —,
+  **não existe deduplicação *cross-source* genérica** e **nenhum token futuro herda a exceção
+  por analogia**. Com a ação de T15, **`R05/F2`** e **`R05/F3`** na cobertura **fecham** por
+  contradição estrutural (**`PE-14`**): o projetor **não escolhe variante**, **não corrige a
+  condição 6** e **não toca os fatos de runtime**. **`T16`/`R06` continua fora do escopo** —
+  `R06/F1` tem ***bindings*** e exige **arbitragem própria**. **`S2-D8`**, **`CAL6`**,
+  **`D8P-11`** e `coverage_decision.py` **não foram tocados**.
 - **Limites materiais do projetor nesta versão**: ele consome as ações da **primeira** decisão
   da máquina; **ações produzidas por chamadas posteriores da `MaquinaEstados` não entram nesta
   projeção**; somente **fragmentos mandatórios estáticos e previamente aprovados por *gate* de
@@ -687,7 +717,7 @@ código; o contrato vive em `docs/07` §2.3.
 | Pendência | Situação atual | Impacto / bloqueio | Fonte |
 |---|---|---|---|
 | **B** — colisão conceitual de nome `RegistroAtendimento` | **ARBITRADA e versionada** (`docs/07` §4.1.1, `B-1`–`B-5`): o **referente comportamental** recebe o nome **`AtualizadorDadosAtendimento`**; a **dataclass** de `persistence.py` é **preservada**; **zero renomeação de código preexistente**, zero alias, zero terceira abstração | **deixou de bloquear** a implementação do componente, que está **materializado e versionado** | `docs/07` §4.1.1, §4.1.8, §12 itens 21 e 26 |
-| **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`ProjetorEmissao`**, **`SeletorFatos`**, **compositor determinístico por fragmento**, a **montagem canônica de uma emissão**, o **`ValidadorResposta`**, a **infraestrutura estrutural de `R2`** (`docs/07` §4.4.2) e o **produtor determinístico S2-D8** (`docs/07` §4.4.3; ver a linha própria de **S2-D8**). **Pendentes**: **integração *end-to-end* da etapa 10**, **superfícies conversacionais sem unidade aprovada**, as **ações produzidas por chamadas posteriores da `MaquinaEstados`**, a **evolução futura do `ProjetorEmissao`** para essas fases e a **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice à **emissão montada numa única mensagem**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §4.1.6, §4.1.7, §12 itens 19, 10 e 22 |
+| **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`ProjetorEmissao`**, **`SeletorFatos`**, **compositor determinístico por fragmento**, a **montagem canônica de uma emissão**, o **`ValidadorResposta`**, a **infraestrutura estrutural de `R2`** (`docs/07` §4.4.2) e o **produtor determinístico S2-D8** (`docs/07` §4.4.3; ver a linha própria de **S2-D8**). **Pendentes**: **integração *end-to-end* da etapa 10**, **superfícies conversacionais sem unidade aprovada** — **T15 deixou de estar entre elas** nesta entrega versionada (`docs/07` §4.1.5, `PE-13`/`PE-14`), e **T16/`R06` continua aberta** —, as **ações produzidas por chamadas posteriores da `MaquinaEstados`**, a **evolução futura do `ProjetorEmissao`** para essas fases e a **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice à **emissão montada numa única mensagem**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §4.1.6, §4.1.7, §12 itens 19, 10 e 22 |
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
 | **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado e **materializado**: infraestrutura estrutural de `R2` (`coverage_map.py`, `coverage_map_load.py`; §4.4.2), **produtor determinístico** (`coverage_decision.py`; §4.4.3), **aplicabilidade de pacote** (`pricing_applicability.py`; §4.4.4) e o **artefato físico** `knowledge/mapa-cobertura.yaml`, com **54/54** assuntos — **33** com cobertura e **21** vazios. Cobertos os eixos **A** e **B**, **`D8-F`**, Classe I/II, os *gates* de **`R05`** e de **preço (`D8-G`)**, **`D8-L4`**, ***witnesses***, `fragmentos_autorizados`, `pendencias_resposta` e **causas** de `E09`. O **conteúdo de `R2` foi concluído nesta capacidade**, e S2-D8 + `R2` **decidem cobertura** quando recebem as entradas estruturadas. **Já materializada e versionada**, fora desta pendência: a **conversão** das causas em **um único `Evento.E09`**, por `src/casa77_sdr/cycle_events.py` (`docs/07` §6.3, `CIE-1`–`CIE-10`). A **agregação** dos produtores distintos e a **montagem de `CondicoesCiclo`** estão **materializadas e versionadas** (`cycle_inputs.py`; §4.1.9). **Ainda ausente**: a execução **dentro do futuro `OrquestradorMotor`** | **deixou de bloquear**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4.1, §4.4.2, §4.4.3, §4.4.4, §12 item 10; `docs/06` §11 |
@@ -725,7 +755,12 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
   ainda ausentes** — as **superfícies textuais sem unidade aprovada**, a **integração
   residual da etapa 10**, as **ações produzidas por chamadas posteriores da
   `MaquinaEstados`** e a **integração completa pelo `OrquestradorMotor`** (`docs/07` §12,
-  item 22);
+  item 22). O **item 22 continua parcialmente aberto**: nesta entrega versionada, **uma única
+  sub-lacuna fechou** — a superfície de **T15**, agora determinística **nas duas rotas**
+  (`PE-13`, `PE-14`) —, e **T16/`R06`**, a **coleta**, o **formato**, a **retomada**, a
+  **incompatibilidade dependente de motivo**, o **reforço de encaminhamento**, as **ações
+  posteriores**, o **papel residual do LLM** e a **integração *end-to-end*** **continuam
+  abertos**. **`C` não está concluída**;
 - **S3-D1** — o **produtor** deixou de ser a lacuna: ele está **materializado**. O
   bloqueio restante é a **integração ao ciclo**, que converte o `E14` e o
   `motivo_encerramento` produzidos em insumo efetivo da `MaquinaEstados`;
@@ -801,7 +836,8 @@ a **integração ao ciclo** dos produtores já materializados — **`S3-D1`**, o
 residuais de **N-a** e o **limiar temporal**, o **destino do alerta operacional**, a
 **integração externa real de calendário** — cuja **condição 6** já está **arbitrada e
 versionada nesta entrega** (§1), sem que o **adaptador da etapa 6 exista** —, as **superfícies
-conversacionais sem unidade aprovada** e, para
+conversacionais sem unidade aprovada** — das quais **T15 saiu** nesta entrega versionada (§1),
+enquanto **T16/`R06`** e as demais **continuam abertas** — e, para
 uso em canal real, a **persistência operacional não volátil**.
 
 **O primeiro teste conversacional local ainda NÃO está liberado**: o `OrquestradorMotor`
