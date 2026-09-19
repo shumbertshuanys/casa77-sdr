@@ -723,6 +723,103 @@ def test_c7_disponibilidade_sem_calendario_integrado() -> None:
     assert decisao.acoes == (AcaoMaquina.INFORMAR_NAO_CONFIRMACAO_DE_DISPONIBILIDADE,)
 
 
+# --------------------------------------------------------------------------
+# CAL6 — fail-closed da condição 6 na família C7
+# --------------------------------------------------------------------------
+
+
+def test_cal6_calendario_nao_avaliado_com_interesse_e_erro_de_contrato() -> None:
+    """CAL6-5: `None` não é T14, não é T15 e não escorre para T04."""
+    with pytest.raises(ValueError, match="calendario_integrado"):
+        decidir(
+            Estado.COLETANDO_DADOS,
+            (Evento.E03,),
+            INCOMPLETOS,
+            CondicoesCiclo(
+                interesse_confirmar_disponibilidade=True, calendario_integrado=None
+            ),
+        )
+
+
+@pytest.mark.parametrize("interesse", [False, None])
+def test_cal6_calendario_nao_avaliado_sem_interesse_nao_levanta(interesse) -> None:
+    """CAL6-4: sem interesse confirmado, `None` continua legítimo."""
+    decisao = decidir(
+        Estado.COLETANDO_DADOS,
+        (Evento.E03,),
+        INCOMPLETOS,
+        CondicoesCiclo(
+            interesse_confirmar_disponibilidade=interesse, calendario_integrado=None
+        ),
+    )
+    assert Transicao.T14 not in decisao.caminho
+    assert Transicao.T15 not in decisao.caminho
+    assert decisao.caminho == (Transicao.T04,)
+
+
+def test_cal6_sem_e03_disponivel_c7_nao_exige_calendario() -> None:
+    """C7 não é alcançada sem gatilho: a exigência é contextual, não global."""
+    decisao = decidir(
+        Estado.COLETANDO_DADOS,
+        (Evento.E10,),
+        INCOMPLETOS,
+        CondicoesCiclo(
+            interesse_confirmar_disponibilidade=True, calendario_integrado=None
+        ),
+    )
+    assert decisao.caminho == (Transicao.T16,)
+
+
+def test_cal6_handoff_anterior_por_e18_nao_exige_calendario() -> None:
+    """C2 resolve o estado antes de C7: a guarda de T14 nunca é consultada."""
+    decisao = decidir(
+        Estado.COLETANDO_DADOS,
+        (Evento.E03, Evento.E18),
+        INCOMPLETOS,
+        CondicoesCiclo(
+            motivos_handoff=("pedido_desconto",),
+            interesse_confirmar_disponibilidade=True,
+            calendario_integrado=None,
+        ),
+    )
+    assert decisao.caminho == (Transicao.T07,)
+    assert decisao.estado_final is Estado.PRONTO_PARA_HANDOFF
+    assert Transicao.T14 not in decisao.caminho
+    assert Transicao.T15 not in decisao.caminho
+
+
+def test_cal6_pendencia_impeditiva_anterior_nao_exige_calendario() -> None:
+    """C6 resolve o estado antes de C7: `E09` impeditivo precede a guarda."""
+    decisao = decidir(
+        Estado.COLETANDO_DADOS,
+        (Evento.E03, Evento.E09),
+        qual(ResultadoQualificacao.INDEFINIDO, pendencias=("campo.pendente",)),
+        CondicoesCiclo(
+            pendencia_impeditiva=True,
+            interesse_confirmar_disponibilidade=True,
+            calendario_integrado=None,
+        ),
+    )
+    assert decisao.caminho == (Transicao.T11,)
+    assert decisao.estado_final is Estado.PRONTO_PARA_HANDOFF
+    assert Transicao.T14 not in decisao.caminho
+
+
+def test_cal6_incompatibilidade_anterior_nao_exige_calendario() -> None:
+    """C5 resolve o estado antes de C7: `E08` documentado precede a guarda."""
+    decisao = decidir(
+        Estado.COLETANDO_DADOS,
+        (Evento.E03, Evento.E08),
+        incompativel(VIOLACAO_DATA),
+        CondicoesCiclo(
+            interesse_confirmar_disponibilidade=True, calendario_integrado=None
+        ),
+    )
+    assert decisao.caminho == (Transicao.T05,)
+    assert decisao.estado_final is Estado.PRONTO_PARA_HANDOFF
+    assert Transicao.T14 not in decisao.caminho
+
+
 def test_c8_qualificacao_por_t13() -> None:
     decisao = decidir(
         Estado.COLETANDO_DADOS,

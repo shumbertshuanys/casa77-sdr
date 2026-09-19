@@ -2802,7 +2802,7 @@ campo carrega dado pessoal (PII), texto de mensagem ou valor comercial.
 | 3 | `motivos_handoff` | conjunto/tupla de **identificadores textuais opacos** | `DetectorHandoff` (gatilhos 3–10, doc 06 §9) |
 | 4 | `resposta_aprovada_disponivel` | `bool \| None` | **S2-D8, eixo B** (arbitragem S2-D8, abaixo; doc 06 §11), com **produtor materializado** em `src/casa77_sdr/coverage_decision.py` (§4.4.3). A **integração** ao ciclo pertence à composição do `OrquestradorMotor` |
 | 5 | `interesse_confirmar_disponibilidade` | `bool \| None` | **fronteira da etapa 4** (arbitragem N-b, §6.3): derivada da `Interpretacao` pela **função total** N-b-CD1–N-b-CD4, abaixo. Único produtor de `CondicoesCiclo` que N-b atribui |
-| 6 | `calendario_integrado` | `bool \| None` | configuração/integração avaliada a montante |
+| 6 | `calendario_integrado` | `bool \| None` | **capacidade operacional explícita** fornecida pela **raiz de composição / adaptador de calendário da etapa 6**; o `OrquestradorMotor` **apenas transporta**. **Nenhum mecanismo concreto de carga, provedor ou SDK é escolhido aqui.** Contrato vivo em **`CAL6-1`**–**`CAL6-8`**, abaixo |
 | 7 | `identidade` | resultado estruturado do `ResolvedorIdentidade` (§7.1) | `ResolvedorIdentidade` (etapa 5) |
 | 8 | `motivo_encerramento` | motivo estruturado entre as **quatro** modalidades aprovadas de T35 (doc 06 §3) | **S3-D1** (§6.3, `S3D1-1`–`S3D1-12`), com **produtor materializado** em `src/casa77_sdr/closure_decision.py`. A **integração** ao ciclo pertence à composição do `OrquestradorMotor` |
 
@@ -2824,6 +2824,21 @@ com **14**.
 
 `True`/`False` significam **avaliado neste ciclo**; `None` significa **não avaliado neste
 ciclo**. `None` **não** é "falso implícito".
+
+**Condição 6 — capacidade de calendário** (`CAL6-1`–`CAL6-8`).
+
+| # | Regra |
+|---|---|
+| CAL6-1 | **Significado.** `calendario_integrado` representa **exclusivamente** a **capacidade operacional de runtime** para que uma consulta autoritativa de calendário **possa ser iniciada** neste ciclo. Ele **não** é planejamento comercial, **não** é o `status` textual de `integracoes_planejadas.calendario`, **não** é data disponível, **não** é data indisponível, **não** é consulta concluída, **não** é consulta válida, **não** é reserva, **não** é *hold* e **não** é confirmação humana. |
+| CAL6-2 | **`True`.** A capacidade foi **avaliada** e está **disponível**. Autoriza **T14** — registrar a data e **solicitar** a consulta. **Não confirma disponibilidade.** |
+| CAL6-3 | **`False`.** A capacidade foi **avaliada** e **não** está disponível. Autoriza **T15** — o *fallback* **`R05 F1` + handoff** (doc 02 §5, caminho **B**). |
+| CAL6-4 | **`None`.** A condição **não foi avaliada** neste caminho. `None` **não** é `False`: **nenhuma fronteira o coage** para `False`, e `cycle_inputs.py` continua **não inventando** valor onde o chamador informou `None`. |
+| CAL6-5 | ***Fail-closed* de C7.** Quando a `MaquinaEstados` **efetivamente alcança C7** — estado intermediário `coletando_dados`, **`E03` ainda disponível** e `interesse_confirmar_disponibilidade is True` —, `calendario_integrado = None` é **erro de contrato** (`ValueError`). **A validação vive na própria máquina**, na guarda de **T14**, e **não** na composição: é **coerência semântica**, matéria de **`IC-11`**. Sem ela, o pedido explícito de confirmação **escorreria silenciosamente para T04** — disponibilidade **nunca** é presumida **nem descartada em silêncio** (doc 06 §5, regra 4). |
+| CAL6-6 | **Autoridade.** O valor vem da **configuração / capacidade operacional de runtime** da futura integração da **etapa 6**. **Não** vem do LLM, **não** vem da conversa e **não** vem de `knowledge/casa77.yaml` como mecanismo de execução. **Nenhuma derivação de `status` é admitida** — em particular, `status != "pendente"` é **proibido**: o vocabulário de `status` **não é fechado** e a leitura seria ***fail-open***. |
+| CAL6-7 | **Separação da disponibilidade.** `True` autoriza **iniciar** a consulta, e **nada além disso**. A **validade da consulta** e o **resultado de disponibilidade** são fatos **posteriores e separados**, com vocabulário próprio em `fatos_runtime` (§4.4.4, **`D8P-10`**–**`D8P-12`**) e gate próprio de candidatura de `R05/F2` e `R05/F3`. **`A4` não é satisfeita pela condição 6 sozinha.** |
+| CAL6-8 | **Limites.** Esta arbitragem **não** escolhe provedor, **não** escolhe Google Calendar, **não** cria adaptador, **não** cria produtor, **não** cria DTO, enum, *loader*, constante ou variável de ambiente, **não** produz `E16`, **não** resolve **`S2-D5`** e **não** implementa o `OrquestradorMotor`. **Nenhuma condição nova é criada**: §4.4 permanece com **oito**, §4.1 com **14** componentes e §2 com **nove** responsabilidades. |
+
+**`None` continua legítimo fora de C7.** A exigência de `CAL6-5` é **contextual**, nunca global: `interesse_confirmar_disponibilidade` igual a `False` ou `None`, ausência de **`E03`** disponível para o gatilho, ou uma família **anterior** a C7 que já tenha resolvido o estado — `E18` em **C2**, `E08` em **C5**, `E09` impeditivo em **C6** — deixam `calendario_integrado = None` **inteiramente válido**, e a guarda de **T14** **sequer é consultada**.
 
 **Montagem física × coordenação do pipeline.** Dizer que a **integração ao ciclo** pertence
 ao `OrquestradorMotor` sempre significou **duas** coisas distintas, que agora se separam. A

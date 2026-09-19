@@ -48,7 +48,7 @@ exclusivamente em `knowledge/casa77.yaml`.
   obrigatória**, terminando em `Interpretacao`. A **coordenação da etapa 4 no ciclo
   continua pendente**.
 - **Fora de `C`**, a **fronteira operacional da cadeia N-b** está **materializada
-  e versionada nesta entrega**, em
+  e versionada na `main`**, em
   `src/casa77_sdr/interpretation_stage.py`, com o contrato vivo em `docs/07` §6.3
   (`EN4-1`–`EN4-12`). Ela **encadeia fisicamente** a produção da `Interpretacao` e as
   **três** derivações que já existiam — **projeção para a identidade**, **condição 5** e
@@ -61,6 +61,20 @@ exclusivamente em `knowledge/casa77.yaml`.
   DTO é construído**: a etapa 5 não executa e o ciclo **não alcança** as etapas 6 e 7. Ela
   **não é** componente novo — §4.1 permanece com **14** —, **não é** etapa nova e **não
   redefine a etapa 4**, que **continua não emitindo `Exx`**.
+- **Fora de `C`**, a **condição 6** — `calendario_integrado` — está **arbitrada** e o seu
+  ***gate* determinístico *fail-closed*** **materializado e versionado nesta entrega**.
+  O contrato vivo é `docs/07` §4.4 (`CAL6-1`–`CAL6-8`), com a regra de família em
+  `docs/06` §4.2. A condição representa **exclusivamente** a **capacidade operacional de
+  runtime** para que uma consulta autoritativa **possa ser iniciada**; o **owner** é a
+  **raiz de composição / adaptador de calendário da etapa 6**, e o `OrquestradorMotor`
+  **apenas transporta**. **Nenhum produtor, módulo, DTO, enum, *loader*, constante ou
+  variável de ambiente foi criado**, e **nenhum provedor foi escolhido**. Quando **C7 é
+  efetivamente alcançada** — `coletando_dados`, `E03` disponível e interesse **verdadeiro**
+  —, `None` passou a ser **erro de contrato** na guarda de **T14**, em vez de escorrer
+  silenciosamente para **T04**. **`T14`, `T15` e `T25` permanecem estruturalmente
+  inalteradas**, `I17` é preservada e `src/casa77_sdr/cycle_inputs.py` permanece
+  **byte-idêntico** à `main` — a coerência semântica continua tendo **um único dono**, a
+  `MaquinaEstados` (`IC-11`). A **integração externa real de calendário continua ausente**.
 - **Fora de `C`**, o **produtor determinístico de eventos derivados da `Interpretacao`**
   — o residual **`N-b-RES2`** — está **materializado e versionado** em
   `src/casa77_sdr/interpretation_events.py`, com o contrato vivo em `docs/07` §6.3
@@ -385,13 +399,20 @@ Permanecem igualmente vigentes: o **produtor não determinístico de `N-b`**
 materializada:
 
 - Python **3.14.5**;
-- **`9150 passed`**, sob **`-W error`**;
+- **`9157 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings, zero skips, zero xfails.
 
-Este é o **baseline da entrega versionada** da **fronteira operacional da cadeia N-b**:
-**`9150 passed`** sob **`-W error`**. A **`main` de base** desta entrega registrava
-**`9065 passed`** — o baseline da **composição dos insumos da primeira decisão**. O
-acréscimo de **85** vem dos cenários de
+Este é o **baseline da entrega versionada** do ***gate* determinístico *fail-closed*** da
+**condição 6**: **`9157 passed`** sob **`-W error`**. A **`main` de base** desta entrega
+registrava **`9150 passed`** — o baseline da **fronteira operacional da cadeia N-b**. O
+acréscimo de **7** vem dos cenários de
+`tests/test_state_machine.py` — `None` com interesse confirmado como **erro de contrato**,
+`None` legítimo com interesse **falso** e **não avaliado**, `None` legítimo **sem `E03`**
+disponível para o gatilho, e a **preservação de precedência** quando `E18` (C2), `E09`
+impeditivo (C6) ou `E08` documentado (C5) resolvem o estado **antes** de C7.
+
+O baseline **precedente** era o da **cadeia operacional de N-b**: **`9150 passed`**. O
+acréscimo de **85** veio dos cenários de
 `tests/test_interpretation_stage.py` — a chamada única ao produtor **por invocação**, a
 identidade de objeto da `Interpretacao` nas três derivações, a forma do DTO, a ausência de
 PII no `repr`, a propagação intacta dos **nove** motivos de falha e dos erros de contrato,
@@ -680,7 +701,7 @@ código; o contrato vive em `docs/07` §2.3.
 | **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL` | **ARBITRADA E VERSIONADA nesta entrega**: contrato vivo em `docs/07` §7.1 (`E4-1`–`E4-14`), com `docs/06` §4.5 reconciliado. Encerra **sem transição**, preserva o pendente, **tenta** o alerta e marca a chave fora da etapa 13. **Pendente**: a **coordenação** do branch pelo `OrquestradorMotor` | **deixou de bloquear** o `OrquestradorMotor`; o que resta é a coordenação, registrada em §6 | `docs/07` §7.1, §12 item 15; `docs/06` §4.5 |
 | **N-a** — integração operacional residual | especificação concluída e fronteiras `M-T`/`M-E`/`M-C`/`M-DT`/`M-AE` materializadas; integração da etapa 13 no pipeline pendente, com bloqueios S4/S5 sem tratamento operacional | bloqueia o pipeline completo | `docs/07` §6.2, §12 item 11 |
 | **Limiar temporal de recência** | valor numérico e mecanismo de carga indefinidos; não é dado comercial | bloqueia a integração operacional de `N-a` e o `OrquestradorMotor` | `docs/07` §12 item 18 |
-| **N-b** — integração da etapa 4 | contrato arbitrado; fronteira determinística materializada; **produtor não determinístico versionado** (`docs/07` §6.3, `M-PN1`–`M-PN12`) — Anthropic / `claude-sonnet-5`, saída estruturada, canonicalização obrigatória, zero retry, exercitado **offline** pela suíte; os **evals semânticos** e o **smoke** existem e **não foram executados**. **`N-b-RES2` deixou de ser residual**: o produtor de eventos derivados está **materializado e versionado** (`RES2-1`–`RES2-12`), com saída fechada em `E02`/`E03`/`E04`/`E05`/`E06`/`E10`; `E09`, `E18`, `E07`/`E08` e `E14` **continuam fora dele**. A **cadeia operacional** deixou de carecer de fronteira física única: produção, projeção, condição 5 e `N-b-RES2` estão **encadeadas** em `interpretation_stage.py` (`docs/07` §6.3, `EN4-1`–`EN4-12`), **materializadas e versionadas nesta entrega**. **Pendente**: a **coordenação da etapa 4** no ciclo, inclusive invocar essa fronteira **no máximo uma vez por ciclo** | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §6.3, §12 item 12 |
+| **N-b** — integração da etapa 4 | contrato arbitrado; fronteira determinística materializada; **produtor não determinístico versionado** (`docs/07` §6.3, `M-PN1`–`M-PN12`) — Anthropic / `claude-sonnet-5`, saída estruturada, canonicalização obrigatória, zero retry, exercitado **offline** pela suíte; os **evals semânticos** e o **smoke** existem e **não foram executados**. **`N-b-RES2` deixou de ser residual**: o produtor de eventos derivados está **materializado e versionado** (`RES2-1`–`RES2-12`), com saída fechada em `E02`/`E03`/`E04`/`E05`/`E06`/`E10`; `E09`, `E18`, `E07`/`E08` e `E14` **continuam fora dele**. A **cadeia operacional** deixou de carecer de fronteira física única: produção, projeção, condição 5 e `N-b-RES2` estão **encadeadas** em `interpretation_stage.py` (`docs/07` §6.3, `EN4-1`–`EN4-12`), **materializadas e versionadas na `main`**. **Pendente**: a **coordenação da etapa 4** no ciclo, inclusive invocar essa fronteira **no máximo uma vez por ciclo** | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §6.3, §12 item 12 |
 | **Unicidade geral de `id_atendimento`** | não decidida entre candidatos não identificados | não bloqueia o bloco corrente de materialização de `C` | `docs/07` §12 item 17 |
 | **Retorno do controle ao bot** | não existe transição inversa de `T31` | não bloqueia | `docs/07` §12 item 16 |
 | **Persistência operacional não volátil** | contrato arbitrado; implementação volátil não sustenta operação real; nenhuma tecnologia escolhida | bloqueia qualquer uso em canal real | `docs/07` §7.3, §7.4, §12 item 2a |
@@ -713,7 +734,7 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
   `M-PN1`–`M-PN12` e `RES2-1`–`RES2-12`). A **cadeia operacional** também deixou de
   faltar — produção, projeção, condição 5 e RES2 estão **fisicamente encadeadas**
   (`interpretation_stage.py`; `docs/07` §6.3, `EN4-1`–`EN4-12`) — e ela está
-  **materializada e versionada nesta entrega**; o que resta é **quem a invoca, quando e no
+  **materializada e versionada na `main`**; o que resta é **quem a invoca, quando e no
   máximo uma vez por ciclo**. Continuam **ausentes os demais produtores
   de evento**. **`E14`, `E18`, `E07`, `E08` e `E09` deixaram de faltar**: os seus
   produtores — **`S3-D1`**, o **`DetectorHandoff`** e `src/casa77_sdr/cycle_events.py` —
@@ -730,6 +751,15 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
 estrutural (`docs/07` §4.4.2), produtor determinístico (§4.4.3), aplicabilidade de pacote
 (§4.4.4) e o **artefato físico do mapa**, com os 54 assuntos associados. Eles **deixaram de
 ser bloqueadores**: dadas as entradas estruturadas, a cobertura é decidida.
+
+**Concluído nesta entrega** — a **condição 6** deixou de ser a única das
+**oito** sem **owner** atribuído: ela está **arbitrada** em `docs/07` §4.4
+(`CAL6-1`–`CAL6-8`), com o **owner** na **raiz de composição / adaptador de calendário da
+etapa 6** e a **entrada de C7** ***fail-closed*** **materializada e versionada nesta
+entrega**. Isso **não remove bloqueador algum
+desta lista**: a **coordenação de N-b**, a **integração ao ciclo** e o `OrquestradorMotor`
+continuam exatamente como acima, e a **integração externa real de calendário continua
+ausente** — `E16` permanece **futuro** e **`S2-D5` permanece aberta**.
 
 Bloqueia o **uso real** em canal, à parte da integração: **persistência operacional não
 volátil**.
@@ -759,7 +789,7 @@ cobertura sobre o artefato aprovado, e a **conversão** de **causa estruturada**
 A **etapa 6** também já está **materializada e versionada** (§1), e com ela o produtor de
 `insumo_qualificacao_atualizado`. A **agregação** dos eventos de produtores distintos e a
 **montagem de `CondicoesCiclo`** estão **materializadas e versionadas** (§1), e a **cadeia
-operacional de N-b** está **materializada e versionada** nesta entrega (§1). O que falta é
+operacional de N-b** está **materializada e versionada** na `main` (§1). O que falta é
 o **ciclo**: ninguém
 **liga** interpretação, qualificação, cobertura, seleção, composição, montagem e validação;
 e nenhuma decisão **percorre** o pipeline.
@@ -768,8 +798,10 @@ e nenhuma decisão **percorre** o pipeline.
 **este mesmo snapshot** ainda registra como abertas em §5 e §6 — entre elas **N-b**,
 a **integração ao ciclo** dos produtores já materializados — **`S3-D1`**, o
 **`DetectorHandoff`** e o de **`E07`/`E08`/`E09`** —, as matérias
-residuais de **N-a** e o **limiar temporal**, o **destino do alerta operacional**,
-`calendario_integrado`, as **superfícies conversacionais sem unidade aprovada** e, para
+residuais de **N-a** e o **limiar temporal**, o **destino do alerta operacional**, a
+**integração externa real de calendário** — cuja **condição 6** já está **arbitrada e
+versionada nesta entrega** (§1), sem que o **adaptador da etapa 6 exista** —, as **superfícies
+conversacionais sem unidade aprovada** e, para
 uso em canal real, a **persistência operacional não volátil**.
 
 **O primeiro teste conversacional local ainda NÃO está liberado**: o `OrquestradorMotor`
