@@ -62,7 +62,7 @@ exclusivamente em `knowledge/casa77.yaml`.
   **não é** componente novo — §4.1 permanece com **14** —, **não é** etapa nova e **não
   redefine a etapa 4**, que **continua não emitindo `Exx`**.
 - **Fora de `C`**, a **condição 6** — `calendario_integrado` — está **arbitrada** e o seu
-  ***gate* determinístico *fail-closed*** **materializado e versionado nesta entrega**.
+  ***gate* determinístico *fail-closed*** **materializado e versionado**.
   O contrato vivo é `docs/07` §4.4 (`CAL6-1`–`CAL6-8`), com a regra de família em
   `docs/06` §4.2. A condição representa **exclusivamente** a **capacidade operacional de
   runtime** para que uma consulta autoritativa **possa ser iniciada**; o **owner** é a
@@ -155,7 +155,7 @@ exclusivamente em `knowledge/casa77.yaml`.
   exportação. **Zero renomeação de código preexistente**, **zero alias**, **zero terceira
   abstração**, e §4.1 continua com **14** componentes.
 - **Fora de `C`**, o tratamento de **`SEM_CANDIDATO_ELEGIVEL`** — a pendência **E4** —
-  está **arbitrado e versionado nesta entrega**, com o contrato vivo em `docs/07` §7.1
+  está **arbitrado e versionado**, com o contrato vivo em `docs/07` §7.1
   (`E4-1`–`E4-14`) e o reflexo em
   `docs/06` §4.5 (G7 e o caso 3). O branch executa as etapas **1** a **5** e encerra **sem
   transição**: **zero emissão**, **zero handoff**, `ProcessamentoPendente` preservado,
@@ -171,9 +171,27 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-Commit funcional `42e7d0a4d7a60a8e4f7db9245bacb93abd67940a`.
+Commit funcional `3496ee988102588f1c8eb0ec9b3c5fa2f445ae54`.
 
-**A última entrega funcional relevante é a composição dos insumos da primeira decisão** — a
+**A última entrega funcional relevante é o *owner* de emissão de T16 — `R06/F1`**,
+**materializado e versionado** em `src/casa77_sdr/emission_projection.py`, com o contrato
+vivo em `docs/07` §4.1.5 (`PE-15`–`PE-20`). **`INFORMAR_CONDICOES_DE_VISITA` passou a
+mapear `R06/F1`**, em **dupla rota condicionada à emissibilidade**, com **regra própria** —
+**nada é herdado de `R05` por analogia**.
+
+**Cobertura presente → a cobertura é a *owner***: o token **mantém a posição original**, não
+há segunda ocorrência e a fotografia **nem é lida**. **Cobertura ausente → a ação é a
+*owner***, e ela consome **exclusivamente** a primitiva compartilhada
+`avaliar_emissibilidade` (`docs/07` §4.4.5) sobre uma **`FotografiaFragmento` já recebida**.
+**Emitível** → o token entra **uma vez**; **não emitível** → **zero fragmento
+acrescentado**, sob **`PE-7`** — não é erro, não há resultado parcial e não há substituto.
+**Zero `E09`**, **zero `E18`** e **zero nova chamada da `MaquinaEstados`**.
+
+**`T16` não está concluída *end-to-end***: continuam **ausentes** o **produtor real da
+`FotografiaFragmento` no ciclo**, o **`OrquestradorMotor`**, a **integração *end-to-end***
+e a **política da etapa 10 para a obrigação degradada** (§1, §6).
+
+**Permanece igualmente vigente a composição dos insumos da primeira decisão** — a
 **agregação** dos eventos confirmados por produtores distintos e a **montagem de
 `CondicoesCiclo`** —, **materializada e versionada** em `src/casa77_sdr/cycle_inputs.py`,
 com o contrato vivo em `docs/07` §4.1.9 (`IC-1`–`IC-12`).
@@ -643,7 +661,7 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   concluída**: o **produtor real da `FotografiaFragmento` no ciclo** continua **residual do
   futuro `OrquestradorMotor`**, e a **integração *end-to-end*** continua **ausente**.
 - **Fora de `C`**, a **primitiva única de emissibilidade de fragmento** está
-  **materializada e versionada nesta entrega**, em
+  **materializada e versionada**, em
   `src/casa77_sdr/fragment_emissibility.py`, com o contrato vivo em `docs/07` §4.4.5
   (`FE-1`–`FE-15`). **`D8-F` continua sendo UMA norma** — nada foi renumerado, ampliado ou
   criado —, e o que passou a existir é **UMA implementação compartilhada** dela: dada a
@@ -804,7 +822,7 @@ código; o contrato vive em `docs/07` §2.3.
 | **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`ProjetorEmissao`**, **`SeletorFatos`**, **compositor determinístico por fragmento**, a **montagem canônica de uma emissão**, o **`ValidadorResposta`**, a **infraestrutura estrutural de `R2`** (`docs/07` §4.4.2) e o **produtor determinístico S2-D8** (`docs/07` §4.4.3; ver a linha própria de **S2-D8**). **Pendentes**: **integração *end-to-end* da etapa 10**, **superfícies conversacionais sem unidade aprovada** — **T15 deixou de estar entre elas** (`docs/07` §4.1.5, `PE-13`/`PE-14`), e **T16** saiu **nesta entrega versionada** (`PE-15`–`PE-20`), sem que **T16 esteja integralmente concluída** —, as **ações produzidas por chamadas posteriores da `MaquinaEstados`**, a **evolução futura do `ProjetorEmissao`** para essas fases e a **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice à **emissão montada numa única mensagem**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §4.1.6, §4.1.7, §12 itens 19, 10 e 22 |
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
-| **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado e **materializado**: infraestrutura estrutural de `R2` (`coverage_map.py`, `coverage_map_load.py`; §4.4.2), **produtor determinístico** (`coverage_decision.py`; §4.4.3) — que nesta entrega passou a consumir a **primitiva única de emissibilidade** (`fragment_emissibility.py`; §4.4.5, `FE-1`–`FE-15`), **sem alteração de comportamento público** —, **aplicabilidade de pacote** (`pricing_applicability.py`; §4.4.4) e o **artefato físico** `knowledge/mapa-cobertura.yaml`, com **54/54** assuntos — **33** com cobertura e **21** vazios. Cobertos os eixos **A** e **B**, **`D8-F`**, Classe I/II, os *gates* de **`R05`** e de **preço (`D8-G`)**, **`D8-L4`**, ***witnesses***, `fragmentos_autorizados`, `pendencias_resposta` e **causas** de `E09`. O **conteúdo de `R2` foi concluído nesta capacidade**, e S2-D8 + `R2` **decidem cobertura** quando recebem as entradas estruturadas. **Já materializada e versionada**, fora desta pendência: a **conversão** das causas em **um único `Evento.E09`**, por `src/casa77_sdr/cycle_events.py` (`docs/07` §6.3, `CIE-1`–`CIE-10`). A **agregação** dos produtores distintos e a **montagem de `CondicoesCiclo`** estão **materializadas e versionadas** (`cycle_inputs.py`; §4.1.9). **Ainda ausente**: a execução **dentro do futuro `OrquestradorMotor`** | **deixou de bloquear**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4.1, §4.4.2, §4.4.3, §4.4.4, §12 item 10; `docs/06` §11 |
+| **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado e **materializado**: infraestrutura estrutural de `R2` (`coverage_map.py`, `coverage_map_load.py`; §4.4.2), **produtor determinístico** (`coverage_decision.py`; §4.4.3) — que consome a **primitiva única de emissibilidade** (`fragment_emissibility.py`; §4.4.5, `FE-1`–`FE-15`), **sem alteração de comportamento público** —, **aplicabilidade de pacote** (`pricing_applicability.py`; §4.4.4) e o **artefato físico** `knowledge/mapa-cobertura.yaml`, com **54/54** assuntos — **33** com cobertura e **21** vazios. Cobertos os eixos **A** e **B**, **`D8-F`**, Classe I/II, os *gates* de **`R05`** e de **preço (`D8-G`)**, **`D8-L4`**, ***witnesses***, `fragmentos_autorizados`, `pendencias_resposta` e **causas** de `E09`. O **conteúdo de `R2` foi concluído nesta capacidade**, e S2-D8 + `R2` **decidem cobertura** quando recebem as entradas estruturadas. **Já materializada e versionada**, fora desta pendência: a **conversão** das causas em **um único `Evento.E09`**, por `src/casa77_sdr/cycle_events.py` (`docs/07` §6.3, `CIE-1`–`CIE-10`). A **agregação** dos produtores distintos e a **montagem de `CondicoesCiclo`** estão **materializadas e versionadas** (`cycle_inputs.py`; §4.1.9). **Ainda ausente**: a execução **dentro do futuro `OrquestradorMotor`** | **deixou de bloquear**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4.1, §4.4.2, §4.4.3, §4.4.4, §12 item 10; `docs/06` §11 |
 | **Etapa 6 — `AtualizadorDadosAtendimento`** | **materializada e versionada**: `src/casa77_sdr/data_update.py`, contrato vivo em `docs/07` §4.1.8 (`AD-1`–`AD-12`). A **condição 1** de §4.4 tem produtor concreto. A **agregação** e a **montagem de `CondicoesCiclo`** estão **materializadas e versionadas** (§4.1.9). **Pendente**: a **coordenação do pipeline** | **`insumo_qualificacao_atualizado` deixou de carecer de produtor**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.1.8, §4.4, §5, §12 item 26 |
 | **Produtor de `E07`/`E08`/`E09`** | **materializado e versionado**: `src/casa77_sdr/cycle_events.py`, contrato vivo em `docs/07` §6.3 (`CIE-1`–`CIE-10`). A **agregação** e a **montagem de `CondicoesCiclo`** estão **materializadas e versionadas** (§4.1.9). **Pendente**: a **coordenação do pipeline** | **`E07`, `E08` e `E09` deixaram de carecer de produtor**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §6.3, §12 item 25; `docs/06` §2.2, §9, §11 |
 | **Semântica de handoff + `DetectorHandoff`** | **materializados e versionados**: `src/casa77_sdr/handoff_detection.py`, contrato vivo em `docs/07` §6.3 (`DH-1`–`DH-12`), com a extensão semântica **AJ4**. Cobre os **gatilhos 3–10** de `docs/04`. **Pendente**: a **integração ao ciclo**, que liga o `E18` e os motivos produzidos à `MaquinaEstados` | **`E18` deixou de carecer de produtor**; o que resta é a integração do ciclo, registrada em §6 | `docs/07` §6.3, §12 item 24; `docs/06` §2.1, §9 |
@@ -812,7 +830,7 @@ código; o contrato vive em `docs/07` §2.3.
 | **Composição dos insumos da máquina** | **materializada e versionada**: `src/casa77_sdr/cycle_inputs.py`, contrato vivo em `docs/07` §4.1.9 (`IC-1`–`IC-12`). Cobre a **agregação** dos eventos de produtores distintos e a **montagem de `CondicoesCiclo`** na **primeira** chamada de um ciclo de **nova mensagem**. **Pendente**: a **coordenação do pipeline** — quando cada etapa roda, com que dados vigentes, a **coordenação do branch E4** já arbitrado e as chamadas da máquina **não** originadas de mensagem nova | **a agregação e a montagem deixaram de faltar**; o que resta é o `OrquestradorMotor`, registrado em §6 | `docs/07` §4.1.9, §4.4, §12 item 27 |
 | **E1** — conversa × atendimento × lead | não arbitrada; atravessa identidade, persistência e registro de leads | não bloqueia a especificação vigente | `docs/07` §12 item 13 |
 | **E3** — evento novo durante atendimento ativo | aberta; contrato vigente é conservador (`AMBIGUA`) | não bloqueia | `docs/07` §12 item 14 |
-| **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL` | **ARBITRADA E VERSIONADA nesta entrega**: contrato vivo em `docs/07` §7.1 (`E4-1`–`E4-14`), com `docs/06` §4.5 reconciliado. Encerra **sem transição**, preserva o pendente, **tenta** o alerta e marca a chave fora da etapa 13. **Pendente**: a **coordenação** do branch pelo `OrquestradorMotor` | **deixou de bloquear** o `OrquestradorMotor`; o que resta é a coordenação, registrada em §6 | `docs/07` §7.1, §12 item 15; `docs/06` §4.5 |
+| **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL` | **ARBITRADA E VERSIONADA**: contrato vivo em `docs/07` §7.1 (`E4-1`–`E4-14`), com `docs/06` §4.5 reconciliado. Encerra **sem transição**, preserva o pendente, **tenta** o alerta e marca a chave fora da etapa 13. **Pendente**: a **coordenação** do branch pelo `OrquestradorMotor` | **deixou de bloquear** o `OrquestradorMotor`; o que resta é a coordenação, registrada em §6 | `docs/07` §7.1, §12 item 15; `docs/06` §4.5 |
 | **N-a** — integração operacional residual | especificação concluída e fronteiras `M-T`/`M-E`/`M-C`/`M-DT`/`M-AE` materializadas; integração da etapa 13 no pipeline pendente, com bloqueios S4/S5 sem tratamento operacional | bloqueia o pipeline completo | `docs/07` §6.2, §12 item 11 |
 | **Limiar temporal de recência** | valor numérico e mecanismo de carga indefinidos; não é dado comercial | bloqueia a integração operacional de `N-a` e o `OrquestradorMotor` | `docs/07` §12 item 18 |
 | **N-b** — integração da etapa 4 | contrato arbitrado; fronteira determinística materializada; **produtor não determinístico versionado** (`docs/07` §6.3, `M-PN1`–`M-PN12`) — Anthropic / `claude-sonnet-5`, saída estruturada, canonicalização obrigatória, zero retry, exercitado **offline** pela suíte; os **evals semânticos** e o **smoke** existem e **não foram executados**. **`N-b-RES2` deixou de ser residual**: o produtor de eventos derivados está **materializado e versionado** (`RES2-1`–`RES2-12`), com saída fechada em `E02`/`E03`/`E04`/`E05`/`E06`/`E10`; `E09`, `E18`, `E07`/`E08` e `E14` **continuam fora dele**. A **cadeia operacional** deixou de carecer de fronteira física única: produção, projeção, condição 5 e `N-b-RES2` estão **encadeadas** em `interpretation_stage.py` (`docs/07` §6.3, `EN4-1`–`EN4-12`), **materializadas e versionadas na `main`**. **Pendente**: a **coordenação da etapa 4** no ciclo, inclusive invocar essa fronteira **no máximo uma vez por ciclo** | bloqueia o `OrquestradorMotor` e a integração completa | `docs/07` §6.3, §12 item 12 |
@@ -880,11 +898,11 @@ estrutural (`docs/07` §4.4.2), produtor determinístico (§4.4.3), aplicabilida
 (§4.4.4) e o **artefato físico do mapa**, com os 54 assuntos associados. Eles **deixaram de
 ser bloqueadores**: dadas as entradas estruturadas, a cobertura é decidida.
 
-**Concluído nesta entrega** — a **condição 6** deixou de ser a única das
+**Concluída e versionada** — a **condição 6** deixou de ser a única das
 **oito** sem **owner** atribuído: ela está **arbitrada** em `docs/07` §4.4
 (`CAL6-1`–`CAL6-8`), com o **owner** na **raiz de composição / adaptador de calendário da
-etapa 6** e a **entrada de C7** ***fail-closed*** **materializada e versionada nesta
-entrega**. Isso **não remove bloqueador algum
+etapa 6** e a **entrada de C7** ***fail-closed*** **materializada e versionada**. Isso
+**não remove bloqueador algum
 desta lista**: a **coordenação de N-b**, a **integração ao ciclo** e o `OrquestradorMotor`
 continuam exatamente como acima, e a **integração externa real de calendário continua
 ausente** — `E16` permanece **futuro** e **`S2-D5` permanece aberta**.
@@ -928,7 +946,7 @@ a **integração ao ciclo** dos produtores já materializados — **`S3-D1`**, o
 **`DetectorHandoff`** e o de **`E07`/`E08`/`E09`** —, as matérias
 residuais de **N-a** e o **limiar temporal**, o **destino do alerta operacional**, a
 **integração externa real de calendário** — cuja **condição 6** já está **arbitrada e
-versionada nesta entrega** (§1), sem que o **adaptador da etapa 6 exista** —, as **superfícies
+versionada** (§1), sem que o **adaptador da etapa 6 exista** —, as **superfícies
 conversacionais sem unidade aprovada** — das quais **T15** saiu em **entrega anterior** e
 **T16** sai **nesta entrega versionada** (§1), sem que a **integração *end-to-end*** exista e
 sem produtor real da `FotografiaFragmento` no ciclo, enquanto as demais **continuam
