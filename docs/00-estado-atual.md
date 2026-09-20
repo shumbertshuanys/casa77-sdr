@@ -399,12 +399,23 @@ Permanecem igualmente vigentes: o **produtor não determinístico de `N-b`**
 materializada:
 
 - Python **3.14.5**;
-- **`9236 passed`**, sob **`-W error`**;
+- **`9276 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings, zero skips, zero xfails.
 
-Este é o **baseline da entrega versionada** da **primitiva única de emissibilidade**:
-**`9236 passed`** sob **`-W error`**. A **`main` de base** desta entrega registrava
-**`9173 passed`** — o baseline do ***owner* de emissão de T15**. O acréscimo de **63** vem,
+Este é o **baseline da entrega versionada** do ***owner* de emissão de T16**:
+**`9276 passed`** sob **`-W error`**. A **`main` de base** desta entrega registrava
+**`9236 passed`** — o baseline da **primitiva única de emissibilidade**. O acréscimo de
+**40** vem, **integralmente**, dos
+cenários novos de `tests/test_emission_projection.py` — as duas rotas de `R06/F1`, a
+**preservação da posição** quando a cobertura é a *owner*, a **irrelevância da fotografia**
+fora da rota da ação, o ***fail-closed*** de `tipo_invalido: fotografia_r06`, os **seis**
+desfechos de não emissibilidade com **zero fragmento**, a **ação repetida** consultando a
+autoridade **uma única vez**, e o *gate* de corpus agora **distinguindo** a classe estática
+— `R03/F1` e `R05/F1`, com zero *bindings* — da **condicionada** — `R06/F1`, com *bindings*
+e **zero `RUNTIME_AUTORITATIVO`**.
+
+O baseline **precedente** era o da **primitiva única de emissibilidade**: **`9236 passed`**.
+O acréscimo de **63** veio,
 **integralmente**, dos cenários novos de
 `tests/test_fragment_emissibility.py` — fragmento emitível, os dois rótulos não emitíveis, o
 **curto-circuito** do status, Classe II, um e vários `ReferenteIndisponivel` na **ordem
@@ -572,21 +583,26 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   - **não abre** `knowledge/**`, **não carrega o índice em produção**, **não chama LLM**,
     **não monta texto**, **não toma decisão comercial** e **não executa ação alguma**.
 - **Ações sem mapeamento.** A **maioria das `AcaoMaquina` ainda não possui fragmento aprovado
-  materializado nesta fronteira**: nesta versão, **exatamente duas** ações têm contribuição
-  textual materializada — **`INFORMAR_LACUNA_DE_INFORMACAO`** e
-  **`INFORMAR_NAO_CONFIRMACAO_DE_DISPONIBILIDADE`**. Para as outras **18**, **`()` significa
+  materializado nesta fronteira**: nesta versão, **exatamente três** ações têm contribuição
+  textual materializada — **`INFORMAR_LACUNA_DE_INFORMACAO`**,
+  **`INFORMAR_NAO_CONFIRMACAO_DE_DISPONIBILIDADE`** e
+  **`INFORMAR_CONDICOES_DE_VISITA`**. Para as outras **17**, **`()` significa
   zero fragmento acrescentado pelo `ProjetorEmissao`** — e **não** que a ação esteja
   resolvida: a **obrigação conversacional permanece**.
-- **`R03/F1`** e **`R05/F1`** são os **dois fragmentos materializados** pelo projetor, com
-  **naturezas distintas**. Um ***gate* mecânico do corpus** comprova, para **ambos**, a
-  **existência**, o status **`APROVADO`** e os **zero *bindings***. **`R03/F1`** é
+- **`R03/F1`**, **`R05/F1`** e **`R06/F1`** são os **três fragmentos materializados** pelo
+  projetor, com
+  **naturezas distintas**. Um ***gate* mecânico do corpus** comprova, para **os três**, a
+  **existência** e o status **`APROVADO`**, e a partir daí **divide-se em duas classes**
+  (**`PE-11`**): a **estática** — **`R03/F1`** e **`R05/F1`** — exige **zero *bindings***; a
+  **condicionada** — **`R06/F1`** — exige o oposto, **ter *bindings*** e **nenhum** de origem
+  **`RUNTIME_AUTORITATIVO`**. **`R03/F1`** é
   **mandatório puro**: ele **não pertence a `R2`**, chega **exclusivamente** pela ação de
   lacuna, e a colisão ***cross-source*** com ele **continua *fail-closed***. **`R05/F1`**
   **pertence a `R2`** — é alternativa do grupo de `disponibilidade_de_data` — e por isso
   **pode chegar pela cobertura de S2-D8**, além de poder ser **exigido pela ação de T15**:
   daí a **dupla rota fechada** por **`PE-13`**, com **cobertura presente → cobertura
   *owner*** e **cobertura ausente → ação *owner***, sempre em **exatamente uma ocorrência**.
-  Nenhum dos dois é **reavaliado por S2-D8 nesta fronteira** e nenhum **torna a
+  Nenhum dos três é **reavaliado por S2-D8 nesta fronteira** e nenhum **torna a
   `MaquinaEstados` conhecedora de `Rxx`**.
 - **Fora de `C`**, o ***owner* de emissão de T15** está **materializado e versionado nesta
   entrega**, com o contrato vivo em `docs/07` §4.1.5
@@ -599,9 +615,33 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   **não existe deduplicação *cross-source* genérica** e **nenhum token futuro herda a exceção
   por analogia**. Com a ação de T15, **`R05/F2`** e **`R05/F3`** na cobertura **fecham** por
   contradição estrutural (**`PE-14`**): o projetor **não escolhe variante**, **não corrige a
-  condição 6** e **não toca os fatos de runtime**. **`T16`/`R06` continua fora do escopo** —
-  `R06/F1` tem ***bindings*** e exige **arbitragem própria**. **`S2-D8`**, **`CAL6`**,
-  **`D8P-11`** e `coverage_decision.py` **não foram tocados**.
+  condição 6** e **não toca os fatos de runtime**. **`S2-D8`**, **`CAL6`**, **`D8P-11`** e
+  `coverage_decision.py` **não foram tocados**. A **arbitragem própria** que `R06/F1` exigia
+  — por ter ***bindings*** — foi feita **em entrega separada**, abaixo.
+- **Fora de `C`**, o ***owner* de emissão de T16** está **materializado e versionado nesta
+  entrega**, com o contrato vivo em `docs/07` §4.1.5
+  (**`PE-15`**–**`PE-20`**). **`R06/F1`** é **dupla rota condicionada à emissibilidade**, com
+  **regra própria** — **nada é herdado de `R05` por analogia**. **Cobertura presente → a
+  cobertura é a *owner***: o token **mantém a posição original**, não há segunda ocorrência e
+  a fotografia **nem é lida**. **Cobertura ausente → a ação é a *owner***, e ela consome
+  **exclusivamente** a **primitiva compartilhada** `avaliar_emissibilidade` (§4.4.5) sobre uma
+  **`FotografiaFragmento` já montada** — o projetor **não** compara status, **não** percorre
+  referentes, **não** avalia `ASSERTIVA`, **não** lê índice e **não** abre `knowledge/**`.
+  **Emitível** → o token entra; **não emitível** → **zero fragmento acrescentado**, sob
+  **`PE-7`**: não é erro, não há resultado parcial, não há substituto e **nenhum texto é
+  inventado**. A avaliação ocorre **no máximo uma vez por chamada**, com **zero *cache*
+  global**. A entrada `fotografia_r06` é **keyword-only e condicional**: exigida **somente**
+  na rota da ação, onde ausência ou tipo inválido fecham com `tipo_invalido: fotografia_r06`;
+  fora dela é **irrelevante**, e chamadas com **dois argumentos continuam válidas**. **Zero
+  `E09`, zero `E18`, zero `CausaE09`, zero `MotivoHandoff` e zero nova chamada da
+  `MaquinaEstados`**: `state_machine.py`, `cycle_events.py`, `cycle_inputs.py`,
+  `handoff_detection.py`, `coverage_decision.py` e `fragment_emissibility.py` permanecem
+  **intocados**. **T16 na máquina permanece literal** — `E10` → `T16` —, e **interesse
+  simples em visita continua sendo T16**: pedido de **confirmação** de visita permanece
+  matéria **humana** e distinta. **`PE-13`** e **`PE-14`** seguem **inalterados**, e a colisão
+  *cross-source* de **`R03/F1`** continua ***fail-closed***. **T16 não está integralmente
+  concluída**: o **produtor real da `FotografiaFragmento` no ciclo** continua **residual do
+  futuro `OrquestradorMotor`**, e a **integração *end-to-end*** continua **ausente**.
 - **Fora de `C`**, a **primitiva única de emissibilidade de fragmento** está
   **materializada e versionada nesta entrega**, em
   `src/casa77_sdr/fragment_emissibility.py`, com o contrato vivo em `docs/07` §4.4.5
@@ -622,16 +662,26 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   `casa77_sdr.response_assertion`, agora consumida **exclusivamente** pela primitiva
   compartilhada. A cadeia passa a ser `coverage_decision` → `fragment_emissibility` →
   `response_assertion`, e **nenhum teste comportamental foi alterado**.
-  **`T16`/`R06` continua aberta**: nenhum *owner* de `R06/F1` foi implementado, o mapeamento
-  de `INFORMAR_CONDICOES_DE_VISITA` permanece `()` e **nenhum desfecho** para `R06` **não
-  emitível** foi decidido — nem *zero fragmento*, nem `E09`, nem *handoff*. **Nenhuma
-  superfície conversacional nova foi fechada.**
+  A **PR #173** apenas criou a **autoridade compartilhada** e, **naquele momento**, deixou
+  **`T16`/`R06` aberta**: ela **não** criou *owner* de `R06/F1`, **não** mapeou
+  `INFORMAR_CONDICOES_DE_VISITA` — que ali permanecia `()` — e **não** decidiu o desfecho de
+  `R06` **não emitível**; **nenhuma superfície conversacional nova foi fechada por ela**.
+  **Nesta entrega**, a **rota de ação de T16** já **consome essa autoridade**, conforme
+  **`PE-15`**–**`PE-20`** (bloco acima). A primitiva, porém, **permanece independente de
+  ação**: ela **não conhece T16**, **não conhece ação** e **não é *owner***; o ***owner* vive no
+  `ProjetorEmissao`**. E ***owner* de emissão isolado não é T16 *end-to-end***: o **produtor
+  real da `FotografiaFragmento` no ciclo** continua **residual**, o **`OrquestradorMotor`**
+  continua **ausente** e a **integração *end-to-end*** continua **ausente**. **T16 não está
+  integralmente concluída.**
 - **Limites materiais do projetor nesta versão**: ele consome as ações da **primeira** decisão
   da máquina; **ações produzidas por chamadas posteriores da `MaquinaEstados` não entram nesta
-  projeção**; somente **fragmentos mandatórios estáticos e previamente aprovados por *gate* de
-  corpus** podem ser inseridos pelo mapa atual; qualquer futuro mandatório com ***binding***,
-  **`ASSERTIVA`** ou **fato de runtime** **exige nova arbitragem**; e ação com mapa vazio
-  **continua podendo ter obrigação textual pendente**.
+  projeção**; o mapa atual insere **exatamente três** fragmentos, em **três naturezas já
+  arbitradas** — **`R03/F1`**, **mandatório puro estático**; **`R05/F1`**, **dupla rota sem
+  *bindings*** (**`PE-13`**); e **`R06/F1`**, **dupla rota condicionada à emissibilidade**, com
+  ***bindings*** de origem **`YAML`** e **zero `RUNTIME_AUTORITATIVO`**
+  (**`PE-15`**–**`PE-20`**) —; **qualquer OUTRO** futuro mapeamento com ***binding***,
+  **`ASSERTIVA`** ou **fato de runtime** **exige arbitragem própria**, e **nada é herdado por
+  analogia**; e ação com mapa vazio **continua podendo ter obrigação textual pendente**.
 - **Política geral de composição — `PC-1`–`PC-6`** — é agora **norma arquitetural** em
   `docs/07` §4.1.5: **múltiplos fragmentos individualmente aprovados podem compor a mesma
   resposta**; os ***witnesses*** **preservam ordem e cardinalidade**; em **cobertura mista**,
@@ -751,7 +801,7 @@ código; o contrato vive em `docs/07` §2.3.
 | Pendência | Situação atual | Impacto / bloqueio | Fonte |
 |---|---|---|---|
 | **B** — colisão conceitual de nome `RegistroAtendimento` | **ARBITRADA e versionada** (`docs/07` §4.1.1, `B-1`–`B-5`): o **referente comportamental** recebe o nome **`AtualizadorDadosAtendimento`**; a **dataclass** de `persistence.py` é **preservada**; **zero renomeação de código preexistente**, zero alias, zero terceira abstração | **deixou de bloquear** a implementação do componente, que está **materializado e versionado** | `docs/07` §4.1.1, §4.1.8, §12 itens 21 e 26 |
-| **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`ProjetorEmissao`**, **`SeletorFatos`**, **compositor determinístico por fragmento**, a **montagem canônica de uma emissão**, o **`ValidadorResposta`**, a **infraestrutura estrutural de `R2`** (`docs/07` §4.4.2) e o **produtor determinístico S2-D8** (`docs/07` §4.4.3; ver a linha própria de **S2-D8**). **Pendentes**: **integração *end-to-end* da etapa 10**, **superfícies conversacionais sem unidade aprovada** — **T15 deixou de estar entre elas** nesta entrega versionada (`docs/07` §4.1.5, `PE-13`/`PE-14`), e **T16/`R06` continua aberta** —, as **ações produzidas por chamadas posteriores da `MaquinaEstados`**, a **evolução futura do `ProjetorEmissao`** para essas fases e a **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice à **emissão montada numa única mensagem**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §4.1.6, §4.1.7, §12 itens 19, 10 e 22 |
+| **C** — índice estruturado `Rxx` × YAML | **materializados**: índice físico e *templates*, **autoridade de status**, ***lookup* operacional**, **`ValidadorConsistenciaBase`**, **`ProjetorEmissao`**, **`SeletorFatos`**, **compositor determinístico por fragmento**, a **montagem canônica de uma emissão**, o **`ValidadorResposta`**, a **infraestrutura estrutural de `R2`** (`docs/07` §4.4.2) e o **produtor determinístico S2-D8** (`docs/07` §4.4.3; ver a linha própria de **S2-D8**). **Pendentes**: **integração *end-to-end* da etapa 10**, **superfícies conversacionais sem unidade aprovada** — **T15 deixou de estar entre elas** (`docs/07` §4.1.5, `PE-13`/`PE-14`), e **T16** saiu **nesta entrega versionada** (`PE-15`–`PE-20`), sem que **T16 esteja integralmente concluída** —, as **ações produzidas por chamadas posteriores da `MaquinaEstados`**, a **evolução futura do `ProjetorEmissao`** para essas fases e a **integração pelo `OrquestradorMotor`** | a **ausência física do índice deixou de ser o bloqueio** e a cadeia já vai do índice à **emissão montada numa única mensagem**; enquanto as capacidades restantes não forem materializadas, o `OrquestradorMotor` e a integração completa **não** devem ser considerados prontos. **`C` não está concluída** | `docs/07` §2.3, §4.1.2, §4.1.3, §4.1.4, §4.1.5, §4.1.6, §4.1.7, §12 itens 19, 10 e 22 |
 | **S2-D5** — mensagem conversacional em `aguardando_confirmacao_disponibilidade` antes de `E16` | aberta; resolver na Etapa 6 | não bloqueia | `docs/06` §12 |
 | **S2-D7** — `E13` a partir de estado diferente de `encaminhado_humano` | aberta; resolver na Etapa 5 | não bloqueia | `docs/06` §12 |
 | **S2-D8** — detecção e classificação de pendências e cobertura de resposta aprovada | contrato arbitrado e **materializado**: infraestrutura estrutural de `R2` (`coverage_map.py`, `coverage_map_load.py`; §4.4.2), **produtor determinístico** (`coverage_decision.py`; §4.4.3) — que nesta entrega passou a consumir a **primitiva única de emissibilidade** (`fragment_emissibility.py`; §4.4.5, `FE-1`–`FE-15`), **sem alteração de comportamento público** —, **aplicabilidade de pacote** (`pricing_applicability.py`; §4.4.4) e o **artefato físico** `knowledge/mapa-cobertura.yaml`, com **54/54** assuntos — **33** com cobertura e **21** vazios. Cobertos os eixos **A** e **B**, **`D8-F`**, Classe I/II, os *gates* de **`R05`** e de **preço (`D8-G`)**, **`D8-L4`**, ***witnesses***, `fragmentos_autorizados`, `pendencias_resposta` e **causas** de `E09`. O **conteúdo de `R2` foi concluído nesta capacidade**, e S2-D8 + `R2` **decidem cobertura** quando recebem as entradas estruturadas. **Já materializada e versionada**, fora desta pendência: a **conversão** das causas em **um único `Evento.E09`**, por `src/casa77_sdr/cycle_events.py` (`docs/07` §6.3, `CIE-1`–`CIE-10`). A **agregação** dos produtores distintos e a **montagem de `CondicoesCiclo`** estão **materializadas e versionadas** (`cycle_inputs.py`; §4.1.9). **Ainda ausente**: a execução **dentro do futuro `OrquestradorMotor`** | **deixou de bloquear**: o que resta é a integração do ciclo, registrada em §6 | `docs/07` §4.4.1, §4.4.2, §4.4.3, §4.4.4, §12 item 10; `docs/06` §11 |
@@ -789,16 +839,21 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
   ainda ausentes** — as **superfícies textuais sem unidade aprovada**, a **integração
   residual da etapa 10**, as **ações produzidas por chamadas posteriores da
   `MaquinaEstados`** e a **integração completa pelo `OrquestradorMotor`** (`docs/07` §12,
-  item 22). O **item 22 continua parcialmente aberto**: nesta entrega versionada, **uma única
-  sub-lacuna fechou** — a superfície de **T15**, agora determinística **nas duas rotas**
-  (`PE-13`, `PE-14`) —, e **T16/`R06`**, a **coleta**, o **formato**, a **retomada**, a
+  item 22). O **item 22 continua parcialmente aberto**: **duas sub-lacunas fecharam** — a
+  superfície de **T15**, determinística **nas duas rotas**, fechada na **entrega anterior**
+  (`PE-13`, `PE-14`), e, **nesta entrega versionada**, a de **T16** (`PE-15`–`PE-20`), com
+  `R06/F1` condicionado à emissibilidade e **zero fragmento** quando não emitível —, e a
+  **coleta**, o **formato**, a **retomada**, a
   **incompatibilidade dependente de motivo**, o **reforço de encaminhamento**, as **ações
   posteriores**, o **papel residual do LLM** e a **integração *end-to-end*** **continuam
-  abertos**. **`C` não está concluída**. Nesta entrega, **`D8-F` ganhou implementação
-  única** (`docs/07` §4.4.5), o que **prepara** — e **não fecha** — a superfície de **T16**:
-  a **PR-2 continua dependendo de arbitragem** sobre o que acontece quando **`R06/F1` não é
-  emitível**, entre *zero fragmento* sob **`PE-7`**, `E09` ou *handoff*. **Nenhum** desses
-  desfechos foi decidido ou implementado;
+  abertos**. **`C` não está concluída**. A **`D8-F` de implementação única** (`docs/07`
+  §4.4.5) **preparou** a superfície de **T16**, e **esta entrega a fechou como *owner* de
+  emissão isolado**: a arbitragem de **`R06/F1` não emitível** está **FECHADA** — **zero
+  fragmento** sob **`PE-7`**, **zero `E09`**, **zero `E18`** e **zero nova chamada da
+  `MaquinaEstados`**; nem `E09`, nem *handoff*. **T16 não está integralmente concluída**:
+  continuam ausentes o **produtor real da `FotografiaFragmento` no ciclo**, a **coordenação
+  pelo `OrquestradorMotor`**, a **integração *end-to-end*** e a **política final da etapa 10
+  para a obrigação degradada**;
 - **S3-D1** — o **produtor** deixou de ser a lacuna: ele está **materializado**. O
   bloqueio restante é a **integração ao ciclo**, que converte o `E14` e o
   `motivo_encerramento` produzidos em insumo efetivo da `MaquinaEstados`;
@@ -874,8 +929,11 @@ a **integração ao ciclo** dos produtores já materializados — **`S3-D1`**, o
 residuais de **N-a** e o **limiar temporal**, o **destino do alerta operacional**, a
 **integração externa real de calendário** — cuja **condição 6** já está **arbitrada e
 versionada nesta entrega** (§1), sem que o **adaptador da etapa 6 exista** —, as **superfícies
-conversacionais sem unidade aprovada** — das quais **T15 saiu** nesta entrega versionada (§1),
-enquanto **T16/`R06`** e as demais **continuam abertas** — e, para
+conversacionais sem unidade aprovada** — das quais **T15** saiu em **entrega anterior** e
+**T16** sai **nesta entrega versionada** (§1), sem que a **integração *end-to-end*** exista e
+sem produtor real da `FotografiaFragmento` no ciclo, enquanto as demais **continuam
+abertas** — e,
+para
 uso em canal real, a **persistência operacional não volátil**.
 
 **O primeiro teste conversacional local ainda NÃO está liberado**: o `OrquestradorMotor`
