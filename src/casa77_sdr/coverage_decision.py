@@ -137,10 +137,10 @@ from typing import Any
 
 from casa77_sdr.coverage_map import conferir_referencias
 from casa77_sdr.fragment_emissibility import (
-    FotografiaFragmento,
     ImpedimentoEmissao,
     avaliar_emissibilidade,
 )
+from casa77_sdr.fragment_snapshot import montar_fotografia_fragmento
 from casa77_sdr.identity import Confianca
 from casa77_sdr.interpretation import (
     AssuntoComercial,
@@ -393,11 +393,10 @@ def decidir_pendencias_e_cobertura(
     # A projecao de runtime vem **antes**: ela produz o registro esperado de
     # `bindings_runtime_nao_avaliados`, contra o qual a coerencia e conferida.
     runtime_por_token, registro_runtime = _projetar_runtime(indice)
-    status_por_token = _validar_consistencia(
-        consistencia, dominio, registro_runtime
-    )
-    bloqueados = frozenset(consistencia.tokens_divergentes)
-    indisponiveis = _projetar_indisponiveis(consistencia)
+    # A conferencia integral da coerencia do resultado recebido continua
+    # **aqui**: e ela que garante status total, unico e canonico, `VCB-7` e
+    # `VCB-10`. A **montagem** da fotografia, essa sim, saiu para §4.4.6.
+    _validar_consistencia(consistencia, dominio, registro_runtime)
 
     # Eixo A — `Q1` literal: nada e produzido no schema vigente.
     pendencia_impeditiva = False
@@ -425,9 +424,7 @@ def decidir_pendencias_e_cobertura(
         witnesses, causas_do_assunto = _avaliar_assunto(
             assunto,
             grupos_por_assunto,
-            status_por_token,
-            bloqueados,
-            indisponiveis,
+            consistencia,
             runtime_por_token,
             fatos,
             aplicabilidade,
@@ -474,9 +471,7 @@ def decidir_pendencias_e_cobertura(
 def _avaliar_assunto(
     assunto: AssuntoComercial,
     grupos_por_assunto: dict[str, list[Any]],
-    status_por_token: dict[str, str],
-    bloqueados: frozenset[str],
-    indisponiveis: dict[str, tuple[str, str]],
+    consistencia: ResultadoConsistencia,
     runtime_por_token: dict[str, tuple[tuple[str, str], ...]],
     fatos: dict[str, bool],
     aplicabilidade: object,
@@ -527,9 +522,7 @@ def _avaliar_assunto(
             desfecho = _avaliar_alternativa(
                 token,
                 assunto,
-                status_por_token,
-                bloqueados,
-                indisponiveis,
+                consistencia,
                 runtime_por_token,
                 fatos,
             )
@@ -561,9 +554,7 @@ def _avaliar_assunto(
 def _avaliar_alternativa(
     token: str,
     assunto: AssuntoComercial,
-    status_por_token: dict[str, str],
-    bloqueados: frozenset[str],
-    indisponiveis: dict[str, tuple[str, str]],
+    consistencia: ResultadoConsistencia,
     runtime_por_token: dict[str, tuple[tuple[str, str], ...]],
     fatos: dict[str, bool],
 ) -> object:
@@ -575,8 +566,11 @@ def _avaliar_alternativa(
 
     A **emissibilidade estrutural** em si — **D8-F1**, **Classe II**, **C-7** e
     **`ASSERTIVA` de runtime**, nessa ordem fixa — pertence à **primitiva
-    compartilhada** de §4.4.5, que é **uma só implementação** de **D8-F**. Aqui
-    fica o que é **de S2-D8**: montar a fotografia do token e **projetar** cada
+    compartilhada** de §4.4.5, que é **uma só implementação de decisão** de
+    **D8-F**. A **montagem** da fotografia também saiu daqui: ela tem **uma só
+    fronteira**, `montar_fotografia_fragmento` (§4.4.6, **FF-1**–**FF-12**).
+    Aqui fica o que é **de S2-D8**: **resolver o valor** de cada `ASSERTIVA` de
+    runtime a partir da fotografia factual autoritativa e **projetar** cada
     impedimento devolvido na `CausaE09` correspondente, **com o assunto**.
 
     **Todas as causas estruturais da alternativa são coletadas** (**D8-E4**):
@@ -586,16 +580,11 @@ def _avaliar_alternativa(
     ali o fragmento **sequer é aprovado**, e o veredito é único.
     """
     resultado = avaliar_emissibilidade(
-        FotografiaFragmento(
-            status=status_por_token[token],
-            divergente=token in bloqueados,
-            # A ordem fisica dos referentes e preservada; o mecanismo nao entra
-            # na emissibilidade, so o caminho ja conferido a montante.
-            referentes_indisponiveis=tuple(
-                referente for _, referente in indisponiveis.get(token, ())
-            ),
+        montar_fotografia_fragmento(
+            token,
+            consistencia,
             # O valor do fato e resolvido **aqui**: a fotografia factual
-            # autoritativa e de S2-D8, e a primitiva so recebe o par ja pronto.
+            # autoritativa e de S2-D8, e a montagem so recebe o par ja pronto.
             assertivas_runtime=tuple(
                 (predicado, fatos[fato])
                 for fato, predicado in runtime_por_token.get(token, ())
@@ -805,24 +794,6 @@ def _validar_consistencia(
         raise _nao_avaliavel(_COMBINACAO_INVALIDA, _RUNTIME_NAO_AVALIADOS)
 
     return status_por_token
-
-
-def _projetar_indisponiveis(
-    consistencia: ResultadoConsistencia,
-) -> dict[str, tuple[tuple[str, str], ...]]:
-    """`token -> ((mecanismo, referente), ...)`, **todos**, na ordem recebida.
-
-    Reduzir ao primeiro perderia causa estrutural: **D8-E4** manda avaliar
-    **todas** as causas da lacuna, e cada `ReferenteIndisponivel` carrega o seu
-    próprio `caminho_yaml`. **D8-F6** continua valendo sobre a emissão — o
-    fragmento é emitível inteiro ou não é —, e não sobre a auditoria da causa.
-    """
-    projecao: dict[str, list[tuple[str, str]]] = {}
-    for item in consistencia.referentes_indisponiveis:
-        projecao.setdefault(item.token, []).append(
-            (item.mecanismo, item.referente)
-        )
-    return {token: tuple(itens) for token, itens in projecao.items()}
 
 
 def _projetar_runtime(

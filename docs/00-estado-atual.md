@@ -190,12 +190,27 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-Commit funcional `3496ee988102588f1c8eb0ec9b3c5fa2f445ae54`.
+Commit funcional `e23d1e726d2e7a22f052cfc48de09badb313a058`.
 
-**A última entrega funcional relevante é o *owner* de emissão de T16 — `R06/F1`**,
+**A última entrega funcional relevante é o produtor determinístico compartilhado da
+`FotografiaFragmento`**, **materializado e versionado** em
+`src/casa77_sdr/fragment_snapshot.py`, com o contrato vivo em `docs/07` §4.4.6
+(`FF-1`–`FF-12`). A **montagem** da fotografia deixou de ser *inline* e passou a ter **uma
+única fronteira de produção**: `montar_fotografia_fragmento(token, consistencia, *,
+assertivas_runtime)`.
+
+**`coverage_decision.py` passou a consumir a montagem compartilhada**, e
+`_projetar_indisponiveis` foi **removida** por não ter mais consumidor.
+**`avaliar_emissibilidade` continua sendo a única implementação de decisão de `D8-F`**
+(§4.4.5): **montar não é avaliar**. O **comportamento público de S2-D8 é idêntico** — assinatura,
+*defaults*, `ResultadoS2D8`, ordem de fragmentos e de causas, deduplicação, candidatura,
+**`D8-G`**, **`D8P-11`**, `R05`, Classe I, Classe II, erros e mensagens —, e **candidatura**,
+**resolução de runtime**, **cobertura** e **projeção de causas** continuam sendo dele.
+
+**Permanece igualmente vigente o *owner* de emissão de T16 — `R06/F1`**,
 **materializado e versionado** em `src/casa77_sdr/emission_projection.py`, com o contrato
-vivo em `docs/07` §4.1.5 (`PE-15`–`PE-20`). **`INFORMAR_CONDICOES_DE_VISITA` passou a
-mapear `R06/F1`**, em **dupla rota condicionada à emissibilidade**, com **regra própria** —
+vivo em `docs/07` §4.1.5 (`PE-15`–`PE-20`). **`INFORMAR_CONDICOES_DE_VISITA` mapeia
+`R06/F1`**, em **dupla rota condicionada à emissibilidade**, com **regra própria** —
 **nada é herdado de `R05` por analogia**.
 
 **Cobertura presente → a cobertura é a *owner***: o token **mantém a posição original**, não
@@ -206,9 +221,13 @@ há segunda ocorrência e a fotografia **nem é lida**. **Cobertura ausente → 
 acrescentado**, sob **`PE-7`** — não é erro, não há resultado parcial e não há substituto.
 **Zero `E09`**, **zero `E18`** e **zero nova chamada da `MaquinaEstados`**.
 
-**`T16` não está concluída *end-to-end***: continuam **ausentes** o **produtor real da
-`FotografiaFragmento` no ciclo**, o **`OrquestradorMotor`**, a **integração *end-to-end***
-e a **política da etapa 10 para a obrigação degradada** (§1, §6).
+Com a nova fronteira, **`R06/F1` pode ter a sua `FotografiaFragmento` montada
+deterministicamente** com `assertivas_runtime=()`. **Isso não integra a chamada ao
+ciclo.** **`T16` não está concluída *end-to-end***: a **primitiva determinística de
+montagem** está **materializada e versionada** (§4.4.6), mas a sua
+**invocação/coordenação dentro do ciclo** continua **ausente**, assim como o
+**`OrquestradorMotor`**, a **integração *end-to-end*** e a **política da etapa 10 para a
+obrigação degradada** (§1, §6).
 
 **Permanece igualmente vigente a composição dos insumos da primeira decisão** — a
 **agregação** dos eventos confirmados por produtores distintos e a **montagem de
@@ -436,11 +455,27 @@ Permanecem igualmente vigentes: o **produtor não determinístico de `N-b`**
 materializada:
 
 - Python **3.14.5**;
-- **`9276 passed`**, sob **`-W error`**;
+- **`9394 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings, zero skips, zero xfails.
 
-Este é o **baseline da entrega versionada** do ***owner* de emissão de T16**:
-**`9276 passed`** sob **`-W error`**. A **`main` de base** desta entrega registrava
+Este é o **baseline da entrega versionada** do **produtor determinístico compartilhado da
+`FotografiaFragmento`**: **`9394 passed`** sob **`-W error`**. A **`main` de base** desta
+entrega registrava **`9276 passed`** — o baseline do ***owner* de emissão de T16**. O
+acréscimo de **118** vem,
+**integralmente**, dos cenários novos de `tests/test_fragment_snapshot.py` — os quatro
+campos e as suas autoridades, a ordem física e as duplicatas de **`C-7`**, o transporte
+literal do runtime, o ***fail-closed*** de `status_ausente` e `status_ambiguo`, os tipos
+exatos da superfície, a pureza por AST, os imports fechados, a prova de que S2-D8 **não
+monta mais a fotografia *inline*** e a **prova de encaixe** com a rota *action-owner* de
+**T16**/`R06`. **Nenhum comportamento esperado de teste preexistente foi alterado**:
+`tests/test_coverage_decision.py` recebeu **somente** a reconciliação estrutural do novo
+*import* de `fragment_snapshot`, e `tests/test_fragment_emissibility.py` foi reconciliado
+**estruturalmente** para remover a exigência obsoleta de `_projetar_indisponiveis`; as
+contagens permanecem, respectivamente, **177** e **63**.
+`tests/test_emission_projection.py` permanece **inalterado**, com **139**.
+
+O baseline **precedente** era o do ***owner* de emissão de T16**:
+**`9276 passed`** sob **`-W error`**. A **`main` de base** daquela entrega registrava
 **`9236 passed`** — o baseline da **primitiva única de emissibilidade**. O acréscimo de
 **40** vem, **integralmente**, dos
 cenários novos de `tests/test_emission_projection.py` — as duas rotas de `R06/F1`, a
@@ -677,8 +712,30 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   simples em visita continua sendo T16**: pedido de **confirmação** de visita permanece
   matéria **humana** e distinta. **`PE-13`** e **`PE-14`** seguem **inalterados**, e a colisão
   *cross-source* de **`R03/F1`** continua ***fail-closed***. **T16 não está integralmente
-  concluída**: o **produtor real da `FotografiaFragmento` no ciclo** continua **residual do
-  futuro `OrquestradorMotor`**, e a **integração *end-to-end*** continua **ausente**.
+  concluída**: a **primitiva determinística de montagem da `FotografiaFragmento`** está
+  **materializada e versionada** (§4.4.6), mas a sua **invocação nesta rota, dentro do
+  ciclo**, continua **AUSENTE** — residual do futuro **`OrquestradorMotor`** —, e a
+  **integração *end-to-end*** continua **ausente**.
+- **Fora de `C`**, o **produtor determinístico compartilhado da `FotografiaFragmento`**
+  está **MATERIALIZADO E VERSIONADO nesta entrega**, em
+  `src/casa77_sdr/fragment_snapshot.py`, com o contrato vivo em `docs/07` §4.4.6
+  (`FF-1`–`FF-12`). A **montagem** da fotografia deixou de ser *inline* e passou a ter
+  **uma única fronteira**: `montar_fotografia_fragmento(token, consistencia, *,
+  assertivas_runtime)`. O `status` vem de `status_por_fragmento`, exigindo **exatamente um**
+  par; `divergente`, de `tokens_divergentes`; os caminhos de **`C-7`**, de
+  `referentes_indisponiveis`, filtrados pelo token, na **ordem física** e **sem
+  deduplicação**, projetando **só o referente**; e `assertivas_runtime` é **transportado
+  literalmente**, ***keyword-only* e obrigatório**. **Montar não é avaliar**: **`D8-F`
+  continua com uma única implementação de decisão**, `avaliar_emissibilidade` (§4.4.5).
+  **S2-D8 consome a primitiva** e preserva **comportamento público idêntico** — assinatura,
+  *defaults*, `ResultadoS2D8`, ordem de fragmentos e de causas, deduplicação, candidatura,
+  **`D8-G`**, **`D8P-11`**, `R05`, Classe I, Classe II, erros e mensagens —, com os **177**
+  cenários de `tests/test_coverage_decision.py` verdes **sem alteração comportamental**.
+  `fragment_emissibility.py`, `emission_projection.py` e `response_consistency.py`
+  permanecem **byte-idênticos**. **A invocação desta primitiva pela rota *action-owner* de
+  T16 dentro de um ciclo real NÃO está materializada**: ela continua sendo do **futuro
+  `OrquestradorMotor`** (§6.3, `CN4-1`–`CN4-12`). **T16 continua NÃO concluída
+  *end-to-end***.
 - **Fora de `C`**, a **primitiva única de emissibilidade de fragmento** está
   **materializada e versionada**, em
   `src/casa77_sdr/fragment_emissibility.py`, com o contrato vivo em `docs/07` §4.4.5
@@ -706,9 +763,11 @@ Resultados de execução são evidência do GitHub e não são acumulados neste 
   **Nesta entrega**, a **rota de ação de T16** já **consome essa autoridade**, conforme
   **`PE-15`**–**`PE-20`** (bloco acima). A primitiva, porém, **permanece independente de
   ação**: ela **não conhece T16**, **não conhece ação** e **não é *owner***; o ***owner* vive no
-  `ProjetorEmissao`**. E ***owner* de emissão isolado não é T16 *end-to-end***: o **produtor
-  real da `FotografiaFragmento` no ciclo** continua **residual**, o **`OrquestradorMotor`**
-  continua **ausente** e a **integração *end-to-end*** continua **ausente**. **T16 não está
+  `ProjetorEmissao`**. E ***owner* de emissão isolado não é T16 *end-to-end***: a
+  **invocação da `FotografiaFragmento` no ciclo** continua **AUSENTE** — a **primitiva de
+  montagem** está **materializada e versionada** (§4.4.6), a **chamada dela na rota** não
+  —, o **`OrquestradorMotor`** continua **ausente** e a **integração *end-to-end***
+  continua **ausente**. **T16 não está
   integralmente concluída.**
 - **Limites materiais do projetor nesta versão**: ele consome as ações da **primeira** decisão
   da máquina; **ações produzidas por chamadas posteriores da `MaquinaEstados` não entram nesta
@@ -888,9 +947,10 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
   emissão isolado**: a arbitragem de **`R06/F1` não emitível** está **FECHADA** — **zero
   fragmento** sob **`PE-7`**, **zero `E09`**, **zero `E18`** e **zero nova chamada da
   `MaquinaEstados`**; nem `E09`, nem *handoff*. **T16 não está integralmente concluída**:
-  continuam ausentes o **produtor real da `FotografiaFragmento` no ciclo**, a **coordenação
-  pelo `OrquestradorMotor`**, a **integração *end-to-end*** e a **política final da etapa 10
-  para a obrigação degradada**;
+  continuam ausentes a **invocação da `FotografiaFragmento` no ciclo** — a **primitiva de
+  montagem** está **materializada e versionada** (`docs/07` §4.4.6), a **chamada dela**
+  não —, a **coordenação pelo `OrquestradorMotor`**, a **integração *end-to-end*** e a
+  **política final da etapa 10 para a obrigação degradada**;
 - **S3-D1** — o **produtor** deixou de ser a lacuna: ele está **materializado**. O
   bloqueio restante é a **integração ao ciclo**, que converte o `E14` e o
   `motivo_encerramento` produzidos em insumo efetivo da `MaquinaEstados`;
@@ -971,8 +1031,10 @@ residuais de **N-a** e o **limiar temporal**, o **destino do alerta operacional*
 **integração externa real de calendário** — cuja **condição 6** já está **arbitrada e
 versionada** (§1), sem que o **adaptador da etapa 6 exista** —, as **superfícies
 conversacionais sem unidade aprovada** — das quais **T15** saiu em **entrega anterior** e
-**T16** sai **nesta entrega versionada** (§1), sem que a **integração *end-to-end*** exista e
-sem produtor real da `FotografiaFragmento` no ciclo, enquanto as demais **continuam
+**T16** sai **nesta entrega versionada** (§1), sem que a **integração *end-to-end*** exista
+e sem que a `FotografiaFragmento` seja **invocada no ciclo** — a **primitiva de montagem**
+está **materializada e versionada** (§1), a **chamada dela** não —, enquanto as demais
+**continuam
 abertas** — e,
 para
 uso em canal real, a **persistência operacional não volátil**.

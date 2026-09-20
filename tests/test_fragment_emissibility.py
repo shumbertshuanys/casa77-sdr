@@ -466,7 +466,15 @@ def test_fe_t11_fotografia_de_runtime_invalida_continua_fechando_em_s2d8() -> No
 
 
 def test_fe_t11_coerencia_continua_sendo_julgada_em_s2d8() -> None:
-    """`_validar_consistencia` **não** migrou para a primitiva."""
+    """`_validar_consistencia` **não** migrou para a primitiva.
+
+    A **projeção de `C-7` para a fotografia** saiu de S2-D8 — ela pertence
+    agora à fronteira única de montagem —, e por isso
+    `_projetar_indisponiveis` **deixou de existir aqui**: o que se prova é que
+    ela não sobreviveu como *helper* morto. Os **gates** que continuam sendo de
+    S2-D8 permanecem em S2-D8 e **não** migraram para a primitiva de
+    emissibilidade.
+    """
     nomes_s2d8 = {
         no.name
         for no in ast.walk(_arvore(MODULO_S2D8))
@@ -480,12 +488,14 @@ def test_fe_t11_coerencia_continua_sendo_julgada_em_s2d8() -> None:
         "_validar_consistencia",
         "_validar_fatos_runtime",
         "_projetar_runtime",
-        "_projetar_indisponiveis",
         "_e_candidato",
         "_e_candidato_por_faixa",
     ):
         assert gate in nomes_s2d8
         assert gate not in nomes_primitiva
+
+    assert "_projetar_indisponiveis" not in nomes_s2d8
+    assert "_projetar_indisponiveis" not in nomes_primitiva
 
 
 def test_fe_t11_s2d8_consome_a_primitiva_compartilhada() -> None:

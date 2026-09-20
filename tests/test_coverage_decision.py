@@ -1847,6 +1847,7 @@ def test_importa_somente_o_necessario() -> None:
         "typing",
         "casa77_sdr.coverage_map",
         "casa77_sdr.fragment_emissibility",
+        "casa77_sdr.fragment_snapshot",
         "casa77_sdr.identity",
         "casa77_sdr.interpretation",
         "casa77_sdr.pricing_applicability",
