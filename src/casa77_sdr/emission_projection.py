@@ -12,9 +12,18 @@ A saída alimenta `materializar_fatos_autorizados` (§4.1.3). Nada além disso
 acontece aqui.
 
 **O que esta fronteira NÃO faz.** Ela **não** escolhe o fragmento que cobre uma
-consulta, **não** avalia se um fragmento é emitível agora, **não** avalia regra
-comercial, **não** resolve *binding*, **não** monta texto, **não** chama LLM e
-**não** executa ação alguma. Ela **projeta identificadores**, e mais nada.
+consulta, **não implementa** emissibilidade, **não** avalia regra comercial,
+**não** resolve *binding*, **não** monta texto, **não** chama LLM e **não**
+executa ação alguma. Ela **projeta identificadores**, e mais nada.
+
+**Emissibilidade é consumida aqui, nunca implementada.** No **único** caso
+fechado da rota *action-owner* de `R06/F1`, esta fronteira **consome
+exclusivamente** a autoridade compartilhada `avaliar_emissibilidade` (§4.4.5)
+sobre uma `FotografiaFragmento` **já recebida** e pronta. Ela continua **não**
+comparando status, **não** percorrendo referentes, **não** avaliando `ASSERTIVA`
+diretamente, **não** resolvendo *binding*, **não** lendo YAML, **não** lendo o
+índice e **não** tomando decisão comercial: **nenhuma segunda implementação de
+`D8-F` nasce aqui**.
 
 **Pureza.** **Zero I/O**, **zero *filesystem***, **zero rede**, **zero LLM**,
 **zero relógio**, **zero calendário**, **zero ambiente**, **zero logging**,
@@ -39,14 +48,27 @@ unidade aprovada canônica, a obrigação **permanece pendente** fora daqui.
 recebida**, seguidos dos mandatórios **na ordem das ações**. Nada é ordenado
 lexicalmente, nada é reordenado e nenhum identificador recebido é removido.
 
-**Dupla rota, uma só exceção fechada.** `R05/F1` satisfaz a mesma obrigação
-textual de **T15** por **duas** rotas: a cobertura de S2-D8 ou a ação de não
-confirmação de disponibilidade. Quando a cobertura já o trouxe, **ela é a
+**Primeira dupla rota — `R05/F1`, com exceção fechada.** Ela satisfaz a mesma
+obrigação textual de **T15** por **duas** rotas: a cobertura de S2-D8 ou a ação
+de não confirmação de disponibilidade. Quando a cobertura já o trouxe, **ela é a
 owner** — o bloco mandatório não acrescenta segunda ocorrência e o token
 permanece na **posição original** de `fragmentos_autorizados`. Quando a
 cobertura não o trouxe, **a ação o completa**. Isso vale **somente** para esse
 par ação/token: **não existe deduplicação *cross-source* genérica**, e nenhum
 identificador futuro herda a exceção por analogia.
+
+**Segunda dupla rota — `R06/F1`, com regra própria.** A obrigação textual de
+**T16** também admite duas rotas: a cobertura de S2-D8 ou a ação de condições de
+visita. A diferença material é que `R06/F1` **tem *bindings*** — de origem
+`YAML`, nunca `RUNTIME_AUTORITATIVO` —, e por isso a **rota da ação não pode
+acrescentá-lo sem veredito**: ela consulta a **autoridade única** de
+emissibilidade sobre a `FotografiaFragmento` recebida. **Cobertura presente →
+cobertura é a *owner***, e a fotografia **nem é lida**. **Cobertura ausente →
+ação é a *owner***: com o fragmento **emitível**, ele entra; **não emitível**,
+**zero fragmento é acrescentado**, sob a leitura literal de `PE-7` — não é erro,
+não é resultado parcial, não há substituto e **nenhum evento nasce daqui**.
+**Nada disso é herdado de `R05` por analogia**: são duas exceções fechadas e
+independentes, e fora delas `PE-10` continua *fail-closed*.
 
 **Variantes incompatíveis.** Com a ação de T15 presente, `R05/F2` ou `R05/F3`
 em `fragmentos_autorizados` são insumos **contraditórios** — elas sustentam uma
@@ -56,13 +78,18 @@ origem está certa, **não corrige** a condição 6 e **não toca** os fatos de
 runtime: ela apenas **fecha**.
 
 ***Fail-closed*.** Forma inválida, repetição no bloco recebido, ação sem entrada
-na tabela e colisão entre as duas origens — **fora** da dupla rota acima —
-**fecham**, assim como as variantes incompatíveis. Sem resultado parcial, sem
-correção silenciosa e sem composição improvisada.
+na tabela e colisão entre as duas origens — **fora das duas duplas rotas**
+explicitamente fechadas acima — **fecham**, assim como as variantes
+incompatíveis. Sem resultado parcial, sem correção silenciosa e sem composição
+improvisada.
 """
 
 from __future__ import annotations
 
+from casa77_sdr.fragment_emissibility import (
+    FotografiaFragmento,
+    avaliar_emissibilidade,
+)
 from casa77_sdr.state_machine import AcaoMaquina
 
 __all__ = [
@@ -81,8 +108,10 @@ class ProjecaoEmissaoNaoAvaliavel(Exception):
     `repr`.
 
     Ela cobre **apenas** o que nenhuma fronteira existente julga: a forma das
-    duas entradas, a unicidade dentro da tupla recebida, a totalidade da tabela
-    e a colisão entre as duas origens.
+    **duas entradas base** — e, **somente** na rota *action-owner* de `R06/F1`,
+    a da **terceira entrada condicional** `fotografia_r06` —, a unicidade
+    dentro da tupla recebida, a totalidade da tabela e a colisão entre as duas
+    origens.
     """
 
 
@@ -99,6 +128,7 @@ _AUTORIZADOS = "fragmentos_autorizados"
 _AUTORIZADOS_ITEM = "fragmentos_autorizados.item"
 _ACOES = "acoes"
 _ACOES_ITEM = "acoes.item"
+_FOTOGRAFIA_R06 = "fotografia_r06"
 
 # Mandatorio PURO: ele so chega por esta fronteira, pela acao de lacuna, e nunca
 # por cobertura — colisao cross-source com ele continua fail-closed (PE-10). Ele
@@ -108,7 +138,7 @@ _ACOES_ITEM = "acoes.item"
 # runtime e necessaria para emiti-lo.
 _LACUNA = "R03/F1"
 
-# A UNICA dupla rota autorizada (PE-13). `R05/F1` satisfaz a mesma obrigacao
+# A PRIMEIRA dupla rota autorizada (PE-13). `R05/F1` satisfaz a mesma obrigacao
 # textual de T15 por duas rotas — cobertura de S2-D8 ou a acao de nao confirmacao
 # de disponibilidade — e o corpus versionado prova, no teste de integracao, que
 # ele tambem existe, e emitivel e tem **zero bindings**. A excecao vale SOMENTE
@@ -122,6 +152,23 @@ _ACAO_DUPLA_ROTA = AcaoMaquina.INFORMAR_NAO_CONFIRMACAO_DE_DISPONIBILIDADE
 # contradicao estrutural (PE-14): T15 ordena o fallback de **nao** confirmacao.
 # Esta fronteira nao escolhe qual origem esta certa — ela so fecha.
 _VARIANTES_INCOMPATIVEIS: frozenset[str] = frozenset({"R05/F2", "R05/F3"})
+
+# A SEGUNDA dupla rota autorizada, e ela tem regra **propria** — nada aqui e
+# herdado de `R05` por analogia. `R06/F1` satisfaz a obrigacao textual de T16
+# por duas rotas: a cobertura de S2-D8 ou a acao de condicoes de visita. A
+# diferenca material e que ele **tem bindings** de origem `YAML`, e por isso a
+# rota da acao **nao pode** acrescenta-lo sem veredito: ela consulta a
+# **autoridade unica** de emissibilidade (§4.4.5) sobre a fotografia recebida.
+# O corpus versionado prova, no teste de integracao, que ele existe, que o seu
+# rotulo canonico o admite e que **nenhum** dos seus bindings e de origem
+# `RUNTIME_AUTORITATIVO` — logo nenhum fato de runtime entra nesta fronteira.
+_CONDICOES_VISITA = "R06/F1"
+_ACAO_VISITA = AcaoMaquina.INFORMAR_CONDICOES_DE_VISITA
+
+# Sentinela local: distingue "ainda nao avaliado" de um veredito booleano. Ela
+# garante **no maximo uma** avaliacao de `R06/F1` por chamada, e morre com a
+# chamada — **zero cache global**.
+_NAO_AVALIADO = object()
 
 # Tabela TOTAL e LITERAL das 20 acoes de §4.5, na ordem do vocabulario fechado.
 # Escrita uma a uma de proposito: nada de compreensao, nada de valor padrao. Uma
@@ -138,7 +185,7 @@ _FRAGMENTOS_POR_ACAO: dict[AcaoMaquina, tuple[str, ...]] = {
     AcaoMaquina.RETOMAR_COLETA_SEM_REPETIR: (),
     AcaoMaquina.INFORMAR_REGRA_INCOMPATIVEL: (),
     AcaoMaquina.INFORMAR_RESSALVA_DE_CAPACIDADE: (),
-    AcaoMaquina.INFORMAR_CONDICOES_DE_VISITA: (),
+    AcaoMaquina.INFORMAR_CONDICOES_DE_VISITA: (_CONDICOES_VISITA,),
     AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO: (_LACUNA,),
     AcaoMaquina.INFORMAR_NAO_CONFIRMACAO_DE_DISPONIBILIDADE: (
         _FALLBACK_DISPONIBILIDADE,
@@ -159,6 +206,8 @@ _FRAGMENTOS_POR_ACAO: dict[AcaoMaquina, tuple[str, ...]] = {
 def projetar_fragmentos_para_emissao(
     fragmentos_autorizados: object,
     acoes: object,
+    *,
+    fotografia_r06: object = None,
 ) -> tuple[str, ...]:
     """Projeta os fragmentos destinados à emissão neste ciclo.
 
@@ -166,13 +215,20 @@ def projetar_fragmentos_para_emissao(
     (`SF-D4-10`); `acoes` são as ações da **primeira** decisão da máquina
     (§4.5). Esta fronteira **não reavalia** nenhuma das duas.
 
+    `fotografia_r06` é a **terceira entrada, *keyword-only* e condicional**: ela
+    é exigida **somente** quando a ação de **T16** é a *owner* de `R06/F1` — isto
+    é, quando a ação está presente **e** a cobertura **não** trouxe o token.
+    Fora desse caminho ela é **irrelevante**: não é lida, não é validada e não
+    é avaliada. Ausente ou de tipo diferente de `FotografiaFragmento` naquele
+    caminho, a fronteira **fecha** com `tipo_invalido: fotografia_r06`.
+
     A ordem é **fixa**: **1.** a forma da tupla recebida — `tuple` exata, itens
     `str` exatos, **sem repetição**; **2.** a forma das ações — `tuple` exata,
     itens do vocabulário fechado, **todos com entrada na tabela**; **3.** o
     bloco mandatório, percorrendo `acoes` na ordem recebida e acrescentando cada
     identificador declarado **apenas na sua primeira ocorrência**, com a **dupla
-    rota fechada** de `R05/F1` resolvida por *owner*; **4.** a ausência de
-    colisão entre as duas origens.
+    rota fechada** de `R05/F1` e a de `R06/F1` resolvidas por *owner*; **4.** a
+    ausência de colisão entre as duas origens.
 
     Devolve `fragmentos_autorizados + mandatórios`: **todos** os identificadores
     recebidos primeiro, **na ordem recebida**, e então os mandatórios, **na
@@ -188,9 +244,10 @@ def projetar_fragmentos_para_emissao(
     Levanta `ProjecaoEmissaoNaoAvaliavel` com `tipo_invalido`
     (`fragmentos_autorizados`, `fragmentos_autorizados.item`, `acoes`,
     `acoes.item`), `duplicidade` (`fragmentos_autorizados.item`),
-    `acao_sem_mapeamento` (`acoes.item`) e `conflito_origem`
-    (`fragmentos_autorizados.item`). **Nada é capturado** e **nenhum resultado
-    parcial é devolvido**.
+    `acao_sem_mapeamento` (`acoes.item`), `conflito_origem`
+    (`fragmentos_autorizados.item`) e `tipo_invalido` (`fotografia_r06`).
+    **Nada é capturado** e **nenhum resultado parcial é devolvido**. `R06/F1`
+    **não emitível não é erro**: ele apenas **não contribui**.
 
     **PROJETAR NÃO É DECIDIR O QUE RESPONDER, NEM DIZER.** O que cobre a
     consulta já foi decidido por S2-D8; o que a conversa exige já foi decidido
@@ -214,6 +271,9 @@ def projetar_fragmentos_para_emissao(
 
     mandatorios: list[str] = []
     ja_mandatorios: set[str] = set()
+    # Veredito local de `R06/F1`: avaliado **no maximo uma vez** por chamada, e
+    # **somente** quando a acao de T16 e efetivamente a *owner*.
+    veredito_r06: object = _NAO_AVALIADO
 
     for acao in acoes:
         if type(acao) is not AcaoMaquina:
@@ -237,6 +297,27 @@ def projetar_fragmentos_para_emissao(
                     continue
             # Acao repetida, ou duas acoes que declarem o mesmo identificador,
             # contribuem **uma vez**: vence a primeira ocorrencia.
+            if acao is _ACAO_VISITA and token == _CONDICOES_VISITA:
+                # Cobertura *owner*: quando S2-D8 ja autorizou o token, ele
+                # permanece **na posicao original** e o bloco mandatorio nao
+                # acrescenta segunda ocorrencia (PE-4, PE-8). A fotografia e
+                # **irrelevante** aqui — ela nao e lida, nem validada.
+                if token in recebidos:
+                    continue
+                # Acao *owner*: ela **precisa** de um veredito, porque `R06/F1`
+                # tem bindings. A fotografia passa a ser obrigatoria, e a
+                # decisao pertence a **autoridade unica** de §4.4.5 — esta
+                # fronteira **nao** compara status, **nao** percorre referentes
+                # e **nao** avalia `ASSERTIVA`.
+                if veredito_r06 is _NAO_AVALIADO:
+                    if type(fotografia_r06) is not FotografiaFragmento:
+                        raise _nao_avaliavel(_TIPO_INVALIDO, _FOTOGRAFIA_R06)
+                    veredito_r06 = avaliar_emissibilidade(fotografia_r06).emitivel
+                if not veredito_r06:
+                    # Nao emitivel: **zero fragmento** acrescentado por T16, sob
+                    # `PE-7`. Nao e erro, nao e resultado parcial, nao ha
+                    # substituto e **nenhum evento** nasce daqui.
+                    continue
             if token in ja_mandatorios:
                 continue
             ja_mandatorios.add(token)
@@ -244,9 +325,11 @@ def projetar_fragmentos_para_emissao(
 
     for token in mandatorios:
         # Zero deduplicacao cross-source generica: um identificador que chegue
-        # pelas duas origens significa modelagem incoerente a montante. A unica
-        # excecao e a dupla rota fechada de `PE-13`, e ela ja foi resolvida
-        # acima **por owner** — o token sequer entra neste bloco.
+        # pelas duas origens significa modelagem incoerente a montante. As
+        # excecoes sao **duas**, explicitas e independentes — `R05/F1` por
+        # `PE-13` e `R06/F1` por `PE-15`-`PE-20` —, e ambas ja foram resolvidas
+        # acima **por owner**: o token sequer entra neste bloco. Fora delas,
+        # `PE-10` continua fail-closed.
         if token in recebidos:
             raise _nao_avaliavel(_CONFLITO_ORIGEM, _AUTORIZADOS_ITEM)
 

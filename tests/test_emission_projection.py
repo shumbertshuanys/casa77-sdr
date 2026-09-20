@@ -20,6 +20,7 @@ from casa77_sdr.emission_projection import (
     ProjecaoEmissaoNaoAvaliavel,
     projetar_fragmentos_para_emissao,
 )
+from casa77_sdr.fragment_emissibility import FotografiaFragmento
 from casa77_sdr.response_index_load import carregar_indice
 from casa77_sdr.response_index_status import consultar_status
 from casa77_sdr.response_index_tokens import derivar_tokens_do_indice
@@ -40,18 +41,35 @@ A = "R97/F1"
 B = "R98/F1"
 C = "R99/F1"
 
-# Os dois identificadores materializados nesta versão. Eles são lidos da própria
-# tabela privada, nunca copiados — ver `test_pe_t16`.
+# Os três identificadores materializados nesta versão são `R03/F1`, `R05/F1` e
+# `R06/F1` — os dois primeiros logo abaixo, o terceiro adiante. Eles são lidos
+# da própria tabela privada, nunca copiados — ver `test_pe_t16`.
 LACUNA = "R03/F1"
 FALLBACK = "R05/F1"
 
-# A ação de T15, dona da única dupla rota autorizada (PE-13).
+# A ação de T15, dona da primeira dupla rota autorizada (PE-13).
 ACAO_T15 = AcaoMaquina.INFORMAR_NAO_CONFIRMACAO_DE_DISPONIBILIDADE
 
 # Variantes da mesma superfície R05 que dependem da fotografia runtime e que,
 # com a ação de T15, são insumos contraditórios (PE-14).
 VARIANTE_DISPONIVEL = "R05/F2"
 VARIANTE_INDISPONIVEL = "R05/F3"
+
+# A segunda dupla rota, com regra **propria**: `R06/F1` tem *bindings* de origem
+# `YAML`, e por isso a rota da acao so o acrescenta com veredito da autoridade
+# unica de emissibilidade (PE-15+).
+VISITA = "R06/F1"
+ACAO_T16 = AcaoMaquina.INFORMAR_CONDICOES_DE_VISITA
+
+# Rotulos canonicos de `C-3` e caminhos **sinteticos**, na forma estrutural de um
+# `caminho_yaml`. Nenhum conteudo do corpus e reproduzido.
+APROVADO = "APROVADO"
+AGUARDA = "AGUARDA_APROVACAO"
+BLOQUEADO = "BLOQUEADO"
+CAMINHO_A = "secao_sintetica.campo_a"
+CAMINHO_B = "secao_sintetica.campo_b"
+
+EMITIVEL = FotografiaFragmento(status=APROVADO)
 
 
 def _tabela() -> dict[AcaoMaquina, tuple[str, ...]]:
@@ -63,7 +81,13 @@ def _tabela() -> dict[AcaoMaquina, tuple[str, ...]]:
 
 # Ações cuja contribuição declarada é vazia, escolhidas para cobrir **as duas**
 # naturezas exigidas: textual e não textual.
-ACAO_TEXTUAL_SEM_FRAGMENTO = AcaoMaquina.INFORMAR_CONDICOES_DE_VISITA
+# `INFORMAR_CONDICOES_DE_VISITA` deixou de servir de exemplo: ela passou a ter
+# contribuicao materializada (`R06/F1`). `INFORMAR_REGRA_INCOMPATIVEL` continua
+# sendo exemplo **legitimo** de acao **textual** sem unidade aprovada: a
+# superficie da **incompatibilidade dependente de motivo** permanece
+# explicitamente aberta no item 22 de `docs/07` §12, e `PE-7` continua valendo
+# sobre ela — `()` diz **somente** que esta fronteira nada acrescenta.
+ACAO_TEXTUAL_SEM_FRAGMENTO = AcaoMaquina.INFORMAR_REGRA_INCOMPATIVEL
 ACAO_NAO_TEXTUAL = AcaoMaquina.PREPARAR_RESUMO
 
 
@@ -286,6 +310,292 @@ def test_pe_t21_as_duas_rotas_convivem_quando_nao_ha_colisao() -> None:
 
 
 # ---------------------------------------------------------------------------
+# PE-T22 — owner de `R06/F1`, a segunda dupla rota
+
+
+def test_pe_t22_acao_owner_acrescenta_quando_emitivel() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (), (ACAO_T16,), fotografia_r06=EMITIVEL
+    )
+
+    assert resultado == (VISITA,)
+
+
+def test_pe_t22_cobertura_comercial_anterior_recebe_a_visita_ao_final() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (A,), (ACAO_T16,), fotografia_r06=EMITIVEL
+    )
+
+    assert resultado == (A, VISITA)
+
+
+def test_pe_t22_cobertura_owner_nao_duplica() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (VISITA,), (ACAO_T16,), fotografia_r06=EMITIVEL
+    )
+
+    assert resultado == (VISITA,)
+    assert resultado.count(VISITA) == 1
+
+
+def test_pe_t22_cobertura_owner_preserva_a_posicao_original() -> None:
+    recebidos = (A, VISITA, B)
+
+    resultado = projetar_fragmentos_para_emissao(
+        recebidos, (ACAO_T16,), fotografia_r06=EMITIVEL
+    )
+
+    assert resultado == recebidos
+
+
+def test_pe_t22_cobertura_owner_dispensa_a_fotografia() -> None:
+    """A rota da cobertura **não** consulta a fotografia."""
+    resultado = projetar_fragmentos_para_emissao((VISITA,), (ACAO_T16,))
+
+    assert resultado == (VISITA,)
+
+
+@pytest.mark.parametrize(
+    "irrelevante",
+    [None, "fotografia", 0, object()],
+    ids=["nulo", "texto", "inteiro", "objeto"],
+)
+def test_pe_t22_cobertura_owner_ignora_fotografia_invalida(
+    irrelevante: object,
+) -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (VISITA,), (ACAO_T16,), fotografia_r06=irrelevante
+    )
+
+    assert resultado == (VISITA,)
+
+
+@pytest.mark.parametrize(
+    "irrelevante",
+    [None, "fotografia", 0, object()],
+    ids=["nulo", "texto", "inteiro", "objeto"],
+)
+def test_pe_t22_sem_a_acao_de_t16_a_fotografia_e_irrelevante(
+    irrelevante: object,
+) -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (A,),
+        (AcaoMaquina.RESPONDER_PERGUNTA_COMERCIAL,),
+        fotografia_r06=irrelevante,
+    )
+
+    assert resultado == (A,)
+
+
+def test_pe_t22_acao_repetida_com_emitivel_contribui_uma_vez() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (), (ACAO_T16, ACAO_T16, ACAO_T16), fotografia_r06=EMITIVEL
+    )
+
+    assert resultado == (VISITA,)
+
+
+# ---------------------------------------------------------------------------
+# PE-T23 — `R06/F1` não emitível: zero fragmento, sob `PE-7`
+
+
+@pytest.mark.parametrize(
+    "fotografia",
+    [
+        FotografiaFragmento(status=AGUARDA),
+        FotografiaFragmento(status=BLOQUEADO),
+        FotografiaFragmento(status=APROVADO, divergente=True),
+        FotografiaFragmento(status=APROVADO, referentes_indisponiveis=(CAMINHO_A,)),
+        FotografiaFragmento(
+            status=APROVADO, referentes_indisponiveis=(CAMINHO_A, CAMINHO_B)
+        ),
+        FotografiaFragmento(
+            status=APROVADO,
+            divergente=True,
+            referentes_indisponiveis=(CAMINHO_A, CAMINHO_B),
+        ),
+    ],
+    ids=["aguarda", "bloqueado", "divergencia", "um_c7", "varios_c7", "multiplos"],
+)
+def test_pe_t23_nao_emitivel_nao_acrescenta_nada(
+    fotografia: FotografiaFragmento,
+) -> None:
+    """`PE-7`: zero contribuição. Não é erro e não há substituto."""
+    resultado = projetar_fragmentos_para_emissao(
+        (A,), (ACAO_T16,), fotografia_r06=fotografia
+    )
+
+    assert resultado == (A,)
+
+
+def test_pe_t23_nao_emitivel_com_cobertura_vazia_devolve_vazio() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (), (ACAO_T16,), fotografia_r06=FotografiaFragmento(status=BLOQUEADO)
+    )
+
+    assert resultado == ()
+
+
+def test_pe_t23_nao_emitivel_nao_escolhe_substituto() -> None:
+    """Nem `R03/F1`, nem `R05/F1`, nem texto inventado."""
+    resultado = projetar_fragmentos_para_emissao(
+        (), (ACAO_T16,), fotografia_r06=FotografiaFragmento(status=AGUARDA)
+    )
+
+    assert LACUNA not in resultado
+    assert FALLBACK not in resultado
+    assert resultado == ()
+
+
+def test_pe_t23_acao_repetida_com_nao_emitivel_continua_zero() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (),
+        (ACAO_T16, ACAO_T16),
+        fotografia_r06=FotografiaFragmento(status=BLOQUEADO),
+    )
+
+    assert resultado == ()
+
+
+def test_pe_t23_nao_emitivel_nao_impede_outras_contribuicoes() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (),
+        (ACAO_T16, AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO),
+        fotografia_r06=FotografiaFragmento(status=BLOQUEADO),
+    )
+
+    assert resultado == (LACUNA,)
+
+
+# ---------------------------------------------------------------------------
+# PE-T24 — *fail-closed* da fotografia, só na rota da ação
+
+
+@pytest.mark.parametrize(
+    "fotografia",
+    [None, "fotografia", 0, object(), FotografiaFragmento],
+    ids=["ausente", "texto", "inteiro", "objeto", "classe"],
+)
+def test_pe_t24_acao_owner_sem_fotografia_valida_fecha(fotografia: object) -> None:
+    with pytest.raises(ProjecaoEmissaoNaoAvaliavel) as erro:
+        projetar_fragmentos_para_emissao((), (ACAO_T16,), fotografia_r06=fotografia)
+
+    assert str(erro.value) == "tipo_invalido: fotografia_r06"
+
+
+def test_pe_t24_subclasse_de_fotografia_nao_e_forma_canonica() -> None:
+    class Derivada(FotografiaFragmento):
+        pass
+
+    with pytest.raises(ProjecaoEmissaoNaoAvaliavel) as erro:
+        projetar_fragmentos_para_emissao(
+            (), (ACAO_T16,), fotografia_r06=Derivada(status=APROVADO)
+        )
+
+    assert str(erro.value) == "tipo_invalido: fotografia_r06"
+
+
+def test_pe_t24_fecha_sem_resultado_parcial() -> None:
+    resultado = None
+    with pytest.raises(ProjecaoEmissaoNaoAvaliavel):
+        resultado = projetar_fragmentos_para_emissao(
+            (A, B), (ACAO_T16,), fotografia_r06=None
+        )
+
+    assert resultado is None
+
+
+def test_pe_t24_chamada_com_dois_argumentos_continua_valida() -> None:
+    """A terceira entrada é *keyword-only* e **condicional**."""
+    assert projetar_fragmentos_para_emissao((A,), ()) == (A,)
+
+
+def test_pe_t24_fotografia_e_keyword_only() -> None:
+    with pytest.raises(TypeError):
+        projetar_fragmentos_para_emissao((), (ACAO_T16,), EMITIVEL)
+
+
+# ---------------------------------------------------------------------------
+# PE-T25 — a autoridade é consultada no máximo uma vez, e só quando precisa
+
+
+def _espiar(monkeypatch: pytest.MonkeyPatch) -> list[FotografiaFragmento]:
+    """Conta as consultas à autoridade única, sem tocar o código de produção."""
+    import casa77_sdr.emission_projection as modulo
+
+    vistas: list[FotografiaFragmento] = []
+    real = modulo.avaliar_emissibilidade
+
+    def espiao(fotografia: FotografiaFragmento):
+        vistas.append(fotografia)
+        return real(fotografia)
+
+    monkeypatch.setattr(modulo, "avaliar_emissibilidade", espiao)
+    return vistas
+
+
+def test_pe_t25_acao_owner_avalia_exatamente_uma_vez(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    vistas = _espiar(monkeypatch)
+
+    projetar_fragmentos_para_emissao((), (ACAO_T16,), fotografia_r06=EMITIVEL)
+
+    assert len(vistas) == 1
+    assert vistas[0] is EMITIVEL
+
+
+def test_pe_t25_acao_repetida_avalia_uma_unica_vez(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    vistas = _espiar(monkeypatch)
+
+    projetar_fragmentos_para_emissao(
+        (), (ACAO_T16, ACAO_T16, ACAO_T16), fotografia_r06=EMITIVEL
+    )
+
+    assert len(vistas) == 1
+
+
+def test_pe_t25_repetida_nao_emitivel_avalia_uma_unica_vez(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    vistas = _espiar(monkeypatch)
+
+    projetar_fragmentos_para_emissao(
+        (),
+        (ACAO_T16, ACAO_T16),
+        fotografia_r06=FotografiaFragmento(status=BLOQUEADO),
+    )
+
+    assert len(vistas) == 1
+
+
+def test_pe_t25_cobertura_owner_nao_consulta_a_autoridade(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    vistas = _espiar(monkeypatch)
+
+    projetar_fragmentos_para_emissao((VISITA,), (ACAO_T16,), fotografia_r06=EMITIVEL)
+
+    assert vistas == []
+
+
+def test_pe_t25_sem_a_acao_de_t16_nao_consulta_a_autoridade(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    vistas = _espiar(monkeypatch)
+
+    projetar_fragmentos_para_emissao(
+        (A,),
+        (ACAO_T15, AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO),
+        fotografia_r06=EMITIVEL,
+    )
+
+    assert vistas == []
+
+
+# ---------------------------------------------------------------------------
 # PE-T5 — ações vazias
 
 
@@ -333,7 +643,7 @@ def test_pe_t7_acao_repetida_nao_duplica_o_mandatorio() -> None:
 
 
 # ---------------------------------------------------------------------------
-# PE-T8 — tipos exatos das duas entradas
+# PE-T8 — tipos exatos das duas entradas base
 
 
 @pytest.mark.parametrize(
@@ -501,10 +811,20 @@ def _modulos_importados(caminho: Path) -> set[str]:
 
 
 def test_pe_t13_importa_somente_o_necessario() -> None:
+    """A autoridade de emissibilidade entra; `response_assertia` **não**."""
     assert _modulos_importados(MODULO_PE) == {
         "__future__",
+        "casa77_sdr.fragment_emissibility",
         "casa77_sdr.state_machine",
     }
+
+
+def test_pe_t13_nao_importa_a_assertiva_diretamente() -> None:
+    """A autoridade é **única**: `avaliar_assertiva` só é alcançada por ela."""
+    importados = _modulos_importados(MODULO_PE)
+
+    assert "casa77_sdr.response_assertion" not in importados
+    assert "avaliar_assertiva" not in MODULO_PE.read_text(encoding="utf-8")
 
 
 @pytest.mark.parametrize(
@@ -656,17 +976,19 @@ def test_pe_t15_tabela_e_literal_e_nao_gerada() -> None:
 # PE-T16 — exatamente uma contribuição materializada
 
 
-def test_pe_t16_exatamente_duas_acoes_contribuem() -> None:
-    """Lacuna e *fallback* de T15 — e mais nenhuma das outras 18 ações."""
+def test_pe_t16_exatamente_tres_acoes_contribuem() -> None:
+    """Lacuna, *fallback* de T15 e visita — e mais nenhuma das outras 17."""
     tabela = _tabela()
     com_token = {acao: tokens for acao, tokens in tabela.items() if tokens}
 
     assert list(com_token) == [
+        ACAO_T16,
         AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO,
         ACAO_T15,
     ]
     assert com_token[AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO] == (LACUNA,)
     assert com_token[ACAO_T15] == (FALLBACK,)
+    assert com_token[ACAO_T16] == (VISITA,)
 
 
 @pytest.mark.parametrize(
@@ -675,13 +997,12 @@ def test_pe_t16_exatamente_duas_acoes_contribuem() -> None:
         "R01/F1",
         "R05/F2",
         "R05/F3",
-        "R06/F1",
         "R08/F1",
         "R15/F1",
     ],
 )
 def test_pe_t16_nenhum_outro_fragmento_e_mapeado(nao_mapeado: str) -> None:
-    """`R06/F1` tem *bindings*; `R05/F2` e `R05/F3` dependem do runtime."""
+    """`R05/F2` e `R05/F3` dependem do runtime; `R01`/`R15` aguardam aprovação."""
     declarados = {token for tokens in _tabela().values() for token in tokens}
 
     assert nao_mapeado not in declarados
@@ -724,28 +1045,44 @@ def test_pe_t17_mandatorios_tem_rotulo_canonico_emitivel(
         assert consultar_status(indice_real, token) == "APROVADO"
 
 
-def test_pe_t17_mandatorios_nao_tem_binding_algum(
+@pytest.mark.parametrize("token", [LACUNA, FALLBACK], ids=["lacuna", "fallback"])
+def test_pe_t17_estaticos_nao_tem_binding_algum(
+    indice_real: dict[str, Any], token: str
+) -> None:
+    """Classe **estática**: zero *binding*, logo zero juízo factual.
+
+    Se um desses dois ganhar `RENDERIZADO`, `ASSERTIVA` ou fato de runtime,
+    este teste fica vermelho **de propósito**: a admissibilidade passaria a
+    depender de decisão factual, e isso exige nova arbitragem.
+    """
+    fragmento = _fragmento_do_token(indice_real, token)
+
+    assert fragmento["bindings"] == []
+    assert "itera_sobre" not in fragmento
+
+
+def test_pe_t17_visita_e_condicionada_e_nao_depende_de_runtime(
     indice_real: dict[str, Any],
 ) -> None:
-    """Zero *binding* torna qualquer juízo factual de runtime desnecessário.
+    """Classe **condicionada**: `R06/F1` tem *bindings*, nenhum de runtime.
 
-    Se um mandatório futuro ganhar `RENDERIZADO`, `ASSERTIVA` ou fato de
-    runtime, este teste fica vermelho **de propósito**: a admissibilidade
-    passaria a depender de decisão factual, e isso exige nova arbitragem.
+    É justamente por ter *bindings* que a rota da ação **não** o acrescenta sem
+    veredito. E é por **nenhum** deles ser `RUNTIME_AUTORITATIVO` que nenhuma
+    fotografia factual de runtime entra nesta fronteira. Se isso mudar, este
+    teste fica vermelho **de propósito**.
     """
+    fragmento = _fragmento_do_token(indice_real, VISITA)
+
+    assert fragmento["bindings"] != []
+    origens = {binding["origem"] for binding in fragmento["bindings"]}
+    assert "RUNTIME_AUTORITATIVO" not in origens
+
+
+def test_pe_t17_hoje_existem_exatamente_tres_materializados() -> None:
     declarados = [token for tokens in _tabela().values() for token in tokens]
 
-    for token in declarados:
-        fragmento = _fragmento_do_token(indice_real, token)
-        assert fragmento["bindings"] == []
-        assert "itera_sobre" not in fragmento
-
-
-def test_pe_t17_hoje_existem_exatamente_dois_materializados() -> None:
-    declarados = [token for tokens in _tabela().values() for token in tokens]
-
-    assert len(declarados) == 2
-    assert set(declarados) == {LACUNA, FALLBACK}
+    assert len(declarados) == 3
+    assert set(declarados) == {LACUNA, FALLBACK, VISITA}
 
 
 # ---------------------------------------------------------------------------
