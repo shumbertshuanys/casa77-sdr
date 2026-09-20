@@ -467,9 +467,12 @@ campos e as suas autoridades, a ordem física e as duplicatas de **`C-7`**, o tr
 literal do runtime, o ***fail-closed*** de `status_ausente` e `status_ambiguo`, os tipos
 exatos da superfície, a pureza por AST, os imports fechados, a prova de que S2-D8 **não
 monta mais a fotografia *inline*** e a **prova de encaixe** com a rota *action-owner* de
-**T16**/`R06`. **Zero teste existente foi alterado**: `tests/test_coverage_decision.py`
-continua com **177**, `tests/test_fragment_emissibility.py` com **63** e
-`tests/test_emission_projection.py` com **139**.
+**T16**/`R06`. **Nenhum comportamento esperado de teste preexistente foi alterado**:
+`tests/test_coverage_decision.py` recebeu **somente** a reconciliação estrutural do novo
+*import* de `fragment_snapshot`, e `tests/test_fragment_emissibility.py` foi reconciliado
+**estruturalmente** para remover a exigência obsoleta de `_projetar_indisponiveis`; as
+contagens permanecem, respectivamente, **177** e **63**.
+`tests/test_emission_projection.py` permanece **inalterado**, com **139**.
 
 O baseline **precedente** era o do ***owner* de emissão de T16**:
 **`9276 passed`** sob **`-W error`**. A **`main` de base** daquela entrega registrava
