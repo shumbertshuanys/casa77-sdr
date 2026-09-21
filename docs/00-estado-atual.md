@@ -183,6 +183,27 @@ exclusivamente em `knowledge/casa77.yaml`.
   código ou teste mudou**. A **coordenação** desse branch continua sendo do
   `OrquestradorMotor`, que permanece **ausente**; o **destino do alerta**, a **persistência
   não volátil** e o **mecanismo de replay** dos pendentes continuam **abertos**.
+- **Fora de `C`**, o **tratamento operacional dos bloqueios `S4`/`S5` da etapa 3** está
+  **ARBITRADO E VERSIONADO nesta entrega**, com o contrato vivo em `docs/07` §7.1
+  (`TS45-1`–`TS45-20`) e o reflexo em `docs/06` §4.5 (caso 1). O
+  **gatilho é fechado em sete exceções nomeadas** — `ConfiguracaoTemporalInvalida` (S10),
+  `IdentificadorNaoResolvido` (N5/N6/S3), `ContextoElegibilidadeCorrompido` (S11),
+  `MarcoTemporalAusente` (S9), `IdentificadoIncoerente` (N-a-F1/N-I-2/P-I5),
+  `ConjuntoHumanoIncoerente` (H4/H5) e `ProjecaoIdentificadorIncoerente` (N-I-4) —, e a
+  captura futura é **por classe nomeada**, nunca por `except ValueError:` genérico. A ordem
+  é **preservar → tentar alertar → marcar a chave → encerrar sem transição**, com a chave
+  marcada **fora da etapa 13** e **somente após preservação bem-sucedida**. O pendente usa o
+  **`ProcessamentoPendente` existente**, com os **três campos** e **zero campo novo**, e o
+  `conteudo` é a **`EntradaNormalizada.mensagem_normalizada`** da etapa 1, nunca a mensagem
+  bruta. **Zero máquina, evento, transição, emissão, handoff, atendimento, etapa 5, etapa 13,
+  `CondicoesCiclo` e S2-D8**, e **`instante_ultima_transicao` não é atualizado**. No **MVP a
+  etapa 4 não executa** sob bloqueio — **zero chamada de LLM** —, e isso **não revoga S8**,
+  cuja faculdade diagnóstica permanece disponível para arbitragem futura. **Nenhum quinto
+  caso de negócio foi criado**: contexto inválido continua sendo o **caso 1** dos **quatro**
+  encerramentos sem transição. **O runtime de TS45 está AUSENTE**, o **`OrquestradorMotor`
+  está AUSENTE**, a **fronteira concreta de alerta está AUSENTE** e o **destino do alerta
+  continua ABERTO** (item 3a). O **mecanismo concreto de replay** continua **futuro**, e
+  **`E4-13` permanece integralmente preservado**.
 - Etapa 4 permanece **absorvida pela Etapa 3B**; etapas 5 a 10 permanecem futuras
   (`docs/05-roadmap.md`).
 
@@ -909,7 +930,7 @@ código; o contrato vive em `docs/07` §2.3.
 | **E1** — conversa × atendimento × lead | não arbitrada; atravessa identidade, persistência e registro de leads | não bloqueia a especificação vigente | `docs/07` §12 item 13 |
 | **E3** — evento novo durante atendimento ativo | aberta; contrato vigente é conservador (`AMBIGUA`) | não bloqueia | `docs/07` §12 item 14 |
 | **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL` | **ARBITRADA E VERSIONADA**: contrato vivo em `docs/07` §7.1 (`E4-1`–`E4-14`), com `docs/06` §4.5 reconciliado. Encerra **sem transição**, preserva o pendente, **tenta** o alerta e marca a chave fora da etapa 13. **Pendente**: a **coordenação** do branch pelo `OrquestradorMotor` | **deixou de bloquear** o `OrquestradorMotor`; o que resta é a coordenação, registrada em §6 | `docs/07` §7.1, §12 item 15; `docs/06` §4.5 |
-| **N-a** — integração operacional residual | especificação concluída e fronteiras `M-T`/`M-E`/`M-C`/`M-DT`/`M-AE` materializadas; integração da etapa 13 no pipeline pendente, com bloqueios S4/S5 sem tratamento operacional | bloqueia o pipeline completo | `docs/07` §6.2, §12 item 11 |
+| **N-a** — integração operacional residual | especificação concluída e fronteiras `M-T`/`M-E`/`M-C`/`M-DT`/`M-AE` materializadas; integração da etapa 13 no pipeline pendente. O **tratamento operacional dos bloqueios `S4`/`S5`** deixou de ser matéria aberta: está **ARBITRADO E VERSIONADO** em `TS45-1`–`TS45-20` (`docs/07` §7.1). **Continuam pendentes**: o **runtime desse tratamento**, a **integração da etapa 13**, o **destino do alerta**, o **limiar temporal** e a **coordenação pelo `OrquestradorMotor`** — arbitrar **não** é materializar | bloqueia o pipeline completo | `docs/07` §6.2, §7.1 (`TS45-1`–`TS45-20`), §12 item 11 |
 | **Limiar temporal de recência** | valor numérico e mecanismo de carga indefinidos; não é dado comercial | bloqueia a integração operacional de `N-a` e o `OrquestradorMotor` | `docs/07` §12 item 18 |
 | **N-b** — integração da etapa 4 | contrato arbitrado; fronteira determinística materializada; **produtor não determinístico versionado** (`docs/07` §6.3, `M-PN1`–`M-PN12`) — Anthropic / `claude-sonnet-5`, saída estruturada, canonicalização obrigatória, zero retry, exercitado **offline** pela suíte; os **evals semânticos** e o **smoke** existem e **não foram executados**. **`N-b-RES2` deixou de ser residual**: o produtor de eventos derivados está **materializado e versionado** (`RES2-1`–`RES2-12`), com saída fechada em `E02`/`E03`/`E04`/`E05`/`E06`/`E10`; `E09`, `E18`, `E07`/`E08` e `E14` **continuam fora dele**. A **cadeia operacional** deixou de carecer de fronteira física única: produção, projeção, condição 5 e `N-b-RES2` estão **encadeadas** em `interpretation_stage.py` (`docs/07` §6.3, `EN4-1`–`EN4-12`), **materializadas e versionadas na `main`**. A **coordenação por ciclo** deixou de ser matéria aberta: ela está **ARBITRADA e VERSIONADA nesta entrega** em `CN4-1`–`CN4-12` (`docs/07` §6.3) — ponto único de chamada, reutilização do `ArtefatosInterpretacao`, ordem parcial dos produtores, pré-condições da primeira decisão e propagação intacta da falha. **Pendente**: a **coordenação em runtime**, que **NÃO está materializada** | bloqueia o `OrquestradorMotor` e a integração completa — arbitrar **não** é materializar | `docs/07` §6.3 (`EN4-1`–`EN4-12`, `CN4-1`–`CN4-12`), §12 item 12 |
 | **Unicidade geral de `id_atendimento`** | não decidida entre candidatos não identificados | não bloqueia o bloco corrente de materialização de `C` | `docs/07` §12 item 17 |
@@ -971,8 +992,12 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
   versionados** (`cycle_inputs.py`; `docs/07` §4.1.9). O produtor de
   **`insumo_qualificacao_atualizado`** — a **etapa 6** — **deixou de faltar**: ele está
   **materializado e versionado**;
-- **N-a** — integração operacional da etapa 13, tratamento dos bloqueios S4/S5 e destino do
-  alerta operacional;
+- **N-a** — a **integração operacional da etapa 13** e o **destino do alerta operacional**.
+  O **tratamento** dos bloqueios `S4`/`S5` **deixou de ser a lacuna**: ele está **arbitrado
+  e versionado** em `TS45-1`–`TS45-20` (`docs/07` §7.1). O que resta dele é a
+  **materialização em runtime**, que **não existe**: **este bloqueador permanece**, porque o
+  **`OrquestradorMotor` continua ausente** e a **fronteira concreta de tentativa de alerta**
+  também;
 - **limiar temporal** — valor e mecanismo de carga.
 
 **Concluído, e por isso fora da lista acima**: **S2-D8** e **`R2`** — infraestrutura

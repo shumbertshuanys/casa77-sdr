@@ -721,7 +721,7 @@ qualquer chamada da `MaquinaEstados`**. São **quatro** casos, conforme doc 07 �
 
 | # | Caso | Onde encerra |
 |---|---|---|
-| 1 | **contexto inválido** | **etapa 3** — a recuperação de contexto bloqueia (doc 07 §7.1, S1–S8). Não é produzido pelo `ResolvedorIdentidade`: a etapa 5 nem chega a ser executada (S7) |
+| 1 | **contexto inválido** | **etapa 3** — a recuperação de contexto bloqueia (doc 07 §7.1, S1–S8). Não é produzido pelo `ResolvedorIdentidade`: a etapa 5 nem chega a ser executada (S7). O **tratamento operacional** dos bloqueios **S4**/**S5** está arbitrado pelo **contrato TS45** (doc 07 §7.1, `TS45-1`–`TS45-20`): preservar o processamento pendente, **tentar** o alerta operacional, marcar a chave de idempotência e **encerrar sem transição**, sobre um **gatilho fechado de sete exceções nomeadas**. A **coordenação** desses efeitos pertence ao `OrquestradorMotor`, que permanece **ausente** |
 | 2 | **`Identidade.AMBIGUA`** | **etapa 5** — a cascata conclui ambiguidade e aplica A1–A7 (doc 07 §7.1) |
 | 3 | **`SEM_CANDIDATO_ELEGIVEL`** | **etapa 5** — com o tratamento fechado pelo **contrato E4** (doc 07 §7.1, `E4-1`–`E4-14`; tabela G1–G7, abaixo) |
 | 4 | **`situacao_takeover == HUMANO_MULTIPLO`** | **etapa 5** — **sem alvo**, `identidade = None`, a **`MaquinaEstados` não é chamada**, **zero emissão automática** (doc 07 §7.1, R5-P0) |
