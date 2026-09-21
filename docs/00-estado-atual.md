@@ -200,10 +200,29 @@ exclusivamente em `knowledge/casa77.yaml`.
   etapa 4 não executa** sob bloqueio — **zero chamada de LLM** —, e isso **não revoga S8**,
   cuja faculdade diagnóstica permanece disponível para arbitragem futura. **Nenhum quinto
   caso de negócio foi criado**: contexto inválido continua sendo o **caso 1** dos **quatro**
-  encerramentos sem transição. **O runtime de TS45 está AUSENTE**, o **`OrquestradorMotor`
-  está AUSENTE**, a **fronteira concreta de alerta está AUSENTE** e o **destino do alerta
-  continua ABERTO** (item 3a). O **mecanismo concreto de replay** continua **futuro**, e
-  **`E4-13` permanece integralmente preservado**.
+  encerramentos sem transição. O **runtime de TS45 deixou de estar AUSENTE**: ele está
+  **materializado e versionado** no recorte **`R1`** (`docs/07` §4.1.10). O
+  **`OrquestradorMotor` completo continua AUSENTE**, a **fronteira concreta
+  de alerta continua AUSENTE** — em `R1` ela é **dependência injetada**, não implementada —
+  e o **destino do alerta continua ABERTO** (item 3a). O **mecanismo concreto de replay**
+  continua **futuro**, e **`E4-13` permanece integralmente preservado**.
+- **Fora de `C`**, o **recorte `R1` do `OrquestradorMotor`** — **etapas 1–3 + TS45** —
+  está **MATERIALIZADO E VERSIONADO**: `src/casa77_sdr/orchestrator.py` e
+  `tests/test_orchestrator.py`, com o contrato vivo em `docs/07` §4.1.10
+  (`OMR1-1`–`OMR1-14`). Ele é a **última entrega funcional relevante** registrada em §2.
+  Cobre a normalização e a chave de idempotência (etapa 1), a decisão de duplicidade
+  (etapa 2), a montagem das projeções de identidade (etapa 3) e o **tratamento operacional
+  TS45** sobre o **gatilho fechado das sete exceções nomeadas**. A **tentativa de alerta**
+  é **dependência injetada**, e a **janela** e o **limiar** chegam **explícitos do
+  chamador**, **sem default**. A superfície é de **um único** nome —
+  `coordenar_etapas_1_a_3` —, **não exportado** pelo `__init__.py`, **sem classe, DTO,
+  enum, exceção pública ou `Protocol` novo**. **Nenhuma fronteira existente foi alterada**,
+  §4.1 permanece com **14** componentes e os encerramentos sem transição continuam
+  **quatro**. Inventário factual: **runtime TS45 = PRESENTE NO R1**; **`OrquestradorMotor`
+  completo = AUSENTE**; **runtime de `N-b` = AUSENTE**; **`MaquinaEstados` no ciclo =
+  AUSENTE**; **etapa 13 = AUSENTE**; **emissão = AUSENTE**. O **marco M1 — runtime local
+  parcial** está **MATERIALIZADO**; o **M2 — primeiro teste conversacional local** e o
+  **M3 — produção real** continuam **NÃO liberados**.
 - Etapa 4 permanece **absorvida pela Etapa 3B**; etapas 5 a 10 permanecem futuras
   (`docs/05-roadmap.md`).
 
@@ -211,10 +230,32 @@ exclusivamente em `knowledge/casa77.yaml`.
 
 ## 2. Última entrega funcional relevante
 
-Commit funcional `e23d1e726d2e7a22f052cfc48de09badb313a058`.
+Commit funcional `7ce21d17ed561744f83b003c0f5d8466a29e0761`.
 
-**A última entrega funcional relevante é o produtor determinístico compartilhado da
-`FotografiaFragmento`**, **materializado e versionado** em
+**A última entrega funcional relevante é o recorte `R1` do `OrquestradorMotor`** — a
+**materialização parcial das etapas 1–3 mais o tratamento TS45** —, **materializado e
+versionado** em `src/casa77_sdr/orchestrator.py`, com o contrato vivo em `docs/07` §4.1.10
+(`OMR1-1`–`OMR1-14`). A superfície é **um único** nome público,
+`coordenar_etapas_1_a_3(...)`, **não exportado** pelo `__init__.py`.
+
+Ele encadeia, nesta ordem: a **normalização da etapa 1**, que produz a mensagem normalizada
+e a chave de idempotência; o ***gate* de idempotência da etapa 2**, que encerra a reentrega
+técnica antes de qualquer efeito; e a **montagem das projeções de contexto e identidade da
+etapa 3** (§6.2). Quando a etapa 3 bloqueia, o **tratamento TS45 executa em runtime** sobre
+o **gatilho fechado das sete exceções nomeadas**: preservar o `ProcessamentoPendente`,
+**tentar** o alerta operacional, marcar a chave **somente após preservação bem-sucedida** e
+**encerrar sem transição**.
+
+A **tentativa de alerta é dependência injetada** — o recorte exige a tentativa e fecha o
+*payload* sanitizado, **sem escolher destino** —, e a **janela de idempotência** e o
+**limiar de recência** chegam **explícitos do chamador**, **sem default**. Fora dele:
+**zero etapas 4–14**, **zero persistência do estado do ciclo normal** — o caminho feliz
+**não marca a chave** — e **zero emissão**. **Nenhuma fronteira preexistente foi alterada**,
+e §4.1 permanece com **14** componentes.
+
+**A entrega anterior — o produtor determinístico compartilhado da `FotografiaFragmento`** —
+**permanece histórica e integralmente vigente**, e apenas **deixa de ser a última
+funcional**. Ela está **materializada e versionada** em
 `src/casa77_sdr/fragment_snapshot.py`, com o contrato vivo em `docs/07` §4.4.6
 (`FF-1`–`FF-12`). A **montagem** da fotografia deixou de ser *inline* e passou a ter **uma
 única fronteira de produção**: `montar_fotografia_fragmento(token, consistencia, *,
@@ -476,11 +517,26 @@ Permanecem igualmente vigentes: o **produtor não determinístico de `N-b`**
 materializada:
 
 - Python **3.14.5**;
-- **`9394 passed`**, sob **`-W error`**;
+- **`9468 passed`**, sob **`-W error`**;
 - zero failures, zero errors, zero warnings, zero skips, zero xfails.
 
-Este é o **baseline da entrega versionada** do **produtor determinístico compartilhado da
-`FotografiaFragmento`**: **`9394 passed`** sob **`-W error`**. A **`main` de base** desta
+Este é o **baseline da entrega versionada** do recorte **`R1` do `OrquestradorMotor`**:
+**`9468 passed`** sob **`-W error`**. O **baseline anterior** era **`9394 passed`** — o da
+**`main` de base** desta entrega —, e o **delta é `+74`**, vindo **integralmente** de
+`tests/test_orchestrator.py`: caminho feliz, mensagem
+vazia, propagação intacta de `EntradaInvalida`, encerramento na etapa 2 por
+duplicata, contrato da dependência de alerta antes de qualquer leitura, os **seis** gatilhos
+TS45 alcançáveis em runtime, a ordem preservar → alertar → marcar, o conteúdo preservado
+como mensagem **normalizada**, a sanitização do alerta, as três semânticas de falha e a
+precedência entre elas, a reentrega técnica, as exceções fora das sete e as provas
+estruturais por AST — captura fechada em sete classes, um único `except Exception` restrito
+ao alerta, ausência de `except ValueError`, ausência de relógio vivo e de duração literal,
+imports fechados, ausência de chamadas das etapas 4–14, superfície de um único nome e
+ausência de exportação no `__init__.py`. **Nenhum teste preexistente foi alterado** e
+**nenhum arquivo de teste além desse foi tocado**.
+
+O baseline **precedente** era o do **produtor determinístico compartilhado da
+`FotografiaFragmento`**: **`9394 passed`** sob **`-W error`**. A **`main` de base** daquela
 entrega registrava **`9276 passed`** — o baseline do ***owner* de emissão de T16**. O
 acréscimo de **118** vem,
 **integralmente**, dos cenários novos de `tests/test_fragment_snapshot.py` — os quatro
@@ -930,13 +986,13 @@ código; o contrato vive em `docs/07` §2.3.
 | **E1** — conversa × atendimento × lead | não arbitrada; atravessa identidade, persistência e registro de leads | não bloqueia a especificação vigente | `docs/07` §12 item 13 |
 | **E3** — evento novo durante atendimento ativo | aberta; contrato vigente é conservador (`AMBIGUA`) | não bloqueia | `docs/07` §12 item 14 |
 | **E4** — tratamento de `SEM_CANDIDATO_ELEGIVEL` | **ARBITRADA E VERSIONADA**: contrato vivo em `docs/07` §7.1 (`E4-1`–`E4-14`), com `docs/06` §4.5 reconciliado. Encerra **sem transição**, preserva o pendente, **tenta** o alerta e marca a chave fora da etapa 13. **Pendente**: a **coordenação** do branch pelo `OrquestradorMotor` | **deixou de bloquear** o `OrquestradorMotor`; o que resta é a coordenação, registrada em §6 | `docs/07` §7.1, §12 item 15; `docs/06` §4.5 |
-| **N-a** — integração operacional residual | especificação concluída e fronteiras `M-T`/`M-E`/`M-C`/`M-DT`/`M-AE` materializadas; integração da etapa 13 no pipeline pendente. O **tratamento operacional dos bloqueios `S4`/`S5`** deixou de ser matéria aberta: está **ARBITRADO E VERSIONADO** em `TS45-1`–`TS45-20` (`docs/07` §7.1). **Continuam pendentes**: o **runtime desse tratamento**, a **integração da etapa 13**, o **destino do alerta**, o **limiar temporal** e a **coordenação pelo `OrquestradorMotor`** — arbitrar **não** é materializar | bloqueia o pipeline completo | `docs/07` §6.2, §7.1 (`TS45-1`–`TS45-20`), §12 item 11 |
-| **Limiar temporal de recência** | valor numérico e mecanismo de carga indefinidos; não é dado comercial | bloqueia a integração operacional de `N-a` e o `OrquestradorMotor` | `docs/07` §12 item 18 |
-| **N-b** — integração da etapa 4 | contrato arbitrado; fronteira determinística materializada; **produtor não determinístico versionado** (`docs/07` §6.3, `M-PN1`–`M-PN12`) — Anthropic / `claude-sonnet-5`, saída estruturada, canonicalização obrigatória, zero retry, exercitado **offline** pela suíte; os **evals semânticos** e o **smoke** existem e **não foram executados**. **`N-b-RES2` deixou de ser residual**: o produtor de eventos derivados está **materializado e versionado** (`RES2-1`–`RES2-12`), com saída fechada em `E02`/`E03`/`E04`/`E05`/`E06`/`E10`; `E09`, `E18`, `E07`/`E08` e `E14` **continuam fora dele**. A **cadeia operacional** deixou de carecer de fronteira física única: produção, projeção, condição 5 e `N-b-RES2` estão **encadeadas** em `interpretation_stage.py` (`docs/07` §6.3, `EN4-1`–`EN4-12`), **materializadas e versionadas na `main`**. A **coordenação por ciclo** deixou de ser matéria aberta: ela está **ARBITRADA e VERSIONADA nesta entrega** em `CN4-1`–`CN4-12` (`docs/07` §6.3) — ponto único de chamada, reutilização do `ArtefatosInterpretacao`, ordem parcial dos produtores, pré-condições da primeira decisão e propagação intacta da falha. **Pendente**: a **coordenação em runtime**, que **NÃO está materializada** | bloqueia o `OrquestradorMotor` e a integração completa — arbitrar **não** é materializar | `docs/07` §6.3 (`EN4-1`–`EN4-12`, `CN4-1`–`CN4-12`), §12 item 12 |
+| **N-a** — integração operacional residual | especificação concluída e fronteiras `M-T`/`M-E`/`M-C`/`M-DT`/`M-AE` materializadas; integração da etapa 13 no pipeline pendente. O **tratamento operacional dos bloqueios `S4`/`S5`** deixou de ser matéria aberta: está **ARBITRADO E VERSIONADO** em `TS45-1`–`TS45-20` (`docs/07` §7.1). O **runtime desse tratamento deixou de faltar**: ele está **MATERIALIZADO E VERSIONADO** no recorte **`R1`** (`docs/07` §4.1.10, `OMR1-11`–`OMR1-13`), junto com as **etapas 1–3** do `OrquestradorMotor`. **`R1` não é o `OrquestradorMotor` completo.** **Continuam pendentes**: a **integração da etapa 13**, o **destino do alerta**, o **limiar temporal** e a **coordenação completa pelo `OrquestradorMotor`** — arbitrar **não** é materializar, e materializar um **prefixo** não é integrar o ciclo | bloqueia o pipeline completo | `docs/07` §4.1.10, §6.2, §7.1 (`TS45-1`–`TS45-20`), §12 item 11 |
+| **Limiar temporal de recência** | **ABERTA** — valor numérico e mecanismo de carga indefinidos; não é dado comercial. O recorte **`R1`**, **já versionado**, **transporta** o limiar recebido do chamador e **não o revalida** (`docs/07` §4.1.10, `OMR1-4`) | **bloqueia a produção** e a integração operacional de `N-a`; **não** bloqueia o **`R1` local** | `docs/07` §4.1.10, §12 item 18 |
+| **N-b** — integração da etapa 4 | contrato arbitrado; fronteira determinística materializada; **produtor não determinístico versionado** (`docs/07` §6.3, `M-PN1`–`M-PN12`) — Anthropic / `claude-sonnet-5`, saída estruturada, canonicalização obrigatória, zero retry, exercitado **offline** pela suíte; os **evals semânticos** e o **smoke** existem e **não foram executados**. **`N-b-RES2` deixou de ser residual**: o produtor de eventos derivados está **materializado e versionado** (`RES2-1`–`RES2-12`), com saída fechada em `E02`/`E03`/`E04`/`E05`/`E06`/`E10`; `E09`, `E18`, `E07`/`E08` e `E14` **continuam fora dele**. A **cadeia operacional** deixou de carecer de fronteira física única: produção, projeção, condição 5 e `N-b-RES2` estão **encadeadas** em `interpretation_stage.py` (`docs/07` §6.3, `EN4-1`–`EN4-12`), **materializadas e versionadas na `main`**. A **coordenação por ciclo** deixou de ser matéria aberta: ela está **ARBITRADA e VERSIONADA nesta entrega** em `CN4-1`–`CN4-12` (`docs/07` §6.3) — ponto único de chamada, reutilização do `ArtefatosInterpretacao`, ordem parcial dos produtores, pré-condições da primeira decisão e propagação intacta da falha. **Pendente**: a **coordenação em runtime** da etapa 4, que **NÃO está materializada** — ela é **escopo de recortes posteriores** do `OrquestradorMotor` e **não** foi alcançada por **`R1`** | bloqueia o `OrquestradorMotor` **completo** e a integração completa — arbitrar **não** é materializar | `docs/07` §6.3 (`EN4-1`–`EN4-12`, `CN4-1`–`CN4-12`), §12 item 12 |
 | **Unicidade geral de `id_atendimento`** | não decidida entre candidatos não identificados | não bloqueia o bloco corrente de materialização de `C` | `docs/07` §12 item 17 |
 | **Retorno do controle ao bot** | não existe transição inversa de `T31` | não bloqueia | `docs/07` §12 item 16 |
 | **Persistência operacional não volátil** | contrato arbitrado; implementação volátil não sustenta operação real; nenhuma tecnologia escolhida | bloqueia qualquer uso em canal real | `docs/07` §7.3, §7.4, §12 item 2a |
-| **Destino do alerta operacional** | canal separado da conversa exigido por S5, Q5 e F4; destino não especificado | bloqueia o `OrquestradorMotor` | `docs/07` §12 item 3a |
+| **Destino do alerta operacional** | **ABERTA** — canal separado da conversa exigido por S5, Q5 e F4; destino não especificado. O recorte **`R1`** do `OrquestradorMotor`, **já versionado**, recebe a **tentativa de alerta como dependência injetada** e fecha o **payload sanitizado** (`docs/07` §4.1.10, `OMR1-5`, `OMR1-6`), **sem escolher destino** | **bloqueia a produção**; **não** bloqueia o **`R1` local**, que já está materializado e versionado. Continua bloqueando o `OrquestradorMotor` **completo** | `docs/07` §4.1.10, §12 item 3a |
 | **Confirmação física de entrega do handoff** | `encaminhado_humano` afirma handoff registrado, nunca recebimento confirmado | não bloqueia; futura da Etapa 5 | `docs/06` §10; `docs/07` §12 item 5 |
 
 Pendências comerciais e lacunas da base **não são replicadas aqui**:
@@ -946,7 +1002,7 @@ Pendências comerciais e lacunas da base **não são replicadas aqui**:
 
 ## 6. Bloqueadores da integração completa
 
-Bloqueiam o `OrquestradorMotor` e o pipeline completo:
+Bloqueiam o `OrquestradorMotor` **completo** e o pipeline completo:
 
 - **C** — índice físico, *templates*, **autoridade de status**, ***lookup* operacional**,
   **`ValidadorConsistenciaBase`**, o **`ProjetorEmissao`**, o **`SeletorFatos`**, o
@@ -994,11 +1050,15 @@ Bloqueiam o `OrquestradorMotor` e o pipeline completo:
   **materializado e versionado**;
 - **N-a** — a **integração operacional da etapa 13** e o **destino do alerta operacional**.
   O **tratamento** dos bloqueios `S4`/`S5` **deixou de ser a lacuna**: ele está **arbitrado
-  e versionado** em `TS45-1`–`TS45-20` (`docs/07` §7.1). O que resta dele é a
-  **materialização em runtime**, que **não existe**: **este bloqueador permanece**, porque o
-  **`OrquestradorMotor` continua ausente** e a **fronteira concreta de tentativa de alerta**
-  também;
-- **limiar temporal** — valor e mecanismo de carga.
+  e versionado** em `TS45-1`–`TS45-20` (`docs/07` §7.1). A sua **materialização em runtime**
+  **deixou de estar ausente**: ela está **MATERIALIZADA E VERSIONADA** no recorte **`R1`**
+  (`docs/07` §4.1.10), junto com as **etapas 1–3** do `OrquestradorMotor`. **Este bloqueador
+  permanece** mesmo assim, porque **`R1` não é o `OrquestradorMotor` completo**: a
+  **integração da etapa 13** continua ausente e a **fronteira concreta de tentativa de
+  alerta** — o **destino** — continua **não escolhida**; em `R1` ela é **dependência
+  injetada**, não implementada;
+- **limiar temporal** — valor e mecanismo de carga. Ele **bloqueia a produção**, e **não** a
+  existência do **`R1`**, que apenas o **transporta** (`docs/07` §4.1.10, `OMR1-4`).
 
 **Concluído, e por isso fora da lista acima**: **S2-D8** e **`R2`** — infraestrutura
 estrutural (`docs/07` §4.4.2), produtor determinístico (§4.4.3), aplicabilidade de pacote
@@ -1013,6 +1073,23 @@ etapa 6** e a **entrada de C7** ***fail-closed*** **materializada e versionada**
 desta lista**: a **coordenação de N-b em runtime**, a **integração ao ciclo** e o
 `OrquestradorMotor` continuam exatamente como acima, e a **integração externa real de calendário continua
 ausente** — `E16` permanece **futuro** e **`S2-D5` permanece aberta**.
+
+**Runtime parcial versionado — o que ele muda e o que não muda.** O recorte **`R1`** do
+`OrquestradorMotor` (`docs/07` §4.1.10) está **MATERIALIZADO E VERSIONADO** e cobre as
+**etapas 1–3 mais o tratamento TS45**: o **runtime de TS45** e as **etapas 1, 2 e 3** do
+`OrquestradorMotor` deixaram de ser lacuna. Ele **não remove nenhum bloqueador desta
+lista**, porque **`R1` não é o `OrquestradorMotor` completo**: as etapas **4–14** continuam
+fora do ciclo, a **coordenação em runtime da etapa 4 / `N-b` continua ausente** — ela é
+**escopo de recortes posteriores** —, a **`MaquinaEstados` não é chamada**, a **etapa 13 não
+executa** e **nada é emitido**. O que ele muda é a classificação de **dois** itens: o
+**destino do alerta** (item 3a) e o **limiar temporal** (item 18) passam a ser lidos como
+**bloqueadores da produção**, e **não** como pré-requisitos da **existência** de `R1`.
+**Nenhum dos dois é declarado resolvido: ambos continuam ABERTOS.**
+
+**Marcos.** **M1 — runtime local parcial** está **MATERIALIZADO**. **M2 — primeiro teste
+conversacional local** continua **NÃO LIBERADO**. **M3 — produção real** continua **NÃO
+LIBERADA**. Os três são **rótulos de progresso**, e **não** etapas, subetapas ou componentes
+do pipeline — §4.1 permanece com **14** componentes e §5 com **catorze** etapas.
 
 Bloqueia o **uso real** em canal, à parte da integração: **persistência operacional não
 volátil**.
@@ -1055,8 +1132,8 @@ a **integração ao ciclo** dos produtores já materializados — **`S3-D1`**, o
 residuais de **N-a** e o **limiar temporal**, o **destino do alerta operacional**, a
 **integração externa real de calendário** — cuja **condição 6** já está **arbitrada e
 versionada** (§1), sem que o **adaptador da etapa 6 exista** —, as **superfícies
-conversacionais sem unidade aprovada** — das quais **T15** saiu em **entrega anterior** e
-**T16** sai **nesta entrega versionada** (§1), sem que a **integração *end-to-end*** exista
+conversacionais sem unidade aprovada** — das quais **T15** e **T16** saíram em
+**entregas anteriores** (§1), sem que a **integração *end-to-end*** exista
 e sem que a `FotografiaFragmento` seja **invocada no ciclo** — a **primitiva de montagem**
 está **materializada e versionada** (§1), a **chamada dela** não —, enquanto as demais
 **continuam
@@ -1064,8 +1141,30 @@ abertas** — e,
 para
 uso em canal real, a **persistência operacional não volátil**.
 
-**O primeiro teste conversacional local ainda NÃO está liberado**: o `OrquestradorMotor`
-**continua ausente** e a **coordenação das chamadas da máquina** não existe.
+**Residual factual após o recorte `R1`.** O `OrquestradorMotor` **deixou de estar
+integralmente ausente**: o seu **primeiro prefixo** — **etapas 1–3 + TS45** — está
+**materializado e versionado** (`docs/07` §4.1.10). **`R1` não é o `OrquestradorMotor`
+completo**, e o **marco M1 — runtime local parcial** é o único que ele materializa.
 
-**A ordem em que elas serão fechadas não é decidida aqui** — este arquivo é snapshot, não
-plano —, e cada frente será aberta por **novo mandato específico**.
+**Bloqueadores factuais que restam para o M2 — primeiro teste conversacional local:**
+
+- o **runtime da identidade / etapa 5** — o `ResolvedorIdentidade` existe, mas **não é
+  chamado** por nenhum coordenador;
+- o **tratamento de `Identidade.AMBIGUA`** em runtime (doc 06 §4.5, caso 2);
+- o **tratamento de `situacao_takeover == HUMANO_MULTIPLO`** em runtime (caso 4);
+- a **hidratação do atendimento** a partir do alvo resolvido, que hoje ninguém executa;
+- a **composição das dependências posteriores** — interpretação, atualização de dados,
+  regras, qualificação, cobertura, seleção, montagem e validação — em uma raiz única;
+- o **avanço pelas etapas 4–14**, incluindo a **chamada da `MaquinaEstados`**, a **etapa
+  13** e a **emissão da etapa 14**.
+
+Continuam igualmente **abertos**, e **não** são decididos aqui: o **destino do alerta
+operacional**, o **valor e o mecanismo de carga do limiar**, a **integração externa real de
+calendário**, as **superfícies conversacionais sem unidade aprovada** ainda em aberto e,
+para uso em canal real, a **persistência operacional não volátil**.
+
+**O M2 continua NÃO liberado** e o **M3 — produção real** continua **NÃO liberado**.
+
+**A ordem em que essas frentes serão fechadas não é decidida aqui** — este arquivo é
+snapshot, não plano. **Nenhum recorte seguinte do `OrquestradorMotor` é escolhido por este
+documento**, e cada frente será aberta por **novo mandato específico**.
