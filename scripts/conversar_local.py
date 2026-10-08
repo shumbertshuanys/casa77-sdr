@@ -106,13 +106,18 @@ def main() -> int:
         print("SDK `anthropic` não instalado.", file=sys.stderr)
         return 1
 
-    try:
-        cliente = anthropic.Anthropic()
-    except Exception:
+    cliente = anthropic.Anthropic()
+    # Presença apenas — o valor da credencial nunca é lido nem impresso.
+    if (
+        cliente.api_key is None
+        and cliente.auth_token is None
+        and cliente.custom_auth is None
+    ):
         print(
-            "Credencial da Anthropic ausente ou inválida no ambiente do operador. "
-            "Provisione-a fora deste repositório — ela não deve ser colada aqui, "
-            "versionada nem adicionada à CI.",
+            "Credencial da Anthropic não encontrada. Configure a variável de "
+            "ambiente ANTHROPIC_API_KEY no seu ambiente (fora deste repositório) "
+            "e rode de novo. Não cole a chave aqui, não a versione e não a "
+            "adicione à CI.",
             file=sys.stderr,
         )
         return 1
