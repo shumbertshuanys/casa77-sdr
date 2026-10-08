@@ -211,15 +211,22 @@ def test_prompt_vai_por_arquivo_temporario_e_cwd_e_vazio() -> None:
 
 
 def test_ambiente_sem_credencial_da_api(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("ANTHROPIC_API_KEY", "valor-ficticio")
-    monkeypatch.setenv("ANTHROPIC_AUTH_TOKEN", "valor-ficticio")
+    omitidas = (
+        "ANTHROPIC_API_KEY",
+        "ANTHROPIC_AUTH_TOKEN",
+        "ANTHROPIC_BASE_URL",
+        "CLAUDE_CODE_USE_BEDROCK",
+        "CLAUDE_CODE_USE_VERTEX",
+    )
+    for variavel in omitidas:
+        monkeypatch.setenv(variavel, "valor-ficticio")
     monkeypatch.setenv("VARIAVEL_FICTICIA_PRESERVADA", "1")
     executor = _Executor(stdout=_envelope())
     _produzir(_adaptador(executor))
     [(_, opcoes)] = executor.chamadas
     ambiente = opcoes["env"]
-    assert "ANTHROPIC_API_KEY" not in ambiente
-    assert "ANTHROPIC_AUTH_TOKEN" not in ambiente
+    for variavel in omitidas:
+        assert variavel not in ambiente, variavel
     assert ambiente["VARIAVEL_FICTICIA_PRESERVADA"] == "1"
     assert os.environ["ANTHROPIC_API_KEY"] == "valor-ficticio"
 
@@ -261,6 +268,29 @@ def test_timeout() -> None:
 def test_executavel_inexistente_e_erro_de_transporte() -> None:
     falha = _falha_de(_Executor(erro=FileNotFoundError(VAZAMENTO_STDERR)))
     assert falha.motivo is MotivoFalhaProdutor.ERRO_DE_TRANSPORTE
+
+
+def test_byte_nulo_em_argumento_e_erro_de_transporte() -> None:
+    falha = _falha_de(_Executor(erro=ValueError("embedded null byte")))
+    assert falha.motivo is MotivoFalhaProdutor.ERRO_DE_TRANSPORTE
+
+
+@pytest.mark.parametrize("campo", ["mensagem", "prompt_sistema"])
+def test_surrogate_isolado_e_erro_de_transporte(campo: str) -> None:
+    def codificar(argumentos: list[str], **opcoes: Any) -> Any:
+        # Mesmo passo que `subprocess.run` faz com `input=` e `encoding=`.
+        opcoes["input"].encode(opcoes["encoding"])
+        return subprocess.CompletedProcess(argumentos, 0, _envelope(), "")
+
+    adaptador = AdaptadorClaudeCode(
+        executavel=EXECUTAVEL, model=MODELO, timeout=TIMEOUT, executar=codificar
+    )
+    textos = {"prompt_sistema": PROMPT, "mensagem": MENSAGEM}
+    textos[campo] = "\ud800"
+    with pytest.raises(FalhaProdutorInterpretacao) as capturada:
+        adaptador.produzir(schema=SCHEMA, **textos)
+    assert capturada.value.motivo is MotivoFalhaProdutor.ERRO_DE_TRANSPORTE
+    assert capturada.value.__suppress_context__ is True
 
 
 def test_saida_nao_decodificavel_e_json_invalido() -> None:

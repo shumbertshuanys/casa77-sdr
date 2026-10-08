@@ -23,8 +23,9 @@ processo filho.
   `cwd`, removido ao fim da chamada;
 - a mensagem do interessado **somente via stdin** — nunca na linha de comando,
   onde ficaria visível na lista de processos;
-- um ambiente copiado de `os.environ` **sem** `ANTHROPIC_API_KEY` e
-  `ANTHROPIC_AUTH_TOKEN`. Assim o Claude Code usa o login da assinatura e a API
+- um ambiente copiado de `os.environ` **sem** `ANTHROPIC_API_KEY`,
+  `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_BASE_URL`, `CLAUDE_CODE_USE_BEDROCK` e
+  `CLAUDE_CODE_USE_VERTEX`. Assim o Claude Code usa o login da assinatura e a API
   **nunca** é cobrada por acidente. Os valores dessas variáveis não são lidos:
   as chaves são apenas omitidas da cópia.
 
@@ -64,8 +65,16 @@ __all__ = [
 ]
 
 #: Variáveis de credencial da API **omitidas** do ambiente do processo filho.
+#: Inclui as que desviam o Claude Code para outro endpoint ou provedor cobrado
+#: (base URL, Bedrock, Vertex): este caminho usa **somente** a assinatura.
 _VARIAVEIS_OMITIDAS: frozenset[str] = frozenset(
-    {"ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"}
+    {
+        "ANTHROPIC_API_KEY",
+        "ANTHROPIC_AUTH_TOKEN",
+        "ANTHROPIC_BASE_URL",
+        "CLAUDE_CODE_USE_BEDROCK",
+        "CLAUDE_CODE_USE_VERTEX",
+    }
 )
 
 #: Caminho, relativo ao diretório do *shim* npm, do executável nativo.
@@ -282,8 +291,11 @@ class AdaptadorClaudeCode:
     ) -> subprocess.CompletedProcess[str]:
         try:
             with (
-                tempfile.TemporaryDirectory() as diretorio_prompt,
-                tempfile.TemporaryDirectory() as diretorio_trabalho,
+                # `ignore_cleanup_errors`: no Windows, a limpeza logo após o
+                # término forçado do filho pode falhar por arquivo ainda
+                # aberto, e isso não pode mascarar o desfecho real (TIMEOUT).
+                tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as diretorio_prompt,
+                tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as diretorio_trabalho,
             ):
                 caminho_prompt = Path(diretorio_prompt) / "prompt-sistema.md"
                 caminho_prompt.write_text(prompt_sistema, encoding="utf-8")
@@ -306,6 +318,10 @@ class AdaptadorClaudeCode:
             raise _falha(MotivoFalhaProdutor.TIMEOUT) from None
         except UnicodeDecodeError:
             raise _falha(MotivoFalhaProdutor.JSON_INVALIDO) from None
+        except ValueError:
+            # Prompt ou mensagem não codificáveis (surrogate isolado, byte nulo
+            # em argumento): a chamada nem chega a ser feita.
+            raise _falha(MotivoFalhaProdutor.ERRO_DE_TRANSPORTE) from None
         except OSError:
             raise _falha(MotivoFalhaProdutor.ERRO_DE_TRANSPORTE) from None
 
