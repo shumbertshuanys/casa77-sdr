@@ -78,6 +78,7 @@ def _payload(
     dados: dict[str, Any] | None = None,
     perguntas: tuple[str, ...] = (),
     pedido_de_humano: bool = False,
+    intencoes: tuple[str, ...] = (),
 ) -> str:
     extraidos: dict[str, Any] = {}
     for campo in ("tipo_evento", "data_nomeada", "convidados", "formato", "nome", "contato"):
@@ -97,7 +98,9 @@ def _payload(
             "referencias_evento_anterior": [],
             "trechos_ambiguos": [],
             "confianca_global": _slot("alta"),
-            "intencoes_autonomas": [],
+            "intencoes_autonomas": [
+                {"codigo": codigo, "confianca": _slot("alta")} for codigo in intencoes
+            ],
         }
     )
 
@@ -367,6 +370,83 @@ def test_convidados_acima_da_capacidade_sentada_recebem_a_ressalva_sem_pergunta_
     assert r3.estado_final is Estado.ENCAMINHADO_HUMANO
     assert len(cenario.resumos) == 1
     assert cenario.registro().dados_coletados.get("formato") is None
+
+
+# --------------------------------------------------------------------------
+# Aceitação M2.1 — conversa útil
+# --------------------------------------------------------------------------
+
+
+def test_saudacao_com_interesse_em_visita_vira_uma_mensagem_continua(base_motor):
+    cenario = Cenario(base_motor, [_payload(intencoes=("INTERESSE_EM_VISITA",))])
+    r = cenario.processar(
+        _entrada("Ola boa noite. Muito linda a casa, tenho interesse visitar.")
+    )
+
+    saudacao = _texto_aprovado(base_motor, ("R01/F1",))
+    visita = _texto_aprovado(base_motor, ("R06/F1",))
+    esperado = saudacao + "\n\n" + visita
+    assert r.desfecho is DesfechoCiclo.RESPONDIDA
+    assert r.texto_emitido == esperado
+    # Uma única mensagem enviada; nenhuma quebra simples dentro de parágrafo.
+    assert cenario.envios == [(CANAL, CONTATO, esperado)]
+    for paragrafo in esperado.split("\n\n"):
+        assert "\n" not in paragrafo
+
+
+def test_conversa_de_cinco_mensagens_responde_cada_turno_e_encaminha(base_motor):
+    cenario = Cenario(
+        base_motor,
+        [
+            _payload(),
+            _payload(perguntas=("preco_locacao",)),
+            _payload(dados={"tipo_evento": "evento ficticio"}),
+            _payload(
+                dados={
+                    "data_nomeada": "data ficticia",
+                    "convidados": base_motor.base["capacidade"]["convidados_sentados"],
+                    "nome": "Nome Ficticio",
+                }
+            ),
+            _payload(dados={"contato": "contato-ficticio"}),
+        ],
+    )
+    textos = lambda *tokens: _texto_aprovado(base_motor, tokens)  # noqa: E731
+
+    r1 = cenario.processar(_entrada("ola, mensagem ficticia"))
+    assert r1.desfecho is DesfechoCiclo.RESPONDIDA
+    assert r1.texto_emitido == textos("R01/F1")
+
+    # Resposta comercial: resposta aprovada, retomada e a próxima pergunta
+    # (tipo de evento, primeiro na prioridade).
+    r2 = cenario.processar(_entrada("quanto custa, mensagem ficticia", minutos=10))
+    assert r2.desfecho is DesfechoCiclo.RESPONDIDA
+    assert r2.texto_emitido is not None
+    assert r2.texto_emitido.endswith(textos("R32/F1") + "\n\n" + textos("R31/F2"))
+
+    # Falta data, convidados, nome, contato: pergunta a data.
+    r3 = cenario.processar(_entrada("evento ficticio", minutos=20))
+    assert r3.desfecho is DesfechoCiclo.RESPONDIDA
+    assert r3.texto_emitido == textos("R31/F3")
+
+    # Falta só o contato.
+    r4 = cenario.processar(_entrada("dados ficticios", minutos=30))
+    assert r4.desfecho is DesfechoCiclo.RESPONDIDA
+    assert r4.texto_emitido == textos("R31/F5")
+    assert r4.estado_final is Estado.COLETANDO_DADOS
+    assert cenario.resumos == []
+
+    r5 = cenario.processar(_entrada("contato ficticio", minutos=40))
+    assert r5.desfecho is DesfechoCiclo.RESPONDIDA
+    assert r5.estado_final is Estado.ENCAMINHADO_HUMANO
+    assert r5.texto_emitido == textos("R08/F1")
+    assert len(cenario.resumos) == 1
+    assert cenario.log[-1] == ("enviar", textos("R08/F1"))
+    efeitos = cenario.efeitos()
+    assert efeitos.index("entregar_resumo") < len(efeitos) - 1
+    assert cenario.registro().estado_conversa == Estado.ENCAMINHADO_HUMANO.value
+    # Nenhum turno silencioso: um envio por mensagem recebida.
+    assert len(cenario.envios) == 5
 
 
 # --------------------------------------------------------------------------

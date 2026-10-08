@@ -6,11 +6,12 @@ dados comerciais só em `knowledge/casa77.yaml`.
 ## Onde estamos
 
 - **Etapa macro:** 3 — Motor de respostas (em execução). Roadmap em `docs/05-roadmap.md`.
-- **Marco corrente:** **M2 — primeiro teste conversacional local:** código concluído;
-  validação com LLM real pendente (Victor). Plano:
-  `docs/superpowers/plans/2026-10-07-orquestrador-m2.md`.
-- **Marcos:** M1 runtime local parcial — **feito** · M2 — **código concluído, validação
-  pendente** · M3 produção — não iniciado.
+- **Marco corrente:** **M2.1 — conversa útil: concluído** (aguarda merge). Textos aprovados
+  ligados ao motor, parágrafos contínuos (sem quebra no meio de frase), formato não é mais
+  perguntado e a coleta retoma depois de cada resposta. Plano:
+  `docs/superpowers/plans/2026-10-08-m2-1-conversa-util.md`.
+- **Marcos:** M1 runtime local parcial — **feito** · M2 — código concluído, validação com
+  LLM real pendente · **M2.1 — feito** · M3 produção — não iniciado.
 
 ## O que já funciona (com testes)
 
@@ -28,18 +29,20 @@ dados comerciais só em `knowledge/casa77.yaml`.
 - REPL local `scripts/conversar_local.py` (precisa de `ANTHROPIC_API_KEY` no ambiente):
   `python scripts/conversar_local.py --janela-idempotencia-segundos <s>
   --limiar-recencia-dias <d> --model <modelo> --max-tokens <n> --timeout <s>`.
-- Suíte: 9565 testes passando.
+- Conversa útil (M2.1): saudação R01 no 1º contato (sem pergunta extra); pergunta do
+  primeiro campo ausente na ordem tipo de evento, data, convidados, nome, contato (R31);
+  após resposta comercial, retomada R32 + próxima pergunta; ressalva de capacidade R34 (só
+  coquetel) sem perguntar formato; reforço R35 e despedida R15. Cenários de aceitação em
+  `tests/test_ciclo_completo.py`.
+- Suíte: 9705 testes passando.
 
 ## O que falta
 
 - **Validação com LLM real (Victor):** smoke de interpretação, evals em
   `evals/interpretacao` e conversas no REPL. Nunca rodaram com a API real.
-- **Lacuna de produto:** 8 ações da máquina não têm texto aprovado, então o bot fica em
-  silêncio nessas situações: `APRESENTAR_ATENDIMENTO_INICIAL`, `PERGUNTAR_PROXIMO_CAMPO_AUSENTE`,
-  `PERGUNTAR_FORMATO`, `RETOMAR_COLETA_SEM_REPETIR`, `INFORMAR_REGRA_INCOMPATIVEL`,
-  `INFORMAR_RESSALVA_DE_CAPACIDADE`, `DESPEDIR_SEM_CONTINUIDADE`, `REFORCAR_ENCAMINHAMENTO`.
-  É hoje o principal bloqueador de uma conversa útil. (`EMITIR_MENSAGEM_DE_ENCAMINHAMENTO`
-  já está mapeada ao texto aprovado R08/F1.)
+- **R33/F2 (horário além do limite):** ainda sem gatilho; a ressalva R34 chega ao fim da
+  qualificação (T08), não no meio da coleta.
+- `PERGUNTAR_FORMATO` segue sem texto, por decisão do Victor (formato não é obrigatório).
 
 ## Bloqueadores de produção conhecidos (M3)
 
@@ -63,7 +66,6 @@ dados comerciais só em `knowledge/casa77.yaml`.
 | Calendário (Google Calendar?) | Victor |
 | Destino do registro de leads | Victor |
 | Canal e SLA do handoff | Victor / Douglas |
-| Textos aprovados para as 8 ações sem texto (lista em "O que falta") | Douglas |
 
 Lacunas comerciais: `knowledge/informacoes-pendentes.md`.
 
@@ -75,6 +77,5 @@ Detalhes em `docs/07` §12.
 
 ## Próxima ação
 
-1. Victor roda smoke, evals e REPL com a credencial.
-2. Douglas aprova os 8 textos.
-3. Então planejar o M3.
+1. Victor testa no REPL (`--provedor claude-code`), roda smoke e evals com a credencial.
+2. Então planejar o M3.
