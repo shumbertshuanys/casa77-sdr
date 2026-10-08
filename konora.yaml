@@ -1,0 +1,6 @@
+version: 1
+system:
+  id: casa77-sdr
+  name: Casa 77 SDR
+  default_branch: main
+  state_doc: docs/00-estado-atual.md
