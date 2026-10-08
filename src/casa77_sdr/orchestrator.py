@@ -39,6 +39,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from datetime import timedelta
 
+from casa77_sdr.alerta_operacional import preservar_e_alertar
 from casa77_sdr.context import (
     ConjuntoHumanoIncoerente,
     IdentificadorNaoResolvido,
@@ -163,12 +164,11 @@ def _tratar_bloqueio_ts45(
     etapa 13, zero `CondicoesCiclo`, zero S2-D8 e zero atualização de
     `instante_ultima_transicao` (`TS45-17`).
 
-    O `finally` materializa a precedência de falhas de **OL-4** sem capturar a
-    exceção da preservação: se `preservar_pendente` falhar, o alerta ainda é
-    tentado — com `pendente_preservado=False` (`TS45-11`) —, a chave **não** é
-    marcada, e a **exceção da preservação** propaga **por identidade**. Uma
-    falha do alerta **não a substitui**, porque a tentativa é isolada e
-    absorvida em `_tentar_alerta_operacional`.
+    A sequência preservar → tentar alerta, com a precedência de falhas de
+    **OL-4**, vive em `alerta_operacional.preservar_e_alertar`: se
+    `preservar_pendente` falhar, o alerta ainda é tentado — com
+    `pendente_preservado=False` (`TS45-11`) —, a chave **não** é marcada, e a
+    **exceção da preservação** propaga **por identidade**.
     """
     pendente = ProcessamentoPendente(
         canal=entrada.canal,
@@ -177,56 +177,21 @@ def _tratar_bloqueio_ts45(
         conteudo=entrada_normalizada.mensagem_normalizada,
     )
 
-    pendente_preservado = False
-    try:
-        persistencia.preservar_pendente(pendente)
-        pendente_preservado = True
-    finally:
-        _tentar_alerta_operacional(
-            tentar_alerta,
-            # `TS45-3`/`TS45-14` — categoria **estrutural** do bloqueio: o
-            # nome da classe, que distingue a causa para auditoria sem virar
-            # enum, DTO, motivo de handoff ou evento, e sem `repr` da exceção.
-            categoria=type(bloqueio).__name__,
-            pendente_preservado=pendente_preservado,
-            # A chave de idempotência é **opaca por construção** (§4.3) e por
-            # isso serve de correlação auditável sem transportar mensagem,
-            # canal, contato, `id_atendimento`, dado comercial nem segredo.
-            correlacao=entrada_normalizada.chave_idempotencia,
-        )
+    preservar_e_alertar(
+        persistencia=persistencia,
+        pendente=pendente,
+        # `TS45-3`/`TS45-14` — categoria **estrutural** do bloqueio: o nome da
+        # classe, que distingue a causa para auditoria sem virar enum, DTO,
+        # motivo de handoff ou evento, e sem `repr` da exceção.
+        categoria=type(bloqueio).__name__,
+        # A chave de idempotência é **opaca por construção** (§4.3) e por isso
+        # serve de correlação auditável sem transportar mensagem, canal,
+        # contato, `id_atendimento`, dado comercial nem segredo.
+        correlacao=entrada_normalizada.chave_idempotencia,
+        tentar_alerta=tentar_alerta,
+    )
 
     # `TS45-8` — marcada **fora da etapa 13** e **somente após preservação
     # bem-sucedida**. Falha aqui propaga **por identidade** (`TS45-13`): sem
     # retry, sem compensação e sem apagar o pendente já protegido.
     persistencia.marcar_chave_processada(entrada_normalizada.chave_idempotencia)
-
-
-def _tentar_alerta_operacional(
-    tentar_alerta: Callable[..., object],
-    *,
-    categoria: str,
-    pendente_preservado: bool,
-    correlacao: str,
-) -> None:
-    """**Tenta** o alerta operacional, em caminho separado da conversa.
-
-    `TS45-14` — o *payload* é fechado em **exatamente três** informações
-    sanitizadas: a **categoria estrutural** do bloqueio, o **sucesso ou falha
-    da preservação** e uma **correlação opaca**. A chamada é **por palavras-
-    chave**, sem DTO e sem `Protocol`, e o retorno é **ignorado**: sucesso é a
-    **ausência de exceção**, nunca uma confirmação de entrega.
-
-    `TS45-12` — a entrega **não é garantida**. A falha da tentativa é
-    absorvida aqui e **somente aqui**: este é o **único** `except Exception`
-    do módulo, e ele envolve **exclusivamente** a chamada injetada. Zero
-    retry, zero fila, zero contador, zero status de entrega e zero *fallback*
-    para o canal da conversa.
-    """
-    try:
-        tentar_alerta(
-            categoria=categoria,
-            pendente_preservado=pendente_preservado,
-            correlacao=correlacao,
-        )
-    except Exception:
-        return

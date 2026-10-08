@@ -531,3 +531,24 @@ def test_alvo_humano_unico_fora_de_atendimento_humano_falha_fechado(
     )
     with pytest.raises(ValueError, match="fora de atendimento_humano"):
         coordenar_etapas_4_e_5(entrada, normalizada, projecoes, deps_fake)
+
+
+def test_alvo_obrigatorio_ausente_falha_fechado(deps_fake, entrada, normalizada, monkeypatch):
+    _fixar_decisao(
+        monkeypatch,
+        _decisao(Identidade.ATENDIMENTO_ATIVO, None, CriterioIdentidade.INERCIA_ATENDIMENTO_ATIVO),
+    )
+    with pytest.raises(ValueError, match="sem alvo obrigatório"):
+        coordenar_etapas_4_e_5(entrada, normalizada, _projecoes(), deps_fake)
+    _sem_efeito(deps_fake, normalizada.chave_idempotencia)
+
+
+def test_decisao_fora_do_vocabulario_falha_fechado(deps_fake, entrada, normalizada, monkeypatch):
+    # Identidade None com critério que não é primeiro contato nem E4.
+    _fixar_decisao(
+        monkeypatch,
+        _decisao(None, None, CriterioIdentidade.INERCIA_ATENDIMENTO_ATIVO),
+    )
+    with pytest.raises(ValueError, match="fora do vocabulário"):
+        coordenar_etapas_4_e_5(entrada, normalizada, _projecoes(), deps_fake)
+    _sem_efeito(deps_fake, normalizada.chave_idempotencia)

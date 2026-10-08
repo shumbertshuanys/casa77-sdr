@@ -1031,7 +1031,8 @@ def test_a_captura_ts45_contem_exatamente_as_sete_classes_nomeadas() -> None:
     assert len(set(nomes)) == 7
 
 
-def test_existe_exatamente_um_except_exception_e_ele_envolve_so_o_alerta() -> None:
+def test_nenhum_except_exception_no_modulo_o_alerta_isolado_e_compartilhado() -> None:
+    """A única tentativa isolada vive em `alerta_operacional` (provada lá)."""
     arvore = arvore_do_modulo()
     genericos = [
         handler
@@ -1040,33 +1041,13 @@ def test_existe_exatamente_um_except_exception_e_ele_envolve_so_o_alerta() -> No
         and isinstance(handler.type, ast.Name)
         and handler.type.id == "Exception"
     ]
-    assert len(genericos) == 1
-
-    donos = [
-        no
+    assert genericos == []
+    chamados = {
+        no.func.id
         for no in ast.walk(arvore)
-        if isinstance(no, ast.FunctionDef)
-        and any(genericos[0] is filho for filho in ast.walk(no))
-    ]
-    assert [no.name for no in donos] == ["_tentar_alerta_operacional"]
-
-    (tentativa,) = [
-        no
-        for no in ast.walk(arvore)
-        if isinstance(no, ast.Try) and genericos[0] in no.handlers
-    ]
-    assert len(tentativa.body) == 1
-    corpo = tentativa.body[0]
-    assert isinstance(corpo, ast.Expr)
-    assert isinstance(corpo.value, ast.Call)
-    assert isinstance(corpo.value.func, ast.Name)
-    assert corpo.value.func.id == "tentar_alerta"
-    assert corpo.value.args == []
-    assert sorted(palavra.arg for palavra in corpo.value.keywords) == [
-        "categoria",
-        "correlacao",
-        "pendente_preservado",
-    ]
+        if isinstance(no, ast.Call) and isinstance(no.func, ast.Name)
+    }
+    assert "preservar_e_alertar" in chamados
 
 
 def test_nenhum_except_value_error_e_nenhum_except_base_exception() -> None:
@@ -1133,6 +1114,7 @@ def test_apenas_imports_permitidos() -> None:
         "__future__",
         "collections.abc",
         "datetime",
+        "casa77_sdr.alerta_operacional",
         "casa77_sdr.context",
         "casa77_sdr.eligibility",
         "casa77_sdr.normalization",

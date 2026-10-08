@@ -29,6 +29,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from enum import StrEnum
 
+from casa77_sdr.alerta_operacional import preservar_e_alertar
 from casa77_sdr.context import ProjecoesIdentidadeEtapa3
 from casa77_sdr.hydration import AtendimentoHidratado, hidratar
 from casa77_sdr.identity import (
@@ -215,39 +216,11 @@ def _preservar_e_alertar(
     persistencia: PersistenciaOperacional,
     tentar_alerta: Callable[..., object],
 ) -> None:
-    """Preserva o pendente e **sempre** tenta o alerta, mesmo se preservar falhar."""
-    pendente_preservado = False
-    try:
-        persistencia.preservar_pendente(_pendente(entrada, entrada_normalizada))
-        pendente_preservado = True
-    finally:
-        _tentar_alerta_operacional(
-            tentar_alerta,
-            categoria=categoria,
-            pendente_preservado=pendente_preservado,
-            correlacao=entrada_normalizada.chave_idempotencia,
-        )
-
-
-def _tentar_alerta_operacional(
-    tentar_alerta: Callable[..., object],
-    *,
-    categoria: str,
-    pendente_preservado: bool,
-    correlacao: str,
-) -> None:
-    """Tentativa isolada de alerta (mesmo padrão de `orchestrator`, `TS45-12`/`E4-12`).
-
-    Cópia deliberada: importar de `orchestrator` criaria ciclo de importação
-    quando `processar_mensagem` (em `orchestrator`) passar a usar este módulo.
-    Payload fechado em três campos sanitizados; retorno ignorado. Este é o
-    **único** `except Exception` do módulo e envolve só a chamada injetada.
-    """
-    try:
-        tentar_alerta(
-            categoria=categoria,
-            pendente_preservado=pendente_preservado,
-            correlacao=correlacao,
-        )
-    except Exception:
-        return
+    """Preserva o pendente e **sempre** tenta o alerta (`alerta_operacional`)."""
+    preservar_e_alertar(
+        persistencia=persistencia,
+        pendente=_pendente(entrada, entrada_normalizada),
+        categoria=categoria,
+        correlacao=entrada_normalizada.chave_idempotencia,
+        tentar_alerta=tentar_alerta,
+    )
