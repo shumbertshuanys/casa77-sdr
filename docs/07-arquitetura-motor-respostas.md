@@ -11,6 +11,11 @@ Deriva de `docs/02-fluxo-comercial.md`, `docs/03-regras-de-conversa.md`,
 **Estado de implementação e progresso não vivem aqui**: vivem em `docs/00-estado-atual.md`,
 confrontado com a `main`. **Histórico técnico não vive aqui**: vive no Git e no GitHub.
 
+**Regime de manutenção (governança v3).** Este documento é a referência dos contratos já
+vigentes. Ele **não cresce por microdecisão**: decisões técnicas novas ficam registradas na
+descrição do PR que as implementa, e este arquivo só muda quando um contrato vigente muda de
+verdade. Em divergência, código e testes aprovados na `main` prevalecem.
+
 **Dado comercial não vive aqui.** Preço, capacidade, pacote, horário, data bloqueada e
 condição são lidos de `knowledge/casa77.yaml` em tempo de execução; campos são referenciados
 pelo nome.
