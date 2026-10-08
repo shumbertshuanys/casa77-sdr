@@ -43,7 +43,12 @@ class BaseMotor:
 
 @dataclass(frozen=True)
 class DependenciasMotor:
-    """Raiz de composição: tudo que o ciclo precisa, sem valores padrão."""
+    """Raiz de composição: tudo que o ciclo precisa, sem valores padrão.
+
+    `entregar_resumo(resumo)` sinaliza falha de entrega **somente** levantando
+    `casa77_sdr.orchestrator.FalhaEntregaResumo`; qualquer outra exceção não é
+    tratada como falha de entrega e se propaga.
+    """
 
     base_motor: BaseMotor
     persistencia: PersistenciaOperacional
