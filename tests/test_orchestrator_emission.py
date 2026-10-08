@@ -269,6 +269,7 @@ def test_assunto_sem_cobertura_emite_r03_e_gera_resumo(base_motor, monkeypatch):
 
     assert final.texto == _texto_aprovado(base_motor, ("R03/F1",))
     assert final.resumo_handoff is not None
+    assert final.texto_encaminhamento == _texto_aprovado(base_motor, ("R08/F1",))
     # R03 não responde a pergunta: sem `E15`; o resumo confirma `E12` → T27.
     assert len(final.decisoes_do_ciclo) == 2
     assert final.decisoes_do_ciclo[1].caminho == (Transicao.T27,)
@@ -323,6 +324,7 @@ def test_validacao_reprovada_substitui_por_r03_e_tenta_alerta(base_motor, monkey
     assert chamadas["n"] == 1  # uma única validação; nenhuma nova redação
     assert len(alerta.chamadas) == 1
     assert alerta.chamadas[0]["correlacao"] == CORRELACAO
+    assert alerta.chamadas[0]["pendente_preservado"] is True
     # Sem resposta comercial concluída: nada de `E15`, nada de transição extra.
     assert final.decisoes_do_ciclo == (pd.decisao,)
     assert contador["n"] == 0
@@ -367,6 +369,7 @@ def test_e15_reentra_apos_resposta_comercial_e_retoma_coleta(base_motor, monkeyp
     assert final.decisoes_do_ciclo[1].caminho == (Transicao.T20,)
     assert final.decisoes_do_ciclo[-1].estado_final is Estado.COLETANDO_DADOS
     assert final.resumo_handoff is None
+    assert final.texto_encaminhamento is None
     assert contador["n"] == 1
 
 
@@ -412,8 +415,10 @@ def test_pedido_de_humano_gera_resumo_e12_sem_texto_aprovado(base_motor):
     assert final.resumo_handoff is not None
     assert [d.caminho for d in final.decisoes_do_ciclo][-1] == (Transicao.T27,)
     assert final.decisoes_do_ciclo[-1].estado_final is Estado.ENCAMINHADO_HUMANO
-    # `EMITIR_MENSAGEM_DE_ENCAMINHAMENTO` não tem fragmento aprovado no projetor.
+    # A mensagem de encaminhamento é a R08 aprovada (docs/04), separada do texto
+    # principal: só é enviada depois da entrega do resumo.
     assert final.texto is None
+    assert final.texto_encaminhamento == _texto_aprovado(base_motor, ("R08/F1",))
 
 
 @pytest.mark.parametrize(
@@ -456,3 +461,20 @@ def test_resumo_nao_contem_preco(base_motor):
                 assert str(valor) not in resumo
                 assert f"{valor:,}".replace(",", ".") not in resumo
     assert MENSAGEM in resumo
+
+
+def test_encaminhamento_reprovado_nao_e_enviado_e_tenta_alerta(base_motor, monkeypatch):
+    original = orchestrator_emission.validar_resposta_final
+
+    def reprova_r08(texto_candidato: object, montada: Any) -> ResultadoValidacaoResposta:
+        if montada.tokens == ("R08/F1",):
+            return ResultadoValidacaoResposta(False, MotivoValidacaoResposta.TEXTO_DIVERGENTE)
+        return original(texto_candidato, montada)
+
+    monkeypatch.setattr(orchestrator_emission, "validar_resposta_final", reprova_r08)
+    alerta = AlertaEspiao()
+    pd, estado = _primeira(_payload(pedido_de_humano=True), base_motor)
+    final = _produzir(pd, estado, base_motor, alerta)
+    assert final.texto_encaminhamento is None
+    assert final.resumo_handoff is not None
+    assert len(alerta.chamadas) == 1

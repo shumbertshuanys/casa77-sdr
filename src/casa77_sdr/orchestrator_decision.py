@@ -56,7 +56,7 @@ from casa77_sdr.qualification import DadosQualificacao, Qualificacao, qualificar
 from casa77_sdr.rules import avaliar_regras
 from casa77_sdr.state_machine import CondicoesCiclo, DecisaoMaquina, Evento, decidir
 
-__all__ = ["PrimeiraDecisao", "decidir_primeira_chamada"]
+__all__ = ["PrimeiraDecisao", "dados_para_aplicabilidade", "decidir_primeira_chamada"]
 
 #: Fotografia factual sem calendário integrado: nenhuma consulta válida.
 _FATOS_RUNTIME_SEM_CALENDARIO = "consulta_calendario_valida"
@@ -98,7 +98,7 @@ def decidir_primeira_chamada(
     q_provisoria = qualificar(dados, violacoes, (), base)
 
     # 3–5. S2-D8. Classe I atravessa intacta: a máquina não executa.
-    aplicabilidade = decidir_aplicabilidade_de_pacote(_dados_para_aplicabilidade(dados), base)
+    aplicabilidade = decidir_aplicabilidade_de_pacote(dados_para_aplicabilidade(dados), base)
     s2d8 = decidir_pendencias_e_cobertura(
         interpretacao,
         q_provisoria,
@@ -146,7 +146,7 @@ def decidir_primeira_chamada(
     )
 
 
-def _dados_para_aplicabilidade(dados: DadosQualificacao) -> DadosExtraidos:
+def dados_para_aplicabilidade(dados: DadosQualificacao) -> DadosExtraidos:
     """Projeta o que se sabe do evento (após a etapa 6) para §4.4.4.
 
     A etapa 6 só admite valor de confiança `ALTA`; por isso todo valor vigente é

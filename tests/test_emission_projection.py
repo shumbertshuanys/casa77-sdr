@@ -41,11 +41,15 @@ A = "R97/F1"
 B = "R98/F1"
 C = "R99/F1"
 
-# Os três identificadores materializados nesta versão são `R03/F1`, `R05/F1` e
-# `R06/F1` — os dois primeiros logo abaixo, o terceiro adiante. Eles são lidos
+# Os quatro identificadores materializados nesta versão são `R03/F1`, `R05/F1`,
+# `R08/F1` e `R06/F1` — os três primeiros logo abaixo, o quarto adiante. Eles são lidos
 # da própria tabela privada, nunca copiados — ver `test_pe_t16`.
 LACUNA = "R03/F1"
 FALLBACK = "R05/F1"
+
+# Mensagem de encaminhamento de T27 (`docs/04`: e a resposta aprovada R08).
+# Mandatorio puro e estatico, como a lacuna (ruling T5 do orquestrador M2).
+ENCAMINHAMENTO = "R08/F1"
 
 # A ação de T15, dona da primeira dupla rota autorizada (PE-13).
 ACAO_T15 = AcaoMaquina.INFORMAR_NAO_CONFIRMACAO_DE_DISPONIBILIDADE
@@ -976,8 +980,8 @@ def test_pe_t15_tabela_e_literal_e_nao_gerada() -> None:
 # PE-T16 — exatamente uma contribuição materializada
 
 
-def test_pe_t16_exatamente_tres_acoes_contribuem() -> None:
-    """Lacuna, *fallback* de T15 e visita — e mais nenhuma das outras 17."""
+def test_pe_t16_exatamente_quatro_acoes_contribuem() -> None:
+    """Visita, lacuna, *fallback* de T15 e encaminhamento — e nenhuma das outras 16."""
     tabela = _tabela()
     com_token = {acao: tokens for acao, tokens in tabela.items() if tokens}
 
@@ -985,7 +989,9 @@ def test_pe_t16_exatamente_tres_acoes_contribuem() -> None:
         ACAO_T16,
         AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO,
         ACAO_T15,
+        AcaoMaquina.EMITIR_MENSAGEM_DE_ENCAMINHAMENTO,
     ]
+    assert com_token[AcaoMaquina.EMITIR_MENSAGEM_DE_ENCAMINHAMENTO] == (ENCAMINHAMENTO,)
     assert com_token[AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO] == (LACUNA,)
     assert com_token[ACAO_T15] == (FALLBACK,)
     assert com_token[ACAO_T16] == (VISITA,)
@@ -997,7 +1003,6 @@ def test_pe_t16_exatamente_tres_acoes_contribuem() -> None:
         "R01/F1",
         "R05/F2",
         "R05/F3",
-        "R08/F1",
         "R15/F1",
     ],
 )
@@ -1045,7 +1050,11 @@ def test_pe_t17_mandatorios_tem_rotulo_canonico_emitivel(
         assert consultar_status(indice_real, token) == "APROVADO"
 
 
-@pytest.mark.parametrize("token", [LACUNA, FALLBACK], ids=["lacuna", "fallback"])
+@pytest.mark.parametrize(
+    "token",
+    [LACUNA, FALLBACK, ENCAMINHAMENTO],
+    ids=["lacuna", "fallback", "encaminhamento"],
+)
 def test_pe_t17_estaticos_nao_tem_binding_algum(
     indice_real: dict[str, Any], token: str
 ) -> None:
@@ -1078,11 +1087,11 @@ def test_pe_t17_visita_e_condicionada_e_nao_depende_de_runtime(
     assert "RUNTIME_AUTORITATIVO" not in origens
 
 
-def test_pe_t17_hoje_existem_exatamente_tres_materializados() -> None:
+def test_pe_t17_hoje_existem_exatamente_quatro_materializados() -> None:
     declarados = [token for tokens in _tabela().values() for token in tokens]
 
-    assert len(declarados) == 3
-    assert set(declarados) == {LACUNA, FALLBACK, VISITA}
+    assert len(declarados) == 4
+    assert set(declarados) == {LACUNA, FALLBACK, VISITA, ENCAMINHAMENTO}
 
 
 # ---------------------------------------------------------------------------

@@ -19,7 +19,9 @@ Coordena, sobre a `PrimeiraDecisao` das etapas 6–7, a cadeia vigente de
 
 Ação sem fragmento aprovado na tabela do projetor **não produz texto**; sem
 fragmento algum, `texto is None` (ruling T5). Estado `atendimento_humano` ou
-`SILENCIAR_RESPOSTA_AUTOMATICA` → `texto is None`, sem fechamento.
+`SILENCIAR_RESPOSTA_AUTOMATICA` → `texto is None`, sem fechamento. A mensagem
+de encaminhamento (`R08`, ação de T27) sai em `texto_encaminhamento`, nunca em
+`texto`.
 
 **Fechamento** (ruling T5, doc 06 §2.2/§4.2):
 
@@ -48,7 +50,7 @@ from casa77_sdr.fact_selection import materializar_fatos_autorizados
 from casa77_sdr.fragment_snapshot import montar_fotografia_fragmento
 from casa77_sdr.handoff_summary import codigo_pacote_aplicavel, montar_resumo_handoff
 from casa77_sdr.motor_deps import BaseMotor
-from casa77_sdr.orchestrator_decision import PrimeiraDecisao, _dados_para_aplicabilidade
+from casa77_sdr.orchestrator_decision import PrimeiraDecisao, dados_para_aplicabilidade
 from casa77_sdr.pricing_applicability import decidir_aplicabilidade_de_pacote
 from casa77_sdr.response_assembly import RespostaMontada, montar_resposta_final
 from casa77_sdr.response_composition import compor_textos_emitiveis
@@ -78,11 +80,16 @@ class TextoFinal:
     `decisoes_do_ciclo` começa **sempre** pela primeira decisão, seguida das
     decisões de `E15` e/ou `E12` quando feitas (1 a 3 no total).
     `resumo_handoff` existe quando `E12` foi confirmado.
+    `texto_encaminhamento` é a mensagem de encaminhamento ao interessado (`R08`,
+    `docs/04`) projetada das ações das decisões de **fechamento**. Fica
+    **separada** de `texto` porque só pode ser enviada **depois** da entrega
+    bem-sucedida do resumo (doc 06 §10, `docs/07` §5 etapa 14).
     """
 
     texto: str | None
     decisoes_do_ciclo: tuple[DecisaoMaquina, ...]
     resumo_handoff: str | None
+    texto_encaminhamento: str | None = None
 
 
 def produzir_texto_final(
@@ -123,7 +130,14 @@ def produzir_texto_final(
             decidir(decisoes[-1].estado_final, (Evento.E12,), pd.qualificacao, pd.condicoes)
         )
 
-    return TextoFinal(texto=texto, decisoes_do_ciclo=tuple(decisoes), resumo_handoff=resumo)
+    return TextoFinal(
+        texto=texto,
+        decisoes_do_ciclo=tuple(decisoes),
+        resumo_handoff=resumo,
+        texto_encaminhamento=_texto_encaminhamento(
+            tuple(decisoes[1:]), base_motor, tentar_alerta, correlacao
+        ),
+    )
 
 
 def _silencio(estado_inicial: Estado, decisao: DecisaoMaquina) -> bool:
@@ -161,13 +175,44 @@ def _texto_validado(
     # Etapas 11–12.
     if validar_resposta_final(candidato, montada).aprovado:
         return candidato, bool(autorizados)
+    _alertar_reprovacao(tentar_alerta, correlacao)
+    return _montar(base_motor, (_LACUNA,)).texto, False
+
+
+def _texto_encaminhamento(
+    fechamento: tuple[DecisaoMaquina, ...],
+    base_motor: BaseMotor,
+    tentar_alerta: Callable[..., object],
+    correlacao: str,
+) -> str | None:
+    """Mensagem de encaminhamento a partir das ações de `E15`/`E12`.
+
+    PE-2 restringe a projeção do **texto principal** às ações da **primeira**
+    decisão; as ações do fechamento são projetadas **à parte**, sem cobertura,
+    em ordem e sem repetição (primeira ocorrência). Reprovada a validação, nada
+    é enviado ao interessado — não existe substituto aprovado para o
+    encaminhamento — e o alerta é tentado.
+    """
+    acoes = tuple(dict.fromkeys(a for decisao in fechamento for a in decisao.acoes))
+    projetados = projetar_fragmentos_para_emissao((), acoes)
+    if not projetados:
+        return None
+    montada = _montar(base_motor, projetados)
+    if validar_resposta_final(montada.texto, montada).aprovado:
+        return montada.texto
+    _alertar_reprovacao(tentar_alerta, correlacao)
+    return None
+
+
+def _alertar_reprovacao(tentar_alerta: Callable[..., object], correlacao: str) -> None:
     tentar_alerta_operacional(
         tentar_alerta,
         categoria=CATEGORIA_VALIDACAO_REPROVADA,
-        pendente_preservado=False,
+        # Nada falhou ao preservar: a mensagem do ciclo segue intacta no fluxo
+        # normal (a reprovação não descarta nem altera o processamento).
+        pendente_preservado=True,
         correlacao=correlacao,
     )
-    return _montar(base_motor, (_LACUNA,)).texto, False
 
 
 def _montar(base_motor: BaseMotor, tokens: tuple[str, ...]) -> RespostaMontada:
@@ -185,7 +230,7 @@ def _resumo(
 ) -> str:
     dados = pd.atualizacao.dados_atualizados
     aplicabilidade = decidir_aplicabilidade_de_pacote(
-        _dados_para_aplicabilidade(dados), base_motor.base
+        dados_para_aplicabilidade(dados), base_motor.base
     )
     return montar_resumo_handoff(
         dados=dados,

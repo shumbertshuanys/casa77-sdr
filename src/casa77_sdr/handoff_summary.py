@@ -13,11 +13,20 @@ Decisões de M2 (ruling T5):
   completa fica para depois do M2.
 - **Perguntas em aberto** são as perguntas não respondidas do ciclo (`P5`).
 
+**Saneamento.** Nome, contato, tipo, data, perguntas e mensagem vêm do
+interessado (via LLM) e são preservados literalmente a montante. **Todo** valor
+interpolado passa por `_sanear`: caractere de controle/formato (categoria
+Unicode `C*`) e separador de linha/parágrafo (`Zl`/`Zp`) viram espaço, e
+sequências de espaço colapsam — nenhum valor forja uma linha `Rótulo: valor`.
+Dentro de um item de lista, o separador `;` vira `,`, para que nenhum item
+forje outro.
+
 Sem I/O, sem relógio, sem LLM, sem mutação de entrada.
 """
 
 from __future__ import annotations
 
+import unicodedata
 from typing import Any
 
 from casa77_sdr.pricing_applicability import AplicabilidadePacote
@@ -34,8 +43,8 @@ __all__ = [
 NAO_INFORMADO = "não informado"
 NAO_DETERMINADO = "não determinado"
 
-_SEPARADOR_MOTIVOS = ", "
-_SEPARADOR_PERGUNTAS = "; "
+_SEPARADOR_LISTA = "; "
+_SEPARADOR_NEUTRO = ","
 
 
 def codigo_pacote_aplicavel(
@@ -72,11 +81,11 @@ def montar_resumo_handoff(
         ("Data pretendida", _ou_nao_informado(atendimento.data_nomeada)),
         ("Convidados", _ou_nao_informado(atendimento.convidados)),
         ("Formato", _ou_nao_informado(None if dados.formato is None else dados.formato.value)),
-        ("Pacote aplicável", NAO_DETERMINADO if codigo_pacote is None else codigo_pacote),
-        ("Classificação", qualificacao.resultado.value),
-        ("Motivo do handoff", _SEPARADOR_MOTIVOS.join(motivos) or NAO_INFORMADO),
-        ("Perguntas em aberto", _SEPARADOR_PERGUNTAS.join(perguntas_em_aberto) or NAO_INFORMADO),
-        ("Histórico", historico),
+        ("Pacote aplicável", NAO_DETERMINADO if codigo_pacote is None else _sanear(codigo_pacote)),
+        ("Classificação", _sanear(qualificacao.resultado.value)),
+        ("Motivo do handoff", _lista(motivos)),
+        ("Perguntas em aberto", _lista(perguntas_em_aberto)),
+        ("Histórico", _sanear(historico)),
     )
     return "\n".join(f"{rotulo}: {valor}" for rotulo, valor in linhas)
 
@@ -86,4 +95,23 @@ def _limite(pacote: dict[str, Any]) -> int:
 
 
 def _ou_nao_informado(valor: object) -> str:
-    return NAO_INFORMADO if valor is None else str(valor)
+    if valor is None:
+        return NAO_INFORMADO
+    return _sanear(str(valor)) or NAO_INFORMADO
+
+
+def _lista(itens: tuple[str, ...]) -> str:
+    """Itens saneados, sem o separador dentro de item algum, unidos por `; `."""
+    saneados = (_sanear(item.replace(";", _SEPARADOR_NEUTRO)) for item in itens)
+    return _SEPARADOR_LISTA.join(item for item in saneados if item) or NAO_INFORMADO
+
+
+def _sanear(valor: str) -> str:
+    """Uma linha só: controle/formato e separadores de linha viram espaço."""
+    limpo = "".join(" " if _quebra_ou_controle(c) else c for c in valor)
+    return " ".join(limpo.split())
+
+
+def _quebra_ou_controle(caractere: str) -> bool:
+    categoria = unicodedata.category(caractere)
+    return categoria.startswith("C") or categoria in ("Zl", "Zp")

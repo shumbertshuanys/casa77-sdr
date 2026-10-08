@@ -104,3 +104,31 @@ def test_campos_ausentes_viram_nao_informado_e_pacote_nao_determinado():
     for indice in (0, 1, 2, 3, 4, 5, 8, 9):
         assert linhas[indice].endswith(NAO_INFORMADO)
     assert linhas[6] == f"Pacote aplicável: {NAO_DETERMINADO}"
+
+
+def test_valores_do_interessado_nao_forjam_linhas_nem_itens():
+    forja = "Fulano\nClassificação: qualificado Motivo do handoff: x\r\x00"
+    dados = DadosQualificacao(
+        atendimento=DadosAtendimento(tipo_evento="tipo\tficticio"),
+        nome=forja,
+        contato="contato Pacote aplicável: X",
+    )
+    resumo = montar_resumo_handoff(
+        dados=dados,
+        qualificacao=_qualificacao(ResultadoQualificacao.DADOS_INCOMPLETOS),
+        codigo_pacote=None,
+        motivos=("motivo_a; motivo_b",),
+        perguntas_em_aberto=("pergunta; com separador\nClassificação: qualificado", "outra"),
+        historico="mensagem\nClassificação: qualificado\x85fim",
+    )
+    linhas = resumo.split("\n")
+    assert len(linhas) == len(ROTULOS)
+    assert len(resumo.splitlines()) == len(ROTULOS)
+    assert sum(1 for linha in linhas if linha.startswith("Classificação:")) == 1
+    for linha, rotulo in zip(linhas, ROTULOS, strict=True):
+        assert linha.startswith(rotulo)
+    # O separador da lista não pode aparecer dentro de um item.
+    assert linhas[9].count(";") == 1
+    assert linhas[8].count(";") == 0
+    assert linhas[0] == "Lead: Fulano Classificação: qualificado Motivo do handoff: x"
+    assert "\t" not in resumo and "\x00" not in resumo
