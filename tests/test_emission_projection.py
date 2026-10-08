@@ -24,6 +24,7 @@ from casa77_sdr.fragment_emissibility import FotografiaFragmento
 from casa77_sdr.response_index_load import carregar_indice
 from casa77_sdr.response_index_status import consultar_status
 from casa77_sdr.response_index_tokens import derivar_tokens_do_indice
+from casa77_sdr.rules import MotivoViolacao
 from casa77_sdr.state_machine import AcaoMaquina
 
 RAIZ = Path(__file__).resolve().parents[1]
@@ -86,13 +87,55 @@ def _tabela() -> dict[AcaoMaquina, tuple[str, ...]]:
 # Ações cuja contribuição declarada é vazia, escolhidas para cobrir **as duas**
 # naturezas exigidas: textual e não textual.
 # `INFORMAR_CONDICOES_DE_VISITA` deixou de servir de exemplo: ela passou a ter
-# contribuicao materializada (`R06/F1`). `INFORMAR_REGRA_INCOMPATIVEL` continua
-# sendo exemplo **legitimo** de acao **textual** sem unidade aprovada: a
-# superficie da **incompatibilidade dependente de motivo** permanece
-# explicitamente aberta no item 22 de `docs/07` §12, e `PE-7` continua valendo
-# sobre ela — `()` diz **somente** que esta fronteira nada acrescenta.
-ACAO_TEXTUAL_SEM_FRAGMENTO = AcaoMaquina.INFORMAR_REGRA_INCOMPATIVEL
+# contribuicao materializada (`R06/F1`), e `INFORMAR_REGRA_INCOMPATIVEL` passou a
+# contribuir por motivo de violacao no M2.1 (PE-23). `PERGUNTAR_FORMATO` e o
+# exemplo **legitimo** de acao **textual** sem unidade aprovada: o formato nao e
+# perguntado, por decisao do Victor (2026-10-08) — `()` diz **somente** que esta
+# fronteira nada acrescenta (PE-7).
+ACAO_TEXTUAL_SEM_FRAGMENTO = AcaoMaquina.PERGUNTAR_FORMATO
 ACAO_NAO_TEXTUAL = AcaoMaquina.PREPARAR_RESUMO
+
+# M2.1 — superficies conversacionais aprovadas (identificadores estruturais).
+SAUDACAO = "R01/F1"
+DESPEDIDA = "R15/F1"
+TIPO_NAO_ACEITO = "R17/F1"
+PERGUNTA_NOME = "R31/F1"
+PERGUNTA_TIPO = "R31/F2"
+PERGUNTA_DATA = "R31/F3"
+PERGUNTA_CONVIDADOS = "R31/F4"
+PERGUNTA_CONTATO = "R31/F5"
+RETOMADA = "R32/F1"
+ACIMA_DA_CAPACIDADE = "R33/F1"
+HORARIO_LIMITE = "R33/F2"
+RESSALVA = "R34/F1"
+REFORCO = "R35/F1"
+
+ACAO_SAUDACAO = AcaoMaquina.APRESENTAR_ATENDIMENTO_INICIAL
+ACAO_PERGUNTA = AcaoMaquina.PERGUNTAR_PROXIMO_CAMPO_AUSENTE
+ACAO_RETOMADA = AcaoMaquina.RETOMAR_COLETA_SEM_REPETIR
+ACAO_INCOMPATIVEL = AcaoMaquina.INFORMAR_REGRA_INCOMPATIVEL
+ACAO_RESSALVA = AcaoMaquina.INFORMAR_RESSALVA_DE_CAPACIDADE
+
+# Classe condicionada do M2.1 (tem *bindings*), fora `R06/F1`.
+CONDICIONADOS = (SAUDACAO, TIPO_NAO_ACEITO, ACIMA_DA_CAPACIDADE, RESSALVA)
+# Classe estatica (zero *bindings*).
+ESTATICOS = (
+    LACUNA,
+    FALLBACK,
+    ENCAMINHAMENTO,
+    DESPEDIDA,
+    PERGUNTA_NOME,
+    PERGUNTA_TIPO,
+    PERGUNTA_DATA,
+    PERGUNTA_CONVIDADOS,
+    PERGUNTA_CONTATO,
+    RETOMADA,
+    REFORCO,
+)
+
+
+def _fotografar_emitivel(token: str) -> FotografiaFragmento:
+    return EMITIVEL
 
 
 # ---------------------------------------------------------------------------
@@ -626,7 +669,11 @@ def test_pe_t6_todas_as_acoes_sem_contribuicao_sao_aceitas() -> None:
     tabela = _tabela()
     vazias = tuple(acao for acao, tokens in tabela.items() if not tokens)
 
-    assert projetar_fragmentos_para_emissao((A,), vazias) == (A,)
+    # As acoes de selecao por dado estruturado (PE-21–PE-23) tambem nada
+    # acrescentam quando o dado estruturado e vazio.
+    assert projetar_fragmentos_para_emissao(
+        (A,), vazias, campos_ausentes=(), motivos_violacao=()
+    ) == (A,)
 
 
 # ---------------------------------------------------------------------------
@@ -818,7 +865,9 @@ def test_pe_t13_importa_somente_o_necessario() -> None:
     """A autoridade de emissibilidade entra; `response_assertia` **não**."""
     assert _modulos_importados(MODULO_PE) == {
         "__future__",
+        "collections.abc",
         "casa77_sdr.fragment_emissibility",
+        "casa77_sdr.rules",
         "casa77_sdr.state_machine",
     }
 
@@ -980,37 +1029,48 @@ def test_pe_t15_tabela_e_literal_e_nao_gerada() -> None:
 # PE-T16 — exatamente uma contribuição materializada
 
 
-def test_pe_t16_exatamente_quatro_acoes_contribuem() -> None:
-    """Visita, lacuna, *fallback* de T15 e encaminhamento — e nenhuma das outras 16."""
+def _declarados() -> list[str]:
+    """Todos os tokens que a fronteira pode emitir: tabela fixa + selecoes."""
+    import casa77_sdr.emission_projection as modulo
+
+    declarados = [token for tokens in _tabela().values() for token in tokens]
+    declarados.extend(modulo._PERGUNTA_POR_CAMPO.values())
+    declarados.append(modulo._RETOMADA)
+    declarados.extend(modulo._INCOMPATIVEL_POR_MOTIVO.values())
+    return declarados
+
+
+def test_pe_t16_acoes_com_contribuicao_fixa() -> None:
+    """Tabela fixa: oito acoes contribuem; as tres de selecao ficam com `()`."""
     tabela = _tabela()
     com_token = {acao: tokens for acao, tokens in tabela.items() if tokens}
 
     assert list(com_token) == [
+        ACAO_SAUDACAO,
+        ACAO_RESSALVA,
         ACAO_T16,
         AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO,
         ACAO_T15,
+        AcaoMaquina.DESPEDIR_SEM_CONTINUIDADE,
+        AcaoMaquina.REFORCAR_ENCAMINHAMENTO,
         AcaoMaquina.EMITIR_MENSAGEM_DE_ENCAMINHAMENTO,
     ]
+    assert com_token[ACAO_SAUDACAO] == (SAUDACAO,)
+    assert com_token[ACAO_RESSALVA] == (RESSALVA,)
+    assert com_token[AcaoMaquina.DESPEDIR_SEM_CONTINUIDADE] == (DESPEDIDA,)
+    assert com_token[AcaoMaquina.REFORCAR_ENCAMINHAMENTO] == (REFORCO,)
     assert com_token[AcaoMaquina.EMITIR_MENSAGEM_DE_ENCAMINHAMENTO] == (ENCAMINHAMENTO,)
     assert com_token[AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO] == (LACUNA,)
     assert com_token[ACAO_T15] == (FALLBACK,)
     assert com_token[ACAO_T16] == (VISITA,)
+    for acao in (ACAO_PERGUNTA, ACAO_RETOMADA, ACAO_INCOMPATIVEL):
+        assert tabela[acao] == ()
 
 
-@pytest.mark.parametrize(
-    "nao_mapeado",
-    [
-        "R01/F1",
-        "R05/F2",
-        "R05/F3",
-        "R15/F1",
-    ],
-)
+@pytest.mark.parametrize("nao_mapeado", ["R05/F2", "R05/F3", HORARIO_LIMITE])
 def test_pe_t16_nenhum_outro_fragmento_e_mapeado(nao_mapeado: str) -> None:
-    """`R05/F2` e `R05/F3` dependem do runtime; `R01`/`R15` aguardam aprovação."""
-    declarados = {token for tokens in _tabela().values() for token in tokens}
-
-    assert nao_mapeado not in declarados
+    """`R05/F2`/`R05/F3` dependem do runtime; `R33/F2` ainda nao tem motivo de violacao."""
+    assert nao_mapeado not in _declarados()
 
 
 # ---------------------------------------------------------------------------
@@ -1034,7 +1094,7 @@ def test_pe_t17_mandatorios_existem_no_dominio_canonico(
     indice_real: dict[str, Any],
 ) -> None:
     dominio = set(derivar_tokens_do_indice(indice_real))
-    declarados = [token for tokens in _tabela().values() for token in tokens]
+    declarados = _declarados()
 
     assert declarados, "a tabela precisa declarar ao menos um mandatório"
     for token in declarados:
@@ -1044,17 +1104,11 @@ def test_pe_t17_mandatorios_existem_no_dominio_canonico(
 def test_pe_t17_mandatorios_tem_rotulo_canonico_emitivel(
     indice_real: dict[str, Any],
 ) -> None:
-    declarados = [token for tokens in _tabela().values() for token in tokens]
-
-    for token in declarados:
+    for token in _declarados():
         assert consultar_status(indice_real, token) == "APROVADO"
 
 
-@pytest.mark.parametrize(
-    "token",
-    [LACUNA, FALLBACK, ENCAMINHAMENTO],
-    ids=["lacuna", "fallback", "encaminhamento"],
-)
+@pytest.mark.parametrize("token", ESTATICOS)
 def test_pe_t17_estaticos_nao_tem_binding_algum(
     indice_real: dict[str, Any], token: str
 ) -> None:
@@ -1087,11 +1141,23 @@ def test_pe_t17_visita_e_condicionada_e_nao_depende_de_runtime(
     assert "RUNTIME_AUTORITATIVO" not in origens
 
 
-def test_pe_t17_hoje_existem_exatamente_quatro_materializados() -> None:
-    declarados = [token for tokens in _tabela().values() for token in tokens]
+@pytest.mark.parametrize("token", CONDICIONADOS)
+def test_pe_t17_condicionados_tem_bindings_sem_runtime(
+    indice_real: dict[str, Any], token: str
+) -> None:
+    """Classe **condicionada** do M2.1: *bindings* sim, runtime nunca (PE-24)."""
+    fragmento = _fragmento_do_token(indice_real, token)
 
-    assert len(declarados) == 4
-    assert set(declarados) == {LACUNA, FALLBACK, VISITA, ENCAMINHAMENTO}
+    assert fragmento["bindings"] != []
+    origens = {binding["origem"] for binding in fragmento["bindings"]}
+    assert "RUNTIME_AUTORITATIVO" not in origens
+
+
+def test_pe_t17_hoje_existem_exatamente_dezesseis_materializados() -> None:
+    declarados = _declarados()
+
+    assert len(declarados) == len(set(declarados)) == 16
+    assert set(declarados) == {VISITA, *ESTATICOS, *CONDICIONADOS}
 
 
 # ---------------------------------------------------------------------------
@@ -1134,3 +1200,272 @@ def test_pe_t18_mensagens_nao_ecoam_conteudo(
         "acoes",
         "acoes.item",
     }
+
+
+# ---------------------------------------------------------------------------
+# PE-T26 — M2.1: saudacao, despedida, ressalva e reforco (tabela fixa)
+
+
+def test_pe_t26_saudacao_vem_antes_da_cobertura() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (A, B), (ACAO_SAUDACAO,), fotografar=_fotografar_emitivel
+    )
+
+    assert resultado == (SAUDACAO, A, B)
+
+
+def test_pe_t26_saudacao_nao_emitivel_nao_acrescenta_nada() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (A,),
+        (ACAO_SAUDACAO,),
+        fotografar=lambda token: FotografiaFragmento(status=BLOQUEADO),
+    )
+
+    assert resultado == (A,)
+
+
+@pytest.mark.parametrize(
+    "fotografar",
+    [None, "fotografar", lambda token: None, lambda token: "fotografia"],
+    ids=["ausente", "texto", "devolve_nulo", "devolve_texto"],
+)
+def test_pe_t26_condicionado_sem_fotografar_valido_fecha(fotografar: object) -> None:
+    with pytest.raises(ProjecaoEmissaoNaoAvaliavel) as erro:
+        projetar_fragmentos_para_emissao((), (ACAO_SAUDACAO,), fotografar=fotografar)
+
+    assert str(erro.value) == "tipo_invalido: fotografar"
+
+
+def test_pe_t26_fotografar_recebe_o_token_e_e_chamado_uma_vez() -> None:
+    vistos: list[str] = []
+
+    def fotografar(token: str) -> FotografiaFragmento:
+        vistos.append(token)
+        return EMITIVEL
+
+    projetar_fragmentos_para_emissao(
+        (), (ACAO_SAUDACAO, ACAO_SAUDACAO), fotografar=fotografar
+    )
+
+    assert vistos == [SAUDACAO]
+
+
+def test_pe_t26_fotografar_irrelevante_sem_condicionado() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (A,), (AcaoMaquina.DESPEDIR_SEM_CONTINUIDADE,), fotografar="irrelevante"
+    )
+
+    assert resultado == (A, DESPEDIDA)
+
+
+@pytest.mark.parametrize(
+    ("acao", "token"),
+    [
+        (AcaoMaquina.DESPEDIR_SEM_CONTINUIDADE, DESPEDIDA),
+        (AcaoMaquina.REFORCAR_ENCAMINHAMENTO, REFORCO),
+    ],
+    ids=["despedida", "reforco"],
+)
+def test_pe_t26_estaticos_entram_sem_fotografia(acao: AcaoMaquina, token: str) -> None:
+    assert projetar_fragmentos_para_emissao((A,), (acao,)) == (A, token)
+
+
+def test_pe_t26_ressalva_condicionada_entra_depois_da_cobertura() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (A,), (ACAO_RESSALVA,), fotografar=_fotografar_emitivel
+    )
+
+    assert resultado == (A, RESSALVA)
+
+
+# ---------------------------------------------------------------------------
+# PE-T27 — pergunta do proximo campo ausente (PE-21)
+
+
+@pytest.mark.parametrize(
+    ("campos", "esperado"),
+    [
+        (("nome", "contato", "tipo_evento"), PERGUNTA_NOME),
+        (("contato", "tipo_evento"), PERGUNTA_CONTATO),
+        (("tipo_evento", "data_nomeada"), PERGUNTA_TIPO),
+        (("data_nomeada", "convidados"), PERGUNTA_DATA),
+        (("convidados",), PERGUNTA_CONVIDADOS),
+    ],
+)
+def test_pe_t27_pergunta_o_primeiro_campo_ausente(
+    campos: tuple[str, ...], esperado: str
+) -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (), (ACAO_PERGUNTA,), campos_ausentes=campos
+    )
+
+    assert resultado == (esperado,)
+
+
+@pytest.mark.parametrize(
+    "campos",
+    [(), ("formato",), ("formato", "nome")],
+    ids=["nenhum", "formato", "formato_primeiro"],
+)
+def test_pe_t27_sem_pergunta_aprovada_nao_acrescenta_nada(
+    campos: tuple[str, ...],
+) -> None:
+    """`formato` nao e perguntado (decisao do Victor): so o PRIMEIRO campo conta."""
+    resultado = projetar_fragmentos_para_emissao(
+        (A,), (ACAO_PERGUNTA,), campos_ausentes=campos
+    )
+
+    assert resultado == (A,)
+
+
+@pytest.mark.parametrize(
+    "campos",
+    [None, ["nome"], ("nome", 1), "nome"],
+    ids=["ausente", "lista", "item_invalido", "texto"],
+)
+def test_pe_t27_campos_invalidos_fecham(campos: object) -> None:
+    with pytest.raises(ProjecaoEmissaoNaoAvaliavel) as erro:
+        projetar_fragmentos_para_emissao((), (ACAO_PERGUNTA,), campos_ausentes=campos)
+
+    assert str(erro.value) == "tipo_invalido: campos_ausentes"
+
+
+def test_pe_t27_campos_irrelevantes_sem_acao_de_coleta() -> None:
+    assert projetar_fragmentos_para_emissao((A,), (), campos_ausentes="x") == (A,)
+
+
+# ---------------------------------------------------------------------------
+# PE-T28 — retomada seguida da pergunta, sem pergunta duplicada (PE-22)
+
+
+def test_pe_t28_retomada_e_seguida_da_pergunta() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (), (ACAO_RETOMADA,), campos_ausentes=("contato", "convidados")
+    )
+
+    assert resultado == (RETOMADA, PERGUNTA_CONTATO)
+
+
+def test_pe_t28_retomada_e_pergunta_no_mesmo_ciclo_perguntam_uma_vez() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (), (ACAO_PERGUNTA, ACAO_RETOMADA), campos_ausentes=("nome",)
+    )
+
+    assert resultado == (RETOMADA, PERGUNTA_NOME)
+
+
+def test_pe_t28_retomada_sem_pergunta_aprovada_nao_fica_solta() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (A,), (ACAO_RETOMADA,), campos_ausentes=("formato",)
+    )
+
+    assert resultado == (A,)
+
+
+# ---------------------------------------------------------------------------
+# PE-T29 — regra incompativel pelo motivo da violacao (PE-23)
+
+
+@pytest.mark.parametrize(
+    ("motivos", "esperado"),
+    [
+        ((MotivoViolacao.CONVIDADOS_ACIMA_DA_CAPACIDADE,), (ACIMA_DA_CAPACIDADE,)),
+        ((MotivoViolacao.TIPO_NAO_ACEITO,), (TIPO_NAO_ACEITO,)),
+        ((MotivoViolacao.DATA_NAO_ACEITA,), ()),
+        (
+            (
+                MotivoViolacao.TIPO_NAO_ACEITO,
+                MotivoViolacao.CONVIDADOS_ACIMA_DA_CAPACIDADE,
+            ),
+            (TIPO_NAO_ACEITO, ACIMA_DA_CAPACIDADE),
+        ),
+        (
+            (
+                MotivoViolacao.CONVIDADOS_ACIMA_DA_CAPACIDADE,
+                MotivoViolacao.CONVIDADOS_ACIMA_DA_CAPACIDADE,
+            ),
+            (ACIMA_DA_CAPACIDADE,),
+        ),
+        ((), ()),
+    ],
+    ids=["capacidade", "tipo", "data", "dois_motivos", "repetido", "nenhum"],
+)
+def test_pe_t29_fragmento_pelo_motivo(
+    motivos: tuple[MotivoViolacao, ...], esperado: tuple[str, ...]
+) -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (),
+        (ACAO_INCOMPATIVEL, AcaoMaquina.NAO_AVANCAR_COLETA),
+        motivos_violacao=motivos,
+        fotografar=_fotografar_emitivel,
+    )
+
+    assert resultado == esperado
+
+
+def test_pe_t29_motivo_nao_emitivel_nao_acrescenta() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (),
+        (ACAO_INCOMPATIVEL,),
+        motivos_violacao=(MotivoViolacao.CONVIDADOS_ACIMA_DA_CAPACIDADE,),
+        fotografar=lambda token: FotografiaFragmento(status=AGUARDA),
+    )
+
+    assert resultado == ()
+
+
+@pytest.mark.parametrize(
+    "motivos",
+    [None, [MotivoViolacao.TIPO_NAO_ACEITO], ("tipo_nao_aceito",)],
+    ids=["ausente", "lista", "texto_cru"],
+)
+def test_pe_t29_motivos_invalidos_fecham(motivos: object) -> None:
+    with pytest.raises(ProjecaoEmissaoNaoAvaliavel) as erro:
+        projetar_fragmentos_para_emissao(
+            (), (ACAO_INCOMPATIVEL,), motivos_violacao=motivos
+        )
+
+    assert str(erro.value) == "tipo_invalido: motivos_violacao"
+
+
+# ---------------------------------------------------------------------------
+# PE-T30 — ordem da mensagem: saudacao -> cobertura -> demais -> coleta (PE-25)
+
+
+def test_pe_t30_ordem_saudacao_resposta_pergunta() -> None:
+    """Ordem da maquina no 1o contato com dado + visita: T01, T04, T16."""
+    resultado = projetar_fragmentos_para_emissao(
+        (),
+        (ACAO_SAUDACAO, ACAO_PERGUNTA, ACAO_T16),
+        fotografia_r06=EMITIVEL,
+        campos_ausentes=("nome", "contato"),
+        fotografar=_fotografar_emitivel,
+    )
+
+    assert resultado == (SAUDACAO, VISITA, PERGUNTA_NOME)
+
+
+def test_pe_t30_coleta_fica_depois_da_cobertura_e_dos_mandatorios() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (A,),
+        (ACAO_RETOMADA, ACAO_RESSALVA, AcaoMaquina.REFORCAR_ENCAMINHAMENTO),
+        campos_ausentes=("data_nomeada",),
+        fotografar=_fotografar_emitivel,
+    )
+
+    assert resultado == (A, RESSALVA, REFORCO, RETOMADA, PERGUNTA_DATA)
+
+
+@pytest.mark.parametrize(
+    "token", [SAUDACAO, PERGUNTA_NOME, REFORCO], ids=["saudacao", "pergunta", "reforco"]
+)
+def test_pe_t30_colisao_com_a_cobertura_continua_fail_closed(token: str) -> None:
+    with pytest.raises(ProjecaoEmissaoNaoAvaliavel) as erro:
+        projetar_fragmentos_para_emissao(
+            (token,),
+            (ACAO_SAUDACAO, ACAO_PERGUNTA, AcaoMaquina.REFORCAR_ENCAMINHAMENTO),
+            campos_ausentes=("nome",),
+            fotografar=_fotografar_emitivel,
+        )
+
+    assert str(erro.value) == "conflito_origem: fragmentos_autorizados.item"

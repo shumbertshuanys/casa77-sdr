@@ -645,22 +645,22 @@ def test_zero_pergunta_sobre_o_mapa_real(
 # 7. Nao regressao mecanica do corpus e dos vocabularios
 
 
-def test_indice_continua_com_30_rxx(indice: dict[str, Any]) -> None:
-    assert len(indice["respostas"]) == 30
+def test_indice_continua_com_35_rxx(indice: dict[str, Any]) -> None:
+    assert len(indice["respostas"]) == 35
 
 
-def test_indice_continua_com_37_fragmentos(indice: dict[str, Any]) -> None:
-    assert len(derivar_tokens_do_indice(indice)) == 37
+def test_indice_continua_com_47_fragmentos(indice: dict[str, Any]) -> None:
+    assert len(derivar_tokens_do_indice(indice)) == 47
 
 
-def test_indice_continua_com_118_bindings(indice: dict[str, Any]) -> None:
+def test_indice_continua_com_121_bindings(indice: dict[str, Any]) -> None:
     total = sum(
         len(fragmento["bindings"])
         for resposta in indice["respostas"]
         for fragmento in resposta["fragmentos"]
     )
 
-    assert total == 118
+    assert total == 121
 
 
 def test_indice_continua_estruturalmente_valido(indice: dict[str, Any]) -> None:

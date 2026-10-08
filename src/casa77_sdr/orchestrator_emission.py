@@ -164,7 +164,19 @@ def _texto_validado(
         fotografia = montar_fotografia_fragmento(
             _CONDICOES_VISITA, base_motor.consistencia, assertivas_runtime=()
         )
-    projetados = projetar_fragmentos_para_emissao(autorizados, acoes, fotografia_r06=fotografia)
+    qualificacao = pd.qualificacao
+    projetados = projetar_fragmentos_para_emissao(
+        autorizados,
+        acoes,
+        fotografia_r06=fotografia,
+        # M2.1 (PE-21–PE-24): dado estruturado explícito, nunca a qualificação
+        # inteira — o projetor não conhece o `Qualificador`.
+        campos_ausentes=qualificacao.campos_ausentes,
+        motivos_violacao=tuple(v.motivo for v in qualificacao.violacoes),
+        fotografar=lambda token: montar_fotografia_fragmento(
+            token, base_motor.consistencia, assertivas_runtime=()
+        ),
+    )
     if not projetados:
         return None, False
 
@@ -192,8 +204,19 @@ def _texto_encaminhamento(
     em ordem e sem repetição (primeira ocorrência). Reprovada a validação, nada
     é enviado ao interessado — não existe substituto aprovado para o
     encaminhamento — e o alerta é tentado.
+
+    Só a ação de encaminhamento (T27) é projetada aqui: desde o M2.1 a retomada
+    de T20 tem fragmento aprovado, e ela **não** pode sair junto da mensagem de
+    encaminhamento, que só é enviada depois da entrega do resumo.
     """
-    acoes = tuple(dict.fromkeys(a for decisao in fechamento for a in decisao.acoes))
+    acoes = tuple(
+        dict.fromkeys(
+            a
+            for decisao in fechamento
+            for a in decisao.acoes
+            if a is AcaoMaquina.EMITIR_MENSAGEM_DE_ENCAMINHAMENTO
+        )
+    )
     projetados = projetar_fragmentos_para_emissao((), acoes)
     if not projetados:
         return None

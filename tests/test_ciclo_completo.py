@@ -294,12 +294,17 @@ def test_conversa_de_tres_mensagens_avanca_pela_maquina(base_motor):
     # Um único atendimento (a identidade reconheceu o atendimento ativo).
     assert cenario._ids == 1
     assert cenario.produtor.chamadas == 3
-    for r in (r1, r2, r3):
-        # Sem fragmento aprovado para as ações de coleta (ruling T5): o ciclo
-        # grava e marca, mas hoje não há nada aprovado a dizer.
-        assert r.desfecho is DesfechoCiclo.SILENCIOSA
-        assert r.texto_emitido is None
-    assert cenario.envios == []
+    # M2.1: saudação no 1º contato e, depois, a pergunta do primeiro campo
+    # ausente (nome, depois contato — ordem do `Qualificador`).
+    esperados = (
+        _texto_aprovado(base_motor, ("R01/F1",)),
+        _texto_aprovado(base_motor, ("R31/F1",)),
+        _texto_aprovado(base_motor, ("R31/F5",)),
+    )
+    for r, esperado in zip((r1, r2, r3), esperados, strict=True):
+        assert r.desfecho is DesfechoCiclo.RESPONDIDA
+        assert r.texto_emitido == esperado
+    assert cenario.envios == [(CANAL, CONTATO, texto) for texto in esperados]
     assert [e for e in cenario.efeitos() if e in ("criar", "gravar")] == [
         "criar",
         "gravar",

@@ -6,7 +6,7 @@ linha (`LF`/`CRLF`), a delimitação parcial de seção, o envelope do marcador 
 dois estágios, a gramática fechada do `id`, as **sete redações** de `C-A5-X1`
 cobertas por **seis** categorias estruturais, a precedência fixa, o silêncio da
 mensagem de erro, a pureza do módulo de produção, o determinismo e a
-correspondência do corpus real com as **37** unidades humanamente aprovadas em
+correspondência do corpus real com as **47** unidades humanamente aprovadas em
 `C-A5-M5` — e **não** transformam em norma a extração de texto emitível, a
 leitura de status, a unicidade global dos tokens, a prova histórica de
 `C-A5-I6`, uma oitava falha, o índice real ou a bijeção física, que estão
@@ -183,10 +183,20 @@ UNIDADES_APROVADAS = frozenset(
         "R28/F1",
         "R29/F1",
         "R30/F1",
+        "R31/F1",
+        "R31/F2",
+        "R31/F3",
+        "R31/F4",
+        "R31/F5",
+        "R32/F1",
+        "R33/F1",
+        "R33/F2",
+        "R34/F1",
+        "R35/F1",
     }
 )
 
-TOTAL_APROVADO = 37
+TOTAL_APROVADO = 47
 
 
 # ---------------------------------------------------------------------------
@@ -1495,7 +1505,7 @@ def test_falha_repetida_devolve_a_mesma_mensagem():
 
 
 # ---------------------------------------------------------------------------
-# O. Guarda do corpus real — `C-A5-M5`, 37/37
+# O. Guarda do corpus real — `C-A5-M5`, 47/47
 # ---------------------------------------------------------------------------
 
 
@@ -1509,7 +1519,7 @@ def _corpus() -> str:
     return CAMINHO_CORPUS.read_bytes().decode("utf-8")
 
 
-def test_o_corpus_real_produz_trinta_e_sete_tokens():
+def test_o_corpus_real_produz_quarenta_e_sete_tokens():
     assert len(ler_unidades_marcadas(_corpus())) == TOTAL_APROVADO
 
 
@@ -1522,7 +1532,7 @@ def test_o_corpus_real_coincide_com_o_mapeamento_aprovado():
     assert set(ler_unidades_marcadas(_corpus())) == UNIDADES_APROVADAS
 
 
-def test_o_conjunto_aprovado_tem_trinta_e_sete_entradas():
+def test_o_conjunto_aprovado_tem_quarenta_e_sete_entradas():
     assert len(UNIDADES_APROVADAS) == TOTAL_APROVADO
 
 

@@ -98,10 +98,13 @@ def test_silencio_vai_ao_status_e_bot_vai_ao_stdout() -> None:
         entregar_resumo=lambda resumo: None,
     )
     saida: list[str] = []
-    modulo.conversar(iter(["oi"]), saida.append, deps, canal="local", contato="c")
-    assert "desfecho=silenciosa" in saida[0]
-    assert saida[1] == "  (bot sem texto aprovado para esta situação)"
-    assert envios == []
+    # A 1ª mensagem recebe a saudação aprovada (M2.1); a 2ª, sem dado novo nem
+    # pergunta, não tem o que dizer.
+    modulo.conversar(iter(["oi", "oi de novo"]), saida.append, deps, canal="local", contato="c")
+    assert "desfecho=respondida" in saida[0]
+    assert len(envios) == 1
+    assert "desfecho=silenciosa" in saida[1]
+    assert saida[2] == "  (bot sem texto aprovado para esta situação)"
 
 
 class _ProdutorContratoInvalido:

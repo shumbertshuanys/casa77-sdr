@@ -29,7 +29,7 @@ RAIZ = Path(__file__).resolve().parents[1]
 INDICE = RAIZ / "knowledge" / "indice-respostas-aprovadas.yaml"
 MODULO = RAIZ / "src" / "casa77_sdr" / "response_index_status.py"
 
-TOTAL_FRAGMENTOS = 37
+TOTAL_FRAGMENTOS = 47
 
 # Vocabulário canônico de `C-3`. Ele vive **aqui**, no teste, exatamente para
 # provar que **não** vive no módulo sob teste.
@@ -70,7 +70,7 @@ def test_r28_f1_e_aprovado_na_autoridade(indice: dict[str, Any]) -> None:
     assert consultar_status(indice, "R28/F1") == "APROVADO"
 
 
-def test_os_37_tokens_reais_resolvem(indice: dict[str, Any]) -> None:
+def test_os_47_tokens_reais_resolvem(indice: dict[str, Any]) -> None:
     """Todo token do domínio projetado tem status na autoridade."""
     tokens = derivar_tokens_do_indice(indice)
 

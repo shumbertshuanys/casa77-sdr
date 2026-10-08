@@ -15,7 +15,7 @@ respostas:
   - id: R01
     fragmentos:
       - id: F1
-        status: AGUARDA_APROVACAO
+        status: APROVADO
         bindings:
           - nome: localidade_morro_do_moreno
             mecanismo: RENDERIZADO
@@ -392,7 +392,7 @@ respostas:
   - id: R15
     fragmentos:
       - id: F1
-        status: AGUARDA_APROVACAO
+        status: APROVADO
         bindings: []
 
   - id: R16
@@ -864,3 +864,66 @@ respostas:
             origem: YAML
             caminho_yaml: estrutura.piscina.disponivel_para_eventos
             predicado: EH_FALSO
+
+  - id: R31
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings: []
+      - id: F2
+        status: APROVADO
+        bindings: []
+      - id: F3
+        status: APROVADO
+        bindings: []
+      - id: F4
+        status: APROVADO
+        bindings: []
+      - id: F5
+        status: APROVADO
+        bindings: []
+
+  - id: R32
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings: []
+
+  - id: R33
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: convidados_formato_coquetel
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: capacidade.formato_coquetel
+            placeholder: "{{convidados_formato_coquetel}}"
+            formato: inteiro
+      - id: F2
+        status: APROVADO
+        bindings:
+          - nome: horario_limite
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: horarios.horario_limite
+            placeholder: "{{horario_limite}}"
+            formato: hora
+
+  - id: R34
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings:
+          - nome: convidados_sentados
+            mecanismo: RENDERIZADO
+            origem: YAML
+            caminho_yaml: capacidade.convidados_sentados
+            placeholder: "{{convidados_sentados}}"
+            formato: inteiro
+
+  - id: R35
+    fragmentos:
+      - id: F1
+        status: APROVADO
+        bindings: []

@@ -82,14 +82,29 @@ na tabela e colisão entre as duas origens — **fora das duas duplas rotas**
 explicitamente fechadas acima — **fecham**, assim como as variantes
 incompatíveis. Sem resultado parcial, sem correção silenciosa e sem composição
 improvisada.
+
+**Superfícies conversacionais do M2.1 (PE-21–PE-25).** Saudação (`R01/F1`),
+despedida (`R15/F1`), ressalva de capacidade (`R34/F1`) e reforço de
+encaminhamento (`R35/F1`) entram pela tabela fixa. Três ações escolhem o
+fragmento por **dado estruturado** recebido explicitamente, nunca por texto: a
+pergunta de coleta pelo **primeiro** de `campos_ausentes` (`R31/F1`–`F5`), a
+retomada (`R32/F1`) **seguida** dessa mesma pergunta, e a regra incompatível pelo
+**motivo** de cada violação em `motivos_violacao` (`R33/F1` capacidade, `R17/F1`
+tipo não aceito). Tokens com *bindings* (`R01/F1`, `R17/F1`, `R33/F1`,
+`R34/F1`) só entram com veredito da **autoridade única** de emissibilidade sobre
+a fotografia devolvida por `fotografar`; não emitível → zero fragmento (PE-7).
+A mensagem fica **saudação → cobertura → demais mandatórios → coleta**.
 """
 
 from __future__ import annotations
+
+from collections.abc import Callable
 
 from casa77_sdr.fragment_emissibility import (
     FotografiaFragmento,
     avaliar_emissibilidade,
 )
+from casa77_sdr.rules import MotivoViolacao
 from casa77_sdr.state_machine import AcaoMaquina
 
 __all__ = [
@@ -129,6 +144,9 @@ _AUTORIZADOS_ITEM = "fragmentos_autorizados.item"
 _ACOES = "acoes"
 _ACOES_ITEM = "acoes.item"
 _FOTOGRAFIA_R06 = "fotografia_r06"
+_CAMPOS_AUSENTES = "campos_ausentes"
+_MOTIVOS_VIOLACAO = "motivos_violacao"
+_FOTOGRAFAR = "fotografar"
 
 # Mandatorio PURO: ele so chega por esta fronteira, pela acao de lacuna, e nunca
 # por cobertura — colisao cross-source com ele continua fail-closed (PE-10). Ele
@@ -172,6 +190,52 @@ _VARIANTES_INCOMPATIVEIS: frozenset[str] = frozenset({"R05/F2", "R05/F3"})
 _CONDICOES_VISITA = "R06/F1"
 _ACAO_VISITA = AcaoMaquina.INFORMAR_CONDICOES_DE_VISITA
 
+# --- M2.1: superficies conversacionais aprovadas pelo Victor (2026-10-08). ---
+
+# Saudacao do 1o contato. Condicionada: tem bindings `RENDERIZADO` de origem
+# `YAML`, logo so entra com veredito da autoridade unica (PE-24). Vai na FRENTE
+# da cobertura (PE-25).
+_SAUDACAO = "R01/F1"
+# Ressalva de capacidade (so cabe coquetel). Condicionada, como a saudacao.
+_RESSALVA_CAPACIDADE = "R34/F1"
+# Despedida sem continuidade e reforco de encaminhamento: estaticos (zero
+# bindings), como `R03/F1`.
+_DESPEDIDA = "R15/F1"
+_REFORCO_ENCAMINHAMENTO = "R35/F1"
+
+# PE-21. Pergunta de coleta por campo tecnico de `Qualificacao.campos_ausentes`.
+# Tabela FECHADA: campo fora dela (hoje, `formato`, que nao e perguntado por
+# decisao do Victor) nao tem pergunta aprovada e nada acrescenta (PE-7).
+_PERGUNTA_POR_CAMPO: dict[str, str] = {
+    "nome": "R31/F1",
+    "tipo_evento": "R31/F2",
+    "data_nomeada": "R31/F3",
+    "convidados": "R31/F4",
+    "contato": "R31/F5",
+}
+
+# PE-22. Abertura da retomada; so existe seguida da pergunta do proximo campo.
+_RETOMADA = "R32/F1"
+
+# PE-23. Regra incompativel pelo motivo da violacao. Tabela FECHADA: motivo fora
+# dela (hoje, `DATA_NAO_ACEITA`) nada acrescenta (PE-7). `R33/F2` (horario) esta
+# aprovado na base, mas nao ha motivo de violacao de horario: fica sem rota.
+_INCOMPATIVEL_POR_MOTIVO: dict[MotivoViolacao, str] = {
+    MotivoViolacao.TIPO_NAO_ACEITO: "R17/F1",
+    MotivoViolacao.CONVIDADOS_ACIMA_DA_CAPACIDADE: "R33/F1",
+}
+
+# PE-24. Tokens com bindings fora de `R06/F1`: exigem veredito de emissibilidade
+# sobre a fotografia devolvida por `fotografar`.
+_CONDICIONADOS: frozenset[str] = frozenset(
+    {_SAUDACAO, _RESSALVA_CAPACIDADE, *_INCOMPATIVEL_POR_MOTIVO.values()}
+)
+
+_ACAO_SAUDACAO = AcaoMaquina.APRESENTAR_ATENDIMENTO_INICIAL
+_ACAO_PERGUNTA = AcaoMaquina.PERGUNTAR_PROXIMO_CAMPO_AUSENTE
+_ACAO_RETOMADA = AcaoMaquina.RETOMAR_COLETA_SEM_REPETIR
+_ACAO_INCOMPATIVEL = AcaoMaquina.INFORMAR_REGRA_INCOMPATIVEL
+
 # Sentinela local: distingue "ainda nao avaliado" de um veredito booleano. Ela
 # garante **no maximo uma** avaliacao de `R06/F1` por chamada, e morre com a
 # chamada — **zero cache global**.
@@ -185,20 +249,22 @@ _NAO_AVALIADO = object()
 # Tupla vazia diz **somente** que esta fronteira nao acrescenta fragmento
 # aprovado para aquela acao — jamais que a acao foi atendida.
 _FRAGMENTOS_POR_ACAO: dict[AcaoMaquina, tuple[str, ...]] = {
-    AcaoMaquina.APRESENTAR_ATENDIMENTO_INICIAL: (),
+    AcaoMaquina.APRESENTAR_ATENDIMENTO_INICIAL: (_SAUDACAO,),
     AcaoMaquina.RESPONDER_PERGUNTA_COMERCIAL: (),
+    # As tres acoes de selecao por dado estruturado (PE-21–PE-23) tem `()` aqui:
+    # o fragmento delas sai das tabelas fechadas acima, nunca desta.
     AcaoMaquina.PERGUNTAR_PROXIMO_CAMPO_AUSENTE: (),
     AcaoMaquina.PERGUNTAR_FORMATO: (),
     AcaoMaquina.RETOMAR_COLETA_SEM_REPETIR: (),
     AcaoMaquina.INFORMAR_REGRA_INCOMPATIVEL: (),
-    AcaoMaquina.INFORMAR_RESSALVA_DE_CAPACIDADE: (),
+    AcaoMaquina.INFORMAR_RESSALVA_DE_CAPACIDADE: (_RESSALVA_CAPACIDADE,),
     AcaoMaquina.INFORMAR_CONDICOES_DE_VISITA: (_CONDICOES_VISITA,),
     AcaoMaquina.INFORMAR_LACUNA_DE_INFORMACAO: (_LACUNA,),
     AcaoMaquina.INFORMAR_NAO_CONFIRMACAO_DE_DISPONIBILIDADE: (
         _FALLBACK_DISPONIBILIDADE,
     ),
-    AcaoMaquina.DESPEDIR_SEM_CONTINUIDADE: (),
-    AcaoMaquina.REFORCAR_ENCAMINHAMENTO: (),
+    AcaoMaquina.DESPEDIR_SEM_CONTINUIDADE: (_DESPEDIDA,),
+    AcaoMaquina.REFORCAR_ENCAMINHAMENTO: (_REFORCO_ENCAMINHAMENTO,),
     AcaoMaquina.EMITIR_MENSAGEM_DE_ENCAMINHAMENTO: (_ENCAMINHAMENTO,),
     AcaoMaquina.NAO_AVANCAR_COLETA: (),
     AcaoMaquina.SILENCIAR_RESPOSTA_AUTOMATICA: (),
@@ -215,6 +281,9 @@ def projetar_fragmentos_para_emissao(
     acoes: object,
     *,
     fotografia_r06: object = None,
+    campos_ausentes: object = None,
+    motivos_violacao: object = None,
+    fotografar: object = None,
 ) -> tuple[str, ...]:
     """Projeta os fragmentos destinados à emissão neste ciclo.
 
@@ -256,6 +325,15 @@ def projetar_fragmentos_para_emissao(
     **Nada é capturado** e **nenhum resultado parcial é devolvido**. `R06/F1`
     **não emitível não é erro**: ele apenas **não contribui**.
 
+    **M2.1 (PE-21–PE-25).** `campos_ausentes` (tupla de `str`, na ordem do
+    `Qualificador`) é exigido só com a ação de pergunta ou de retomada;
+    `motivos_violacao` (tupla de `MotivoViolacao`) só com a regra incompatível;
+    `fotografar` (`token -> FotografiaFragmento`) só quando um token condicionado
+    é de fato acrescentado — chamado **no máximo uma vez por token**. Forma
+    inválida fecha com `tipo_invalido` no localizador do parâmetro. Saída:
+    **saudação**, depois os recebidos, depois os demais mandatórios na ordem das
+    ações, e por último a **coleta** (retomada + pergunta, uma vez só).
+
     **PROJETAR NÃO É DECIDIR O QUE RESPONDER, NEM DIZER.** O que cobre a
     consulta já foi decidido por S2-D8; o que a conversa exige já foi decidido
     pela máquina; o texto pertence às fronteiras seguintes.
@@ -281,6 +359,13 @@ def projetar_fragmentos_para_emissao(
     # Veredito local de `R06/F1`: avaliado **no maximo uma vez** por chamada, e
     # **somente** quando a acao de T16 e efetivamente a *owner*.
     veredito_r06: object = _NAO_AVALIADO
+    # PE-24. Vereditos locais dos condicionados do M2.1, um por token, na
+    # propria chamada — zero cache global.
+    vereditos: dict[str, bool] = {}
+    # PE-25. A saudacao abre a mensagem; a coleta a fecha.
+    abertura: list[str] = []
+    coleta_pedida = False
+    retomar = False
 
     for acao in acoes:
         if type(acao) is not AcaoMaquina:
@@ -288,7 +373,24 @@ def projetar_fragmentos_para_emissao(
         if acao not in _FRAGMENTOS_POR_ACAO:
             raise _nao_avaliavel(_ACAO_SEM_MAPEAMENTO, _ACOES_ITEM)
 
-        for token in _FRAGMENTOS_POR_ACAO[acao]:
+        if acao is _ACAO_PERGUNTA or acao is _ACAO_RETOMADA:
+            # PE-21/PE-22. A pergunta e escolhida uma vez so, depois do laco:
+            # pergunta e retomada no mesmo ciclo perguntam **uma** vez.
+            coleta_pedida = True
+            retomar = retomar or acao is _ACAO_RETOMADA
+            continue
+
+        if acao is _ACAO_INCOMPATIVEL:
+            # PE-23. Um fragmento por motivo, na ordem das violacoes.
+            tokens = tuple(
+                _INCOMPATIVEL_POR_MOTIVO[motivo]
+                for motivo in _conferir_motivos(motivos_violacao)
+                if motivo in _INCOMPATIVEL_POR_MOTIVO
+            )
+        else:
+            tokens = _FRAGMENTOS_POR_ACAO[acao]
+
+        for token in tokens:
             if acao is _ACAO_DUPLA_ROTA and token == _FALLBACK_DISPONIBILIDADE:
                 # PE-14. `R05/F2` e `R05/F3` sustentam uma resposta de
                 # disponibilidade vinda de consulta autoritativa valida; a acao
@@ -327,10 +429,30 @@ def projetar_fragmentos_para_emissao(
                     continue
             if token in ja_mandatorios:
                 continue
+            if token in _CONDICIONADOS:
+                # PE-24. Mesma regra de `R06/F1` pela rota da acao: veredito da
+                # autoridade unica; nao emitivel → zero fragmento (PE-7).
+                if token not in vereditos:
+                    vereditos[token] = _veredito(fotografar, token)
+                if not vereditos[token]:
+                    continue
             ja_mandatorios.add(token)
-            mandatorios.append(token)
+            if token == _SAUDACAO:
+                abertura.append(token)
+            else:
+                mandatorios.append(token)
 
-    for token in mandatorios:
+    coleta: list[str] = []
+    if coleta_pedida:
+        campos = _conferir_campos(campos_ausentes)
+        pergunta = _PERGUNTA_POR_CAMPO.get(campos[0]) if campos else None
+        # Sem pergunta aprovada para o primeiro campo, a retomada nao fica solta.
+        if pergunta is not None:
+            if retomar:
+                coleta.append(_RETOMADA)
+            coleta.append(pergunta)
+
+    for token in (*abertura, *mandatorios, *coleta):
         # Zero deduplicacao cross-source generica: um identificador que chegue
         # pelas duas origens significa modelagem incoerente a montante. As
         # excecoes sao **duas**, explicitas e independentes — `R05/F1` por
@@ -340,7 +462,35 @@ def projetar_fragmentos_para_emissao(
         if token in recebidos:
             raise _nao_avaliavel(_CONFLITO_ORIGEM, _AUTORIZADOS_ITEM)
 
-    return fragmentos_autorizados + tuple(mandatorios)
+    return tuple(abertura) + fragmentos_autorizados + tuple(mandatorios) + tuple(coleta)
+
+
+def _conferir_campos(campos_ausentes: object) -> tuple[str, ...]:
+    if type(campos_ausentes) is not tuple:
+        raise _nao_avaliavel(_TIPO_INVALIDO, _CAMPOS_AUSENTES)
+    for campo in campos_ausentes:
+        if type(campo) is not str:
+            raise _nao_avaliavel(_TIPO_INVALIDO, _CAMPOS_AUSENTES)
+    return campos_ausentes
+
+
+def _conferir_motivos(motivos_violacao: object) -> tuple[MotivoViolacao, ...]:
+    if type(motivos_violacao) is not tuple:
+        raise _nao_avaliavel(_TIPO_INVALIDO, _MOTIVOS_VIOLACAO)
+    for motivo in motivos_violacao:
+        if type(motivo) is not MotivoViolacao:
+            raise _nao_avaliavel(_TIPO_INVALIDO, _MOTIVOS_VIOLACAO)
+    return motivos_violacao
+
+
+def _veredito(fotografar: object, token: str) -> bool:
+    """Consome a autoridade unica sobre a fotografia que o chamador monta."""
+    if not isinstance(fotografar, Callable):
+        raise _nao_avaliavel(_TIPO_INVALIDO, _FOTOGRAFAR)
+    fotografia = fotografar(token)
+    if type(fotografia) is not FotografiaFragmento:
+        raise _nao_avaliavel(_TIPO_INVALIDO, _FOTOGRAFAR)
+    return avaliar_emissibilidade(fotografia).emitivel
 
 
 def _nao_avaliavel(categoria: str, localizador: str) -> ProjecaoEmissaoNaoAvaliavel:
