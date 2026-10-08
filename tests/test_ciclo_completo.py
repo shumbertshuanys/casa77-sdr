@@ -324,6 +324,51 @@ def test_pergunta_comercial_e_respondida_com_o_texto_aprovado(base_motor):
     assert cenario.registro().estado_conversa == r.estado_final.value
 
 
+def test_convidados_acima_da_capacidade_sentada_recebem_a_ressalva_sem_pergunta_de_formato(
+    base_motor,
+):
+    # Decisão do Victor (2026-10-08): o bot não pergunta o formato; acima de
+    # `capacidade.convidados_sentados` (até `formato_coquetel`) envia a
+    # ressalva de capacidade aprovada e segue.
+    acima = base_motor.base["capacidade"]["convidados_sentados"] + 1
+    assert acima <= base_motor.base["capacidade"]["formato_coquetel"]
+    cenario = Cenario(
+        base_motor,
+        [
+            _payload(),
+            _payload(
+                dados={
+                    "tipo_evento": "evento ficticio",
+                    "data_nomeada": "data ficticia",
+                    "nome": "Nome Ficticio",
+                    "contato": "contato-ficticio",
+                }
+            ),
+            _payload(dados={"convidados": acima}),
+        ],
+    )
+    cenario.processar(_entrada("ola, mensagem ficticia"))
+    r2 = cenario.processar(_entrada("dados ficticios do evento", minutos=10))
+    # Falta só convidados: a pergunta é a de convidados.
+    assert r2.texto_emitido == _texto_aprovado(base_motor, ("R31/F4",))
+
+    r3 = cenario.processar(_entrada("convidados ficticios", minutos=20))
+
+    # A ressalva aprovada (R34/F1) é dita e o atendimento segue para o
+    # encaminhamento (T08): nenhuma pergunta de formato, nenhum silêncio.
+    ressalva = _texto_aprovado(base_motor, ("R34/F1",))
+    encaminhamento = _texto_aprovado(base_motor, ("R08/F1",))
+    assert r3.desfecho is DesfechoCiclo.RESPONDIDA
+    assert r3.texto_emitido == ressalva
+    assert cenario.envios[-2:] == [
+        (CANAL, CONTATO, ressalva),
+        (CANAL, CONTATO, encaminhamento),
+    ]
+    assert r3.estado_final is Estado.ENCAMINHADO_HUMANO
+    assert len(cenario.resumos) == 1
+    assert cenario.registro().dados_coletados.get("formato") is None
+
+
 # --------------------------------------------------------------------------
 # Review Focus 1 — idempotência ponta a ponta
 # --------------------------------------------------------------------------
