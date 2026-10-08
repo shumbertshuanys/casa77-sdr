@@ -44,12 +44,13 @@ dados comerciais só em `knowledge/casa77.yaml`.
 ## Bloqueadores de produção conhecidos (M3)
 
 - Regra 5 do doc 06 §10 não é aplicada: após falha na entrega do resumo, ciclos seguintes
-  prosseguem; recuperação manual via alerta + `pendente` preservado.
+  prosseguem; recuperação manual via alerta + `pendente`.
 - Fatos de calendário fixos em "sem calendário" (`consulta_calendario_valida: False`);
   religar quando o calendário for integrado.
-- Resposta degradada com LLM indisponível (N-b-M4 R03 + handoff) não é emitida: o ciclo
-  preserva e alerta em silêncio.
+- Resposta degradada com LLM indisponível (N-b-M4 R03 + handoff) não é emitida: preserva e alerta.
 - Reescrita por LLM da etapa 10 não é usada (só texto aprovado literal).
+- Falha de `enviar_mensagem` no texto principal impede `entregar_resumo`: sem alerta nem
+  `pendente`, estado `encaminhado_humano` gravado e chave marcada (handoff perdido).
 
 ## Decisões pendentes (bloqueiam o M3, não o M2)
 

@@ -279,7 +279,26 @@ def processar_mensagem(
     *,
     gerar_id: Callable[[], str],
 ) -> ResultadoCiclo:
-    """Executa o ciclo completo (etapas 1–14) para uma mensagem recebida."""
+    """Executa o ciclo completo (etapas 1–14) para uma mensagem recebida.
+
+    Desfechos tratados (bloqueio TS45, terminais de identidade, Classe I,
+    `FalhaDePersistencia`, `FalhaEntregaResumo`) voltam como `ResultadoCiclo`.
+    Contrato de exceções para o adaptador de canal — as demais **propagam**:
+
+    :raises ValueError: / :raises TypeError: erro de contrato das etapas 4–7
+        (ex.: E-Nb da interpretação). Nada é preservado; a chave **não** é
+        marcada.
+    :raises SelecaoNaoAvaliavel: / :raises ComposicaoNaoAvaliavel: /
+        :raises MontagemRespostaNaoAvaliavel: /
+        :raises ProjecaoEmissaoNaoAvaliavel: etapas 8–12. Não há `pendente`
+        e a chave **não** é marcada.
+    :raises: falha de `preservar_pendente` (pelas etapas 4–5, TS45, Classe I,
+        etapa 13 ou resumo): propaga **por identidade**.
+    :raises: falha de `marcar_chave_processada` (etapa 13): o estado já foi
+        gravado, mas a chave **não** fica marcada — a reentrega reaplica o ciclo.
+    :raises: falha de `enviar_mensagem` (etapa 14): o estado permanece gravado
+        e a chave marcada; sem retry.
+    """
     # Etapas 1–3 (+ TS45).
     etapas_1_a_3 = coordenar_etapas_1_a_3(
         entrada,

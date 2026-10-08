@@ -72,7 +72,16 @@ def conversar(
             id_mensagem_canal=_novo_id(),
             id_atendimento=None,
         )
-        resultado = processar_mensagem(entrada, deps, gerar_id=_novo_id)
+        try:
+            resultado = processar_mensagem(entrada, deps, gerar_id=_novo_id)
+        except (ValueError, TypeError) as erro:
+            # Erro de contrato E-Nb (saída do LLM): nada foi preservado nem
+            # marcado; a mensagem é descartada e a conversa em memória segue.
+            print(
+                f"[erro de contrato: {type(erro).__name__}] mensagem descartada",
+                file=sys.stderr,
+            )
+            continue
         estado = resultado.estado_final.value if resultado.estado_final else None
         escrever(f"  [desfecho={resultado.desfecho.value} estado={estado}]")
         if resultado.desfecho is DesfechoCiclo.SILENCIOSA:

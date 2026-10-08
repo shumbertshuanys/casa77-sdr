@@ -104,6 +104,36 @@ def test_silencio_vai_ao_status_e_bot_vai_ao_stdout() -> None:
     assert envios == []
 
 
+class _ProdutorContratoInvalido:
+    """Valor presente sem confiança declarada — erro de contrato E-Nb."""
+
+    def produzir(self, *, prompt_sistema: str, mensagem: str, schema: dict[str, Any]) -> str:
+        carga = json.loads(_payload_vazio())
+        carga["dados_extraidos"]["tipo_evento"] = "festa"
+        return json.dumps(carga)
+
+
+def test_erro_de_contrato_nao_derruba_o_repl(capsys: pytest.CaptureFixture[str]) -> None:
+    modulo = _carregar_script()
+    deps = DependenciasMotor(
+        base_motor=carregar_base_motor(RAIZ),
+        persistencia=PersistenciaEmMemoria(),
+        produtor=_ProdutorContratoInvalido(),
+        prompt_sistema="prompt ficticio",
+        janela_idempotencia=timedelta(minutes=5),
+        limiar_recencia=timedelta(days=30),
+        calendario_integrado=False,
+        tentar_alerta=lambda **_: None,
+        enviar_mensagem=lambda canal, contato, texto: None,
+        entregar_resumo=lambda resumo: None,
+    )
+    saida: list[str] = []
+    modulo.conversar(iter(["oi", "outra"]), saida.append, deps, canal="local", contato="c")
+    erro = capsys.readouterr().err
+    assert erro.count("[erro de contrato: ValueError] mensagem descartada") == 2
+    assert saida == []
+
+
 _ARGS = [
     "conversar_local.py",
     "--janela-idempotencia-segundos", "300",

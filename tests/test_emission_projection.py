@@ -1060,7 +1060,7 @@ def test_pe_t17_estaticos_nao_tem_binding_algum(
 ) -> None:
     """Classe **estática**: zero *binding*, logo zero juízo factual.
 
-    Se um desses dois ganhar `RENDERIZADO`, `ASSERTIVA` ou fato de runtime,
+    Se um desses três ganhar `RENDERIZADO`, `ASSERTIVA` ou fato de runtime,
     este teste fica vermelho **de propósito**: a admissibilidade passaria a
     depender de decisão factual, e isso exige nova arbitragem.
     """

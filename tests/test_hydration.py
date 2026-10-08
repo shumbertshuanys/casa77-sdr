@@ -30,7 +30,7 @@ def registro_coletando() -> RegistroAtendimento:
         dados_coletados={
             "tipo_evento": "evento-ficticio",
             "data_nomeada": "data-ficticia",
-            "convidados": 80,
+            "convidados": 42,
             "nome": "Fulano Ficticio",
             "contato": "contato-ficticio",
             "formato": "sentado",
@@ -81,7 +81,7 @@ def test_sem_registro_e_atendimento_novo():
 def test_registro_existente_preserva_estado_e_dados(registro_coletando):
     at = hidratar(registro_coletando)
     assert at.estado is Estado.COLETANDO_DADOS
-    assert at.dados.atendimento.convidados == 80
+    assert at.dados.atendimento.convidados == 42
     assert at.dados.atendimento.tipo_evento == "evento-ficticio"
     assert at.dados.atendimento.data_nomeada == "data-ficticia"
     assert at.dados.nome == "Fulano Ficticio"
