@@ -138,6 +138,13 @@ _FOTOGRAFIA_R06 = "fotografia_r06"
 # runtime e necessaria para emiti-lo.
 _LACUNA = "R03/F1"
 
+# Mandatorio PURO da mensagem de encaminhamento ao interessado (`docs/04`
+# "Mensagem ao interessado": e a resposta aprovada **R08**). Mesma classe
+# estatica de `R03/F1`: so chega pela acao de T27, nunca por cobertura, e o
+# corpus versionado prova no teste de integracao que ele existe, que o seu
+# rotulo canonico o admite e que **nao tem binding algum**.
+_ENCAMINHAMENTO = "R08/F1"
+
 # A PRIMEIRA dupla rota autorizada (PE-13). `R05/F1` satisfaz a mesma obrigacao
 # textual de T15 por duas rotas — cobertura de S2-D8 ou a acao de nao confirmacao
 # de disponibilidade — e o corpus versionado prova, no teste de integracao, que
@@ -192,7 +199,7 @@ _FRAGMENTOS_POR_ACAO: dict[AcaoMaquina, tuple[str, ...]] = {
     ),
     AcaoMaquina.DESPEDIR_SEM_CONTINUIDADE: (),
     AcaoMaquina.REFORCAR_ENCAMINHAMENTO: (),
-    AcaoMaquina.EMITIR_MENSAGEM_DE_ENCAMINHAMENTO: (),
+    AcaoMaquina.EMITIR_MENSAGEM_DE_ENCAMINHAMENTO: (_ENCAMINHAMENTO,),
     AcaoMaquina.NAO_AVANCAR_COLETA: (),
     AcaoMaquina.SILENCIAR_RESPOSTA_AUTOMATICA: (),
     AcaoMaquina.PREPARAR_RESUMO: (),

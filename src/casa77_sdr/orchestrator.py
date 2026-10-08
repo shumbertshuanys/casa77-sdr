@@ -1,44 +1,54 @@
-"""Recorte **R1** do `OrquestradorMotor` — etapas 1 a 3 e tratamento TS45.
+"""`OrquestradorMotor` — o ciclo ponta a ponta (doc 07 §4.1, §5).
 
-Este módulo materializa o **primeiro prefixo executável** do componente
-`OrquestradorMotor` de `docs/07-arquitetura-motor-respostas.md` §4.1: a
-**normalização** da entrada (etapa 1), a **decisão de idempotência** (etapa
-2), a **recuperação de contexto** (etapa 3) e o **tratamento operacional dos
-bloqueios `S4`/`S5`** arbitrado em §7.1 (`TS45-1`–`TS45-20`). O contrato vivo
-deste recorte está em §4.1.10 (`OMR1-1`–`OMR1-14`).
+Dois níveis convivem neste módulo:
 
-**Não é o `OrquestradorMotor` completo.** As etapas **4** a **14** — em
-especial interpretação, identidade, atualização de dados, qualificação,
-cobertura, composição dos insumos, `MaquinaEstados`, persistência da etapa 13
-e emissão — **não** são coordenadas aqui. Este recorte **não é um 15º
-componente**: §4.1 permanece com **14**, §2 com **nove** responsabilidades e o
-pipeline de §5 com **catorze** etapas.
+- **`coordenar_etapas_1_a_3`** — o recorte **R1** (§4.1.10, `OMR1-1`–`OMR1-14`):
+  **normalização** da entrada (etapa 1), **decisão de idempotência** (etapa
+  2), **recuperação de contexto** (etapa 3) e o **tratamento operacional dos
+  bloqueios `S4`/`S5`** arbitrado em §7.1 (`TS45-1`–`TS45-20`). Seu
+  comportamento é o do R1 e não toca as etapas 4 a 14.
+- **`processar_mensagem`** — o **ciclo completo** do M2: encadeia R1, as
+  etapas 4–5 (`orchestrator_identity`), 6–7 (`orchestrator_decision`), 8–12
+  (`orchestrator_emission`) e 13 (`orchestrator_persist`), e executa aqui a
+  **etapa 14** (emissão). Devolve `ResultadoCiclo` com o `DesfechoCiclo`.
 
-Superfície pública de **exatamente um** nome — `coordenar_etapas_1_a_3` —,
-**não exportada** pelo `__init__.py` do pacote. **Nenhuma classe**, **nenhum
-DTO**, **nenhum enum**, **nenhuma exceção pública nova** e **nenhum
-`Protocol`**: as saídas são os tipos **já existentes** `EntradaNormalizada`
-(etapa 1) e `ProjecoesIdentidadeEtapa3` (etapa 3).
+Etapa 14 (doc 07 §5; doc 06 §10) — **somente depois** de a etapa 13 gravar e
+marcar a chave: 1) enviar o texto principal, se houver; 2) havendo resumo de
+*handoff*, **tentar** entregá-lo; 3) **somente após sucesso**, enviar a
+mensagem de encaminhamento. Falha de entrega (`FalhaEntregaResumo`) não
+reverte o estado registrado, preserva o pendente e tenta o alerta, e o
+encaminhamento **não** é enviado. `deve responder = false` sempre que
+`situacao_takeover != SEM_TAKEOVER` ou estado `atendimento_humano`.
 
-**Zero default operacional.** A `janela_idempotencia` e o `limiar_recencia`
-chegam **explícitos do chamador** (§4.3, risco 3b; §6.2, N-a-L1–N-a-L6), e a
-**tentativa de alerta** chega **injetada** como dependência obrigatória
-(`TS45-14`, `TS45-15`): este módulo **não escolhe** destino, canal, provedor,
-transporte, formato nem confirmação de entrega — o **item 3a de §12 continua
-ABERTO**, e ele bloqueia a **composição de produção**, não a existência deste
-runtime local.
+Desfechos antes da etapa 13: `AMBIGUA` — sem texto aprovado de esclarecimento
+— é **silêncio** + alerta + marcação da chave; os demais desfechos terminais
+de identidade já foram tratados pelas etapas 4–5; **Classe I** da etapa 7 →
+preservar + alertar, chave **não** marcada, nada emitido (`BLOQUEADA_BASE`).
+
+Este módulo **não é um 15º componente**: §4.1 permanece com **14**, §2 com
+**nove** responsabilidades e o pipeline de §5 com **catorze** etapas. Nenhum
+nome é exportado pelo `__init__.py` do pacote.
+
+**Zero default operacional.** Janela, limiar, alerta, envio, entrega e
+`gerar_id` chegam **explícitos do chamador** (§4.3, risco 3b; §6.2), e o
+**item 3a de §12 continua ABERTO** (destino, canal e provedor do alerta).
 
 Fronteira: **nenhum relógio vivo** — o instante de referência do ciclo é o
-campo "data e hora" da entrada (§6.1, N-a-R2) —, nenhum YAML, nenhuma base de
-conhecimento, nenhum LLM, nenhuma rede, nenhum SDK, nenhum *logging*, nenhum
-calendário e nenhuma constante temporal operacional.
+campo "data e hora" da entrada (§6.1, N-a-R2) —, nenhum YAML, nenhuma rede,
+nenhum SDK, nenhum *logging* e nenhuma constante temporal operacional.
 """
 
 from __future__ import annotations
 
 from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import timedelta
+from enum import StrEnum
 
+from casa77_sdr.alerta_operacional import (
+    preservar_e_alertar,
+    tentar_alerta_operacional,
+)
 from casa77_sdr.context import (
     ConjuntoHumanoIncoerente,
     IdentificadorNaoResolvido,
@@ -46,6 +56,8 @@ from casa77_sdr.context import (
     ProjecoesIdentidadeEtapa3,
     montar_projecoes_identidade_etapa3,
 )
+from casa77_sdr.coverage_decision import DecisaoCoberturaNaoAvaliavel
+from casa77_sdr.coverage_map import MapaCoberturaInvalido
 from casa77_sdr.eligibility import (
     ConfiguracaoTemporalInvalida,
     ContextoElegibilidadeCorrompido,
@@ -58,9 +70,30 @@ from casa77_sdr.normalization import (
     MensagemVazia,
     normalizar_entrada,
 )
+from casa77_sdr.identity import SituacaoTakeover
+from casa77_sdr.motor_deps import DependenciasMotor
+from casa77_sdr.orchestrator_decision import decidir_primeira_chamada
+from casa77_sdr.orchestrator_emission import TextoFinal, produzir_texto_final
+from casa77_sdr.orchestrator_identity import (
+    AlvoDoCiclo,
+    DesfechoTerminal,
+    coordenar_etapas_4_e_5,
+)
+from casa77_sdr.orchestrator_persist import persistir_ciclo
 from casa77_sdr.persistence import PersistenciaOperacional, ProcessamentoPendente
+from casa77_sdr.pricing_applicability import AplicabilidadeNaoAvaliavel
+from casa77_sdr.response_assertion import AssertivaNaoAvaliavel
+from casa77_sdr.response_index import IndiceInvalido
+from casa77_sdr.response_index_tokens import ProjecaoDeIdentidadeInvalida
+from casa77_sdr.state_machine import Estado
 
-__all__ = ["coordenar_etapas_1_a_3"]
+__all__ = [
+    "DesfechoCiclo",
+    "FalhaEntregaResumo",
+    "ResultadoCiclo",
+    "coordenar_etapas_1_a_3",
+    "processar_mensagem",
+]
 
 
 def coordenar_etapas_1_a_3(
@@ -163,12 +196,11 @@ def _tratar_bloqueio_ts45(
     etapa 13, zero `CondicoesCiclo`, zero S2-D8 e zero atualização de
     `instante_ultima_transicao` (`TS45-17`).
 
-    O `finally` materializa a precedência de falhas de **OL-4** sem capturar a
-    exceção da preservação: se `preservar_pendente` falhar, o alerta ainda é
-    tentado — com `pendente_preservado=False` (`TS45-11`) —, a chave **não** é
-    marcada, e a **exceção da preservação** propaga **por identidade**. Uma
-    falha do alerta **não a substitui**, porque a tentativa é isolada e
-    absorvida em `_tentar_alerta_operacional`.
+    A sequência preservar → tentar alerta, com a precedência de falhas de
+    **OL-4**, vive em `alerta_operacional.preservar_e_alertar`: se
+    `preservar_pendente` falhar, o alerta ainda é tentado — com
+    `pendente_preservado=False` (`TS45-11`) —, a chave **não** é marcada, e a
+    **exceção da preservação** propaga **por identidade**.
     """
     pendente = ProcessamentoPendente(
         canal=entrada.canal,
@@ -177,23 +209,19 @@ def _tratar_bloqueio_ts45(
         conteudo=entrada_normalizada.mensagem_normalizada,
     )
 
-    pendente_preservado = False
-    try:
-        persistencia.preservar_pendente(pendente)
-        pendente_preservado = True
-    finally:
-        _tentar_alerta_operacional(
-            tentar_alerta,
-            # `TS45-3`/`TS45-14` — categoria **estrutural** do bloqueio: o
-            # nome da classe, que distingue a causa para auditoria sem virar
-            # enum, DTO, motivo de handoff ou evento, e sem `repr` da exceção.
-            categoria=type(bloqueio).__name__,
-            pendente_preservado=pendente_preservado,
-            # A chave de idempotência é **opaca por construção** (§4.3) e por
-            # isso serve de correlação auditável sem transportar mensagem,
-            # canal, contato, `id_atendimento`, dado comercial nem segredo.
-            correlacao=entrada_normalizada.chave_idempotencia,
-        )
+    preservar_e_alertar(
+        persistencia=persistencia,
+        pendente=pendente,
+        # `TS45-3`/`TS45-14` — categoria **estrutural** do bloqueio: o nome da
+        # classe, que distingue a causa para auditoria sem virar enum, DTO,
+        # motivo de handoff ou evento, e sem `repr` da exceção.
+        categoria=type(bloqueio).__name__,
+        # A chave de idempotência é **opaca por construção** (§4.3) e por isso
+        # serve de correlação auditável sem transportar mensagem, canal,
+        # contato, `id_atendimento`, dado comercial nem segredo.
+        correlacao=entrada_normalizada.chave_idempotencia,
+        tentar_alerta=tentar_alerta,
+    )
 
     # `TS45-8` — marcada **fora da etapa 13** e **somente após preservação
     # bem-sucedida**. Falha aqui propaga **por identidade** (`TS45-13`): sem
@@ -201,32 +229,227 @@ def _tratar_bloqueio_ts45(
     persistencia.marcar_chave_processada(entrada_normalizada.chave_idempotencia)
 
 
-def _tentar_alerta_operacional(
-    tentar_alerta: Callable[..., object],
-    *,
-    categoria: str,
-    pendente_preservado: bool,
-    correlacao: str,
-) -> None:
-    """**Tenta** o alerta operacional, em caminho separado da conversa.
+# ==========================================================================
+# Ciclo completo — `processar_mensagem` e etapa 14
+# ==========================================================================
 
-    `TS45-14` — o *payload* é fechado em **exatamente três** informações
-    sanitizadas: a **categoria estrutural** do bloqueio, o **sucesso ou falha
-    da preservação** e uma **correlação opaca**. A chamada é **por palavras-
-    chave**, sem DTO e sem `Protocol`, e o retorno é **ignorado**: sucesso é a
-    **ausência de exceção**, nunca uma confirmação de entrega.
 
-    `TS45-12` — a entrega **não é garantida**. A falha da tentativa é
-    absorvida aqui e **somente aqui**: este é o **único** `except Exception`
-    do módulo, e ele envolve **exclusivamente** a chamada injetada. Zero
-    retry, zero fila, zero contador, zero status de entrega e zero *fallback*
-    para o canal da conversa.
+class DesfechoCiclo(StrEnum):
+    """Como o ciclo de uma mensagem terminou."""
+
+    IGNORADA = "ignorada"  # vazia, duplicada ou bloqueio TS45
+    TERMINAL_IDENTIDADE = "terminal_identidade"  # desfechos terminais das etapas 4–5
+    BLOQUEADA_PERSISTENCIA = "bloqueada_persistencia"  # etapa 13 falhou (§7.2)
+    BLOQUEADA_BASE = "bloqueada_base"  # Classe I antes da etapa 7
+    RESPONDIDA = "respondida"  # algo foi enviado ao interessado
+    SILENCIOSA = "silenciosa"  # gravado, nada enviado ao interessado
+
+
+@dataclass(frozen=True)
+class ResultadoCiclo:
+    """Resultado observável do ciclo.
+
+    `texto_emitido` é o texto principal enviado — ou a mensagem de
+    encaminhamento quando foi a única enviada —; `estado_final` é o estado
+    **gravado** pela etapa 13, `None` quando nada foi gravado.
     """
+
+    desfecho: DesfechoCiclo
+    texto_emitido: str | None
+    estado_final: Estado | None
+
+
+class FalhaEntregaResumo(Exception):
+    """Contrato de `entregar_resumo`: a entrega do resumo a Douglas falhou.
+
+    É a **única** falha de entrega que a etapa 14 trata (doc 06 §10); qualquer
+    outra exceção do chamável injetado propaga intacta.
+    """
+
+
+#: Categoria estrutural do alerta de `AMBIGUA` sem esclarecimento aprovado.
+_CATEGORIA_AMBIGUA = DesfechoTerminal.AMBIGUA.name
+
+_IGNORADA = ResultadoCiclo(DesfechoCiclo.IGNORADA, None, None)
+
+
+def processar_mensagem(
+    entrada: EntradaMensagem,
+    deps: DependenciasMotor,
+    *,
+    gerar_id: Callable[[], str],
+) -> ResultadoCiclo:
+    """Executa o ciclo completo (etapas 1–14) para uma mensagem recebida.
+
+    Desfechos tratados (bloqueio TS45, terminais de identidade, Classe I,
+    `FalhaDePersistencia`, `FalhaEntregaResumo`) voltam como `ResultadoCiclo`.
+    Contrato de exceções para o adaptador de canal — as demais **propagam**:
+
+    :raises ValueError: / :raises TypeError: erro de contrato das etapas 4–7
+        (ex.: E-Nb da interpretação). Nada é preservado; a chave **não** é
+        marcada.
+    :raises SelecaoNaoAvaliavel: / :raises ComposicaoNaoAvaliavel: /
+        :raises MontagemRespostaNaoAvaliavel: /
+        :raises ProjecaoEmissaoNaoAvaliavel: etapas 8–12. Não há `pendente`
+        e a chave **não** é marcada.
+    :raises: falha de `preservar_pendente` (pelas etapas 4–5, TS45, Classe I,
+        etapa 13 ou resumo): propaga **por identidade**.
+    :raises: falha de `marcar_chave_processada` (etapa 13): o estado já foi
+        gravado, mas a chave **não** fica marcada — a reentrega reaplica o ciclo.
+    :raises: falha de `enviar_mensagem` (etapa 14): o estado permanece gravado
+        e a chave marcada; sem retry.
+    """
+    # Etapas 1–3 (+ TS45).
+    etapas_1_a_3 = coordenar_etapas_1_a_3(
+        entrada,
+        persistencia=deps.persistencia,
+        janela_idempotencia=deps.janela_idempotencia,
+        limiar_recencia=deps.limiar_recencia,
+        tentar_alerta=deps.tentar_alerta,
+    )
+    if etapas_1_a_3 is None:
+        return _IGNORADA
+    entrada_normalizada, projecoes = etapas_1_a_3
+    chave = entrada_normalizada.chave_idempotencia
+
+    # Etapas 4–5.
+    alvo = coordenar_etapas_4_e_5(entrada, entrada_normalizada, projecoes, deps)
+    if isinstance(alvo, DesfechoTerminal):
+        if alvo is DesfechoTerminal.AMBIGUA:
+            # A3 — não existe texto aprovado de esclarecimento: silêncio, alerta
+            # (superfície sem unidade aprovada) e marcação da chave. O pendente
+            # já foi preservado pelas etapas 4–5 (A7).
+            tentar_alerta_operacional(
+                deps.tentar_alerta,
+                categoria=_CATEGORIA_AMBIGUA,
+                pendente_preservado=True,
+                correlacao=chave,
+            )
+            deps.persistencia.marcar_chave_processada(chave)
+        return ResultadoCiclo(DesfechoCiclo.TERMINAL_IDENTIDADE, None, None)
+
+    # Etapas 6–7. Classe I bloqueia antes da máquina (D8-CI7–D8-CI14).
     try:
-        tentar_alerta(
-            categoria=categoria,
-            pendente_preservado=pendente_preservado,
-            correlacao=correlacao,
+        primeira = decidir_primeira_chamada(
+            alvo,
+            base_motor=deps.base_motor,
+            calendario_integrado=deps.calendario_integrado,
+            e01_confirmado=True,
         )
-    except Exception:
-        return
+    except (
+        DecisaoCoberturaNaoAvaliavel,
+        AplicabilidadeNaoAvaliavel,
+        IndiceInvalido,
+        MapaCoberturaInvalido,
+        ProjecaoDeIdentidadeInvalida,
+        AssertivaNaoAvaliavel,
+    ) as classe_i:
+        # Preservar → alertar; a chave **não** é marcada (reprocessável depois
+        # de a base ser corrigida); nada é emitido.
+        preservar_e_alertar(
+            persistencia=deps.persistencia,
+            pendente=_pendente_do_ciclo(entrada, entrada_normalizada.mensagem_normalizada),
+            categoria=type(classe_i).__name__,
+            correlacao=chave,
+            tentar_alerta=deps.tentar_alerta,
+        )
+        return ResultadoCiclo(DesfechoCiclo.BLOQUEADA_BASE, None, None)
+
+    # Etapas 8–12.
+    texto_final = produzir_texto_final(
+        primeira,
+        base_motor=deps.base_motor,
+        estado_inicial=alvo.atendimento.estado,
+        mensagem=entrada_normalizada.mensagem_normalizada,
+        tentar_alerta=deps.tentar_alerta,
+        correlacao=chave,
+    )
+
+    # Etapa 13 — antecede a 14 sem exceção.
+    gravado = persistir_ciclo(
+        deps=deps,
+        alvo=alvo,
+        primeira=primeira,
+        texto_final=texto_final,
+        entrada=entrada,
+        entrada_normalizada=entrada_normalizada,
+        gerar_id=gerar_id,
+    )
+    if not gravado:
+        return ResultadoCiclo(DesfechoCiclo.BLOQUEADA_PERSISTENCIA, None, None)
+    *_, ultima = texto_final.decisoes_do_ciclo
+    estado_final = ultima.estado_final
+
+    # Etapa 14.
+    if not _deve_responder(alvo, estado_final):
+        return ResultadoCiclo(DesfechoCiclo.SILENCIOSA, None, estado_final)
+    emitido = _emitir(
+        texto_final,
+        entrada=entrada,
+        mensagem_normalizada=entrada_normalizada.mensagem_normalizada,
+        chave=chave,
+        deps=deps,
+    )
+    desfecho = DesfechoCiclo.SILENCIOSA if emitido is None else DesfechoCiclo.RESPONDIDA
+    return ResultadoCiclo(desfecho, emitido, estado_final)
+
+
+def _deve_responder(alvo: AlvoDoCiclo, estado_final: Estado) -> bool:
+    """R5 / I03 — takeover ou `atendimento_humano` silenciam a automação."""
+    return (
+        alvo.decisao_identidade.situacao_takeover is SituacaoTakeover.SEM_TAKEOVER
+        and alvo.atendimento.estado is not Estado.ATENDIMENTO_HUMANO
+        and estado_final is not Estado.ATENDIMENTO_HUMANO
+    )
+
+
+def _emitir(
+    texto_final: TextoFinal,
+    *,
+    entrada: EntradaMensagem,
+    mensagem_normalizada: str,
+    chave: str,
+    deps: DependenciasMotor,
+) -> str | None:
+    """Etapa 14 na ordem obrigatória; devolve o texto emitido (ou `None`).
+
+    1. texto principal; 2. tentar entregar o resumo; 3. **somente após
+    sucesso**, a mensagem de encaminhamento (doc 06 §10). Falha do envio ao
+    interessado propaga (estado já gravado; sem retry).
+    """
+    emitido: str | None = None
+    if texto_final.texto is not None:
+        deps.enviar_mensagem(entrada.canal, entrada.contato, texto_final.texto)
+        emitido = texto_final.texto
+
+    if texto_final.resumo_handoff is None:
+        return emitido
+    try:
+        deps.entregar_resumo(texto_final.resumo_handoff)
+    except FalhaEntregaResumo as falha:
+        # Doc 06 §10 — não reverte o estado; preserva o pendente de forma
+        # opaca; tenta o alerta; não afirma o handoff ao interessado.
+        preservar_e_alertar(
+            persistencia=deps.persistencia,
+            pendente=_pendente_do_ciclo(entrada, mensagem_normalizada),
+            categoria=type(falha).__name__,
+            correlacao=chave,
+            tentar_alerta=deps.tentar_alerta,
+        )
+        return emitido
+
+    if texto_final.texto_encaminhamento is not None:
+        deps.enviar_mensagem(entrada.canal, entrada.contato, texto_final.texto_encaminhamento)
+        if emitido is None:
+            emitido = texto_final.texto_encaminhamento
+    return emitido
+
+
+def _pendente_do_ciclo(
+    entrada: EntradaMensagem, mensagem_normalizada: str
+) -> ProcessamentoPendente:
+    return ProcessamentoPendente(
+        canal=entrada.canal,
+        contato=entrada.contato,
+        conteudo=mensagem_normalizada,
+    )

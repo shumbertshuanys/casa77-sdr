@@ -6,10 +6,11 @@ dados comerciais só em `knowledge/casa77.yaml`.
 ## Onde estamos
 
 - **Etapa macro:** 3 — Motor de respostas (em execução). Roadmap em `docs/05-roadmap.md`.
-- **Marco corrente:** **M2 — primeiro teste conversacional local.** Plano:
+- **Marco corrente:** **M2 — primeiro teste conversacional local:** código concluído;
+  validação com LLM real pendente (Victor). Plano:
   `docs/superpowers/plans/2026-10-07-orquestrador-m2.md`.
-- **Marcos:** M1 runtime local parcial — **feito** · M2 — **em execução** · M3 produção —
-  não iniciado.
+- **Marcos:** M1 runtime local parcial — **feito** · M2 — **código concluído, validação
+  pendente** · M3 produção — não iniciado.
 
 ## O que já funciona (com testes)
 
@@ -19,17 +20,37 @@ dados comerciais só em `knowledge/casa77.yaml`.
 - Interpretação da mensagem por LLM (Anthropic) com saída estruturada e canonicalização.
 - Resolução de identidade do atendimento; máquina de estados (T01–T41, 20 ações).
 - Regras comerciais, qualificador, decisão de cobertura (S2-D8), aplicabilidade de pacote.
-- Produtores de eventos (interpretação, internos E07/E08/E09, handoff E18, encerramento E14)
-  e montagem de `CondicoesCiclo`.
-- Seleção de fatos, composição, montagem e validação da resposta final.
+- Produtores de eventos, seleção de fatos, composição, montagem e validação da resposta.
 - Persistência **em memória** com marco de transição.
-- Orquestrador recorte R1: etapas 1–3 + tratamento de bloqueio TS45.
+- **Ciclo completo** `casa77_sdr.orchestrator.processar_mensagem` (etapas 1–14), via
+  `motor_deps`, `hydration`, `orchestrator_identity`, `alerta_operacional`,
+  `orchestrator_decision`, `orchestrator_emission`, `handoff_summary`, `orchestrator_persist`.
+- REPL local `scripts/conversar_local.py` (precisa de `ANTHROPIC_API_KEY` no ambiente):
+  `python scripts/conversar_local.py --janela-idempotencia-segundos <s>
+  --limiar-recencia-dias <d> --model <modelo> --max-tokens <n> --timeout <s>`.
+- Suíte: 9565 testes passando.
 
-## O que falta para o M2
+## O que falta
 
-Ligar as peças num ciclo único `processar_mensagem` (etapas 4–14): identidade em runtime,
-decisão da máquina, emissão, persistência e envio; depois um REPL local e a primeira
-execução dos evals/smoke de interpretação. Detalhe por tarefa no plano.
+- **Validação com LLM real (Victor):** smoke de interpretação, evals em
+  `evals/interpretacao` e conversas no REPL. Nunca rodaram com a API real.
+- **Lacuna de produto:** 8 ações da máquina não têm texto aprovado, então o bot fica em
+  silêncio nessas situações: `APRESENTAR_ATENDIMENTO_INICIAL`, `PERGUNTAR_PROXIMO_CAMPO_AUSENTE`,
+  `PERGUNTAR_FORMATO`, `RETOMAR_COLETA_SEM_REPETIR`, `INFORMAR_REGRA_INCOMPATIVEL`,
+  `INFORMAR_RESSALVA_DE_CAPACIDADE`, `DESPEDIR_SEM_CONTINUIDADE`, `REFORCAR_ENCAMINHAMENTO`.
+  É hoje o principal bloqueador de uma conversa útil. (`EMITIR_MENSAGEM_DE_ENCAMINHAMENTO`
+  já está mapeada ao texto aprovado R08/F1.)
+
+## Bloqueadores de produção conhecidos (M3)
+
+- Regra 5 do doc 06 §10 não é aplicada: após falha na entrega do resumo, ciclos seguintes
+  prosseguem; recuperação manual via alerta + `pendente`.
+- Fatos de calendário fixos em "sem calendário" (`consulta_calendario_valida: False`);
+  religar quando o calendário for integrado.
+- Resposta degradada com LLM indisponível (N-b-M4 R03 + handoff) não é emitida: preserva e alerta.
+- Reescrita por LLM da etapa 10 não é usada (só texto aprovado literal).
+- Falha de `enviar_mensagem` no texto principal impede `entregar_resumo`: sem alerta nem
+  `pendente`, estado `encaminhado_humano` gravado e chave marcada (handoff perdido).
 
 ## Decisões pendentes (bloqueiam o M3, não o M2)
 
@@ -42,7 +63,7 @@ execução dos evals/smoke de interpretação. Detalhe por tarefa no plano.
 | Calendário (Google Calendar?) | Victor |
 | Destino do registro de leads | Victor |
 | Canal e SLA do handoff | Victor / Douglas |
-| Textos ainda sem aprovação (coleta, formato, retomada, esclarecimento, reforço de encaminhamento) | Douglas |
+| Textos aprovados para as 8 ações sem texto (lista em "O que falta") | Douglas |
 
 Lacunas comerciais: `knowledge/informacoes-pendentes.md`.
 
@@ -54,4 +75,6 @@ Detalhes em `docs/07` §12.
 
 ## Próxima ação
 
-Executar o plano do M2, começando pela Task 1 (raiz de composição).
+1. Victor roda smoke, evals e REPL com a credencial.
+2. Douglas aprova os 8 textos.
+3. Então planejar o M3.
