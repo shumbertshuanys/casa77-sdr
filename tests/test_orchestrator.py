@@ -311,6 +311,28 @@ def handlers_do_modulo() -> list[ast.ExceptHandler]:
     ]
 
 
+#: As funções do recorte R1. Desde o M2 o módulo também abriga o ciclo
+#: completo (`processar_mensagem`); as provas de fronteira do R1 que falam das
+#: etapas 4–14 valem para **estas** funções, não para o módulo inteiro.
+FUNCOES_R1 = ("coordenar_etapas_1_a_3", "_tratar_bloqueio_ts45")
+
+
+def funcoes_r1() -> list[ast.FunctionDef]:
+    return [
+        no
+        for no in arvore_do_modulo().body
+        if isinstance(no, ast.FunctionDef) and no.name in FUNCOES_R1
+    ]
+
+
+def nomes_usados_no_r1() -> set[str]:
+    nomes: set[str] = set()
+    for funcao in funcoes_r1():
+        nomes |= {n.id for n in ast.walk(funcao) if isinstance(n, ast.Name)}
+        nomes |= {n.attr for n in ast.walk(funcao) if isinstance(n, ast.Attribute)}
+    return nomes
+
+
 # --------------------------------------------------------------------------
 # A. Caminho feliz (`OMR1-9`)
 # --------------------------------------------------------------------------
@@ -1021,8 +1043,9 @@ def test_value_error_generico_nao_e_capturado_como_ts45() -> None:
 def test_a_captura_ts45_contem_exatamente_as_sete_classes_nomeadas() -> None:
     tuplas = [
         handler
-        for handler in handlers_do_modulo()
-        if isinstance(handler.type, ast.Tuple)
+        for funcao in funcoes_r1()
+        for handler in ast.walk(funcao)
+        if isinstance(handler, ast.ExceptHandler) and isinstance(handler.type, ast.Tuple)
     ]
     assert len(tuplas) == 1
 
@@ -1065,12 +1088,24 @@ def test_nenhum_except_value_error_e_nenhum_except_base_exception() -> None:
 
 
 def test_nenhuma_classe_enum_dto_ou_excecao_nova() -> None:
+    """O R1 não cria tipos; as únicas classes são as do ciclo completo (M2)."""
     arvore = arvore_do_modulo()
-    assert [no.name for no in ast.walk(arvore) if isinstance(no, ast.ClassDef)] == []
+    assert [no.name for no in ast.walk(arvore) if isinstance(no, ast.ClassDef)] == [
+        "DesfechoCiclo",
+        "ResultadoCiclo",
+        "FalhaEntregaResumo",
+    ]
 
 
 def test_a_superficie_publica_tem_exatamente_um_nome() -> None:
-    assert orchestrator.__all__ == ["coordenar_etapas_1_a_3"]
+    """Um nome do R1 + o ciclo completo do M2 e seus tipos de resultado."""
+    assert orchestrator.__all__ == [
+        "DesfechoCiclo",
+        "FalhaEntregaResumo",
+        "ResultadoCiclo",
+        "coordenar_etapas_1_a_3",
+        "processar_mensagem",
+    ]
 
     arvore = arvore_do_modulo()
     definidos = [
@@ -1079,7 +1114,13 @@ def test_a_superficie_publica_tem_exatamente_um_nome() -> None:
         if isinstance(no, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
         and not no.name.startswith("_")
     ]
-    assert definidos == ["coordenar_etapas_1_a_3"]
+    assert definidos == [
+        "coordenar_etapas_1_a_3",
+        "DesfechoCiclo",
+        "ResultadoCiclo",
+        "FalhaEntregaResumo",
+        "processar_mensagem",
+    ]
 
 
 def test_o_modulo_nao_e_exportado_pelo_init_do_pacote() -> None:
@@ -1103,7 +1144,14 @@ def test_apenas_imports_permitidos() -> None:
             raizes.update(a.name.split(".")[0] for a in no.names)
         elif isinstance(no, ast.ImportFrom) and no.module:
             raizes.add(no.module.split(".")[0])
-    assert raizes == {"__future__", "collections", "datetime", "casa77_sdr"}
+    assert raizes == {
+        "__future__",
+        "collections",
+        "dataclasses",
+        "datetime",
+        "enum",
+        "casa77_sdr",
+    }
 
     submodulos = {
         no.module
@@ -1113,17 +1161,49 @@ def test_apenas_imports_permitidos() -> None:
     assert submodulos == {
         "__future__",
         "collections.abc",
+        "dataclasses",
         "datetime",
+        "enum",
         "casa77_sdr.alerta_operacional",
         "casa77_sdr.context",
         "casa77_sdr.eligibility",
         "casa77_sdr.normalization",
         "casa77_sdr.persistence",
+        # Ciclo completo (M2): coordenadores das etapas 4–13 e as classes
+        # nomeadas de Classe I / o vocabulário de takeover e de estado.
+        "casa77_sdr.coverage_decision",
+        "casa77_sdr.coverage_map",
+        "casa77_sdr.identity",
+        "casa77_sdr.motor_deps",
+        "casa77_sdr.orchestrator_decision",
+        "casa77_sdr.orchestrator_emission",
+        "casa77_sdr.orchestrator_identity",
+        "casa77_sdr.orchestrator_persist",
+        "casa77_sdr.pricing_applicability",
+        "casa77_sdr.response_assertion",
+        "casa77_sdr.response_index",
+        "casa77_sdr.response_index_tokens",
+        "casa77_sdr.state_machine",
     }
 
 
 def test_nenhum_import_das_etapas_4_a_14_nem_de_infraestrutura_externa() -> None:
+    """Infraestrutura externa: módulo inteiro. Etapas 4–14: só as funções do R1."""
     nomes = nomes_usados(MODULO)
+    for proibido in (
+        "anthropic",
+        "openai",
+        "yaml",
+        "requests",
+        "httpx",
+        "logging",
+        "os",
+        "socket",
+        "random",
+    ):
+        assert proibido not in nomes
+
+    nomes_r1 = nomes_usados_no_r1()
     for proibido in (
         "casa77_sdr.interpretation",
         "casa77_sdr.interpretation_llm",
@@ -1149,17 +1229,15 @@ def test_nenhum_import_das_etapas_4_a_14_nem_de_infraestrutura_externa() -> None
         "casa77_sdr.response_assembly",
         "casa77_sdr.knowledge",
         "casa77_sdr.pricing_applicability",
-        "anthropic",
-        "openai",
-        "yaml",
-        "requests",
-        "httpx",
-        "logging",
-        "os",
-        "socket",
-        "random",
+        "coordenar_etapas_4_e_5",
+        "decidir_primeira_chamada",
+        "produzir_texto_final",
+        "persistir_ciclo",
+        "DependenciasMotor",
+        "Estado",
+        "SituacaoTakeover",
     ):
-        assert proibido not in nomes
+        assert proibido not in nomes_r1
 
 
 def test_nenhuma_chamada_das_etapas_4_a_14() -> None:
