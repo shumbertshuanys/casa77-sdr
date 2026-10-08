@@ -1,10 +1,24 @@
-"""REPL local do M2 — conversa com o motor completo e o produtor Anthropic real.
+"""REPL local do M2 — conversa com o motor completo e um produtor LLM real.
 
 **Uso manual, por decisão humana.** Cada mensagem é **uma chamada real** ao
-provedor e consome tokens. Não é teste, não roda em CI e não prova qualidade.
+provedor. Não é teste, não roda em CI e não prova qualidade.
 
-    python scripts/conversar_local.py --janela-idempotencia-segundos <s> \\
-        --limiar-recencia-dias <d> --model <modelo> --max-tokens <n> --timeout <s>
+Dois provedores, escolhidos por `--provedor` (obrigatório):
+
+- `anthropic` — Messages API, cobrada por token na chave do operador:
+
+      python scripts/conversar_local.py --provedor anthropic \\
+          --janela-idempotencia-segundos <s> --limiar-recencia-dias <d> \\
+          --model <modelo> --max-tokens <n> --timeout <s>
+
+- `claude-code` — Claude Code headless (`claude -p`), consumindo a assinatura
+  Claude Pro/Max em que o operador fez login (`claude` e depois `/login`).
+  `ANTHROPIC_API_KEY` é omitida do ambiente do processo filho, então a API
+  nunca é cobrada por este caminho. `--max-tokens` não se aplica:
+
+      python scripts/conversar_local.py --provedor claude-code \\
+          --janela-idempotencia-segundos <s> --limiar-recencia-dias <d> \\
+          --model sonnet --timeout <s>
 
 `--janela-idempotencia-segundos` e `--limiar-recencia-dias` são **obrigatórios e
 sem default**: o valor do limiar continua decisão aberta do projeto.
@@ -16,8 +30,8 @@ memória** — nada sobrevive ao fim do processo.
 Saídas: `Bot: <texto>` em stdout; alertas, resumo ao responsável e linhas de
 status (`[desfecho=… estado=…]`) em stderr. Sai em EOF, `sair` ou Ctrl+C.
 
-**Segurança.** A credencial é resolvida pelo **próprio SDK**, a partir do
-ambiente do operador. Este script **não** lê variável de credencial, **não**
+**Segurança.** A credencial é resolvida pelo **próprio SDK** (ou pelo próprio
+Claude Code), a partir do ambiente do operador. Este script **não** lê variável de credencial, **não**
 imprime chave e **não** pede que ela seja colada. Se faltar, falha claramente.
 Use apenas mensagens fictícias: o repositório é público.
 """
@@ -96,24 +110,39 @@ def _linhas_do_terminal() -> Iterator[str]:
             return
 
 
-def main() -> int:
-    analisador = argparse.ArgumentParser(
-        description="REPL local do M2. Chamadas reais ao provedor; consome tokens."
-    )
-    analisador.add_argument("--janela-idempotencia-segundos", required=True, type=float)
-    analisador.add_argument("--limiar-recencia-dias", required=True, type=float)
-    analisador.add_argument("--model", required=True, help="identificador do modelo")
-    analisador.add_argument("--max-tokens", required=True, type=int)
-    analisador.add_argument("--timeout", required=True, type=float)
-    analisador.add_argument("--contato", default="contato-local")
-    analisador.add_argument("--canal", default="local")
-    argumentos = analisador.parse_args()
+_MENSAGEM_LOGIN_CLAUDE = (
+    "Claude Code não encontrado ou sem login. Instale o Claude Code, rode "
+    "`claude` no terminal, faça login com `/login` (conta Claude Pro/Max) e "
+    "rode de novo. Não cole credencial aqui."
+)
 
+
+def _produtor_claude_code(argumentos: argparse.Namespace) -> object | None:
+    """Preflight da CLI (encontrada e com login) e construção do adaptador."""
+    from casa77_sdr import interpretation_claude_code as claude_code
+
+    try:
+        comando = claude_code.resolver_executavel_claude()
+    except claude_code.ExecutavelClaudeNaoEncontrado:
+        print(_MENSAGEM_LOGIN_CLAUDE, file=sys.stderr)
+        return None
+    if not claude_code.verificar_login_claude(comando, timeout=argumentos.timeout):
+        print(_MENSAGEM_LOGIN_CLAUDE, file=sys.stderr)
+        return None
+    return claude_code.AdaptadorClaudeCode(
+        executavel=comando,
+        model=argumentos.model,
+        timeout=argumentos.timeout,
+    )
+
+
+def _produtor_anthropic(argumentos: argparse.Namespace) -> object | None:
+    """Preflight da credencial (presença apenas) e construção do adaptador."""
     try:
         import anthropic
     except ImportError:
         print("SDK `anthropic` não instalado.", file=sys.stderr)
-        return 1
+        return None
 
     cliente = anthropic.Anthropic()
     # Presença apenas — o valor da credencial nunca é lido nem impresso.
@@ -129,16 +158,44 @@ def main() -> int:
             "adicione à CI.",
             file=sys.stderr,
         )
-        return 1
+        return None
 
     from casa77_sdr.interpretation_anthropic import AdaptadorAnthropic
 
-    produtor = AdaptadorAnthropic(
+    return AdaptadorAnthropic(
         cliente,
         model=argumentos.model,
         max_tokens=argumentos.max_tokens,
         timeout=argumentos.timeout,
     )
+
+
+def main() -> int:
+    analisador = argparse.ArgumentParser(
+        description="REPL local do M2. Chamadas reais ao provedor."
+    )
+    analisador.add_argument(
+        "--provedor", required=True, choices=("anthropic", "claude-code")
+    )
+    analisador.add_argument("--janela-idempotencia-segundos", required=True, type=float)
+    analisador.add_argument("--limiar-recencia-dias", required=True, type=float)
+    analisador.add_argument("--model", required=True, help="identificador do modelo")
+    analisador.add_argument(
+        "--max-tokens", type=int, help="obrigatório com --provedor anthropic"
+    )
+    analisador.add_argument("--timeout", required=True, type=float)
+    analisador.add_argument("--contato", default="contato-local")
+    analisador.add_argument("--canal", default="local")
+    argumentos = analisador.parse_args()
+
+    if argumentos.provedor == "anthropic":
+        if argumentos.max_tokens is None:
+            analisador.error("--max-tokens é obrigatório com --provedor anthropic")
+        produtor = _produtor_anthropic(argumentos)
+    else:
+        produtor = _produtor_claude_code(argumentos)
+    if produtor is None:
+        return 1
 
     def tentar_alerta(**campos: object) -> None:
         print(
