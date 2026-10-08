@@ -15,7 +15,7 @@ Coordena, sobre o `AlvoDoCiclo` devolvido pelas etapas 4–5, a **etapa 6**
 de origem atravessa **intacta** e `decidir` **não** é chamado. Preservar e
 alertar pertence ao chamador.
 
-Duas montagens são deste coordenador:
+Três montagens são deste coordenador:
 
 - **`fatos_runtime`** — sem calendário integrado (condição 6 *fail-closed*), a
   fotografia factual é `{"consulta_calendario_valida": False}`: `R05/F1` é o
@@ -27,13 +27,21 @@ Duas montagens são deste coordenador:
   dados **já atualizados** pela etapa 6 são projetados com confiança `ALTA`,
   porque a etapa 6 só admite valor de confiança `ALTA` (§4.1.8). Só
   `convidados` e `formato` são projetados; nenhuma PII atravessa.
+- **contato do canal** — `docs/06` §6: *"telefone obtido automaticamente pelo
+  canal"*. Quando a entrada traz identificador de canal não vazio e, depois da
+  etapa 6, `DadosQualificacao.contato` continua vazio, o contato da
+  qualificação é preenchido com ele (fora da interpretação do LLM). O contato
+  dado explicitamente pelo interessado **nunca** é sobrescrito: um vigente igual
+  ao identificador do canal é tratado como ainda vazio diante da etapa 6, de
+  modo que um contato explícito posterior é admitido. Consequência aceita:
+  `R31/F5` deixa de ser perguntado quando o canal fornece o número.
 
 Sem I/O, sem relógio, sem persistência, sem emissão.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from casa77_sdr.closure_decision import decidir_encerramento
 from casa77_sdr.coverage_decision import ResultadoS2D8, decidir_pendencias_e_cobertura
@@ -48,7 +56,12 @@ from casa77_sdr.data_update import (
 )
 from casa77_sdr.handoff_detection import detectar_handoff
 from casa77_sdr.identity import Confianca
-from casa77_sdr.interpretation import DadosExtraidos
+from casa77_sdr.interpretation import (
+    _CAMPOS_DADOS,
+    DadosExtraidos,
+    Interpretacao,
+    _mesmo_valor,
+)
 from casa77_sdr.motor_deps import BaseMotor
 from casa77_sdr.orchestrator_identity import AlvoDoCiclo
 from casa77_sdr.pricing_applicability import decidir_aplicabilidade_de_pacote
@@ -84,13 +97,16 @@ def decidir_primeira_chamada(
     base_motor: BaseMotor,
     calendario_integrado: bool,
     e01_confirmado: bool,
+    contato_canal: str | None = None,
 ) -> PrimeiraDecisao:
     """Executa as etapas 6 e 7 na ordem de §5 e devolve a primeira decisão."""
     interpretacao = alvo.artefatos.interpretacao
     base = base_motor.base
 
-    # Etapa 6 — dados e correções.
-    atualizacao = atualizar_dados_atendimento(alvo.atendimento.dados, interpretacao)
+    # Etapa 6 — dados e correções; depois, o contato do canal se ainda vazio.
+    atualizacao = _atualizar_com_contato_do_canal(
+        alvo.atendimento.dados, interpretacao, contato_canal
+    )
     dados = atualizacao.dados_atualizados
 
     # 1–2. Regras e qualificação provisória.
@@ -143,6 +159,49 @@ def decidir_primeira_chamada(
         atualizacao=atualizacao,
         eventos=eventos,
         condicoes=condicoes,
+    )
+
+
+def _atualizar_com_contato_do_canal(
+    vigentes: DadosQualificacao,
+    interpretacao: Interpretacao,
+    contato_canal: str | None,
+) -> ResultadoAtualizacaoDados:
+    """Etapa 6 e, na sua fronteira, o preenchimento do contato pelo canal.
+
+    Sem identificador de canal, é exatamente a etapa 6. Com ele: um vigente
+    igual ao identificador (preenchido pelo canal num ciclo anterior) entra na
+    etapa 6 como vazio, para que um contato explícito do interessado seja
+    admitido; se o contato final continuar vazio, recebe o identificador. A
+    mutação efetiva é recalculada contra os vigentes originais.
+    """
+    if contato_canal is None or not contato_canal.strip():
+        return atualizar_dados_atendimento(vigentes, interpretacao)
+    entrada_etapa_6 = (
+        replace(vigentes, contato=None) if vigentes.contato == contato_canal else vigentes
+    )
+    atualizacao = atualizar_dados_atendimento(entrada_etapa_6, interpretacao)
+    dados = atualizacao.dados_atualizados
+    if dados.contato is None:
+        dados = replace(dados, contato=contato_canal)
+    return replace(
+        atualizacao,
+        dados_atualizados=dados,
+        insumo_qualificacao_atualizado=_mutou(vigentes, dados),
+    )
+
+
+def _mutou(antes: DadosQualificacao, depois: DadosQualificacao) -> bool:
+    """Mutação efetiva (igualdade estrita de domínio, P-1) entre os seis campos."""
+
+    def valor(dados: DadosQualificacao, campo: str) -> object:
+        if campo in ("tipo_evento", "data_nomeada", "convidados"):
+            return getattr(dados.atendimento, campo)
+        return getattr(dados, campo)
+
+    return any(
+        not _mesmo_valor(valor(antes, campo), valor(depois, campo))
+        for campo in _CAMPOS_DADOS
     )
 
 

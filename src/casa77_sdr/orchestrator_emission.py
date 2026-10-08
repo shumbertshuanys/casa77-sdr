@@ -127,7 +127,9 @@ def produzir_texto_final(
         decisoes.append(
             decidir(primeira.estado_final, (Evento.E15,), pd.qualificacao, pd.condicoes)
         )
-        texto = _com_coleta_do_e15(pd, decisoes[-1], texto, base_motor, tentar_alerta, correlacao)
+        texto = _com_coleta_do_e15(
+            pd, decisoes[-1], texto, base_motor, tentar_alerta, correlacao, estado_inicial
+        )
 
     resumo: str | None = None
     if decisoes[-1].estado_final is Estado.PRONTO_PARA_HANDOFF:
@@ -184,6 +186,7 @@ def _com_coleta_do_e15(
     base_motor: BaseMotor,
     tentar_alerta: Callable[..., object],
     correlacao: str,
+    estado_inicial: Estado,
 ) -> str | None:
     """Retomada da coleta depois da resposta comercial (T20, decisão de `E15`).
 
@@ -192,8 +195,19 @@ def _com_coleta_do_e15(
     principal** — reprojetado com as ações da primeira decisão mais elas, e
     validado **uma vez** como texto final. Reprovado, fica o texto já validado
     da resposta e o alerta é tentado (nenhuma nova chamada da máquina).
+
+    Na primeira mensagem (`estado_inicial` `NOVO` → T02 → `E15` → T20) não há
+    coleta a retomar: `RETOMAR_COLETA_SEM_REPETIR` vale como
+    `PERGUNTAR_PROXIMO_CAMPO_AUSENTE` — a pergunta vem sem `R32`.
     """
     coleta = tuple(a for a in e15.acoes if a in _ACOES_DE_COLETA)
+    if estado_inicial is Estado.NOVO:
+        coleta = tuple(
+            AcaoMaquina.PERGUNTAR_PROXIMO_CAMPO_AUSENTE
+            if a is AcaoMaquina.RETOMAR_COLETA_SEM_REPETIR
+            else a
+            for a in coleta
+        )
     if not coleta:
         return texto
     projetados = _projetar(pd, base_motor, pd.decisao.acoes + coleta)

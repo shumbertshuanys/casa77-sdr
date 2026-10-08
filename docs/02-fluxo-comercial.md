@@ -29,7 +29,7 @@ de dar valor. Dúvida sem resposta aprovada → handoff.
 | Campo | Obrigatório |
 |---|---|
 | nome | sim |
-| telefone/WhatsApp | sim |
+| telefone/WhatsApp | sim — preenchido automaticamente pelo identificador do canal quando ainda vazio (docs/06 §6); contato dado pelo interessado nunca é sobrescrito; `R31/F5` não é perguntado nesse caso (revisão final M2.1) |
 | tipo de evento | sim |
 | data pretendida | sim |
 | número de convidados | sim |
@@ -87,7 +87,7 @@ Fonte: `capacidade.convidados_sentados = 80`, `capacidade.formato_coquetel = 100
 | até 80 | opcional | `qualificado` (se demais dados ok) | `ATE_80` |
 | 81 a 100 | coquetel | `qualificado` em princípio | `ATE_100` |
 | 81 a 100 | sentado | `qualificado_com_ressalva` + handoff | `ATE_100` (sujeito a confirmação) |
-| 81 a 100 | não informado | `qualificado_com_ressalva` + ressalva de capacidade (R34) + handoff | `ATE_100` (sujeito a confirmação) |
+| 81 a 100 | não informado | `qualificado_com_ressalva` + ressalva de capacidade (R34) + handoff | a definir (formato não informado) |
 | acima de 100 | qualquer | `incompativel` | nenhum |
 
 O formato **não é campo obrigatório** e o bot **não o pergunta** (decisão do Victor,

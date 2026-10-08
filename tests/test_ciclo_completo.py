@@ -395,6 +395,8 @@ def test_saudacao_com_interesse_em_visita_vira_uma_mensagem_continua(base_motor)
 
 
 def test_conversa_de_cinco_mensagens_responde_cada_turno_e_encaminha(base_motor):
+    # O contato vem do canal (docs/06 §6): o turno que completa os dados do
+    # evento já encaminha, sem perguntar o contato.
     cenario = Cenario(
         base_motor,
         [
@@ -405,10 +407,9 @@ def test_conversa_de_cinco_mensagens_responde_cada_turno_e_encaminha(base_motor)
                 dados={
                     "data_nomeada": "data ficticia",
                     "convidados": base_motor.base["capacidade"]["convidados_sentados"],
-                    "nome": "Nome Ficticio",
                 }
             ),
-            _payload(dados={"contato": "contato-ficticio"}),
+            _payload(dados={"nome": "Nome Ficticio"}),
         ],
     )
     textos = lambda *tokens: _texto_aprovado(base_motor, tokens)  # noqa: E731
@@ -424,19 +425,19 @@ def test_conversa_de_cinco_mensagens_responde_cada_turno_e_encaminha(base_motor)
     assert r2.texto_emitido is not None
     assert r2.texto_emitido.endswith(textos("R32/F1") + "\n\n" + textos("R31/F2"))
 
-    # Falta data, convidados, nome, contato: pergunta a data.
+    # Falta data, convidados e nome: pergunta a data.
     r3 = cenario.processar(_entrada("evento ficticio", minutos=20))
     assert r3.desfecho is DesfechoCiclo.RESPONDIDA
     assert r3.texto_emitido == textos("R31/F3")
 
-    # Falta só o contato.
+    # Falta só o nome (o contato veio do canal).
     r4 = cenario.processar(_entrada("dados ficticios", minutos=30))
     assert r4.desfecho is DesfechoCiclo.RESPONDIDA
-    assert r4.texto_emitido == textos("R31/F5")
+    assert r4.texto_emitido == textos("R31/F1")
     assert r4.estado_final is Estado.COLETANDO_DADOS
     assert cenario.resumos == []
 
-    r5 = cenario.processar(_entrada("contato ficticio", minutos=40))
+    r5 = cenario.processar(_entrada("nome ficticio", minutos=40))
     assert r5.desfecho is DesfechoCiclo.RESPONDIDA
     assert r5.estado_final is Estado.ENCAMINHADO_HUMANO
     assert r5.texto_emitido == textos("R08/F1")
@@ -447,6 +448,73 @@ def test_conversa_de_cinco_mensagens_responde_cada_turno_e_encaminha(base_motor)
     assert cenario.registro().estado_conversa == Estado.ENCAMINHADO_HUMANO.value
     # Nenhum turno silencioso: um envio por mensagem recebida.
     assert len(cenario.envios) == 5
+
+
+def test_contato_do_canal_completa_a_qualificacao_sem_o_interessado_digitar(base_motor):
+    # Achado final M2.1 #1: nenhum turno traz `contato`; o identificador do
+    # canal preenche o contato da qualificação e o lead é encaminhado.
+    cenario = Cenario(
+        base_motor,
+        [
+            _payload(),
+            _payload(
+                dados={
+                    "tipo_evento": "evento ficticio",
+                    "data_nomeada": "data ficticia",
+                    "convidados": base_motor.base["capacidade"]["convidados_sentados"],
+                    "nome": "Nome Ficticio",
+                }
+            ),
+        ],
+    )
+    cenario.processar(_entrada("ola, mensagem ficticia"))
+    assert cenario.registro().dados_coletados["contato"] == CONTATO
+
+    r2 = cenario.processar(_entrada("dados ficticios", minutos=10))
+    assert r2.desfecho is DesfechoCiclo.RESPONDIDA
+    assert r2.estado_final is Estado.ENCAMINHADO_HUMANO
+    assert r2.texto_emitido == _texto_aprovado(base_motor, ("R08/F1",))
+    assert len(cenario.resumos) == 1
+    assert cenario.registro().dados_coletados["contato"] == CONTATO
+
+
+def test_contato_dado_pelo_interessado_nunca_e_sobrescrito_pelo_canal(base_motor):
+    cenario = Cenario(
+        base_motor,
+        [
+            _payload(dados={"contato": "outro-contato-ficticio"}),
+            _payload(),
+        ],
+    )
+    cenario.processar(_entrada("ola, meu contato ficticio"))
+    assert cenario.registro().dados_coletados["contato"] == "outro-contato-ficticio"
+    cenario.processar(_entrada("mensagem ficticia", minutos=10))
+    assert cenario.registro().dados_coletados["contato"] == "outro-contato-ficticio"
+
+
+def test_contato_explicito_posterior_substitui_o_preenchido_pelo_canal(base_motor):
+    cenario = Cenario(
+        base_motor,
+        [_payload(), _payload(dados={"contato": "outro-contato-ficticio"})],
+    )
+    cenario.processar(_entrada("ola, mensagem ficticia"))
+    assert cenario.registro().dados_coletados["contato"] == CONTATO
+    cenario.processar(_entrada("meu contato ficticio", minutos=10))
+    assert cenario.registro().dados_coletados["contato"] == "outro-contato-ficticio"
+
+
+def test_primeira_mensagem_comercial_nao_diz_voltando_ao_evento(base_motor):
+    # Achado final M2.1 #3: NOVO -> T02 -> E15 -> T20 não tem coleta a
+    # retomar; a pergunta do próximo campo vem sem o R32.
+    cenario = Cenario(base_motor, [_payload(perguntas=("preco_locacao",))])
+    r = cenario.processar(_entrada("quanto custa, mensagem ficticia"))
+    retomada = _texto_aprovado(base_motor, ("R32/F1",))
+    pergunta = _texto_aprovado(base_motor, ("R31/F2",))
+    assert r.desfecho is DesfechoCiclo.RESPONDIDA
+    assert r.texto_emitido is not None
+    assert retomada not in r.texto_emitido
+    assert r.texto_emitido.endswith("\n\n" + pergunta)
+    assert cenario.envios == [(CANAL, CONTATO, r.texto_emitido)]
 
 
 # --------------------------------------------------------------------------

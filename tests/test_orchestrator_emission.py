@@ -222,9 +222,11 @@ def test_pergunta_comercial_emite_composicao_aprovada_byte_a_byte(base_motor):
     projetados = projetar_fragmentos_para_emissao(
         pd.s2d8.fragmentos_autorizados, pd.decisao.acoes
     )
-    # `E15` → T20: a retomada e a pergunta do tipo de evento (primeiro campo da
-    # prioridade natural) fecham a mesma mensagem.
-    esperado = _texto_aprovado(base_motor, (*projetados, "R32/F1", "R31/F2"))
+    # `E15` → T20 na primeira mensagem (`NOVO`): não há coleta a retomar, então
+    # só a pergunta do tipo de evento (primeiro campo da prioridade natural)
+    # fecha a mensagem — sem `R32/F1` (achado final M2.1 #3).
+    assert estado is Estado.NOVO
+    esperado = _texto_aprovado(base_motor, (*projetados, "R31/F2"))
 
     final = _produzir(pd, estado, base_motor)
 

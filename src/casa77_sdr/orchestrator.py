@@ -335,6 +335,7 @@ def processar_mensagem(
             base_motor=deps.base_motor,
             calendario_integrado=deps.calendario_integrado,
             e01_confirmado=True,
+            contato_canal=entrada.contato,
         )
     except (
         DecisaoCoberturaNaoAvaliavel,

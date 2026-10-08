@@ -339,8 +339,9 @@ def projetar_fragmentos_para_emissao(
     **Nada é capturado** e **nenhum resultado parcial é devolvido**. `R06/F1`
     **não emitível não é erro**: ele apenas **não contribui**.
 
-    **M2.1 (PE-21–PE-25).** `campos_ausentes` (tupla de `str`, na ordem do
-    `Qualificador`) é exigido só com a ação de pergunta ou de retomada;
+    **M2.1 (PE-21–PE-25).** `campos_ausentes` (tupla de `str`) é exigido só com
+    a ação de pergunta ou de retomada — a pergunta é a do primeiro campo
+    ausente na ordem natural (tipo de evento, data, convidados, nome, contato);
     `motivos_violacao` (tupla de `MotivoViolacao`) só com a regra incompatível;
     `fotografar` (`token -> FotografiaFragmento`) só quando um token condicionado
     é de fato acrescentado — chamado **no máximo uma vez por token**. Forma
@@ -477,8 +478,9 @@ def projetar_fragmentos_para_emissao(
     for token in (*abertura, *mandatorios, *coleta):
         # Zero deduplicacao cross-source generica: um identificador que chegue
         # pelas duas origens significa modelagem incoerente a montante. As
-        # excecoes sao **duas**, explicitas e independentes — `R05/F1` por
-        # `PE-13` e `R06/F1` por `PE-15`-`PE-20` —, e ambas ja foram resolvidas
+        # excecoes sao **tres**, explicitas e independentes — `R05/F1` por
+        # `PE-13`, `R06/F1` por `PE-15`-`PE-20` e os tokens de motivo de
+        # `PE-23` (`R33/F1`, `R17/F1`, `R18/F1`) —, e todas ja foram resolvidas
         # acima **por owner**: o token sequer entra neste bloco. Fora delas,
         # `PE-10` continua fail-closed.
         if token in recebidos:

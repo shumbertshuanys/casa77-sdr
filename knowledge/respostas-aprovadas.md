@@ -296,7 +296,8 @@ Valor: **BLOQUEADO** (`suite_noiva.valor: null`) → R03 + handoff.
 
 ## R31 — Coleta de dados — APROVADO
 
-Uma pergunta por campo ausente; o motor escolhe o fragmento do **primeiro** campo ausente.
+Uma pergunta por campo ausente; o motor escolhe o fragmento do **primeiro** campo ausente
+na ordem natural (tipo de evento, data, convidados, nome, contato).
 
 Nome:
 
