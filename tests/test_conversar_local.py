@@ -136,6 +136,7 @@ def test_erro_de_contrato_nao_derruba_o_repl(capsys: pytest.CaptureFixture[str])
 
 _ARGS = [
     "conversar_local.py",
+    "--provedor", "anthropic",
     "--janela-idempotencia-segundos", "300",
     "--limiar-recencia-dias", "30",
     "--model", "m",
@@ -163,3 +164,112 @@ def test_main_argumento_obrigatorio_ausente_sai_com_2(monkeypatch: pytest.Monkey
     with pytest.raises(SystemExit) as saida:
         modulo.main()
     assert saida.value.code == 2
+
+
+_ARGS_CLAUDE_CODE = [
+    "conversar_local.py",
+    "--provedor", "claude-code",
+    "--janela-idempotencia-segundos", "300",
+    "--limiar-recencia-dias", "30",
+    "--model", "sonnet",
+    "--timeout", "5",
+]
+
+
+def _sem_argumento(argumentos: list[str], nome: str) -> list[str]:
+    indice = argumentos.index(nome)
+    return argumentos[:indice] + argumentos[indice + 2 :]
+
+
+def test_main_provedor_e_obrigatorio(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    modulo = _carregar_script()
+    monkeypatch.setattr(sys, "argv", _sem_argumento(_ARGS, "--provedor"))
+    with pytest.raises(SystemExit) as saida:
+        modulo.main()
+    assert saida.value.code == 2
+    assert "--provedor" in capsys.readouterr().err
+
+
+def test_main_provedor_desconhecido_sai_com_2(monkeypatch: pytest.MonkeyPatch) -> None:
+    modulo = _carregar_script()
+    argumentos = list(_ARGS)
+    argumentos[argumentos.index("anthropic")] = "openai"
+    monkeypatch.setattr(sys, "argv", argumentos)
+    with pytest.raises(SystemExit) as saida:
+        modulo.main()
+    assert saida.value.code == 2
+
+
+def test_main_anthropic_exige_max_tokens(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    modulo = _carregar_script()
+    monkeypatch.setattr(sys, "argv", _sem_argumento(_ARGS, "--max-tokens"))
+    with pytest.raises(SystemExit) as saida:
+        modulo.main()
+    assert saida.value.code == 2
+    assert "--max-tokens" in capsys.readouterr().err
+
+
+def test_main_claude_code_cli_ausente_falha_claro(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from casa77_sdr import interpretation_claude_code
+
+    def ausente() -> list[str]:
+        raise interpretation_claude_code.ExecutavelClaudeNaoEncontrado("claude")
+
+    monkeypatch.setattr(interpretation_claude_code, "resolver_executavel_claude", ausente)
+    modulo = _carregar_script()
+    monkeypatch.setattr(sys, "argv", _ARGS_CLAUDE_CODE)
+    assert modulo.main() == 1
+    erro = capsys.readouterr().err
+    assert "/login" in erro
+    assert "Traceback" not in erro
+
+
+def test_main_claude_code_sem_login_falha_claro(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from casa77_sdr import interpretation_claude_code
+
+    chamadas: list[tuple[list[str], float]] = []
+
+    def sem_login(comando: list[str], *, timeout: float) -> bool:
+        chamadas.append((comando, timeout))
+        return False
+
+    monkeypatch.setattr(
+        interpretation_claude_code, "resolver_executavel_claude", lambda: ["claude-ficticio"]
+    )
+    monkeypatch.setattr(interpretation_claude_code, "verificar_login_claude", sem_login)
+    modulo = _carregar_script()
+    monkeypatch.setattr(sys, "argv", _ARGS_CLAUDE_CODE)
+    assert modulo.main() == 1
+    erro = capsys.readouterr().err
+    assert "`claude`" in erro and "/login" in erro
+    assert "ANTHROPIC_API_KEY" not in erro
+    assert "Traceback" not in erro
+    assert chamadas == [(["claude-ficticio"], 5.0)]
+
+
+def test_main_claude_code_nao_exige_max_tokens_nem_credencial_da_api(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from casa77_sdr import interpretation_claude_code
+
+    for variavel in ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"):
+        monkeypatch.delenv(variavel, raising=False)
+    monkeypatch.setattr(
+        interpretation_claude_code, "resolver_executavel_claude", lambda: ["claude-ficticio"]
+    )
+    monkeypatch.setattr(
+        interpretation_claude_code, "verificar_login_claude", lambda comando, *, timeout: True
+    )
+    modulo = _carregar_script()
+    monkeypatch.setattr(modulo, "_linhas_do_terminal", lambda: iter(()))
+    monkeypatch.setattr(sys, "argv", _ARGS_CLAUDE_CODE)
+    assert modulo.main() == 0
+    assert "Traceback" not in capsys.readouterr().err
