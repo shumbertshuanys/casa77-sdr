@@ -32,8 +32,7 @@ dados comerciais só em `knowledge/casa77.yaml`.
 - Conversa útil (M2.1): saudação R01 no 1º contato (sem pergunta extra); pergunta do
   primeiro campo ausente na ordem tipo de evento, data, convidados, nome, contato (R31);
   após resposta comercial, retomada R32 + próxima pergunta; ressalva de capacidade R34 (só
-  coquetel) sem perguntar formato; reforço R35 e despedida R15. Cenários de aceitação em
-  `tests/test_ciclo_completo.py`.
+  coquetel) sem perguntar formato; reforço R35, despedida R15. Aceitação: `tests/test_ciclo_completo.py`.
 - Suíte: 9705 testes passando.
 
 ## O que falta
