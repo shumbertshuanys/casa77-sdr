@@ -222,7 +222,9 @@ def test_pergunta_comercial_emite_composicao_aprovada_byte_a_byte(base_motor):
     projetados = projetar_fragmentos_para_emissao(
         pd.s2d8.fragmentos_autorizados, pd.decisao.acoes
     )
-    esperado = _texto_aprovado(base_motor, projetados)
+    # `E15` → T20: a retomada e a pergunta do tipo de evento (primeiro campo da
+    # prioridade natural) fecham a mesma mensagem.
+    esperado = _texto_aprovado(base_motor, (*projetados, "R32/F1", "R31/F2"))
 
     final = _produzir(pd, estado, base_motor)
 
@@ -241,9 +243,10 @@ def test_apresentar_atendimento_inicial_emite_a_saudacao_aprovada(base_motor):
     assert final.resumo_handoff is None
 
 
-def test_primeiro_contato_com_visita_saudacao_visita_e_pergunta_numa_mensagem(base_motor):
+def test_primeiro_contato_com_visita_saudacao_e_visita_numa_mensagem(base_motor):
     # 1º contato com dado + interesse em visita: a máquina emite T01, T04, T16
-    # (saudação, pergunta, visita); a mensagem fica saudação → visita → pergunta.
+    # (saudação, pergunta, visita). A saudação já pergunta o tipo de evento, então
+    # a pergunta de coleta não entra: saudação → visita.
     pd, estado = _primeira(
         _payload(dados={"tipo_evento": "evento ficticio"}, intencoes=("interesse_em_visita",)),
         base_motor,
@@ -258,7 +261,7 @@ def test_primeiro_contato_com_visita_saudacao_visita_e_pergunta_numa_mensagem(ba
     final = _produzir(pd, estado, base_motor)
 
     partes = [
-        _texto_aprovado(base_motor, (token,)) for token in ("R01/F1", "R06/F1", "R31/F1")
+        _texto_aprovado(base_motor, (token,)) for token in ("R01/F1", "R06/F1")
     ]
     assert final.texto == "\n\n".join(partes)
     assert final.texto.split("\n\n") == partes
@@ -276,7 +279,72 @@ def test_retomada_seguida_da_pergunta_do_proximo_campo(base_motor):
 
     final = _produzir(pd, estado, base_motor)
 
-    assert final.texto == _texto_aprovado(base_motor, ("R32/F1", "R31/F5"))
+    # Prioridade natural: data antes de convidados, nome e contato.
+    assert final.texto == _texto_aprovado(base_motor, ("R32/F1", "R31/F3"))
+
+
+def test_resposta_comercial_em_coleta_retoma_e_pergunta_numa_mensagem(
+    base_motor, monkeypatch
+):
+    validados: list[str] = []
+    original = orchestrator_emission.validar_resposta_final
+
+    def espiao(texto: str, montada: Any) -> Any:
+        validados.append(texto)
+        return original(texto, montada)
+
+    monkeypatch.setattr(orchestrator_emission, "validar_resposta_final", espiao)
+    contador = _contar_decidir(monkeypatch)
+    pd, estado = _primeira(
+        _payload(perguntas=("preco_locacao",)),
+        base_motor,
+        atendimento=_registro(Estado.COLETANDO_DADOS, {"tipo_evento": "evento ficticio"}),
+    )
+    assert pd.decisao.caminho == (Transicao.T10,)
+    resposta = pd.s2d8.fragmentos_autorizados
+    assert resposta
+
+    final = _produzir(pd, estado, base_motor)
+
+    assert final.decisoes_do_ciclo[1].caminho == (Transicao.T20,)
+    esperado = "\n\n".join(
+        (
+            _texto_aprovado(base_motor, resposta),
+            _texto_aprovado(base_motor, ("R32/F1",)),
+            _texto_aprovado(base_motor, ("R31/F3",)),
+        )
+    )
+    assert final.texto == esperado
+    # O texto final é validado uma vez; a primeira validação é a da resposta,
+    # que sustenta o critério de `E15`.
+    assert validados[-1] == esperado
+    assert validados.count(esperado) == 1
+    assert contador["n"] == 1
+    assert final.texto_encaminhamento is None
+
+
+def test_retomada_do_e15_reprovada_mantem_a_resposta_validada(base_motor, monkeypatch):
+    original = orchestrator_emission.validar_resposta_final
+    pd, estado = _primeira(
+        _payload(perguntas=("preco_locacao",)),
+        base_motor,
+        atendimento=_registro(Estado.COLETANDO_DADOS, {"tipo_evento": "evento ficticio"}),
+    )
+    resposta = _texto_aprovado(base_motor, pd.s2d8.fragmentos_autorizados)
+    retomada = _texto_aprovado(base_motor, ("R32/F1",))
+
+    def reprova(texto: str, montada: Any) -> Any:
+        if retomada in texto:
+            return ResultadoValidacaoResposta(False, MotivoValidacaoResposta.TEXTO_DIVERGENTE)
+        return original(texto, montada)
+
+    monkeypatch.setattr(orchestrator_emission, "validar_resposta_final", reprova)
+    alerta = AlertaEspiao()
+
+    final = _produzir(pd, estado, base_motor, alerta)
+
+    assert final.texto == resposta
+    assert len(alerta.chamadas) == 1
 
 
 def test_regra_incompativel_por_capacidade_informa_o_limite(base_motor):

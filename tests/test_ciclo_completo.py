@@ -295,11 +295,12 @@ def test_conversa_de_tres_mensagens_avanca_pela_maquina(base_motor):
     assert cenario._ids == 1
     assert cenario.produtor.chamadas == 3
     # M2.1: saudação no 1º contato e, depois, a pergunta do primeiro campo
-    # ausente (nome, depois contato — ordem do `Qualificador`).
+    # ausente na prioridade natural (tipo, data, convidados, nome, contato): a
+    # data continua ausente nas duas mensagens seguintes.
     esperados = (
         _texto_aprovado(base_motor, ("R01/F1",)),
-        _texto_aprovado(base_motor, ("R31/F1",)),
-        _texto_aprovado(base_motor, ("R31/F5",)),
+        _texto_aprovado(base_motor, ("R31/F3",)),
+        _texto_aprovado(base_motor, ("R31/F3",)),
     )
     for r, esperado in zip((r1, r2, r3), esperados, strict=True):
         assert r.desfecho is DesfechoCiclo.RESPONDIDA

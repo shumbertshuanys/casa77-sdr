@@ -87,11 +87,13 @@ improvisada.
 despedida (`R15/F1`), ressalva de capacidade (`R34/F1`) e reforço de
 encaminhamento (`R35/F1`) entram pela tabela fixa. Três ações escolhem o
 fragmento por **dado estruturado** recebido explicitamente, nunca por texto: a
-pergunta de coleta pelo **primeiro** de `campos_ausentes` (`R31/F1`–`F5`), a
+pergunta de coleta pelo primeiro campo ausente na **prioridade natural** (tipo,
+data, convidados, nome, contato; `R31/F1`–`F5`) — omitida quando a saudação está
+na mensagem, porque `R01/F1` já pergunta o tipo —, a
 retomada (`R32/F1`) **seguida** dessa mesma pergunta, e a regra incompatível pelo
 **motivo** de cada violação em `motivos_violacao` (`R33/F1` capacidade, `R17/F1`
-tipo não aceito). Tokens com *bindings* (`R01/F1`, `R17/F1`, `R33/F1`,
-`R34/F1`) só entram com veredito da **autoridade única** de emissibilidade sobre
+tipo não aceito, `R18/F1` data bloqueada; cobertura com o mesmo token é a owner). Tokens com *bindings* (`R01/F1`, `R17/F1`, `R18/F1`,
+`R33/F1`, `R34/F1`) só entram com veredito da **autoridade única** de emissibilidade sobre
 a fotografia devolvida por `fotografar`; não emitível → zero fragmento (PE-7).
 A mensagem fica **saudação → cobertura → demais mandatórios → coleta**.
 """
@@ -213,15 +215,27 @@ _PERGUNTA_POR_CAMPO: dict[str, str] = {
     "convidados": "R31/F4",
     "contato": "R31/F5",
 }
+# Prioridade natural da conversa (controller, 2026-10-08): pergunta-se o
+# primeiro campo AUSENTE nesta ordem — a ordem de `campos_ausentes` nao conta.
+_PRIORIDADE_COLETA: tuple[str, ...] = (
+    "tipo_evento",
+    "data_nomeada",
+    "convidados",
+    "nome",
+    "contato",
+)
 
 # PE-22. Abertura da retomada; so existe seguida da pergunta do proximo campo.
 _RETOMADA = "R32/F1"
 
 # PE-23. Regra incompativel pelo motivo da violacao. Tabela FECHADA: motivo fora
-# dela (hoje, `DATA_NAO_ACEITA`) nada acrescenta (PE-7). `R33/F2` (horario) esta
-# aprovado na base, mas nao ha motivo de violacao de horario: fica sem rota.
+# dela nada acrescenta (PE-7). `DATA_NAO_ACEITA` nasce de
+# `eventos.datas_nao_aceitas`, exatamente o que `R18/F1` (datas bloqueadas)
+# renderiza. `R33/F2` (horario) esta aprovado na base, mas nao ha motivo de
+# violacao de horario: fica sem rota.
 _INCOMPATIVEL_POR_MOTIVO: dict[MotivoViolacao, str] = {
     MotivoViolacao.TIPO_NAO_ACEITO: "R17/F1",
+    MotivoViolacao.DATA_NAO_ACEITA: "R18/F1",
     MotivoViolacao.CONVIDADOS_ACIMA_DA_CAPACIDADE: "R33/F1",
 }
 
@@ -381,11 +395,14 @@ def projetar_fragmentos_para_emissao(
             continue
 
         if acao is _ACAO_INCOMPATIVEL:
-            # PE-23. Um fragmento por motivo, na ordem das violacoes.
+            # PE-23. Um fragmento por motivo, na ordem das violacoes. Quando a
+            # cobertura ja trouxe o mesmo token (ex.: `R18/F1` para pergunta de
+            # datas), a cobertura e a owner e ele mantem a posicao original.
             tokens = tuple(
                 _INCOMPATIVEL_POR_MOTIVO[motivo]
                 for motivo in _conferir_motivos(motivos_violacao)
                 if motivo in _INCOMPATIVEL_POR_MOTIVO
+                and _INCOMPATIVEL_POR_MOTIVO[motivo] not in recebidos
             )
         else:
             tokens = _FRAGMENTOS_POR_ACAO[acao]
@@ -443,9 +460,14 @@ def projetar_fragmentos_para_emissao(
                 mandatorios.append(token)
 
     coleta: list[str] = []
-    if coleta_pedida:
+    # Com a saudacao na mensagem nao ha pergunta de coleta: `R01/F1` ja pergunta
+    # o tipo de evento (controller, 2026-10-08).
+    if coleta_pedida and not abertura:
         campos = _conferir_campos(campos_ausentes)
-        pergunta = _PERGUNTA_POR_CAMPO.get(campos[0]) if campos else None
+        pergunta = next(
+            (_PERGUNTA_POR_CAMPO[campo] for campo in _PRIORIDADE_COLETA if campo in campos),
+            None,
+        )
         # Sem pergunta aprovada para o primeiro campo, a retomada nao fica solta.
         if pergunta is not None:
             if retomar:

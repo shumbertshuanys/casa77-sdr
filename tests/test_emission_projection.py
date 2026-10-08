@@ -108,6 +108,7 @@ RETOMADA = "R32/F1"
 ACIMA_DA_CAPACIDADE = "R33/F1"
 HORARIO_LIMITE = "R33/F2"
 RESSALVA = "R34/F1"
+DATA_BLOQUEADA = "R18/F1"
 REFORCO = "R35/F1"
 
 ACAO_SAUDACAO = AcaoMaquina.APRESENTAR_ATENDIMENTO_INICIAL
@@ -117,7 +118,7 @@ ACAO_INCOMPATIVEL = AcaoMaquina.INFORMAR_REGRA_INCOMPATIVEL
 ACAO_RESSALVA = AcaoMaquina.INFORMAR_RESSALVA_DE_CAPACIDADE
 
 # Classe condicionada do M2.1 (tem *bindings*), fora `R06/F1`.
-CONDICIONADOS = (SAUDACAO, TIPO_NAO_ACEITO, ACIMA_DA_CAPACIDADE, RESSALVA)
+CONDICIONADOS = (SAUDACAO, TIPO_NAO_ACEITO, ACIMA_DA_CAPACIDADE, RESSALVA, DATA_BLOQUEADA)
 # Classe estatica (zero *bindings*).
 ESTATICOS = (
     LACUNA,
@@ -1153,10 +1154,10 @@ def test_pe_t17_condicionados_tem_bindings_sem_runtime(
     assert "RUNTIME_AUTORITATIVO" not in origens
 
 
-def test_pe_t17_hoje_existem_exatamente_dezesseis_materializados() -> None:
+def test_pe_t17_hoje_existem_exatamente_dezessete_materializados() -> None:
     declarados = _declarados()
 
-    assert len(declarados) == len(set(declarados)) == 16
+    assert len(declarados) == len(set(declarados)) == 17
     assert set(declarados) == {VISITA, *ESTATICOS, *CONDICIONADOS}
 
 
@@ -1285,14 +1286,15 @@ def test_pe_t26_ressalva_condicionada_entra_depois_da_cobertura() -> None:
 @pytest.mark.parametrize(
     ("campos", "esperado"),
     [
-        (("nome", "contato", "tipo_evento"), PERGUNTA_NOME),
-        (("contato", "tipo_evento"), PERGUNTA_CONTATO),
-        (("tipo_evento", "data_nomeada"), PERGUNTA_TIPO),
-        (("data_nomeada", "convidados"), PERGUNTA_DATA),
-        (("convidados",), PERGUNTA_CONVIDADOS),
+        (("nome", "contato", "tipo_evento", "data_nomeada", "convidados"), PERGUNTA_TIPO),
+        (("nome", "contato", "data_nomeada", "convidados"), PERGUNTA_DATA),
+        (("nome", "contato", "convidados"), PERGUNTA_CONVIDADOS),
+        (("contato", "nome"), PERGUNTA_NOME),
+        (("contato",), PERGUNTA_CONTATO),
+        (("formato", "contato"), PERGUNTA_CONTATO),
     ],
 )
-def test_pe_t27_pergunta_o_primeiro_campo_ausente(
+def test_pe_t27_pergunta_pela_prioridade_natural(
     campos: tuple[str, ...], esperado: str
 ) -> None:
     resultado = projetar_fragmentos_para_emissao(
@@ -1304,13 +1306,13 @@ def test_pe_t27_pergunta_o_primeiro_campo_ausente(
 
 @pytest.mark.parametrize(
     "campos",
-    [(), ("formato",), ("formato", "nome")],
-    ids=["nenhum", "formato", "formato_primeiro"],
+    [(), ("formato",), ("campo_desconhecido",)],
+    ids=["nenhum", "formato", "desconhecido"],
 )
 def test_pe_t27_sem_pergunta_aprovada_nao_acrescenta_nada(
     campos: tuple[str, ...],
 ) -> None:
-    """`formato` nao e perguntado (decisao do Victor): so o PRIMEIRO campo conta."""
+    """`formato` nao e perguntado (decisao do Victor) nem campo fora da tabela."""
     resultado = projetar_fragmentos_para_emissao(
         (A,), (ACAO_PERGUNTA,), campos_ausentes=campos
     )
@@ -1343,7 +1345,7 @@ def test_pe_t28_retomada_e_seguida_da_pergunta() -> None:
         (), (ACAO_RETOMADA,), campos_ausentes=("contato", "convidados")
     )
 
-    assert resultado == (RETOMADA, PERGUNTA_CONTATO)
+    assert resultado == (RETOMADA, PERGUNTA_CONVIDADOS)
 
 
 def test_pe_t28_retomada_e_pergunta_no_mesmo_ciclo_perguntam_uma_vez() -> None:
@@ -1371,7 +1373,7 @@ def test_pe_t28_retomada_sem_pergunta_aprovada_nao_fica_solta() -> None:
     [
         ((MotivoViolacao.CONVIDADOS_ACIMA_DA_CAPACIDADE,), (ACIMA_DA_CAPACIDADE,)),
         ((MotivoViolacao.TIPO_NAO_ACEITO,), (TIPO_NAO_ACEITO,)),
-        ((MotivoViolacao.DATA_NAO_ACEITA,), ()),
+        ((MotivoViolacao.DATA_NAO_ACEITA,), (DATA_BLOQUEADA,)),
         (
             (
                 MotivoViolacao.TIPO_NAO_ACEITO,
@@ -1403,6 +1405,18 @@ def test_pe_t29_fragmento_pelo_motivo(
     assert resultado == esperado
 
 
+def test_pe_t29_data_bloqueada_ja_na_cobertura_e_owner() -> None:
+    """`R18/F1` tambem cobre a pergunta de datas: a cobertura e a owner."""
+    resultado = projetar_fragmentos_para_emissao(
+        (A, DATA_BLOQUEADA),
+        (ACAO_INCOMPATIVEL,),
+        motivos_violacao=(MotivoViolacao.DATA_NAO_ACEITA,),
+        fotografar=_fotografar_emitivel,
+    )
+
+    assert resultado == (A, DATA_BLOQUEADA)
+
+
 def test_pe_t29_motivo_nao_emitivel_nao_acrescenta() -> None:
     resultado = projetar_fragmentos_para_emissao(
         (),
@@ -1432,17 +1446,28 @@ def test_pe_t29_motivos_invalidos_fecham(motivos: object) -> None:
 # PE-T30 — ordem da mensagem: saudacao -> cobertura -> demais -> coleta (PE-25)
 
 
-def test_pe_t30_ordem_saudacao_resposta_pergunta() -> None:
-    """Ordem da maquina no 1o contato com dado + visita: T01, T04, T16."""
+def test_pe_t30_saudacao_dispensa_a_pergunta_de_coleta() -> None:
+    """1o contato com dado + visita (T01, T04, T16): R01 ja pergunta o tipo."""
     resultado = projetar_fragmentos_para_emissao(
-        (),
-        (ACAO_SAUDACAO, ACAO_PERGUNTA, ACAO_T16),
+        (A,),
+        (ACAO_SAUDACAO, ACAO_PERGUNTA, ACAO_T16, ACAO_RETOMADA),
         fotografia_r06=EMITIVEL,
         campos_ausentes=("nome", "contato"),
         fotografar=_fotografar_emitivel,
     )
 
-    assert resultado == (SAUDACAO, VISITA, PERGUNTA_NOME)
+    assert resultado == (SAUDACAO, A, VISITA)
+
+
+def test_pe_t30_saudacao_nao_emitivel_mantem_a_pergunta() -> None:
+    resultado = projetar_fragmentos_para_emissao(
+        (),
+        (ACAO_SAUDACAO, ACAO_PERGUNTA),
+        campos_ausentes=("nome",),
+        fotografar=lambda token: FotografiaFragmento(status=BLOQUEADO),
+    )
+
+    assert resultado == (PERGUNTA_NOME,)
 
 
 def test_pe_t30_coleta_fica_depois_da_cobertura_e_dos_mandatorios() -> None:
@@ -1457,13 +1482,21 @@ def test_pe_t30_coleta_fica_depois_da_cobertura_e_dos_mandatorios() -> None:
 
 
 @pytest.mark.parametrize(
-    "token", [SAUDACAO, PERGUNTA_NOME, REFORCO], ids=["saudacao", "pergunta", "reforco"]
+    ("token", "acao"),
+    [
+        (SAUDACAO, ACAO_SAUDACAO),
+        (PERGUNTA_NOME, ACAO_PERGUNTA),
+        (REFORCO, AcaoMaquina.REFORCAR_ENCAMINHAMENTO),
+    ],
+    ids=["saudacao", "pergunta", "reforco"],
 )
-def test_pe_t30_colisao_com_a_cobertura_continua_fail_closed(token: str) -> None:
+def test_pe_t30_colisao_com_a_cobertura_continua_fail_closed(
+    token: str, acao: AcaoMaquina
+) -> None:
     with pytest.raises(ProjecaoEmissaoNaoAvaliavel) as erro:
         projetar_fragmentos_para_emissao(
             (token,),
-            (ACAO_SAUDACAO, ACAO_PERGUNTA, AcaoMaquina.REFORCAR_ENCAMINHAMENTO),
+            (acao,),
             campos_ausentes=("nome",),
             fotografar=_fotografar_emitivel,
         )
