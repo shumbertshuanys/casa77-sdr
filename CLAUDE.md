@@ -1,108 +1,51 @@
 # CLAUDE.md — Projeto Casa 77 SDR
 
-## O que é este projeto
+Bot SDR que atende interessados na locação da Casa 77: responde dúvidas, informa preços e
+condições aprovadas, coleta dados do evento, qualifica o lead e encaminha para Douglas
+Bianchi. **Não** fecha contrato, **não** dá desconto, **não** confirma visita ou
+disponibilidade sem humano.
 
-Bot SDR para atendimento inicial de interessados na locação da Casa 77.
+## Como trabalhar
 
-Responsabilidades do bot:
+Regras completas: `docs/governanca/01-regras.md`. Em resumo:
 
-1. responder dúvidas sobre o espaço;
-2. informar preços e condições aprovadas;
-3. identificar o tipo de evento;
-4. coletar informações essenciais do interessado;
-5. verificar disponibilidade quando houver integração com calendário;
-6. qualificar o lead;
-7. encaminhar o atendimento para Douglas Bianchi.
+1. Ler `docs/00-estado-atual.md` e o plano do marco em `docs/superpowers/plans/`.
+2. Executar as tarefas do plano aprovado **em sequência, sem pedir autorização a cada uma**,
+   com TDD (superpowers: `subagent-driven-development` ou `executing-plans`).
+3. Suíte verde antes de cada commit: `python -m pytest -q`.
+4. Lacuna técnica: escolher a opção mais simples compatível com as regras abaixo e registrar
+   em 1–3 linhas na descrição do PR. **Não** abrir arbitragem nem editar `docs/07` por
+   microdecisão.
+5. Parar e perguntar apenas para: decisão comercial ou texto ao cliente (Douglas);
+   fornecedor/tecnologia/custo (Victor); credencial; ação destrutiva; plano errado.
+6. Merge só com autorização do Victor. Atualizar `docs/00-estado-atual.md` (≤ 80 linhas)
+   no PR que fecha o marco.
 
-O bot **não** fecha contratos, **não** concede descontos e **não** confirma visitas sem aprovação humana.
+## Regras invioláveis
 
-## Fonte de verdade
+- `knowledge/casa77.yaml` é a **única** fonte de preço, capacidade, horário, pacote e
+  restrição. Nunca inventar, inferir ou copiar valor comercial para código, prompt, teste ou
+  documento.
+- Informação ausente, `null` ou `pendente` → handoff humano.
+- Texto ao cliente só de `knowledge/respostas-aprovadas.md`; texto novo precisa de
+  aprovação do Douglas.
+- O LLM interpreta, extrai e redige; **nunca** decide preço, pacote, capacidade,
+  disponibilidade ou exceção.
+- Nenhum segredo, `.env` ou dado pessoal versionado.
+
+## Onde está cada coisa
 
 | Assunto | Arquivo |
 |---|---|
-| Dados comerciais e operacionais | `knowledge/casa77.yaml` |
-| Respostas com texto aprovado | `knowledge/respostas-aprovadas.md` |
-| Lacunas conhecidas | `knowledge/informacoes-pendentes.md` |
-| Regras de conversa | `docs/03-regras-de-conversa.md` |
-| Regras de handoff | `docs/04-handoff-humano.md` |
-| Prompt de produção | `prompts/prompt-sistema-bot.md` |
+| Estado e próximo passo | `docs/00-estado-atual.md` |
+| Dados comerciais | `knowledge/casa77.yaml` |
+| Respostas aprovadas | `knowledge/respostas-aprovadas.md` |
+| Lacunas comerciais | `knowledge/informacoes-pendentes.md` |
+| Conversa / handoff | `docs/03-regras-de-conversa.md`, `docs/04-handoff-humano.md` |
+| Máquina de estados | `docs/06-maquina-de-estados.md` |
+| Contratos do motor | `docs/07-arquitetura-motor-respostas.md` |
+| Prompt de interpretação | `prompts/prompt-interpretacao.md` |
 
-Nunca inventar informação ausente nesses arquivos. Informação ausente ou marcada como
-`pendente` vira handoff humano.
+## Ambiente
 
-## Preços e condições comerciais
-
-- Valores nunca são inferidos de conversas antigas, de memória ou de conhecimento genérico.
-- A única origem de preço, capacidade, horário e restrição é `knowledge/casa77.yaml`.
-- Proibido ao bot: criar descontos, negociar preços, oferecer parcelamentos diferentes,
-  confirmar exceções, alterar regras de horário, prometer disponibilidade sem consulta,
-  concluir contratação.
-
-## Segurança contra alucinação
-
-Quando não houver resposta aprovada:
-
-1. não inventar;
-2. não usar conhecimento genérico;
-3. informar que a questão precisa ser confirmada;
-4. encaminhar para Douglas Bianchi quando necessário.
-
-## Arquitetura — camadas separadas
-
-- dados comerciais (`knowledge/`)
-- regras de negócio
-- motor de conversa
-- integração com calendário
-- integração com WhatsApp
-- registro de leads
-- atendimento humano
-
-A lógica comercial não pode ficar espalhada pelo código. Preços, capacidades, horários e
-restrições são carregados de arquivo estruturado ou banco de dados.
-
-## Regras de trabalho por tarefa
-
-- Trabalhar somente na tarefa da mensagem atual.
-- Antes de alterar código: identificar os arquivos diretamente relacionados, ler apenas
-  esses arquivos, apresentar plano de no máximo cinco itens, executar somente o escopo.
-- Não varrer o repositório inteiro sem pedido expresso.
-- Não reescrever arquivos que não precisam mudar.
-- Não criar funcionalidade extra por parecer útil.
-- Não produzir documentação extensa quando o pedido for implementar código.
-- Preferencialmente até cinco arquivos alterados por execução.
-- Uma funcionalidade principal por execução.
-- Não avançar automaticamente para a etapa seguinte.
-
-Ao concluir, seguir o esquema único de resposta definido em
-`docs/governanca/01-regras.md` §11 e no mandato vigente.
-
-## Ordem do projeto
-
-1. organizar a base de conhecimento ← **concluída**
-2. definir o fluxo de atendimento
-3. criar o motor de respostas
-4. implementar a qualificação
-5. implementar o encaminhamento humano
-6. integrar calendário
-7. integrar WhatsApp
-8. criar registro de leads
-9. testar
-10. publicar
-
-Não avançar de etapa sem pedido específico.
-
-## Estado do projeto
-
-Antes de qualquer tarefa, consultar `docs/00-estado-atual.md` para o snapshot operacional
-corrente. Histórico, PRs, commits e diffs são verificados no Git/GitHub conforme
-`docs/governanca/02-mapa-de-fontes.md`.
-
-Quando o mandato exigir verificação determinística de estado Git, usar
-`scripts/repo_state.py` (`pre` / `post`; ver `--help`). `RESULT` diferente de `PASS` exige
-STOP. O script produz evidência mecânica e não substitui a auditoria do GPT.
-
-Para qualquer dado comercial ou operacional, consultar `knowledge/casa77.yaml`. Lacunas
-conhecidas estão em `knowledge/informacoes-pendentes.md`.
-
-`CLAUDE.md` não é fonte de estado granular nem de valor comercial. Nenhum número
-comercial deve ser copiado para este arquivo.
+Python ≥ 3.13. Instalar: `python -m pip install -e ".[dev]"`. Testes: `python -m pytest -q`.
