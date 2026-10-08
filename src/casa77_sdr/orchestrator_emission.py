@@ -66,6 +66,11 @@ CATEGORIA_VALIDACAO_REPROVADA = "validacao_resposta_reprovada"
 _LACUNA = "R03/F1"
 _CONDICOES_VISITA = "R06/F1"
 
+# Ações de coleta da decisão de `E15` (T20) que entram no texto principal.
+_ACOES_DE_COLETA = frozenset(
+    {AcaoMaquina.RETOMAR_COLETA_SEM_REPETIR, AcaoMaquina.PERGUNTAR_PROXIMO_CAMPO_AUSENTE}
+)
+
 # Estados a partir dos quais a máquina admite `E15` (doc 06 §4.2).
 _ESTADOS_QUE_ADMITEM_E15 = frozenset(
     {Estado.RESPONDENDO_DUVIDAS, Estado.ENCAMINHADO_HUMANO, Estado.PRONTO_PARA_HANDOFF}
@@ -122,6 +127,9 @@ def produzir_texto_final(
         decisoes.append(
             decidir(primeira.estado_final, (Evento.E15,), pd.qualificacao, pd.condicoes)
         )
+        texto = _com_coleta_do_e15(
+            pd, decisoes[-1], texto, base_motor, tentar_alerta, correlacao, estado_inicial
+        )
 
     resumo: str | None = None
     if decisoes[-1].estado_final is Estado.PRONTO_PARA_HANDOFF:
@@ -156,15 +164,7 @@ def _texto_validado(
 ) -> tuple[str | None, bool]:
     """Etapas 8–12. Devolve `(texto, responde_pergunta_comercial)`."""
     autorizados = pd.s2d8.fragmentos_autorizados
-    acoes = pd.decisao.acoes
-
-    # Etapa 8 — a fotografia só é montada quando a ação de T16 é a owner.
-    fotografia = None
-    if AcaoMaquina.INFORMAR_CONDICOES_DE_VISITA in acoes and _CONDICOES_VISITA not in autorizados:
-        fotografia = montar_fotografia_fragmento(
-            _CONDICOES_VISITA, base_motor.consistencia, assertivas_runtime=()
-        )
-    projetados = projetar_fragmentos_para_emissao(autorizados, acoes, fotografia_r06=fotografia)
+    projetados = _projetar(pd, base_motor, pd.decisao.acoes)
     if not projetados:
         return None, False
 
@@ -177,6 +177,72 @@ def _texto_validado(
         return candidato, bool(autorizados)
     _alertar_reprovacao(tentar_alerta, correlacao)
     return _montar(base_motor, (_LACUNA,)).texto, False
+
+
+def _com_coleta_do_e15(
+    pd: PrimeiraDecisao,
+    e15: DecisaoMaquina,
+    texto: str | None,
+    base_motor: BaseMotor,
+    tentar_alerta: Callable[..., object],
+    correlacao: str,
+    estado_inicial: Estado,
+) -> str | None:
+    """Retomada da coleta depois da resposta comercial (T20, decisão de `E15`).
+
+    O critério de `E15` não muda: ele já foi confirmado sobre o texto validado
+    da resposta. Aqui as ações de coleta dessa decisão entram no **texto
+    principal** — reprojetado com as ações da primeira decisão mais elas, e
+    validado **uma vez** como texto final. Reprovado, fica o texto já validado
+    da resposta e o alerta é tentado (nenhuma nova chamada da máquina).
+
+    Na primeira mensagem (`estado_inicial` `NOVO` → T02 → `E15` → T20) não há
+    coleta a retomar: `RETOMAR_COLETA_SEM_REPETIR` vale como
+    `PERGUNTAR_PROXIMO_CAMPO_AUSENTE` — a pergunta vem sem `R32`.
+    """
+    coleta = tuple(a for a in e15.acoes if a in _ACOES_DE_COLETA)
+    if estado_inicial is Estado.NOVO:
+        coleta = tuple(
+            AcaoMaquina.PERGUNTAR_PROXIMO_CAMPO_AUSENTE
+            if a is AcaoMaquina.RETOMAR_COLETA_SEM_REPETIR
+            else a
+            for a in coleta
+        )
+    if not coleta:
+        return texto
+    projetados = _projetar(pd, base_motor, pd.decisao.acoes + coleta)
+    montada = _montar(base_motor, projetados)
+    if validar_resposta_final(montada.texto, montada).aprovado:
+        return montada.texto
+    _alertar_reprovacao(tentar_alerta, correlacao)
+    return texto
+
+
+def _projetar(
+    pd: PrimeiraDecisao, base_motor: BaseMotor, acoes: tuple[AcaoMaquina, ...]
+) -> tuple[str, ...]:
+    """Etapa 8 — `ProjetorEmissao` sobre a cobertura e as ações recebidas."""
+    autorizados = pd.s2d8.fragmentos_autorizados
+
+    # A fotografia de `R06/F1` só é montada quando a ação de T16 é a owner.
+    fotografia = None
+    if AcaoMaquina.INFORMAR_CONDICOES_DE_VISITA in acoes and _CONDICOES_VISITA not in autorizados:
+        fotografia = montar_fotografia_fragmento(
+            _CONDICOES_VISITA, base_motor.consistencia, assertivas_runtime=()
+        )
+    qualificacao = pd.qualificacao
+    return projetar_fragmentos_para_emissao(
+        autorizados,
+        acoes,
+        fotografia_r06=fotografia,
+        # M2.1 (PE-21–PE-24): dado estruturado explícito, nunca a qualificação
+        # inteira — o projetor não conhece o `Qualificador`.
+        campos_ausentes=qualificacao.campos_ausentes,
+        motivos_violacao=tuple(v.motivo for v in qualificacao.violacoes),
+        fotografar=lambda token: montar_fotografia_fragmento(
+            token, base_motor.consistencia, assertivas_runtime=()
+        ),
+    )
 
 
 def _texto_encaminhamento(
@@ -192,8 +258,19 @@ def _texto_encaminhamento(
     em ordem e sem repetição (primeira ocorrência). Reprovada a validação, nada
     é enviado ao interessado — não existe substituto aprovado para o
     encaminhamento — e o alerta é tentado.
+
+    Só a ação de encaminhamento (T27) é projetada aqui: desde o M2.1 a retomada
+    de T20 tem fragmento aprovado, e ela **não** pode sair junto da mensagem de
+    encaminhamento, que só é enviada depois da entrega do resumo.
     """
-    acoes = tuple(dict.fromkeys(a for decisao in fechamento for a in decisao.acoes))
+    acoes = tuple(
+        dict.fromkeys(
+            a
+            for decisao in fechamento
+            for a in decisao.acoes
+            if a is AcaoMaquina.EMITIR_MENSAGEM_DE_ENCAMINHAMENTO
+        )
+    )
     projetados = projetar_fragmentos_para_emissao((), acoes)
     if not projetados:
         return None

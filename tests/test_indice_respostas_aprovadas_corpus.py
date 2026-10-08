@@ -66,14 +66,14 @@ BASE_FACTUAL = RAIZ / "knowledge" / "casa77.yaml"
 
 # Cardinalidades físicas do corpus corrente. São **contagens estruturais**, não
 # dado comercial: nenhuma delas é preço, capacidade, horário ou condição.
-TOTAL_FRAGMENTOS = 37
-TOTAL_RESPOSTAS = 30
-TOTAL_BINDINGS = 118
-TOTAL_RENDERIZADO_YAML = 62
+TOTAL_FRAGMENTOS = 47
+TOTAL_RESPOSTAS = 35
+TOTAL_BINDINGS = 121
+TOTAL_RENDERIZADO_YAML = 65
 TOTAL_ASSERTIVA_YAML = 52
 TOTAL_ASSERTIVA_RUNTIME = 4
-TOTAL_OCORRENCIAS_PLACEHOLDER = 65
-TOTAL_FRAGMENTOS_COM_RENDERIZADO = 19
+TOTAL_OCORRENCIAS_PLACEHOLDER = 68
+TOTAL_FRAGMENTOS_COM_RENDERIZADO = 22
 
 # Despacho fechado de `C-6`. Cada formato é aplicado pela sua própria fronteira.
 _FORMATADORES = {
@@ -156,8 +156,8 @@ def test_st6_cardinalidade_estrutural(indice: dict[str, Any]) -> None:
 def test_st6_vocabulario_de_status_do_indice(indice: dict[str, Any]) -> None:
     contagem = collections.Counter(f["status"] for _, f in _fragmentos(indice))
 
-    assert contagem["APROVADO"] == 35
-    assert contagem["AGUARDA_APROVACAO"] == 2
+    assert contagem["APROVADO"] == 47
+    assert contagem["AGUARDA_APROVACAO"] == 0
     assert contagem["BLOQUEADO"] == 0
     assert set(contagem) <= {"APROVADO", "AGUARDA_APROVACAO", "BLOQUEADO"}
 
@@ -228,7 +228,7 @@ def test_st7_correspondencia_canonica(
 def test_st8_markdown_reconcilia_com_status_autoritativo_do_indice(
     indice: dict[str, Any], markdown: str
 ) -> None:
-    """37/37, por ocorrência física e na ordem do documento.
+    """47/47, por ocorrência física e na ordem do documento.
 
     A direção é **índice → Markdown** (`C-11`): o índice é o **esperado
     autoritativo** e o Markdown é o **conferido**. Esta comparação **NÃO** torna

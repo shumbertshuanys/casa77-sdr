@@ -62,6 +62,9 @@ class MotivoQualificacao(StrEnum):
     FORMATO_SENTADO_ACIMA_CAPACIDADE_SENTADA = (
         "formato_sentado_acima_capacidade_sentada"
     )
+    FORMATO_NAO_INFORMADO_ACIMA_CAPACIDADE_SENTADA = (
+        "formato_nao_informado_acima_capacidade_sentada"
+    )
     COMPATIVEL = "compativel"
 
 
@@ -118,8 +121,10 @@ def qualificar(
        completos, I20);
     2. campo obrigatório ausente → `dados_incompletos` (I09, doc 02 §6);
     3. dados completos com pendência impeditiva → `indefinido` (I10);
-    4. faixa que exige formato, com formato sentado →
-       `qualificado_com_ressalva`;
+    4. faixa acima da capacidade sentada, com formato sentado ou não
+       informado → `qualificado_com_ressalva` (o formato não é campo
+       obrigatório — decisão do Victor, 2026-10-08: o bot não pergunta o
+       formato; envia a ressalva de capacidade e segue);
     5. demais casos completos e compatíveis → `qualificado`.
 
     A ordem dos passos 7 e 8 do doc 06 §4 descreve a sequência de verificações
@@ -148,13 +153,11 @@ def qualificar(
     _validar_formato(dados.formato)
 
     convidados = atendimento.convidados
-    exige_formato = (
+    acima_capacidade_sentada = (
         not convidados_ausente
         and convidados is not None
         and sentados < convidados <= coquetel
     )
-    if exige_formato and dados.formato is None:
-        ausentes.append("formato")
 
     if not violacoes and convidados is not None and convidados > coquetel:
         # Integração incoerente: a 3B.2 sempre produz violação nesse caso, e
@@ -186,10 +189,16 @@ def qualificar(
             pendencias_impeditivas=pendencias_impeditivas,
         )
 
-    if exige_formato and dados.formato is FormatoEvento.SENTADO:
+    if acima_capacidade_sentada and dados.formato is FormatoEvento.SENTADO:
         return Qualificacao(
             resultado=ResultadoQualificacao.QUALIFICADO_COM_RESSALVA,
             motivo=MotivoQualificacao.FORMATO_SENTADO_ACIMA_CAPACIDADE_SENTADA,
+        )
+
+    if acima_capacidade_sentada and dados.formato is None:
+        return Qualificacao(
+            resultado=ResultadoQualificacao.QUALIFICADO_COM_RESSALVA,
+            motivo=MotivoQualificacao.FORMATO_NAO_INFORMADO_ACIMA_CAPACIDADE_SENTADA,
         )
 
     return Qualificacao(

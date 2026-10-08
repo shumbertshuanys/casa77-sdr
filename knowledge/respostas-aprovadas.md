@@ -16,7 +16,7 @@ pertencem às demais validações e a `S2-D8`.
 
 ---
 
-## R01 — Saudação — AGUARDA APROVAÇÃO
+## R01 — Saudação — APROVADO
 
 <!-- fragmento: F1 -->
 > Oi! Aqui é o atendimento da Casa 77, espaço para eventos no
@@ -162,7 +162,7 @@ Link do Google Maps: **BLOQUEADO** (`google_maps_url: null`) → R03.
 > A casa não tem estacionamento próprio e a rua tem vagas limitadas. O ideal é orientar os
 > convidados a virem de aplicativo ou táxi.
 
-## R15 — Encerramento sem interesse — AGUARDA APROVAÇÃO
+## R15 — Encerramento sem interesse — APROVADO
 
 <!-- fragmento: F1 -->
 > Sem problema. Se mudar de ideia, é só chamar por aqui. Obrigado pelo contato!
@@ -293,6 +293,71 @@ Valor: **BLOQUEADO** (`suite_noiva.valor: null`) → R03 + handoff.
 
 <!-- fragmento: F1 -->
 > Não temos espaço infantil, e a piscina não é liberada para uso em eventos.
+
+## R31 — Coleta de dados — APROVADO
+
+Uma pergunta por campo ausente; o motor escolhe o fragmento do **primeiro** campo ausente
+na ordem natural (tipo de evento, data, convidados, nome, contato).
+
+Nome:
+
+<!-- fragmento: F1 -->
+> Pra eu registrar certinho, qual é o seu nome?
+
+Tipo de evento:
+
+<!-- fragmento: F2 -->
+> Que tipo de evento você está planejando?
+
+Data:
+
+<!-- fragmento: F3 -->
+> Qual é a data que você tem em mente para o evento?
+
+Convidados:
+
+<!-- fragmento: F4 -->
+> Quantos convidados você pretende receber, mais ou menos?
+
+Contato:
+
+<!-- fragmento: F5 -->
+> Posso usar este número de WhatsApp para o responsável comercial falar com você?
+
+## R32 — Retomada da coleta — APROVADO
+
+Sempre seguido da pergunta do próximo campo ausente (R31).
+
+<!-- fragmento: F1 -->
+> Voltando ao seu evento, pra eu completar as informações:
+
+## R33 — Regra incompatível — APROVADO
+
+Acima da capacidade:
+
+<!-- fragmento: F1 -->
+> A Casa 77 recebe até {{convidados_formato_coquetel}} convidados, então para esse número de
+> pessoas o espaço não comporta o evento.
+
+Horário além do limite:
+
+<!-- fragmento: F2 -->
+> O evento precisa terminar até as {{horario_limite}}, mesmo com hora adicional. Esse limite
+> não pode ser estendido.
+
+Tipo de evento não aceito → R17.
+
+## R34 — Ressalva de capacidade — APROVADO
+
+<!-- fragmento: F1 -->
+> Para esse número de convidados, o evento precisa ser no formato coquetel. Com todos
+> sentados, a casa comporta até {{convidados_sentados}}.
+
+## R35 — Reforço de encaminhamento — APROVADO
+
+<!-- fragmento: F1 -->
+> Sua conversa já está com o responsável comercial, que vai falar com você para dar
+> sequência.
 
 ---
 

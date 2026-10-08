@@ -48,7 +48,7 @@ BASE_FACTUAL = RAIZ / "knowledge" / "casa77.yaml"
 MODULO_SF = RAIZ / "src" / "casa77_sdr" / "fact_selection.py"
 
 # Cardinalidade estrutural do corpus corrente — contagem, não dado comercial.
-TOTAL_FRAGMENTOS = 37
+TOTAL_FRAGMENTOS = 47
 
 # Único rótulo de status usado nos cenários sintéticos. Ele existe apenas para
 # satisfazer `validar_indice`: esta fronteira **não** lê status, e nada aqui

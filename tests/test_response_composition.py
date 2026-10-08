@@ -52,7 +52,7 @@ BASE_FACTUAL = RAIZ / "knowledge" / "casa77.yaml"
 MODULO_CMP = RAIZ / "src" / "casa77_sdr" / "response_composition.py"
 
 # Cardinalidade estrutural do corpus corrente — contagem, não dado comercial.
-TOTAL_FRAGMENTOS = 37
+TOTAL_FRAGMENTOS = 47
 
 
 # ---------------------------------------------------------------------------

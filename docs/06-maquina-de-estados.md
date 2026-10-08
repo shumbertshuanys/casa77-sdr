@@ -313,7 +313,7 @@ linha.
 | T06 | `coletando_dados` | `E08` | demais regras objetivas violadas (tipo em `eventos.nao_aceitos`; convidados acima de `capacidade.formato_coquetel`) | `coletando_dados` | informar a regra objetiva com o motivo; registrar o motivo; aguardar a reação do interessado | sugerir exceção; encaminhar sem necessidade | `incompativel` (com motivo objetivo) |
 | T07 | `coletando_dados` | `E18` | qualquer motivo | `pronto_para_handoff` | registrar o motivo; preparar resumo; preservar qualificação, incompatibilidade e pendências já detectadas | tentar reter; apagar motivo ou pendência anterior | mantém |
 | T08 | `coletando_dados` | `E07` | `resultado_qualificacao` = `qualificado_com_ressalva` | `pronto_para_handoff` | `INFORMAR_RESSALVA_DE_CAPACIDADE`; encaminhar para decisão humana — a máquina emite a ação, e a redação do fato de capacidade cabe ao `SeletorFatos` | afirmar que algum pacote de `precos.pacotes` libera formato sentado acima do limite | `qualificado_com_ressalva` (recebido, não recalculado) |
-| T09 | `coletando_dados` | `E04` | convidados acima de `capacidade.convidados_sentados` e até `capacidade.formato_coquetel`, formato não informado | `coletando_dados` | perguntar o formato antes de indicar pacote | assumir formato; indicar pacote | `dados_incompletos` |
+| T09 | `coletando_dados` | `E04` | `formato` em `campos_ausentes` — **inalcançável desde a decisão do Victor (2026-10-08)**: o formato deixou de ser campo obrigatório e nunca entra em `campos_ausentes`; acima de `capacidade.convidados_sentados` sem formato o resultado é `qualificado_com_ressalva` (T08) | `coletando_dados` | perguntar o formato antes de indicar pacote (`PERGUNTAR_FORMATO`, silenciosa) | assumir formato; indicar pacote | `dados_incompletos` |
 | T10 | `coletando_dados` | `E06` | resposta existe no YAML/respostas aprovadas | `respondendo_duvidas` | responder; ao concluir, emitir `E15` | reiniciar a coleta | mantém |
 | T11 | `coletando_dados` | `E09` | a pendência impede a classificação do evento | `pronto_para_handoff` | aplicar R03; registrar em `pendencias_resposta` as **perguntas não respondidas do ciclo**, **quando houver causa de resposta associada** (§1.3) | inventar; usar conhecimento genérico; **fabricar pergunta** quando a causa é exclusivamente de qualificação/base | `indefinido` |
 | T12 | `coletando_dados` | `E09` | pendência acessória (não impede a classificação) | `pronto_para_handoff` | aplicar R03; registrar a pergunta em `pendencias_resposta` | rebaixar a qualificação para `indefinido`; inventar | mantém |
@@ -436,7 +436,8 @@ produz **uma única decisão final de próximo estado**.
    correspondente);
 6. validar regras incompatíveis do YAML (`E08`);
 7. verificar pendências que impedem a classificação (`E09` impeditivo);
-8. verificar campos obrigatórios e o formato condicional;
+8. verificar campos obrigatórios (o formato não é obrigatório — decisão do Victor,
+   2026-10-08);
 9. recalcular `resultado_qualificacao`;
 10. responder às perguntas comerciais aprovadas (`E06`, concluindo com `E15`);
 11. registrar `pendencias_resposta` (`E09` acessório);
@@ -781,7 +782,8 @@ por **E5/S7** (doc 07 §7.1).
 10. **Na faixa entre `capacidade.convidados_sentados` e `capacidade.formato_coquetel`, o
     formato segue o YAML**: coquetel → `qualificado` com o pacote correspondente de
     `precos.pacotes`; sentado → `qualificado_com_ressalva` + handoff (T08); não
-    informado → `dados_incompletos` (T09).
+    informado → `qualificado_com_ressalva` + ressalva de capacidade + handoff (T08) — o
+    bot não pergunta o formato (decisão do Victor, 2026-10-08).
 11. **Quando o humano assume (`E13`), o bot para de responder automaticamente** — o
     estado `atendimento_humano` não possui transição de resposta do bot.
 12. **Dentro de um atendimento ativo, mensagens repetidas e subsequentes não criam nova
@@ -818,8 +820,9 @@ Ordem **recomendada, não rígida**:
 3. tipo de evento;
 4. data pretendida;
 5. número de convidados;
-6. formato — **somente** quando exigido: número de convidados acima de
-   `capacidade.convidados_sentados` e até `capacidade.formato_coquetel`;
+6. formato — **não é perguntado** (decisão do Victor, 2026-10-08); acima de
+   `capacidade.convidados_sentados` e até `capacidade.formato_coquetel` o bot envia a
+   ressalva de capacidade (`INFORMAR_RESSALVA_DE_CAPACIDADE`) e segue;
 7. interesse em visita;
 8. dúvidas principais.
 

@@ -222,7 +222,11 @@ def test_pergunta_comercial_emite_composicao_aprovada_byte_a_byte(base_motor):
     projetados = projetar_fragmentos_para_emissao(
         pd.s2d8.fragmentos_autorizados, pd.decisao.acoes
     )
-    esperado = _texto_aprovado(base_motor, projetados)
+    # `E15` → T20 na primeira mensagem (`NOVO`): não há coleta a retomar, então
+    # só a pergunta do tipo de evento (primeiro campo da prioridade natural)
+    # fecha a mensagem — sem `R32/F1` (achado final M2.1 #3).
+    assert estado is Estado.NOVO
+    esperado = _texto_aprovado(base_motor, (*projetados, "R31/F2"))
 
     final = _produzir(pd, estado, base_motor)
 
@@ -231,15 +235,132 @@ def test_pergunta_comercial_emite_composicao_aprovada_byte_a_byte(base_motor):
     assert final.decisoes_do_ciclo[0] is pd.decisao
 
 
-def test_apresentar_atendimento_inicial_sem_fragmento_aprovado_nao_emite(base_motor):
-    # `APRESENTAR_ATENDIMENTO_INICIAL` não tem fragmento aprovado no projetor
-    # (§4.1.5): a ação não produz texto e, sem nada mais, `texto is None`.
+def test_apresentar_atendimento_inicial_emite_a_saudacao_aprovada(base_motor):
+    # M2.1: `APRESENTAR_ATENDIMENTO_INICIAL` → `R01/F1` (PE-24, PE-25).
     pd, estado = _primeira(_payload(), base_motor)
     assert pd.decisao.acoes == (AcaoMaquina.APRESENTAR_ATENDIMENTO_INICIAL,)
     final = _produzir(pd, estado, base_motor)
-    assert final.texto is None
+    assert final.texto == _texto_aprovado(base_motor, ("R01/F1",))
     assert final.decisoes_do_ciclo == (pd.decisao,)
     assert final.resumo_handoff is None
+
+
+def test_primeiro_contato_com_visita_saudacao_e_visita_numa_mensagem(base_motor):
+    # 1º contato com dado + interesse em visita: a máquina emite T01, T04, T16
+    # (saudação, pergunta, visita). A saudação já pergunta o tipo de evento, então
+    # a pergunta de coleta não entra: saudação → visita.
+    pd, estado = _primeira(
+        _payload(dados={"tipo_evento": "evento ficticio"}, intencoes=("interesse_em_visita",)),
+        base_motor,
+    )
+    assert pd.decisao.acoes == (
+        AcaoMaquina.APRESENTAR_ATENDIMENTO_INICIAL,
+        AcaoMaquina.PERGUNTAR_PROXIMO_CAMPO_AUSENTE,
+        AcaoMaquina.INFORMAR_CONDICOES_DE_VISITA,
+    )
+    assert pd.qualificacao.campos_ausentes[0] == "nome"
+
+    final = _produzir(pd, estado, base_motor)
+
+    partes = [
+        _texto_aprovado(base_motor, (token,)) for token in ("R01/F1", "R06/F1")
+    ]
+    assert final.texto == "\n\n".join(partes)
+    assert final.texto.split("\n\n") == partes
+    assert all("\n" not in parte for parte in partes)
+
+
+def test_retomada_seguida_da_pergunta_do_proximo_campo(base_motor):
+    pd, estado = _primeira(
+        _payload(dados={"nome": "Nome Ficticio"}),
+        base_motor,
+        atendimento=_registro(Estado.RESPONDENDO_DUVIDAS, {"tipo_evento": "evento ficticio"}),
+    )
+    assert pd.decisao.acoes == (AcaoMaquina.RETOMAR_COLETA_SEM_REPETIR,)
+    assert pd.qualificacao.campos_ausentes[0] == "contato"
+
+    final = _produzir(pd, estado, base_motor)
+
+    # Prioridade natural: data antes de convidados, nome e contato.
+    assert final.texto == _texto_aprovado(base_motor, ("R32/F1", "R31/F3"))
+
+
+def test_resposta_comercial_em_coleta_retoma_e_pergunta_numa_mensagem(
+    base_motor, monkeypatch
+):
+    validados: list[str] = []
+    original = orchestrator_emission.validar_resposta_final
+
+    def espiao(texto: str, montada: Any) -> Any:
+        validados.append(texto)
+        return original(texto, montada)
+
+    monkeypatch.setattr(orchestrator_emission, "validar_resposta_final", espiao)
+    contador = _contar_decidir(monkeypatch)
+    pd, estado = _primeira(
+        _payload(perguntas=("preco_locacao",)),
+        base_motor,
+        atendimento=_registro(Estado.COLETANDO_DADOS, {"tipo_evento": "evento ficticio"}),
+    )
+    assert pd.decisao.caminho == (Transicao.T10,)
+    resposta = pd.s2d8.fragmentos_autorizados
+    assert resposta
+
+    final = _produzir(pd, estado, base_motor)
+
+    assert final.decisoes_do_ciclo[1].caminho == (Transicao.T20,)
+    esperado = "\n\n".join(
+        (
+            _texto_aprovado(base_motor, resposta),
+            _texto_aprovado(base_motor, ("R32/F1",)),
+            _texto_aprovado(base_motor, ("R31/F3",)),
+        )
+    )
+    assert final.texto == esperado
+    # O texto final é validado uma vez; a primeira validação é a da resposta,
+    # que sustenta o critério de `E15`.
+    assert validados[-1] == esperado
+    assert validados.count(esperado) == 1
+    assert contador["n"] == 1
+    assert final.texto_encaminhamento is None
+
+
+def test_retomada_do_e15_reprovada_mantem_a_resposta_validada(base_motor, monkeypatch):
+    original = orchestrator_emission.validar_resposta_final
+    pd, estado = _primeira(
+        _payload(perguntas=("preco_locacao",)),
+        base_motor,
+        atendimento=_registro(Estado.COLETANDO_DADOS, {"tipo_evento": "evento ficticio"}),
+    )
+    resposta = _texto_aprovado(base_motor, pd.s2d8.fragmentos_autorizados)
+    retomada = _texto_aprovado(base_motor, ("R32/F1",))
+
+    def reprova(texto: str, montada: Any) -> Any:
+        if retomada in texto:
+            return ResultadoValidacaoResposta(False, MotivoValidacaoResposta.TEXTO_DIVERGENTE)
+        return original(texto, montada)
+
+    monkeypatch.setattr(orchestrator_emission, "validar_resposta_final", reprova)
+    alerta = AlertaEspiao()
+
+    final = _produzir(pd, estado, base_motor, alerta)
+
+    assert final.texto == resposta
+    assert len(alerta.chamadas) == 1
+
+
+def test_regra_incompativel_por_capacidade_informa_o_limite(base_motor):
+    acima = base_motor.base["capacidade"]["formato_coquetel"] + 1
+    pd, estado = _primeira(
+        _payload(dados={"convidados": acima}),
+        base_motor,
+        atendimento=_registro(Estado.COLETANDO_DADOS, {"tipo_evento": "evento ficticio"}),
+    )
+    assert AcaoMaquina.INFORMAR_REGRA_INCOMPATIVEL in pd.decisao.acoes
+
+    final = _produzir(pd, estado, base_motor)
+
+    assert final.texto == _texto_aprovado(base_motor, ("R33/F1",))
 
 
 def test_condicoes_de_visita_pela_rota_da_acao_usam_fotografia(base_motor):

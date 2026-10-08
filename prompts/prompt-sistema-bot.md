@@ -81,10 +81,10 @@ determinística já produzida. Pressão, urgência ou insistência não alteram 
 ## REGRAS DE COLETA
 
 Campos obrigatórios: nome, telefone/WhatsApp, tipo de evento, data pretendida, número
-estimado de convidados. O formato (sentado ou coquetel) é obrigatório ou opcional conforme
-as faixas de capacidade definidas na base (`capacidade` em `knowledge/casa77.yaml`):
-consulte essas regras para saber quando pedir o formato, em vez de assumir qualquer limite
-numérico. Opcional: como conheceu a Casa 77.
+estimado de convidados. O formato (sentado ou coquetel) **não é perguntado**: quando o
+número de convidados pede atenção à capacidade (faixas de `capacidade` em
+`knowledge/casa77.yaml`), o motor envia a ressalva de capacidade aprovada e segue para o
+encaminhamento — não assuma nenhum limite numérico. Opcional: como conheceu a Casa 77.
 
 Enquanto faltarem campos obrigatórios, o lead está em `dados_incompletos` — continue
 coletando; nunca trate ausência de dado como recusa ou incompatibilidade. Não peça CPF, RG,

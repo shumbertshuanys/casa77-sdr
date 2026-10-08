@@ -186,13 +186,36 @@ def test_ordem_dos_campos_ausentes_e_deterministica() -> None:
 # 3. Formato condicional e faixa de capacidade
 
 
-def test_formato_ausente_na_faixa_entra_em_campos_ausentes() -> None:
+def test_formato_ausente_na_faixa_nao_e_campo_obrigatorio() -> None:
+    # Decisão do Victor (2026-10-08): o bot não pergunta o formato; acima da
+    # capacidade sentada ele envia a ressalva de capacidade e segue.
     dados = dados_ficticios(convidados=SENTADOS + 1, formato=None)
 
     resultado = qualificar(dados, (), (), base_ficticia())
 
+    assert resultado.resultado is not ResultadoQualificacao.DADOS_INCOMPLETOS
+    assert "formato" not in resultado.campos_ausentes
+
+
+def test_formato_ausente_na_faixa_produz_qualificado_com_ressalva() -> None:
+    dados = dados_ficticios(convidados=SENTADOS + 1, formato=None)
+
+    resultado = qualificar(dados, (), (), base_ficticia())
+
+    assert resultado.resultado is ResultadoQualificacao.QUALIFICADO_COM_RESSALVA
+    assert (
+        resultado.motivo
+        is MotivoQualificacao.FORMATO_NAO_INFORMADO_ACIMA_CAPACIDADE_SENTADA
+    )
+
+
+def test_formato_ausente_na_faixa_com_outro_campo_ausente_nao_lista_formato() -> None:
+    dados = dados_ficticios(convidados=SENTADOS + 1, formato=None, nome=None)
+
+    resultado = qualificar(dados, (), (), base_ficticia())
+
     assert resultado.resultado is ResultadoQualificacao.DADOS_INCOMPLETOS
-    assert resultado.campos_ausentes == ("formato",)
+    assert resultado.campos_ausentes == ("nome",)
 
 
 def test_faixa_com_formato_coquetel_produz_qualificado() -> None:
@@ -219,12 +242,22 @@ def test_borda_igual_a_capacidade_sentada_mantem_formato_opcional() -> None:
     assert resultado.resultado is ResultadoQualificacao.QUALIFICADO
 
 
-def test_borda_superior_da_faixa_ainda_exige_formato() -> None:
+def test_borda_superior_da_faixa_sem_formato_produz_ressalva() -> None:
     dados = dados_ficticios(convidados=COQUETEL, formato=None)
 
     resultado = qualificar(dados, (), (), base_ficticia())
 
-    assert resultado.campos_ausentes == ("formato",)
+    assert resultado.campos_ausentes == ()
+    assert resultado.resultado is ResultadoQualificacao.QUALIFICADO_COM_RESSALVA
+
+
+def test_borda_superior_da_faixa_com_sentado_continua_ressalva_de_sentado() -> None:
+    dados = dados_ficticios(convidados=COQUETEL, formato=FormatoEvento.SENTADO)
+
+    resultado = qualificar(dados, (), (), base_ficticia())
+
+    assert resultado.resultado is ResultadoQualificacao.QUALIFICADO_COM_RESSALVA
+    assert resultado.motivo is MotivoQualificacao.FORMATO_SENTADO_ACIMA_CAPACIDADE_SENTADA
 
 
 def test_formato_sentado_abaixo_da_faixa_nao_gera_ressalva() -> None:

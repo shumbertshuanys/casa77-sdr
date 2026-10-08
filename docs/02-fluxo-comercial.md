@@ -14,8 +14,9 @@ próprio**.
 
 ### 2. Identificação do evento
 
-Descobrir: tipo de evento, data pretendida, número estimado de convidados, formato (sentado
-ou coquetel).
+Descobrir: tipo de evento, data pretendida, número estimado de convidados. O formato
+(sentado ou coquetel) **não é perguntado** (decisão do Victor, 2026-10-08); se o interessado
+o informar espontaneamente, é registrado.
 
 ### 3. Resposta a dúvidas
 
@@ -28,11 +29,11 @@ de dar valor. Dúvida sem resposta aprovada → handoff.
 | Campo | Obrigatório |
 |---|---|
 | nome | sim |
-| telefone/WhatsApp | sim |
+| telefone/WhatsApp | sim — preenchido automaticamente pelo identificador do canal quando ainda vazio (docs/06 §6); contato dado pelo interessado nunca é sobrescrito; `R31/F5` não é perguntado nesse caso (revisão final M2.1) |
 | tipo de evento | sim |
 | data pretendida | sim |
 | número de convidados | sim |
-| formato (sentado/coquetel) | condicional — obrigatório de 81 a 100 convidados; opcional até 80 |
+| formato (sentado/coquetel) | não — não é perguntado (decisão do Victor, 2026-10-08); de 81 a 100 convidados o bot envia a ressalva de capacidade (R34) |
 | como conheceu a Casa 77 | não |
 
 ### 5. Verificação de disponibilidade
@@ -86,10 +87,13 @@ Fonte: `capacidade.convidados_sentados = 80`, `capacidade.formato_coquetel = 100
 | até 80 | opcional | `qualificado` (se demais dados ok) | `ATE_80` |
 | 81 a 100 | coquetel | `qualificado` em princípio | `ATE_100` |
 | 81 a 100 | sentado | `qualificado_com_ressalva` + handoff | `ATE_100` (sujeito a confirmação) |
-| 81 a 100 | não informado | `dados_incompletos` (perguntar o formato) | a definir |
+| 81 a 100 | não informado | `qualificado_com_ressalva` + ressalva de capacidade (R34) + handoff | a definir (formato não informado) |
 | acima de 100 | qualquer | `incompativel` | nenhum |
 
-Para 81 a 100 convidados o formato é **obrigatório**. Até 80 ele é opcional.
+O formato **não é campo obrigatório** e o bot **não o pergunta** (decisão do Victor,
+2026-10-08). De 81 a 100 convidados sem formato informado, o bot envia a ressalva de
+capacidade aprovada (`INFORMAR_RESSALVA_DE_CAPACIDADE`, R34) e segue; a confirmação do
+formato fica com o humano (`qualificado_com_ressalva`).
 
 O pacote `ATE_100` **não** significa que 100 pessoas sentadas são automaticamente aceitas —
 100 sentados excede a capacidade sentada de 80 e por isso vira `qualificado_com_ressalva`
@@ -122,11 +126,11 @@ abertura
     → data ──[Carnaval | Natal | Ano Novo]──> incompativel → R18 + handoff
       → convidados
           ├─ > 100 ─────────────────> incompativel
-          ├─ até 80 (formato opcional) ──> ATE_80
-          └─ 81 a 100 (formato obrigatório)
+          ├─ até 80 ──> ATE_80
+          └─ 81 a 100 (formato não é perguntado)
                 ├─ coquetel ──> ATE_100 (qualificado)
                 ├─ sentado ──> qualificado_com_ressalva + handoff
-                └─ sem formato ──> dados_incompletos (perguntar)
+                └─ sem formato ──> qualificado_com_ressalva + ressalva (R34) + handoff
         → dúvidas (knowledge/) ──[pendente impeditivo]──> indefinido → R03 + handoff
                                ──[pendente acessório]──> pendencias_resposta → R03 + handoff (qualificação mantida)
           → coleta de dados ──[falta campo obrigatório]──> dados_incompletos

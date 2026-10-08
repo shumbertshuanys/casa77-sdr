@@ -47,7 +47,7 @@ BASE_FACTUAL = RAIZ / "knowledge" / "casa77.yaml"
 MODULO_VCB = RAIZ / "src" / "casa77_sdr" / "response_consistency.py"
 
 # Cardinalidades estruturais do corpus corrente — contagens, não dado comercial.
-TOTAL_FRAGMENTOS = 37
+TOTAL_FRAGMENTOS = 47
 TOTAL_ASSERTIVA_RUNTIME = 4
 
 _CAMPOS_DE_IDENTIDADE = (
