@@ -1,7 +1,7 @@
 version: 1
 system:
-  id: casa77
-  name: Casa 77
+  id: casa77-sdr
+  name: Casa 77 SDR
   default_branch: main
   state_doc: docs/00-estado-atual.md
 projeto:                    # presente = em desenvolvimento (Konora). Roteiro em docs/05-roadmap.md.
