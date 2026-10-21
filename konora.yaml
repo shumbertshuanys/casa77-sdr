@@ -1,6 +1,13 @@
 version: 1
 system:
-  id: casa77-sdr
-  name: Casa 77 SDR
+  id: casa77
+  name: Casa 77
   default_branch: main
   state_doc: docs/00-estado-atual.md
+projeto:                    # presente = em desenvolvimento (Konora). Roteiro em docs/05-roadmap.md.
+  cliente: Casa 77
+  marcos:
+    - { id: m1, nome: "M1 Runtime local", feito: true }
+    - { id: m2, nome: "M2 Motor de respostas (validação com LLM real pendente)", feito: false }
+    - { id: m2-1, nome: "M2.1 Conversa útil", feito: true }
+    - { id: m3, nome: "M3 Produção (persistência, WhatsApp, calendário, handoff)", feito: false }
