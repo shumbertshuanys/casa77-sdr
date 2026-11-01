@@ -4,6 +4,8 @@ system:
   name: Casa 77 SDR
   default_branch: main
   state_doc: docs/00-estado-atual.md
+  suspenso: true            # suspenso em 01/11/2026 (decisão do Victor); não há deploy, banco nem chave de API paga
+fornecedores: []           # Padrão Konora R5: o Claude roda pela assinatura do Claude Code (API nunca cobrada)
 projeto:                    # presente = em desenvolvimento (Konora). Roteiro em docs/05-roadmap.md.
   cliente: Casa 77
   marcos:
